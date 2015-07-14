@@ -65,7 +65,7 @@ append Null Null
 
 20060303-21:49:20-2bc1510b76bf11ac93785858fe7225ee.seminal.ml
 *** Failed! *** Exception: TypeError "could not match TCon \"string\" against TCon \"unit\"" (after 2 tests): 
-map (fun _ -> ) "\DEL"
+map (fun _ -> ) "S"
 
 20060303-22:00:40-01a5cb3bf91aa2112c2a6c4201763826.seminal.ml
 *** Failed! *** Exception: TypeError "invalid argument to print_string: fun x -> 2 + 3" (after 1 test): 
@@ -78,46 +78,46 @@ map (fun _ -> ) "\DEL"
 
 20060305-21:54:22-225f629e0d1a262f23af4cbcfa099317.seminal.ml
 *** Failed! *** Exception: TypeError "could not match TCon \"string\" against TApp \"list\" [TVar \"a\"]" (after 1 test): 
-map (fun _ -> !) ""
+map (fun _ -> B) ""
 
 20060305-21:56:00-9af22179cf4408715cbf337f5c3a534f.seminal.ml
 +++ OK, passed 1 tests (100% "no error").
 
 20060305-22:14:52-12016d8b3cdc445959e85885bbc00c77.seminal.ml
-*** Failed! *** Exception: TypeError "cannot compare ordering of non-numeric types" (after 1 test): 
+*** Failed! *** Exception: TypeError "invalid argument to print_string: ['E' ; 'M' ; 'I']" (after 1 test): 
 
 20060305-22:23:52-2cddd39a2e0ba2ddb9831a32c8c470f4.seminal.ml
-*** Failed! *** Exception: TypeError "cannot compare ordering of non-numeric types" (after 1 test): 
-upperMatch ¬
+*** Failed! *** Exception: TypeError "invalid argument to print_string: 'Y'" (after 7 tests): 
+upperMatch y
 
 20060305-22:25:00-bfad48a8bb7388bdd92708919b46cbb2.seminal.ml
-*** Failed! *** Exception: TypeError "cannot compare ordering of non-numeric types" (after 1 test): 
-upperMatch 
+*** Failed! *** Exception: TypeError "could not match TCon \"char\" against TCon \"unit\"" (after 8 tests): 
+upperMatch i
 
 20060306-08:28:18-863fd9c993226acc0132a40c3f5d3b7e.seminal.ml
-*** Failed! *** Exception: TypeError "cannot compare ordering of non-numeric types" (after 1 test): 
+*** Failed! *** Exception: TypeError "invalid argument to print_string: ['R' ; 'E' ; 'D' ; 'S' ; 'K' ; 'I' ; 'N']" (after 1 test): 
 
 20060306-08:32:58-cadc6088100ec722ce0c8ab60e81a45a.seminal.ml
-*** Failed! *** Exception: TypeError "cannot compare ordering of non-numeric types" (after 1 test): 
+*** Failed! *** Exception: TypeError "invalid arguments to ^: \"\", []" (after 1 test): 
 
 20060306-08:33:16-ec35aa1715ccf5f5b7fff55effcc06f0.seminal.ml
-*** Failed! *** Exception: TypeError "cannot compare ordering of non-numeric types" (after 1 test): 
+*** Failed! *** Exception: TypeError "invalid arguments to ^: \"\", 'N'" (after 1 test): 
 
 20060306-08:37:02-47b330576eb70ab4b956307ff1978ccc.seminal.ml
-*** Failed! *** Exception: TypeError "cannot compare ordering of non-numeric types" (after 1 test): 
+*** Failed! *** Exception: TypeError "invalid argument to print_string: ()" (after 1 test): 
 
 20060306-08:46:54-c09bb5fa4ade9b9834ebc0e95c303f20.seminal.ml
-*** Failed! *** Exception: TypeError "cannot compare ordering of non-numeric types" (after 1 test): 
+*** Failed! *** Exception: TypeError "invalid argument to Char.escaped: ['R' ; 'E' ; 'D' ; 'S' ; 'K' ; 'I' ; 'N']" (after 1 test): 
 
 20060306-09:32:26-9dfb57b0785b1229719704e079d51228.seminal.ml
-*** Failed! *** Exception: TypeError "cannot compare ordering of non-numeric types" (after 1 test): 
++++ OK, passed 1 tests (100% "no error").
 
 20060306-09:54:52-94bacf5a48d35fd1aa367bc565cc4abd.seminal.ml
 *** Failed! *** Exception: TypeError "invalid argument to print_string: ' '" (after 1 test): 
 
 20060308-15:14:15-b4673217f9f876ace714063f276c1cb7.seminal.ml
 *** Failed! *** Exception: TypeError "- can only be applied to ints" (after 1 test): 
-map (fun _ -> @) ""
+map (fun _ -> ) ""
 
 20060308-15:14:55-8b55587ab02b2e74f5be9a1620ad164b.seminal.ml
 *** Failed! *** Exception: TypeError ":: expects a list, was given: \"\"" (after 1 test): 
@@ -151,7 +151,7 @@ titlecase ""
 *** Failed! *** Exception: TypeError "invalid argument to string_of_int: 'a'" (after 1 test): 
 
 20060311-23:38:59-d8f33461447ecf33f137a33374ccfae1.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"int\" against TApp \"list\" [TVar \"a\"]" (after 2 tests): 
+*** Failed! *** Exception: TypeError "could not match TCon \"int\" against TApp \"list\" [TVar \"a\"]" (after 22 tests): 
 lookup ((HeapEntry ("" , [])) :: []) ""
 
 20060311-23:47:13-bb5548edde7545872f33b6b15649642f.seminal.ml
@@ -159,56 +159,56 @@ lookup ((HeapEntry ("" , [])) :: []) ""
 lookup [] ""
 
 20060312-00:01:00-e429466fc820ac64a608a8302289bcb7.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match (\"\" , HeapEntry []) against IntEntry (str1 , i)" (after 2 tests): 
-lookup (("" , HeapEntry []) :: []) ""
+*** Failed! *** Exception: TypeError "type error: tried to match (\"\" , IntEntry 0) against IntEntry (str1 , i)" (after 2 tests): 
+lookup (("" , IntEntry 0) :: []) "n"
 
 20060312-00:02:53-b5e4fbb55ad62a0991139e6650717758.seminal.ml
 *** Failed! *** Exception: TypeError "could not match TCon \"int\" against TTup [TCon \"string\",TCon \"int\"]" (after 1 test): 
 update [] "" 0
 
 20060312-00:03:36-75e554ed461a798f3b14545e2dfb6e02.seminal.ml
-*** Failed! *** Exception: TypeError "+ can only be applied to ints" (after 2 tests): 
-interp_e (("" , HeapEntry []) :: []) (Plus (Int 0 , Var ""))
+*** Failed! *** Exception: TypeError "* can only be applied to ints" (after 4 tests): 
+interp_e (("" , HeapEntry []) :: []) (Times (Var "" , Int 0))
 
 20060313-20:23:36-95bbcfafa3a38ccac06f556bd50a04cc.seminal.ml
 *** Failed! *** Exception: TypeError "could not match TCon \"int\" against TCon \"heapElement\"" (after 1 test): 
 interp_e [] (Var "")
 
 20060313-22:34:26-a82a6e4c5612542497388ac707e1afcf.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"exp\" against TCon \"intorheap\"" (after 16 tests): 
-interp_prog (While (Heap ("`" , Heap []) :: [] , RestoreHeap ""))
+*** Failed! *** Exception: TypeError "could not match TCon \"exp\" against TCon \"intorheap\"" (after 10 tests): 
+interp_prog (While (Plus (Var "!,`" , Heap []) , While (Heap ("\142p\247?\t" , Int -3) :: [] , If (Int 5 , While (Times (Var ";\217" , Plus (Times (Var "#" , Heap []) , Int 1)) , While (Heap ("" , Int -1) :: (("\251" , Heap []) :: []) , RestoreHeap "")) , SaveHeap "N\245BJ"))))
 
 20060313-22:39:42-644d210e9d66cf006f61c64435b0efb3.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"exp\" against TCon \"intorheap\"" (after 9 tests): 
-interp_e (("(\147" , Int 3) :: []) (Times (Heap ("\246U" , Heap []) :: [] , Heap ("\206" , Heap ("/=\SO" , Int -2) :: (("\247\189" , Int -1) :: [])) :: (("\171\ETB\NUL\238" , Heap ("" , Heap ("" , Heap []) :: []) :: (("\NAK" , Heap []) :: (("" , Int 0) :: []))) :: (("%\133\SOH" , Int -1) :: (("gx" , Heap []) :: (("n" , Heap []) :: (("" , Int 0) :: [])))))))
+*** Failed! *** Exception: TypeError "could not match TCon \"exp\" against TCon \"intorheap\"" (after 4 tests): 
+interp_e (("" , Heap []) :: []) (Times (Heap [] , Heap ("" , Int 0) :: []))
 
 20060313-23:03:58-c9d9c96a5c92d44ea888b2bf8287ed92.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"exp\" against TCon \"intorheap\"" (after 8 tests): 
-interp_e [] (Heap ("3y\DC3p4" , Heap []) :: (("S" , Int 2) :: (("y" , Int 2) :: (("\DLE" , Int 1) :: []))))
+*** Failed! *** Exception: TypeError "could not match TCon \"exp\" against TCon \"intorheap\"" (after 4 tests): 
+interp_e [] (Heap ("" , Int 0) :: [])
 
 20060316-15:04:22-646d45fc661ea972e495854dafda19d7.seminal.ml
 *** Failed! *** Exception: TypeError "* can only be applied to ints" (after 1 test): 
 makePoly 0 0.0
 
 20060316-17:28:56-cb82b8e194910fe2ced3aab54f0a7577.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"int\" against TCon \"heapContain\"" (after 3 tests): 
-interp_s [] (Assign ("" , Int 0))
+*** Failed! *** Exception: TypeError "could not match TCon \"int\" against TCon \"heapContain\"" (after 13 tests): 
+interp_s [] (Assign ("\238" , Times (Int 0 , Int 0)))
 
 20060316-17:48:30-214ae1ff72fdc57fe9fcb9d441c5126a.seminal.ml
 *** Failed! *** Exception: TypeError "could not match TCon \"int\" against TCon \"heapContain\"" (after 1 test): 
 interp_e [] (Int 0)
 
 20060316-18:23:48-78d82e8a55cd9a83edca023c74a4cc32.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match \"i\\200N\" against HeapInt i" (after 5 tests): 
-interp_s [] (Restoreheap "i\200N")
+*** Failed! *** Exception: TypeError "type error: tried to match \"\" against HeapInt i" (after 1 test): 
+interp_s [] (Restoreheap "")
 
 20060316-18:34:06-d422060219a7891f487cd20b421acb81.seminal.ml
-*** Failed! *** Exception: TypeError "* can only be applied to ints" (after 2 tests): 
-interp_e (("" , HeapCon []) :: []) (Times (Int 0 , Var ""))
+*** Failed! *** Exception: TypeError "could not match TCon \"int\" against TCon \"heapContain\"" (after 1 test): 
+interp_e [] (Var "")
 
 20060316-18:53:54-be762b624eb6b35410f5e00547f2a579.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"heapEntry\" against TCon \"exp\"" (after 4 tests): 
-interp_s ((",\SI" , HInt -1) :: []) (While (Int 1 , Seq (Skip , Assign ("" , Int 0))))
+*** Failed! *** Exception: TypeError "could not match TCon \"exp\" against TCon \"heapEntry\"" (after 1 test): 
+interp_s [] (Assign ("" , Int 0))
 
 20060316-19:34:40-21991f746ce1d63c2b7ecd57ca2fccea.seminal.ml
 +++ OK, passed 1 tests (100% "no error").
@@ -218,20 +218,20 @@ interp_s ((",\SI" , HInt -1) :: []) (While (Int 1 , Seq (Skip , Assign ("" , Int
 makePoly 0 0.0
 
 20060316-23:15:56-8740564a90852da99c1d1bd7bef8897e.seminal.ml
-*** Failed! *** Exception: UnboundVariable "pi" (after 3 tests): 
-interpLarge (Home :: ((Turn 0.0) :: []))
+*** Failed! *** Exception: UnboundVariable "pi" (after 13 tests): 
+interpLarge ((Turn 0.0) :: [])
 
 20060316-23:16:56-c5c2fe4b8bf744437e4adaf36529464b.seminal.ml
-*** Failed! *** Exception: UnboundVariable "pi" (after 2 tests): 
+*** Failed! *** Exception: UnboundVariable "pi" (after 23 tests): 
 interpLarge ((Turn 0.0) :: [])
 
 20060317-20:59:10-62548773f8854de2f4ec54a035814283.seminal.ml
-*** Failed! *** Exception: TypeError "* can only be applied to ints" (after 4 tests): 
-interpLarge ((For (-1 , (Turn 0.0) :: [])) :: ((Turn 0.0) :: ((Turn 0.0) :: [])))
+*** Failed! *** Exception: TypeError "* can only be applied to ints" (after 3 tests): 
+interpLarge ((For (0 , [])) :: ((Turn 0.0) :: []))
 
 20060317-20:59:44-36ef05a00938aacce23d0d13a4c3a945.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match fun acc ->\n  match idx with\n  | 0 -> (p , dir , acc)\n  | idx -> execFor (idx - 1) lst (loop lst p dir acc) against (pnew , dirnew , accnew)" (after 7 tests): 
-interpLarge ((Forward -0.4228575051181339) :: ((For (-2 , [])) :: []))
+*** Failed! *** Exception: TypeError "type error: tried to match fun acc ->\n  match idx with\n  | 0 -> (p , dir , acc)\n  | idx -> execFor (idx - 1) lst (loop lst p dir acc) against (pnew , dirnew , accnew)" (after 5 tests): 
+interpLarge ((For (2 , Home :: ((Forward 0.0) :: []))) :: (Home :: ((For (0 , [])) :: [])))
 
 20060317-21:37:11-096a01551f7cdd335b3d20437b761729.seminal.ml
 *** Failed! *** Exception: TypeError "/ can only be applied to ints" (after 1 test): 
@@ -242,31 +242,31 @@ makePoly 0 0.0
 interpLarge []
 
 20060317-22:27:40-749212b202dba76c8efe1df72c2fa36c.seminal.ml
-*** Failed! *** Exception: TypeError "invalid argument to List.rev: ()" (after 3 tests): 
-interpSmall ((Turn 0.0) :: ((Turn 0.0) :: []))
+*** Failed! *** Exception: TypeError "invalid argument to List.rev: ()" (after 5 tests): 
+interpSmall (Home :: (Home :: []))
 
 20060319-13:25:22-d82ce217b923933f541e5e4c291912ff.seminal.ml
 *** Failed! *** Exception: TypeError "could not match TCon \"string\" against TApp \"list\" [TTup [TCon \"string\",TCon \"int\"]]" (after 1 test): 
 
 20060319-13:26:52-dfb16e91c8f77833a400015941114cd0.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"stmt\" against TApp \"list\" [TTup [TCon \"string\",TCon \"int\"]]" (after 2 tests): 
-interp_s (("" , 0) :: []) (Seq (Saveheap [] , Restoreheap []))
+*** Failed! *** Exception: TypeError "could not match TCon \"stmt\" against TApp \"list\" [TTup [TCon \"string\",TCon \"int\"]]" (after 3 tests): 
+interp_s [] (Saveheap [])
 
 20060319-13:43:18-06b44c2851b0cf81bcb54bfa7f1abe36.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"int\" against TCon \"heapVar\"" (after 3 tests): 
-interp_s (("\SOH" , 1) :: []) (SaveHeap "")
+*** Failed! *** Exception: TypeError "could not match TCon \"heapVar\" against TCon \"int\"" (after 1 test): 
+interp_s [] (SaveHeap "")
 
 20060319-14:09:00-2446404578b9f18bfa9723208c094098.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"int\" against TCon \"heapVar\"" (after 1 test): 
-interp_e [] (Var "")
+*** Failed! *** Exception: TypeError "could not match TCon \"int\" against TCon \"heapVar\"" (after 4 tests): 
+interp_e [] (Var "\\")
 
 20060319-14:52:14-bd3d537e5d622471db44fef57470b962.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"int\" against TCon \"heapVar\"" (after 1 test): 
-interp_s [] (Assign ("" , Int 0))
+*** Failed! *** Exception: TypeError "could not match TCon \"heapVar\" against TCon \"int\"" (after 12 tests): 
+interp_s (("" , HeapInt 0) :: []) (If (Var "" , Assign ("" , Int 0) , Assign ("" , Var "")))
 
 20060319-15:07:50-8f39f32b5a36e11a9464ad6fec165b06.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"heapVar\" against TApp \"list\" [TTup [TCon \"string\",TCon \"heapVar\"]]" (after 3 tests): 
-interp_s [] (RestoreHeap "")
+*** Failed! *** Exception: TypeError "could not match TCon \"heapVar\" against TApp \"list\" [TTup [TCon \"string\",TCon \"heapVar\"]]" (after 7 tests): 
+interp_s (("\n\156" , HeapInt -3) :: (("\165" , HeapInt 1) :: [])) (RestoreHeap "\tA")
 
 20060319-18:31:02-58a2a6ce864ad7931326ad63f6ecd7dc.seminal.ml
 *** Failed! *** Exception: TypeError "* can only be applied to ints" (after 1 test): 
@@ -297,34 +297,34 @@ foo (Home :: [])
 +++ OK, passed 1000 tests (100% "MLException").
 
 20060319-20:12:50-9e05cf3ce7d3e32b370b305e43ceb96e.seminal.ml
-*** Failed! *** Exception: TypeError "invalid argument to List.rev: ([] , 0.0 , 0.0 , 0.0)" (after 2 tests): 
+*** Failed! *** Exception: TypeError "invalid argument to List.rev: ([] , 0.0 , 0.0 , 0.0)" (after 4 tests): 
 interpSmall (Home :: [])
 
 20060319-20:22:42-d63e90715d3fa73c6f01d82b97c2c2b9.seminal.ml
-*** Failed! *** Exception: TypeError "cannot compare incompatible types: (VD 0.0) (VI 2)" (after 13 tests): 
-interpSmall (Home :: [])
+*** Failed! *** Exception: TypeError "cannot compare incompatible types: (VD 0.0) (VI 2)" (after 34 tests): 
+interpSmall (Home :: ((For (0 , [])) :: ((Forward 0.0) :: [])))
 
 20060319-20:25:40-ab4845a572308a5afc057b8957487498.seminal.ml
-*** Failed! *** Exception: TypeError "invalid argument to List.rev: (fun x ->\n  fun y ->\n    fun dir ->\n      fun acc ->\n        match interpSmallStep movelist x y dir with\n        | (newList , newX , newY , newDir) -> if x <> newX\n                                              then print_string \"x doesnt match\"\n                                              else (); (if y <> newY\n                                                        then print_string \"y doesnt match\"\n                                                        else ();\n        (loop newList , newX , newY , newDir , acc)) , 2.0 , 0.0 , 0.0 , [(0.0 , 0.0)])" (after 6 tests): 
-interpSmall (Home :: (Home :: []))
+*** Failed! *** Exception: TypeError "invalid argument to List.rev: (fun x ->\n  fun y ->\n    fun dir ->\n      fun acc ->\n        match interpSmallStep movelist x y dir with\n        | (newList , newX , newY , newDir) -> if x <> newX\n                                              then print_string \"x doesnt match\"\n                                              else (); (if y <> newY\n                                                        then print_string \"y doesnt match\"\n                                                        else ();\n        (loop newList , newX , newY , newDir , acc)) , 2.0 , 0.0 , 0.0 , [(0.0 , 0.0)])" (after 4 tests): 
+interpSmall (Home :: ((Turn 0.0) :: []))
 
 20060319-20:31:44-c7d3dae870ff326c6e2fd8bf9e61eaac.seminal.ml
 *** Failed! *** Exception: TypeError "type error: tried to match (Home , Home) against Home" (after 1 test): 
 
 20060319-20:33:22-bcfa231f83876c0dc43b07ef583566dd.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"list\" against TTup [TCon \"float\",TCon \"float\"]" (after 338 tests): 
+*** Failed! *** Exception: TypeError "could not match TCon \"list\" against TTup [TCon \"float\",TCon \"float\"]" (after 78 tests): 
 interpSmall (Home :: (Home :: []))
 
 20060319-20:50:52-35197c77367f54669cee073b06fe3d9f.seminal.ml
-*** Failed! *** Exception: TypeError "invalid argument to List.rev: ()" (after 4 tests): 
-interpSmall ((Turn -3.4016890504162323) :: [])
+*** Failed! *** Exception: TypeError "invalid argument to List.rev: ()" (after 3 tests): 
+interpSmall (Home :: ((Turn 0.0) :: []))
 
 20060319-20:54:18-c6f1941f5de39e516e26f06cc990b9ca.seminal.ml
 *** Failed! *** Exception: TypeError "could not match TCon \"float\" against TCon \"int\"" (after 1 test): 
 
 20060319-21:34:00-e26e787a429e0f90295aee0f257622a1.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match [((-4.084735319810907 , 0.2953734132701791) , -8.14071893144241)] against ([] , d1)" (after 9 tests): 
-interpTrans ((Forward 2.5039145729158854) :: []) -3.3765675738834404 2.6970575373981944 -8.14071893144241
+*** Failed! *** Exception: TypeError "type error: tried to match [((-2414.2707555768106 , 6.449687034807368) , -14.056446355548433)] against ([] , d1)" (after 8 tests): 
+interpTrans ((Forward -0.20235686025010294) :: []) -2414.254438945382 6.24798907639156 -14.056446355548433
 
 20060319-22:34:04-69a3d06e7473a44a841727a7bc995e4d.seminal.ml
 I don't (yet) know how to check this program!
@@ -333,8 +333,8 @@ I don't (yet) know how to check this program!
 *** Failed! *** Exception: TypeError "could not match TCon \"float\" against TCon \"int\"" (after 1 test): 
 
 20060320-22:38:06-708bc29e217c4928054fc822a3c96238.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"move\" against TApp \"list\" [TTup [TCon \"float\",TCon \"float\"]]" (after 16 tests): 
-interpLarge ((Turn -5.32734417500757) :: ((For (2 , (Forward 0.0) :: ((Forward 0.0) :: []))) :: []))
+*** Failed! *** Exception: TypeError "could not match TCon \"move\" against TApp \"list\" [TTup [TCon \"float\",TCon \"float\"]]" (after 4 tests): 
+interpLarge ((For (1 , [])) :: ((Forward 0.0) :: ((Turn 0.0) :: [])))
 
 20060321-14:46:28-05145270d2aab43fd3bd842cc07baf1c.seminal.ml
 *** Failed! *** Exception: TypeError "could not match TCon \"unit\" against TCon \"string\"" (after 1 test): 
@@ -345,8 +345,8 @@ print_heap []
 print_heap []
 
 20060321-15:25:48-2255f168a336d2981038c536d51364a3.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Complex (\",]\" , []) against (s , i)" (after 6 tests): 
-interp_e ((Complex (",]" , [])) :: []) (Var "\199G")
+*** Failed! *** Exception: TypeError "type error: tried to match Simple (\"\" , 0) against (s , i)" (after 2 tests): 
+interp_e ((Simple ("" , 0)) :: []) (Var "")
 
 20060321-15:34:36-8c2ed57505ebdb3c66f90b66ae3e8b87.seminal.ml
 *** Failed! *** Exception: TypeError "could not match TCon \"heap_elt\" against TTup [TCon \"string\",TCon \"int\"]" (after 1 test): 
@@ -359,7 +359,7 @@ interp_s [] (Assign ("" , Var ""))
 *** Failed! *** Exception: TypeError "could not match TCon \"heap_elt\" against TTup [TCon \"string\",TCon \"int\"]" (after 1 test): 
 
 20060321-17:27:50-28fab13e4dbcd9ee742bdff83acf1462.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"unit\" against TCon \"string\"" (after 1 test): 
+*** Failed! *** Exception: TypeError "could not match TCon \"unit\" against TCon \"string\"" (after 6 tests): 
 print_elt (H ("" , []))
 
 20060321-17:38:52-5224914e10b7b5eacd09bb21ab53a674.seminal.ml
@@ -380,7 +380,7 @@ print_heap []
 *** Failed! *** Exception: TypeError "could not match TCon \"exp\" against TCon \"string\"" (after 1 test): 
 
 20060321-19:13:54-3266bbae2ef5c3a941538a6481a5e5d5.seminal.ml
-*** Failed! Exception: '<<timeout>>' (after 7 tests): 
+*** Failed! Exception: '<<timeout>>' (after 9 tests): 
 
 20060321-20:20:44-5df57b343df5a403116c396481a3d568.seminal.ml
 *** Failed! *** Exception: TypeError "- can only be applied to ints" (after 1 test): 
@@ -392,27 +392,27 @@ print_heap []
 *** Failed! *** Exception: TypeError "- can only be applied to ints" (after 1 test): 
 
 20060321-21:38:22-dde7db6405ce5ba9ae626405e061c4a3.seminal.ml
-*** Failed! *** Exception: TypeError "cannot compare ordering of non-numeric types" (after 3 tests): 
-interpLarge ((Forward 0.0) :: [])
+*** Failed! *** Exception: TypeError "cannot compare incompatible types: (VD 0.0) (VI 0)" (after 6 tests): 
+interpLarge ((Forward 4.488527027263272) :: [])
 
 20060321-22:08:35-80305c5562a7971b78c8db75d01d0fd0.seminal.ml
-*** Failed! *** Exception: TypeError "+ can only be applied to ints" (after 84 tests): 
-interpLarge ((Turn 0.2137456027835334) :: (Home :: ((Forward 0.0) :: [])))
+*** Failed! *** Exception: TypeError "+ can only be applied to ints" (after 76 tests): 
+interpLarge ((Turn 0.8356083105165291) :: ((Forward -1.8711313156984024) :: (Home :: ((For (0 , [])) :: ((Turn 0.0) :: [])))))
 
 20060322-00:21:12-0ccd603b43d0ef97d3e539c3f0925073.seminal.ml
 +++ OK, passed 1000 tests:
-79% "no error"
-21% "MLException"
+81% "no error"
+18% "MLException"
 
 20060322-00:47:36-635d92e5e80fdb07be8405858041dcbd.seminal.ml
 *** Failed! *** Exception: TypeError "* can only be applied to ints" (after 1 test): 
 interpLarge []
 
 20060322-01:15:12-8f2c701fedc5409bb06ec8282652a352.seminal.ml
-*** Failed! Exception: '<<timeout>>' (after 4 tests): 
+*** Failed! Exception: '<<timeout>>' (after 8 tests): 
 
 20060322-02:34:06-a881a82dd5534a442bf71f2fcd057d33.seminal.ml
-*** Failed! Exception: '<<timeout>>' (after 3 tests): 
+*** Failed! Exception: '<<timeout>>' (after 10 tests): 
 
 20060322-08:30:28-3f81c07149bfccbd0e3179bdf8a9aadd.seminal.ml
 I don't (yet) know how to check this program!
@@ -427,23 +427,23 @@ makePoly 0 0.0
 
 20060322-14:52:42-79d266181ace652898dfea63f34d1e95.seminal.ml
 +++ OK, passed 1000 tests:
-73% "no error"
-26% "MLException"
+76% "no error"
+23% "MLException"
 
 20060322-15:04:54-ac4a1848657627cfd6df53804ad2c8f5.seminal.ml
-*** Failed! *** Exception: TypeError ":: expects a list, was given: (-4.528663924516873 , 0.0)" (after 16 tests): 
-interpLarge ((Forward -3.894589670020341) :: ((Forward -0.6340742544965319) :: ((Forward -6.58681255341176) :: [])))
+*** Failed! *** Exception: TypeError ":: expects a list, was given: (4.741795383292635 , 0.0)" (after 10 tests): 
+interpLarge ((Forward 4.741795383292635) :: (Home :: ((Turn 0.1990426978346994) :: ((Turn -0.14794406508122454) :: []))))
 
 20060322-15:33:54-702b0150ab82b8d3fe04d50824f66378.seminal.ml
-*** Failed! Exception: 'Prelude.read: no parse' (after 1 test): 
++++ OK, passed 1 tests (100% "MLException").
 
 20060322-15:37:15-a3b57f848696e7fb4e0c7b52ec319871.seminal.ml
-*** Failed! *** Exception: TypeError "tried to apply a non-function" (after 2 tests): 
-interpSmall ((Forward 0.0) :: [])
+*** Failed! *** Exception: TypeError "tried to apply a non-function" (after 6 tests): 
+interpSmall ((Forward 2.9975013939096895) :: ((Turn -7.063642670429796) :: (Home :: [])))
 
 20060322-15:37:30-cccd2d578960e5ca742dca45d4bd04e4.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match For (2 , [For (3 , [Turn 1.8602970498865714 ; Home ; Home]) ; For (-1 , []) ; For (0 , [Home])]) against []" (after 17 tests): 
-interpLarge ((For (-3 , (Forward -1.2983641958614918) :: [])) :: ((For (3 , (Turn 1.8602970498865714) :: (Home :: (Home :: [])))) :: ((For (-1 , [])) :: ((For (0 , Home :: [])) :: []))))
+*** Failed! *** Exception: TypeError "type error: tried to match For (0 , [For (1 , []) ; Forward 1.3389712842552681]) against []" (after 37 tests): 
+interpLarge ((Forward 5.196836114032049) :: ((For (-3 , (For (1 , Home :: [])) :: [])) :: ((For (1 , [])) :: ((Forward 1.3389712842552681) :: []))))
 
 20060322-15:37:56-7674fa2cf2a648a9e414034e5ffccee5.seminal.ml
 +++ OK, passed 1000 tests (100% "MLException").
@@ -462,48 +462,48 @@ interpLarge ((For (-3 , (Forward -1.2983641958614918) :: [])) :: ((For (3 , (Tur
 makePoly 0 0.0
 
 20060322-20:07:20-8a106f89f15ecfb4570c9918256c0e5a.seminal.ml
-*** Failed! *** Exception: TypeError ":: expects a list, was given: (0.0 , 0.0)" (after 6 tests): 
+*** Failed! *** Exception: TypeError ":: expects a list, was given: (0.0 , 0.0)" (after 3 tests): 
 interpLarge (Home :: [])
 
 20060322-20:08:36-a8f43066cc9b2fd09808dd2eb10c07f9.seminal.ml
-*** Failed! *** Exception: TypeError ":: expects a list, was given: (0.0 , 0.0)" (after 12 tests): 
-interpLarge ((Forward 0.0) :: [])
+*** Failed! *** Exception: TypeError ":: expects a list, was given: (-1.3468307849368863 , 0.0)" (after 6 tests): 
+interpLarge ((Forward -1.3468307849368863) :: [])
 
 20060322-20:42:10-898d93a908e3393e99cf3e0027384a19.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"move\" against TApp \"list\" [TCon \"move\"]" (after 5 tests): 
-interpLarge ((For (2 , (For (0 , [])) :: (Home :: []))) :: ((Forward 0.48302526875212287) :: ((Forward 0.0) :: [])))
+*** Failed! *** Exception: TypeError "could not match TCon \"move\" against TApp \"list\" [TCon \"move\"]" (after 14 tests): 
+interpLarge ((For (1 , (Turn 0.0) :: [])) :: [])
 
 20060322-20:53:12-8240b6c0f1e8fb463aae7ab123a6ad8d.seminal.ml
-*** Failed! *** Exception: TypeError "invalid argument to List.rev: fun y ->\n  fun dir ->\n    fun acc ->\n      match movelist with\n      | [] -> acc\n      | _ -> loop (interpSmallStep movelist x y dir) ((x , y) :: acc)" (after 5 tests): 
-interpSmall ((Turn 0.5252901766812105) :: ((Forward 3.7754061455131476) :: ((For (0 , [])) :: ((Turn 0.0) :: []))))
+*** Failed! *** Exception: TypeError "invalid argument to List.rev: fun y ->\n  fun dir ->\n    fun acc ->\n      match movelist with\n      | [] -> acc\n      | _ -> loop (interpSmallStep movelist x y dir) ((x , y) :: acc)" (after 2 tests): 
+interpSmall (Home :: [])
 
 20060323-08:35:44-95aa68925746f2cfecd00300845fb947.seminal.ml
 *** Failed! *** Exception: TypeError "could not match TCon \"float\" against TCon \"int\"" (after 2 tests): 
-interpTrans (Home :: []) 6.5141285929918515 3.8499612842583635 0.8314900630447315
+interpTrans (Home :: []) -5.79207479620923 -1.7937218861878228 -0.5187778201366052
 
 20060323-08:43:40-4ea7768a439a9c9693ab1dd8a5a3e1ae.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match (fun x ->\n  fun y ->\n    fun d ->\n      if (x = 0.0) && (y = 0.0)\n      then ft 0.0 0.0 0.0\n      else let (rtl , d) =\n             ft 0.0 0.0 0.0 in\n           ((0.0 , 0.0) :: rtl , d) , 29.70028622340979 , 1.20755338748127 , 5.812845076577544) against (rtl , d)" (after 14 tests): 
-interpTrans ((Forward -0.9488812218453674) :: ((Turn 0.0) :: (Home :: []))) 30.54749783431121 0.7802267448241816 -0.4671549234224566
+*** Failed! *** Exception: TypeError "could not match TCon \"list\" against TVar \"a\" :-> TVar \"b\"" (after 2 tests): 
+interpTrans ((Turn 0.0) :: []) -14.370140120059716 -0.7661169991308092 -2.555227981341384
 
 20060323-09:29:18-4d4687569f144490d021a1f614083ab6.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match fun x ->\n  fun y -> fun d -> ([] , d) against (trl , d2)" (after 18 tests): 
-interpTrans ((For (-4 , [])) :: (Home :: ((For (1 , [])) :: ((Turn 2.9426497424610227) :: ((For (-1 , (Forward 0.0) :: [])) :: (Home :: [])))))) -6.295275104267937 -6.4519658682136605 -12.930379126767399
+*** Failed! *** Exception: TypeError "type error: tried to match fun x ->\n  fun y ->\n    fun d ->\n      if (x = 0.0) && (y = 0.0)\n      then ft 0.0 0.0 0.0\n      else let (rtl , d) =\n             ft 0.0 0.0 0.0 in\n           ((0.0 , 0.0) :: rtl , d) against (trl , d2)" (after 10 tests): 
+interpTrans ((For (-4 , Home :: ((Forward -2.447736324870609) :: ((Turn -2.8411713554034836) :: [])))) :: []) 12.277992321546222 12.677990778667446 5.897259250576188
 
 20060323-10:36:10-23f563f30054417a24188e71c358a86b.seminal.ml
-*** Failed! *** Exception: TypeError ":: expects a list, was given: (0.0 , 0.0)" (after 4 tests): 
-interpTrans (Home :: ((Forward 0.0) :: (Home :: []))) -8.732198130448573 4.754458618421696 -0.49388177532261723
+*** Failed! *** Exception: TypeError ":: expects a list, was given: (0.0 , 0.0)" (after 2 tests): 
+interpTrans (Home :: []) 0.39079568399705367 -1.1295586415457644 -0.4041541489789153
 
 20060323-13:43:52-9b3c922faea5332ae7dcbdd3542cf6bb.seminal.ml
 *** Failed! *** Exception: TypeError "could not match TCon \"float\" against TCon \"int\"" (after 1 test): 
 
 20060323-14:46:06-12e2638acf73c54ba75337e4a67e0897.seminal.ml
 +++ OK, passed 1000 tests:
-69% "MLException"
-30% "no error"
+70% "MLException"
+29% "no error"
 
 20060323-15:47:38-bdbf194565202f6e6e0fcc814a9c01e7.seminal.ml
-*** Failed! *** Exception: TypeError ":: expects a list, was given: (127.1094007317848 , 2.1640412300544227)" (after 3 tests): 
-interpTrans (Home :: (Home :: [])) 127.1094007317848 2.1640412300544227 6.357746192677973
+*** Failed! *** Exception: TypeError ":: expects a list, was given: (3.894792996083914 , -1.6152819287391973)" (after 4 tests): 
+interpTrans (Home :: []) 3.894792996083914 -1.6152819287391973 -2.530869230402459
 
 20060323-16:46:00-99a4dfd320923a6e786e35326d72280c.seminal.ml
 *** Failed! *** Exception: TypeError "- can only be applied to ints" (after 1 test): 
@@ -530,55 +530,55 @@ interpTrans [] 0.0 0.0 0.0
 *** Failed! *** Exception: TypeError "type error: tried to match For (5 , [Forward 2.0 ; Turn 2.0 ; Forward 2.0 ; Turn 2.0 ; Forward 2.0 ; Turn 2.0 ; Forward 2.0 ; Home]) against []" (after 1 test): 
 
 20060323-17:42:56-fde71158703a08ba423540e01ef09474.seminal.ml
-*** Failed! *** Exception: TypeError ":: expects a list, was given: Home" (after 9 tests): 
-makePoly 8 17.15389881537476
+*** Failed! *** Exception: TypeError ":: expects a list, was given: Home" (after 26 tests): 
+makePoly 3 -16.31019369337101
 
 20060323-17:43:30-1b93c486fae4bb533744e65e09c11cdc.seminal.ml
 *** Failed! *** Exception: TypeError "could not match TCon \"move\" against TApp \"list\" [TCon \"move\"]" (after 1 test): 
 makePoly 0 0.0
 
 20060323-17:53:24-a64241aa861dc6d7d3671fc0eed904ec.seminal.ml
-*** Failed! *** Exception: TypeError ":: expects a list, was given: Turn 2.0" (after 6 tests): 
-makePoly 4 3.3828815603000733
+*** Failed! *** Exception: TypeError ":: expects a list, was given: Turn 2.0" (after 9 tests): 
+makePoly 4 5.676966763225828
 
 20060323-18:18:26-dcbd6b61400ff0cc8088df3b9bf9ec58.seminal.ml
-*** Failed! *** Exception: TypeError "invalid argument to print_int: 0.0" (after 8 tests): 
-interpSmall ((Forward 23.323283445426682) :: ((Turn -3.7940319031943046) :: (Home :: (Home :: []))))
+*** Failed! *** Exception: TypeError "invalid argument to print_int: 0.0" (after 17 tests): 
+interpSmall ((Forward -4.6390253309775185) :: [])
 
 20060323-18:20:56-215cf04f284998f18aa9a297f6c69cae.seminal.ml
 *** Failed! *** Exception: TypeError "/ can only be applied to ints" (after 1 test): 
 makePoly 0 0.0
 
 20060323-18:23:06-e8617e33234ad0d0b1db0cca97888631.seminal.ml
-*** Failed! *** Exception: TypeError "invalid argument to cos: fun x ->\n  fun y -> (mod_float x y)" (after 15 tests): 
-interpSmall ((For (1 , (Forward 0.0) :: ((Turn 0.0) :: []))) :: ((Forward 1.2472220216400134) :: (Home :: (Home :: []))))
+*** Failed! *** Exception: TypeError "+ can only be applied to ints" (after 4 tests): 
+interpSmall ((Turn -0.4283393843173602) :: ((Turn 0.0) :: []))
 
 20060323-18:45:02-8c83180cdb55405fceb028edc3b8e52f.seminal.ml
-*** Failed! *** Exception: TypeError "invalid argument to print_newline: ()" (after 2 tests): 
-interpSmall ((Forward 0.0) :: [])
+*** Failed! *** Exception: TypeError "type error: tried to match () against (newList , retX , retY , retDir)" (after 34 tests): 
+interpSmall ((For (-1 , Home :: [])) :: [])
 
 20060323-20:07:14-1ff99f5b5d1579e4b5f2712f7687bb64.seminal.ml
-*** Failed! *** Exception: TypeError "invalid argument to List.length: (-8.012595220758243 , -11.870331665244064)" (after 6 tests): 
-interpTrans ((Forward 2.017406761577475) :: []) -8.195410831195302 -13.879438057210164 7.763238036141612
+*** Failed! *** Exception: TypeError "invalid argument to List.length: (5.222985380145216 , 1.4307640283310206)" (after 25 tests): 
+interpTrans ((Forward 2.9683145350745734) :: ((Turn -0.5575768823057518) :: ((Forward 0.0) :: []))) 5.179818131303721 4.398764663061821 4.726932173178625
 
 20060323-20:16:12-f769124d67c2d8b1ba60882729d52b66.seminal.ml
 +++ OK, passed 1000 tests:
-85% "no error"
-14% "MLException"
+86% "no error"
+13% "MLException"
 
 20060323-21:30:30-8708affd60c03e76b1b80f206b86f42a.seminal.ml
 *** Failed! *** Exception: TypeError ":: expects a list, was given: fun y ->\n  fun dir -> ((x , y) :: [] , dir)" (after 2 tests): 
-interpTrans (Home :: []) 0.8469341276260692 3.13023039301129 -7.398832406373469
+interpTrans (Home :: []) -0.9531167192955196 7.666783345145979 -3.770208979983089
 
 20060323-21:50:16-0a01d9e97b5fb61deca9c42f7b87e874.seminal.ml
-*** Failed! *** Exception: TypeError "invalid argument to print_newline: ()" (after 1 test): 
+*** Failed! *** Exception: TypeError "could not match TCon \"int\" against TApp \"list\" [TTup [TCon \"float\",TCon \"float\"]]" (after 1 test): 
 interpSmall []
 
 20060323-22:04:56-2161ca6d347b52d7dbd370350b463115.seminal.ml
 *** Failed! *** Exception: TypeError "type error: tried to match Forward 5.0 against []" (after 1 test): 
 
 20060323-22:20:22-4e5f88ae07be062df109ed5701cbef33.seminal.ml
-*** Failed! *** Exception: TypeError "invalid argument to print_newline: ()" (after 1 test): 
+*** Failed! *** Exception: TypeError "could not match TCon \"unit\" against TApp \"list\" [TTup [TCon \"float\",TCon \"float\"]]" (after 1 test): 
 interpSmall []
 
 20060323-22:43:36-a87f4de68f6bf8428673d8b8bab3f579.seminal.ml
@@ -593,14 +593,15 @@ lookup_raw [] ""
 lookup_var [] ""
 
 20060323-23:05:28-8208a05059a4335cea94c878a710ddd0.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match VarElement (\"\\183t\\242\" , 0) against 0" (after 9 tests): 
-interp_s ((VarElement ("9@\RS" , -2)) :: ((VarElement ("" , 5)) :: ((VarElement ("E" , -2)) :: ((VarElement ("=]\213" , 3)) :: [])))) (RestoreHeap "\183t\242")
+*** Failed! *** Exception: TypeError "type error: tried to match VarElement (\"\" , 0) against 0" (after 2 tests): 
+interp_s [] (Seq (Assign ("" , Int 0) , RestoreHeap ""))
 
 20060323-23:11:28-c24ddccacfbcdc668613ca92ad083c49.seminal.ml
 *** Failed! *** Exception: TypeError "could not match TCon \"exp\" against TCon \"int\"" (after 1 test): 
 
 20060323-23:12:42-0cdc8336167ed8e67ba5a2f8e22bed49.seminal.ml
-*** Failed! Exception: '<<timeout>>' (after 18 tests): 
+*** Failed! *** Exception: TypeError "invalid argument to print_newline: \"\"" (after 1 test): 
+test (RestoreHeap "")
 
 20060323-23:27:42-7911ad31a60a0c09a7cb35ea3b402363.seminal.ml
 *** Failed! *** Exception: TypeError "unknown data constructor: Pi" (after 1 test): 
@@ -611,8 +612,8 @@ makePoly 0 0.0
 makePoly 0 0.0
 
 20060323-23:58:10-8a98128ae553a921e83e0e588be1843b.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"move\" against TApp \"list\" [TVar \"a\"]" (after 9 tests): 
-interpLarge ((For (-3 , [])) :: ((Forward 1.4526403716033824) :: []))
+*** Failed! *** Exception: TypeError "could not match TCon \"move\" against TApp \"list\" [TVar \"a\"]" (after 7 tests): 
+interpLarge ((Forward -3.411161314241971) :: ((For (2 , [])) :: ((For (-2 , [])) :: (Home :: []))))
 
 20060324-10:21:08-1099c20635149bf4c21dae977b473fa7.seminal.ml
 *** Failed! *** Exception: TypeError "- can only be applied to ints" (after 1 test): 
@@ -651,11 +652,11 @@ interpTrans [] 0.0 0.0 0.0
 *** Failed! *** Exception: TypeError "- can only be applied to ints" (after 1 test): 
 
 20060324-22:00:17-ecdfe52e272243e86b6b7a8128d95dd3.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"storage\" against TApp \"list\" [TVar \"a\"]" (after 1 test): 
-interp_s [] (SaveHeap "")
+*** Failed! *** Exception: TypeError "could not match TCon \"int\" against TCon \"storage\"" (after 1 test): 
+interp_s [] (Assign ("" , Var ""))
 
 20060324-22:00:33-db93e113469e7bb804bada46ace29e7a.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match 0 against Int2 v" (after 2 tests): 
+*** Failed! *** Exception: TypeError "type error: tried to match 0 against Int2 v" (after 1 test): 
 interp_e [] (Var "")
 
 20060324-22:01:55-60f7617e7e801a26ea584bcc86751861.seminal.ml
@@ -663,16 +664,16 @@ interp_e [] (Var "")
 interp_e [] (Var "")
 
 20060324-22:04:48-ca1773b81b82f426df3e9e7e4632b399.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"int\" against TCon \"storage\"" (after 1 test): 
-interp_s [] (Assign ("" , Int 0))
+*** Failed! *** Exception: TypeError "type error: tried to match [(\"\\215\" , [(\"\\145r\" , [])]) ; (\"\\145r\" , [])] against StoredInt v" (after 5 tests): 
+interp_s [] (Seq (SaveHeap "\145r" , Seq (SaveHeap "\215" , Seq (SaveHeap "" , While (Var "" , Assign ("" , Var ""))))))
 
 20060324-22:07:48-d2b75cb83836da475118ae658501a5ca.seminal.ml
-*** Failed! *** Exception: TypeError "invalid argument to fst: fun x -> fun y -> (List.nth x y)" (after 17 tests): 
-interpTrans ((For (1 , (Forward -0.9416775659144435) :: [])) :: []) -2.6189239214722977 -8.513781453288013 -6.1970102163371825
+*** Failed! *** Exception: TypeError "invalid argument to fst: fun x -> fun y -> (List.nth x y)" (after 60 tests): 
+interpTrans ((For (1 , Home :: [])) :: ((Turn -52.68168566095664) :: [])) -9.039417130148022 6.905232318083929 33.03870309231736
 
 20060324-22:08:00-d2df9ba9c697ee7e1b27b4b952dcdd4a.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"storage\" against TApp \"list\" [TTup [TCon \"string\",TCon \"storage\"]]" (after 6 tests): 
-interp_s (("U" , StoredHeap ("\n" , StoredHeap ("" , StoredInt 0) :: []) :: (("" , StoredHeap []) :: (("" , StoredHeap []) :: []))) :: []) (Seq (SaveHeap "\170\250%" , SaveHeap "\175"))
+*** Failed! *** Exception: TypeError "could not match TCon \"storage\" against TApp \"list\" [TTup [TCon \"string\",TCon \"storage\"]]" (after 3 tests): 
+interp_s (("" , StoredInt 0) :: []) (If (Times (Var "" , Int 0) , SaveHeap "" , SaveHeap ""))
 
 20060324-22:24:46-8ab05dd4986d17d763e509d04ea02fde.seminal.ml
 *** Failed! *** Exception: UnboundVariable "List.fold_left2" (after 1 test): 
@@ -682,43 +683,46 @@ interp_s (("U" , StoredHeap ("\n" , StoredHeap ("" , StoredInt 0) :: []) :: ((""
 makePoly 0 0.0
 
 20060324-22:37:56-14013c68b574056a18cf98eb43cf3811.seminal.ml
-*** Failed! Exception: '<<timeout>>' (after 26 tests): 
+*** Failed! *** Exception: TypeError "type error: tried to match [(0.0 , 0.0)] against (x2 , y2)" (after 56 tests): 
+interpTrans ((For (3 , (Forward -3.2939451831282835) :: (Home :: []))) :: []) 4.913513633626235 5.227550058149044 -103.10387094463506
 
 20060324-22:39:30-c619291e201e563ad9550d8cd7acb5f0.seminal.ml
-*** Failed! Exception: '<<timeout>>' (after 6 tests): 
+*** Failed! Exception: '<<timeout>>' (after 18 tests): 
 
 20060324-22:39:43-eebf94185c695dc23122f1f8a3b05347.seminal.ml
-*** Failed! *** Exception: TypeError ":: expects a list, was given: (0.0 , 0.0)" (after 38 tests): 
-interpLarge (Home :: (Home :: (Home :: [])))
+*** Failed! *** Exception: TypeError ":: expects a list, was given: (0.0 , 0.0)" (after 233 tests): 
+interpLarge (Home :: (Home :: []))
 
 20060324-22:45:51-9b07192b0a6d5857aee50032d33ab030.seminal.ml
-*** Failed! *** Exception: TypeError "Loop expects 2 arguments, but was given 0" (after 7 tests): 
-interpLarge (Home :: ((Loop (-3 , [])) :: ((Loop (2 , (Loop (0 , [])) :: [])) :: [])))
+*** Failed! *** Exception: TypeError "Loop expects 2 arguments, but was given 0" (after 5 tests): 
+interpLarge ((Turn 1.8692214865280774) :: ((Loop (1 , (Forward 0.0) :: [])) :: []))
 
 20060324-22:46:18-435497b4fd7d69acd543ff31eea2fb72.seminal.ml
-*** Failed! Exception: '<<timeout>>' (after 14 tests): 
+*** Failed! *** Exception: TypeError "type error: tried to match [(-6.036911215617508 , 1.8418039587632997)] against (x2 , y2)" (after 7 tests): 
+interpTrans ((For (3 , (Forward -0.8396337708010085) :: ((Forward -6.286428781598224e-2) :: []))) :: ((For (-2 , (For (1 , [])) :: ((Turn 0.0) :: ((Forward 0.0) :: [])))) :: [])) -5.7478755992721595 2.696766623615574 7.527975846242583
 
 20060324-22:53:08-18b6d1fa1b4022dcf41a6276b9ca9fc9.seminal.ml
-*** Failed! Exception: '<<timeout>>' (after 7 tests): 
+*** Failed! Exception: '<<timeout>>' (after 6 tests): 
 
 20060324-22:57:22-f4d3fc8cbafcab94ceae8ce7d40c51a5.seminal.ml
 *** Failed! *** Exception: TypeError "type error: tried to match For (10 , []) against []" (after 1 test): 
 
 20060324-23:04:56-f1d095019a8df3560f887b998e607db5.seminal.ml
-*** Failed! *** Exception: TypeError "* can only be applied to ints" (after 2 tests): 
-interpLarge ((Turn 0.0) :: [])
+*** Failed! *** Exception: TypeError "* can only be applied to ints" (after 6 tests): 
+interpLarge ((Turn 3.0599412717778613) :: [])
 
 20060325-09:30:54-e182e9092714cced8953b2f5b29145da.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Assign (\"foo\" , Plus (Int 3 , Int 4)) against IntNode (s , i)" (after 1 test): 
-interp_prog Skip
+*** Failed! *** Exception: TypeError "could not match TCon \"stmt\" against TCon \"node\"" (after 1 test): 
+interp_prog (Assign ("" , Int 0))
 
 20060325-09:41:54-7dbacbbb2d533f44a1db48037fe31cbd.seminal.ml
 *** Failed! *** Exception: TypeError "type error: tried to match 0 against []" (after 1 test): 
 
 20060328-14:00:48-8da9cf0dfa8df41870d6ee216a089637.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
+*** Failed! *** Exception: TypeError "type error: tried to match Closure (\"\" , Var \"\" , []) against Closure _" (after 2 tests): 
 interp (fun _ ->
-  fun _ -> []) [] (Int 0)
+  fun _ ->
+    []) [] (Closure ("" , Var "" , []))
 
 20060329-19:32:13-413085166cad1985799707383569fe55.seminal.ml
 *** Failed! *** Exception: TypeError "type error: tried to match Apply (Apply (Lam (\"x\" , Lam (\"y\" , Plus (Var \"x\" , Var \"y\") , None) , None) , Int 17) , Int 19) against Closure _" (after 1 test): 
@@ -732,21 +736,20 @@ interp (fun _ ->
 *** Failed! *** Exception: TypeError "type error: tried to match Apply (Apply (Lam (\"x\" , Lam (\"y\" , Plus (Var \"x\" , Var \"y\") , None) , None) , Int 17) , Int 19) against Closure _" (after 1 test): 
 
 20060403-20:43:16-b07f4d13cabbbd98858efb4e21fb2f2e.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"exp\" against TApp \"option\" [TApp \"list\" [TCon \"string\"]]" (after 4 tests): 
-computeFreeVars (Pair (If (Second Int 0 , Apply (Int 0 , Var "") , Lam ("" , Var "" , Some [])) , Apply (Plus (Var "" , Int 0) , Int 0)))
+*** Failed! *** Exception: TypeError "could not match TCon \"exp\" against TApp \"option\" [TApp \"list\" [TVar \"a\"]]" (after 5 tests): 
+computeFreeVars (Second Lam ("\178" , Int 0 , None))
 
 20060403-21:25:44-455f9320f05e875d718926bbafb03dd9.seminal.ml
-*** Failed! *** Exception: TypeError "invalid argument to List.length: Some []" (after 4 tests): 
-computeFreeVars (Lam ("}\133" , Plus (Closure ("" , Int 0 , []) , Lam ("" , Var "" , None)) , Some []))
+*** Failed! *** Exception: TypeError "invalid argument to List.length: Some []" (after 5 tests): 
+computeFreeVars (Plus (Second Var "\218" , Lam ("" , Lam ("x" , Second Int 0 , Some []) , Some [])))
 
 20060403-21:35:06-110b4ff4ab239ddf2024c924f7b24c81.seminal.ml
 *** Failed! *** Exception: TypeError "type error: tried to match Apply (Apply (Lam (\"x\" , Lam (\"y\" , Plus (Var \"x\" , Var \"y\") , None) , None) , Int 17) , Int 19) against Closure _" (after 1 test): 
 
 20060403-23:29:52-92f0c4405907a1f677168b5773c9c0a9.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Second Int 0 against Closure _" (after 2 tests): 
+*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
 interp (fun _ ->
-  fun _ ->
-    ("" , Var "") :: []) [] (Second Int 0)
+  fun _ -> []) [] (Int 0)
 
 20060403-23:30:42-935cb5f8947224ca15c05bc1b31c5394.seminal.ml
 *** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
@@ -754,10 +757,10 @@ interp (fun _ ->
   fun _ -> []) [] (Int 0)
 
 20060403-23:31:40-acb953a7a447b99f3a44d62c523c0ade.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Apply (Int 0 , Int 0) against Closure _" (after 2 tests): 
+*** Failed! *** Exception: TypeError "type error: tried to match Second Var \"\" against Closure _" (after 2 tests): 
 interp (fun _ ->
   fun _ ->
-    ("" , Int 0) :: []) [] (Apply (Int 0 , Int 0))
+    []) (("" , Var "") :: []) (Second Var "")
 
 20060404-22:13:52-137af8b879346e055957a720071ea44e.seminal.ml
 *** Failed! *** Exception: TypeError "type error: tried to match Apply (Apply (Lam (\"x\" , Lam (\"y\" , Plus (Var \"x\" , Var \"y\") , None) , None) , Int 17) , Int 19) against Closure _" (after 1 test): 
@@ -772,48 +775,47 @@ interp (fun _ ->
 *** Failed! *** Exception: TypeError "type error: tried to match Apply (Apply (Lam (\"x\" , Lam (\"y\" , Plus (Var \"x\" , Var \"y\") , None) , None) , Int 17) , Int 19) against Closure _" (after 1 test): 
 
 20060405-20:30:56-fbd72970e1c774661ada3799804de280.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"string\" against TCon \"exp\"" (after 1 test): 
-computeFreeVars (Var "")
+*** Failed! *** Exception: TypeError "could not match TCon \"string\" against TCon \"exp\"" (after 6 tests): 
+computeFreeVars (Var "\209+-\RS")
 
 20060405-20:41:02-03a9838eef87a5baf5d05bd769e72274.seminal.ml
 *** Failed! *** Exception: TypeError "type error: tried to match Apply (Apply (Lam (\"x\" , Lam (\"y\" , Plus (Var \"x\" , Var \"y\") , None) , None) , Int 17) , Int 19) against Closure _" (after 1 test): 
 
 20060406-11:05:36-7beaaeb582c5ffce2f318b0abe8d1ff6.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Pair (Int 0 , Int 0) against Closure _" (after 2 tests): 
+*** Failed! *** Exception: TypeError "type error: tried to match Second Var \"\" against Closure _" (after 2 tests): 
 interp (fun _ ->
   fun _ ->
-    ("" , Var "") :: []) [] (Pair (Int 0 , Int 0))
+    ("" , Var "") :: []) [] (Second Var "")
 
 20060406-11:17:50-f3fec0a8ebf80f9b609a4bd6698f4c33.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Plus (Int 0 , Int 0) against Closure _" (after 2 tests): 
+*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 3 tests): 
 interp (fun _ ->
   fun _ ->
-    []) (("" , Var "") :: []) (Plus (Int 0 , Int 0))
+    []) (("\168" , Var "") :: []) (Int 0)
 
 20060406-14:42:20-dde7bed9a1366515f6889378b8159823.seminal.ml
 *** Failed! *** Exception: TypeError "type error: tried to match Apply (Apply (Lam (\"x\" , Lam (\"y\" , Plus (Var \"x\" , Var \"y\") , None) , None) , Int 17) , Int 19) against Closure _" (after 1 test): 
 
 20060406-15:15:00-89b2ea1f6daa44f016f1115e5e7a0e5c.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Pair (Var \"\" , Var \"\") against Closure _" (after 2 tests): 
+*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
 interp (fun _ ->
-  fun _ ->
-    ("" , Int 0) :: []) (("" , Var "") :: []) (Pair (Var "" , Var ""))
+  fun _ -> []) [] (Int 0)
 
 20060406-16:17:14-8a3de947b667000de8e1ae8f13f19ad5.seminal.ml
 *** Failed! *** Exception: TypeError "invalid arguments to String.make: 0, \" \"" (after 1 test): 
 print_prog (Var "")
 
 20060406-16:21:14-364e8a472f1d55e872c7f223d5767649.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 2 tests): 
+*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
 print_prog (Int 0)
 
 20060406-16:21:36-7bbc8e17d3da25fefc500f10db76996f.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Apply (Int 0 , Var \"\") against Closure _" (after 2 tests): 
-print_prog (Apply (Int 0 , Var ""))
+*** Failed! *** Exception: TypeError "type error: tried to match Second Int 0 against Closure _" (after 2 tests): 
+print_prog (Second Int 0)
 
 20060406-16:33:28-3e359e9c9b8723f54053d2ca78c3f996.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"option\" against TApp \"list\" [TVar \"a\"]" (after 2 tests): 
-computeFreeVars (Lam ("" , Var "" , None))
+*** Failed! *** Exception: TypeError "could not match TCon \"option\" against TApp \"list\" [TCon \"string\"]" (after 14 tests): 
+computeFreeVars (First Lam ("\217" , Var "" , None))
 
 20060406-16:51:34-f6a4b5a7a5903facda19e0431adb571e.seminal.ml
 *** Failed! *** Exception: TypeError "type error: tried to match Apply (Apply (Lam (\"x\" , Lam (\"y\" , Plus (Var \"x\" , Var \"y\") , None) , None) , Int 17) , Int 19) against Closure _" (after 1 test): 
@@ -822,27 +824,27 @@ computeFreeVars (Lam ("" , Var "" , None))
 *** Failed! *** Exception: TypeError "type error: tried to match Apply (Apply (Lam (\"x\" , Lam (\"y\" , Plus (Var \"x\" , Var \"y\") , None) , None) , Int 17) , Int 19) against Closure _" (after 1 test): 
 
 20060407-12:05:48-b0c22b01ad12500b1c4bf679d6fb1d2a.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match First Int 0 against Closure _" (after 2 tests): 
-computeFreeVars (First Int 0)
+*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
+computeFreeVars (Int 0)
 
 20060407-12:38:30-642a84ce028494fa2e6f268cb01f2d6e.seminal.ml
 *** Failed! *** Exception: TypeError "invalid arguments to ^: \"Test: \", [() ; () ; () ; () ; ()]" (after 1 test): 
 
 20060407-13:09:40-68fa1d749857b7c158fe3ea20c682917.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
-computeFreeVars (Int 0)
+*** Failed! *** Exception: TypeError "type error: tried to match First Int 0 against Closure _" (after 2 tests): 
+computeFreeVars (First Int 0)
 
 20060407-14:04:36-4f6bd8de53c236abdacd46fda85bf207.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
-computeFreeVars (Int 0)
+*** Failed! *** Exception: TypeError "type error: tried to match If (Int 0 , Var \"\" , Var \"\") against Closure _" (after 2 tests): 
+computeFreeVars (If (Int 0 , Var "" , Var ""))
 
 20060407-14:09:40-7804fcbc75f8b1ecc35cb5f0b73b61e1.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
-computeFreeVars (Int 0)
+*** Failed! *** Exception: TypeError "type error: tried to match Pair (Int 0 , Int 0) against Closure _" (after 2 tests): 
+computeFreeVars (Pair (Int 0 , Int 0))
 
 20060407-14:13:28-a922dd99a12b24c5e1535113889190b5.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Second Int 0 against Closure _" (after 2 tests): 
-computeFreeVars (Second Int 0)
+*** Failed! *** Exception: TypeError "type error: tried to match Closure (\"\" , Var \"\" , []) against Closure _" (after 2 tests): 
+computeFreeVars (Closure ("" , Var "" , []))
 
 20060407-19:01:03-abd1f315759bb561fda04484cb139c03.seminal.ml
 *** Failed! *** Exception: TypeError "type error: tried to match Apply (Apply (Lam (\"x\" , Lam (\"y\" , Plus (Var \"x\" , Var \"y\") , None) , None) , Int 17) , Int 19) against Closure _" (after 1 test): 
@@ -865,16 +867,16 @@ interp (fun _ ->
   fun _ -> []) [] (Var "")
 
 20060407-22:43:20-5c0b48e6862129272a152635d2fffb9f.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match [(\"\" , Var \"\")] against Var s" (after 2 tests): 
-printEnv (("" , Var "") :: [])
+*** Failed! *** Exception: TypeError "type error: tried to match [(\"\\ACK\" , Int 0) ; (\"\" , Var \"\")] against Var s" (after 3 tests): 
+printEnv (("\ACK" , Int 0) :: (("" , Var "") :: []))
 
 20060407-22:43:39-0e0a265418f2ab15923390cbe2319fe1.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match [(\"\" , Plus (Var \"\" , Var \"\")) ; (\"\" , Int 0)] against Var s" (after 3 tests): 
-printEnv (("" , Plus (Var "" , Var "")) :: (("" , Int 0) :: []))
+*** Failed! *** Exception: TypeError "type error: tried to match [(\"M\" , If (Int 0 , Var \"\" , Int 0))] against Var s" (after 3 tests): 
+printEnv (("M" , If (Int 0 , Var "" , Int 0)) :: [])
 
 20060407-22:58:54-33fb0f89929a29aeedba76680ae970bc.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"option\" against TApp \"list\" [TCon \"string\"]" (after 6 tests): 
-computeFreeVars (Lam ("w\153L" , Second Lam ("\221" , Closure ("" , Pair (Var "" , Var "") , ("" , Var "") :: []) , Some []) , None))
+*** Failed! *** Exception: TypeError "could not match TCon \"option\" against TApp \"list\" [TCon \"string\"]" (after 2 tests): 
+computeFreeVars (Lam ("" , Var "" , Some []))
 
 20060408-22:49:00-d7677aecaf225da83dfe298659b3af98.seminal.ml
 I don't (yet) know how to check this program!
@@ -891,26 +893,27 @@ computeFreeVars (Int 0)
 computeFreeVars (Int 0)
 
 20060408-23:25:43-af8743fb96b206fe5d43a8f1ffba9d59.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
+*** Failed! *** Exception: TypeError "type error: tried to match First Var \"\" against Closure _" (after 2 tests): 
 interp (fun _ ->
-  fun _ -> []) [] (Int 0)
+  fun _ ->
+    []) (("" , Var "") :: []) (First Var "")
 
 20060408-23:28:03-17cf64e920a8226ad7e5c78cd6217862.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
+*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 2 tests): 
 computeFreeVars (Int 0)
 
 20060409-00:07:29-26092bf6b0d197a7cad0d4c6a3b795e6.seminal.ml
 *** Failed! *** Exception: TypeError "Lam expects 3 arguments, but was given 2" (after 1 test): 
 
 20060409-15:05:26-8ff60256917627e3357b0b8561216a84.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 2 tests): 
+*** Failed! *** Exception: TypeError "type error: tried to match Apply (Var \"\" , Int 0) against Closure _" (after 2 tests): 
 interp (fun _ ->
   fun _ ->
-    []) (("" , Int 0) :: []) (Int 0)
+    ("" , Var "") :: []) (("" , Int 0) :: []) (Apply (Var "" , Int 0))
 
 20060414-10:15:40-92278a7bf8def4c58490ade009db5dcc.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match RecordV [] against Closure _" (after 2 tests): 
-typecheck [] (RecordV [])
+*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
+typecheck [] (Int 0)
 
 20060414-11:06:26-2e8f9d56c3e7c006332210cfc11dfc40.seminal.ml
 *** Failed! *** Exception: TypeError "could not match TCon \"typ\" against TCon \"exp\"" (after 1 test): 
@@ -919,7 +922,7 @@ typecheck [] (RecordV [])
 *** Failed! *** Exception: TypeError "could not match TCon \"exp\" against TVar \"a\" :-> TVar \"b\"" (after 1 test): 
 
 20060414-18:56:18-975364d5af6fc324097b99df4af18792.seminal.ml
-*** Failed! *** Exception: TypeError "record VR [(\"ctr2\",VI 0),(\"incr2\",VF (Lam WildPat (Var \"()\"))),(\"allowDecr2\",VF (Lam WildPat (Lam WildPat (Var \"()\")))),(\"print2\",VF (Lam WildPat (Var \"()\")))] (TApp \"t2\" [TCon \"int\"]) does not have a field 'ctr1'" (after 1 test): 
+*** Failed! *** Exception: TypeError "record VR [(\"ctr2\",0),(\"incr2\",1),(\"allowDecr2\",2),(\"print2\",3)] (TApp \"t2\" [TCon \"int\"]) does not have a field 'ctr1'" (after 1 test): 
 client2 {ctr2 = 0 ; incr2 = fun _ ->
   () ; allowDecr2 = fun _ ->
   fun _ -> () ; print2 = fun _ ->
@@ -930,36 +933,36 @@ client2 {ctr2 = 0 ; incr2 = fun _ ->
 typecheck [] (Int 0)
 
 20060416-13:23:38-0530e1eaf713b518ff0e7e7a832ea50c.seminal.ml
-*** Failed! *** Exception: TypeError "if-then-else given a non-boolean" (after 7 tests): 
-subtype (RecordT ("{\n%" , RecordT [] , Write) :: (("\223" , RecordT ("" , ArrowT (IntT , IntT) , Both) :: [] , Both) :: [])) (RecordT ("" , IntT , Read) :: [])
+*** Failed! *** Exception: TypeError "cannot compare incompatible types: (VT 3 [VS \"\",VA \"IntT\" Nothing (TCon \"typ\"),VA \"Write\" Nothing (TCon \"access\")] [TCon \"string\",TCon \"typ\",TCon \"access\"]) (VA \"IntT\" Nothing (TCon \"typ\"))" (after 3 tests): 
+subtype (RecordT ("" , IntT , Write) :: []) IntT
 
 20060416-13:29:12-8de255153d5663cbcb8fad71f8dc4724.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match (\"c\" , ArrowT (RecordT [] , IntT) , Read) against IntT" (after 5 tests): 
-subtype (RecordT ("c" , ArrowT (RecordT [] , IntT) , Read) :: (("" , ArrowT (IntT , IntT) , Write) :: (("" , IntT , Both) :: []))) (RecordT ("" , IntT , Write) :: [])
+*** Failed! *** Exception: TypeError "cannot compare incompatible types: (VT 3 [VS \"E\\bk\",VA \"ArrowT\" (Just (VT 2 [VA \"RecordT\" (Just (VL [] (TVar \"a\"))) (TCon \"typ\"),VA \"RecordT\" (Just (VL [] (TVar \"a\"))) (TCon \"typ\")] [TCon \"typ\",TCon \"typ\"])) (TCon \"typ\"),VA \"Both\" Nothing (TCon \"access\")] [TCon \"string\",TCon \"typ\",TCon \"access\"]) (VA \"ArrowT\" (Just (VT 2 [VA \"ArrowT\" (Just (VT 2 [VA \"ArrowT\" (Just (VT 2 [VA \"IntT\" Nothing (TCon \"typ\"),VA \"ArrowT\" (Just (VT 2 [VA \"ArrowT\" (Just (VT 2 [VA \"IntT\" Nothing (TCon \"typ\"),VA \"IntT\" Nothing (TCon \"typ\")] [TCon \"typ\",TCon \"typ\"])) (TCon \"typ\"),VA \"RecordT\" (Just (VL [] (TVar \"a\"))) (TCon \"typ\")] [TCon \"typ\",TCon \"typ\"])) (TCon \"typ\")] [TCon \"typ\",TCon \"typ\"])) (TCon \"typ\"),VA \"ArrowT\" (Just (VT 2 [VA \"RecordT\" (Just (VL [] (TVar \"a\"))) (TCon \"typ\"),VA \"RecordT\" (Just (VL [VT 3 [VS \"\",VA \"IntT\" Nothing (TCon \"typ\"),VA \"Read\" Nothing (TCon \"access\")] [TCon \"string\",TCon \"typ\",TCon \"access\"]] (TTup [TCon \"string\",TCon \"typ\",TCon \"access\"]))) (TCon \"typ\")] [TCon \"typ\",TCon \"typ\"])) (TCon \"typ\")] [TCon \"typ\",TCon \"typ\"])) (TCon \"typ\"),VA \"ArrowT\" (Just (VT 2 [VA \"IntT\" Nothing (TCon \"typ\"),VA \"ArrowT\" (Just (VT 2 [VA \"RecordT\" (Just (VL [VT 3 [VS \"\",VA \"IntT\" Nothing (TCon \"typ\"),VA \"Both\" Nothing (TCon \"access\")] [TCon \"string\",TCon \"typ\",TCon \"access\"]] (TTup [TCon \"string\",TCon \"typ\",TCon \"access\"]))) (TCon \"typ\"),VA \"IntT\" Nothing (TCon \"typ\")] [TCon \"typ\",TCon \"typ\"])) (TCon \"typ\")] [TCon \"typ\",TCon \"typ\"])) (TCon \"typ\")] [TCon \"typ\",TCon \"typ\"])) (TCon \"typ\"))" (after 6 tests): 
+subtype (RecordT ("E\bk" , ArrowT (RecordT [] , RecordT []) , Both) :: (("" , RecordT ("" , IntT , Both) :: [] , Both) :: (("" , ArrowT (IntT , IntT) , Both) :: []))) (ArrowT (ArrowT (ArrowT (IntT , ArrowT (ArrowT (IntT , IntT) , RecordT [])) , ArrowT (RecordT [] , RecordT ("" , IntT , Read) :: [])) , ArrowT (IntT , ArrowT (RecordT ("" , IntT , Both) :: [] , IntT))))
 
 20060416-23:25:44-e7cce69a55cf521059786e569bdc1318.seminal.ml
 *** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
 typecheck [] (Int 0)
 
 20060417-09:09:48-c1254f26855289d18929c3dffb68cc3d.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match \"\" against []" (after 4 tests): 
-type_to_string (RecordT ("" , ArrowT (IntT , IntT) , Both) :: [])
+*** Failed! *** Exception: TypeError "type error: tried to match \"\" against []" (after 2 tests): 
+type_to_string (RecordT [])
 
 20060417-22:20:54-16c6772d6fdb93e703aea2128369c509.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match \"\" against []" (after 3 tests): 
-type_to_string (RecordT ("" , IntT , Write) :: [])
+*** Failed! *** Exception: TypeError "type error: tried to match \"\" against []" (after 6 tests): 
+type_to_string (ArrowT (IntT , ArrowT (ArrowT (IntT , RecordT ("" , IntT , Read) :: []) , RecordT [])))
 
 20060417-22:41:48-01a73c5b831c09060fa52a6d35b70d63.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match \"\" against []" (after 3 tests): 
-subtype (RecordT ("" , IntT , Write) :: []) (ArrowT (IntT , ArrowT (IntT , IntT)))
+*** Failed! *** Exception: TypeError "type error: tried to match true against []" (after 3 tests): 
+subtype (RecordT ("" , IntT , Write) :: []) (RecordT ("" , IntT , Write) :: [])
 
 20060418-22:05:32-39fdd837557bc77c42f640f2b57c4bb7.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Cast (Int 0 , IntT) against Closure _" (after 2 tests): 
-typecheck (("" , Int 0) :: []) (Cast (Int 0 , IntT))
+*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
+typecheck [] (Int 0)
 
 20060419-09:13:18-d2a4e8e4cefed9ee58f028d6ea15e910.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match RecordE [] against Closure _" (after 2 tests): 
-typecheck (("" , Int 0) :: []) (RecordE [])
+*** Failed! *** Exception: TypeError "type error: tried to match If (Int 0 , Int 0 , Var \"\") against Closure _" (after 2 tests): 
+typecheck (("" , Var "") :: []) (If (Int 0 , Int 0 , Var ""))
 
 20060419-09:24:44-b0e52bafc8fad4bc05a7ec92466c8a96.seminal.ml
 *** Failed! *** Exception: TypeError "invalid argument to print_endline: 1" (after 1 test): 
@@ -969,60 +972,60 @@ typecheck (("" , Int 0) :: []) (RecordE [])
 typecheck [] (Int 0)
 
 20060419-09:39:12-1b59d618af2b6777b32b06872235a1a5.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
-typecheck [] (Int 0)
+*** Failed! *** Exception: TypeError "type error: tried to match Get (Var \"\" , \"\") against Closure _" (after 2 tests): 
+typecheck (("" , Int 0) :: []) (Get (Var "" , ""))
 
 20060420-11:57:34-64faf25cf828b203532860f001bbe336.seminal.ml
 *** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
 typecheck [] (Int 0)
 
 20060420-12:58:02-dac428f4bb4abd4e1e1c736857e38c88.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match [] against (t2_name , t2_type , t2_access)" (after 2 tests): 
-subtype IntT (RecordT [])
+*** Failed! *** Exception: TypeError "type error: tried to match [(\"\" , IntT , Write)] against (t2_name , t2_type , t2_access)" (after 3 tests): 
+subtype IntT (RecordT ("" , IntT , Write) :: [])
 
 20060420-13:26:40-295f6dadefdff9931a5b54c5f40a9631.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match None against (t2_type , t2_access)" (after 3 tests): 
-subtype (RecordT ("" , IntT , Write) :: []) (RecordT [])
+*** Failed! *** Exception: TypeError "type error: tried to match None against (t2_type , t2_access)" (after 8 tests): 
+subtype (RecordT ("\226" , RecordT [] , Write) :: (("\a" , RecordT ("" , ArrowT (IntT , ArrowT (IntT , IntT)) , Write) :: (("&" , RecordT [] , Write) :: (("" , IntT , Both) :: [])) , Read) :: (("9\ETX" , RecordT [] , Read) :: []))) (RecordT (",_8|X" , IntT , Read) :: [])
 
 20060420-13:38:24-ef3f2b6607c05aa2a3d64cc30f7e5587.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
-typecheck [] (Int 0)
-
-20060420-13:46:42-6b7b9df433faea187437ee73710fed1e.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match RecordV [] against Closure _" (after 2 tests): 
-typecheck [] (RecordV [])
-
-20060420-13:48:52-2d8bd63819a740a8529923125a96d7de.seminal.ml
 *** Failed! *** Exception: TypeError "type error: tried to match Cast (Int 0 , IntT) against Closure _" (after 2 tests): 
 typecheck [] (Cast (Int 0 , IntT))
 
+20060420-13:46:42-6b7b9df433faea187437ee73710fed1e.seminal.ml
+*** Failed! *** Exception: TypeError "type error: tried to match Get (Var \"\" , \"\") against Closure _" (after 2 tests): 
+typecheck (("" , Var "") :: []) (Get (Var "" , ""))
+
+20060420-13:48:52-2d8bd63819a740a8529923125a96d7de.seminal.ml
+*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
+typecheck [] (Int 0)
+
 20060420-14:37:50-f4603d9b9411817f0e5686e3dc20bc8c.seminal.ml
-*** Failed! *** Exception: TypeError "if-then-else given a non-boolean" (after 3 tests): 
-subtype (ArrowT (IntT , RecordT [])) (ArrowT (RecordT [] , IntT))
+*** Failed! *** Exception: TypeError "if-then-else given a non-boolean" (after 5 tests): 
+subtype (ArrowT (ArrowT (IntT , ArrowT (RecordT [] , RecordT [])) , IntT)) (ArrowT (RecordT [] , RecordT ("\ESC" , IntT , Both) :: (("" , IntT , Both) :: [])))
 
 20060420-14:42:50-174cee33963e34fe367d8a7099d076f7.seminal.ml
-*** Failed! *** Exception: TypeError "RecordT expects 1 arguments, but was given 0" (after 229 tests): 
-subtype (ArrowT (RecordT ("c" , ArrowT (RecordT [] , ArrowT (IntT , IntT)) , Write) :: (("\161y<" , IntT , Both) :: []) , RecordT ("\155\242KBN" , RecordT ("\237%" , IntT , Both) :: [] , Both) :: [])) (ArrowT (RecordT ("U5\176{\NUL" , ArrowT (RecordT [] , RecordT []) , Write) :: (("I:9K" , RecordT [] , Write) :: []) , ArrowT (RecordT ("\195j" , RecordT [] , Write) :: [] , IntT)))
+*** Failed! *** Exception: TypeError "RecordT expects 1 arguments, but was given 0" (after 145 tests): 
+subtype (RecordT (">\241" , RecordT [] , Both) :: []) (RecordT ("r\SUB" , ArrowT (RecordT [] , IntT) , Read) :: [])
 
 20060420-14:53:50-33f59721c84171a9a81162de2a236e18.seminal.ml
 *** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
 typecheck [] (Int 0)
 
 20060420-15:02:38-395fc7642049c949d9b40cf19e356a18.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
-typecheck [] (Int 0)
+*** Failed! *** Exception: TypeError "type error: tried to match RecordV [] against Closure _" (after 2 tests): 
+typecheck (("" , Int 0) :: []) (RecordV [])
 
 20060420-15:03:22-2f62bf710968390e0ca81dcbaf9ac350.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
-typecheck [] (Int 0)
+*** Failed! *** Exception: TypeError "could not match TCon \"exp\" against TCon \"typ\"" (after 2 tests): 
+typecheck (("" , Var "") :: []) (Lam ("" , IntT , Var ""))
 
 20060420-15:04:44-224ca4c8f96b2c6dcf0e1f035d8fdb0b.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
-typecheck [] (Int 0)
+*** Failed! *** Exception: TypeError "could not match TCon \"int\" against TApp \"list\" [TTup [TCon \"string\",TCon \"exp\"]]" (after 2 tests): 
+typecheck (("" , Var "") :: []) (Closure ("" , Int 0 , {contents = 0}))
 
 20060420-15:15:34-f3de90b032b1ab0acc55ba351230021b.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
-typecheck [] (Int 0)
+*** Failed! *** Exception: TypeError "type error: tried to match Plus (Var \"\" , Int 0) against Closure _" (after 2 tests): 
+typecheck (("" , Var "") :: []) (Plus (Var "" , Int 0))
 
 20060421-12:48:26-f3359f667b5a1876fd310f0292d7b57c.seminal.ml
 *** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
@@ -1033,23 +1036,23 @@ typecheck [] (Int 0)
 typecheck [] (Int 0)
 
 20060421-17:21:10-79fe2fbff99827a5b1379ba48f931116.seminal.ml
-*** Failed! *** Exception: TypeError "record VR [(\"ctr2\",VI 0),(\"incr2\",VF (Lam WildPat (Var \"()\"))),(\"allowDecr2\",VF (Lam WildPat (Lam WildPat (Var \"()\")))),(\"print2\",VF (Lam WildPat (Var \"()\")))] (TApp \"t2\" [TCon \"int\"]) does not have a field 'print1'" (after 1 test): 
+*** Failed! *** Exception: TypeError "record VR [(\"ctr2\",0),(\"incr2\",1),(\"allowDecr2\",2),(\"print2\",3)] (TApp \"t2\" [TCon \"int\"]) does not have a field 'print1'" (after 1 test): 
 client2 {ctr2 = 0 ; incr2 = fun _ ->
   () ; allowDecr2 = fun _ ->
   fun _ -> () ; print2 = fun _ ->
   ()}
 
 20060421-17:38:10-9fedad806a399da07f601d1c08599c98.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 2 tests): 
-typecheck (("" , Int 0) :: []) (Int 0)
+*** Failed! *** Exception: TypeError "type error: tried to match Cast (Var \"\" , IntT) against Closure _" (after 2 tests): 
+typecheck [] (Cast (Var "" , IntT))
 
 20060421-17:41:02-0838d2deac55fab6e99ca6a22f996fb7.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match RecordE [] against Closure _" (after 2 tests): 
-typecheck (("" , Var "") :: []) (RecordE [])
+*** Failed! *** Exception: TypeError "type error: tried to match Letrec (IntT , \"\" , \"\" , IntT , Var \"\") against Closure _" (after 2 tests): 
+typecheck (("" , Var "") :: []) (Letrec (IntT , "" , "" , IntT , Var ""))
 
 20060421-18:24:24-ea21fd9a34b5cd724b1843a65c7ba4b1.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
-typecheck [] (Int 0)
+*** Failed! *** Exception: TypeError "type error: tried to match Set (Int 0 , \"\" , Int 0) against Closure _" (after 2 tests): 
+typecheck (("" , Int 0) :: []) (Set (Int 0 , "" , Int 0))
 
 20060421-18:54:48-531e81fe22a5c558cbd10d537c0e7a3f.seminal.ml
 *** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
@@ -1060,8 +1063,8 @@ typecheck [] (Int 0)
 typecheck [] (Int 0)
 
 20060421-19:09:48-c6e8c52f60ef4537806fbfce51ccfd37.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match Cast (Var \"\" , IntT) against Closure _" (after 2 tests): 
-typecheck (("" , Var "") :: []) (Cast (Var "" , IntT))
+*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
+typecheck [] (Int 0)
 
 20060422-14:27:16-f2f2d7b30c2ee14f630e6f99b177e544.seminal.ml
 *** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
@@ -1069,24 +1072,24 @@ typecheck [] (Int 0)
 
 20060422-14:32:10-515422d7b51cfe948920ecc7a6ce6025.seminal.ml
 *** Failed! *** Exception: TypeError "could not match TCon \"exp\" against TCon \"typ\"" (after 2 tests): 
-typecheck (("" , Var "") :: []) (Lam ("" , IntT , Var ""))
+typecheck (("" , Int 0) :: []) (Lam ("" , IntT , Var ""))
 
 20060422-14:34:46-6f7ee1ff7b2f1840f25b0b2ac4a619a1.seminal.ml
-*** Failed! *** Exception: TypeError "type error: tried to match If (Var \"\" , Var \"\" , Var \"\") against Closure _" (after 2 tests): 
-typecheck [] (If (Var "" , Var "" , Var ""))
+*** Failed! *** Exception: TypeError "type error: tried to match Int 0 against Closure _" (after 1 test): 
+typecheck [] (Int 0)
 
 20060422-14:36:42-0f5feccefb217a4914f337274357c84a.seminal.ml
-*** Failed! *** Exception: TypeError "could not match TCon \"int\" against TApp \"list\" [TTup [TCon \"string\",TCon \"exp\"]]" (after 2 tests): 
-typecheck (("" , Int 0) :: []) (Closure ("" , Var "" , {contents = 0}))
+*** Failed! *** Exception: TypeError "type error: tried to match Get (Letrec (IntT , \"\" , \"\" , IntT , Int 0) , \"\") against Closure _" (after 3 tests): 
+typecheck (("" , RecordE []) :: (("" , Int 0) :: [])) (Get (Letrec (IntT , "" , "" , IntT , Int 0) , ""))
 
 DONE!
 286 programs:
-  18 did not fail at runtime
-  8 timed out
-  260 did failed at runtime:
+  20 did not fail at runtime
+  5 timed out
+  261 did failed at runtime:
     7 due to an unbound variable or datacon
-    0 due to an output-type-mismatch
-    255 due to a type error (89.16 %)
-real	9m7.501s
-user	6m23.232s
-sys	1m45.869s
+    0 due to an output-type-mismatch    
+    257 due to a type error (89.86 %)
+real	8m8.211s
+user	4m16.932s
+sys	2m27.707s
