@@ -6,7 +6,7 @@ module NanoML
   ( module NanoML.Parser
   , module NanoML.Types
   , module NanoML.Eval
-  , check, checkAll, runProg
+  , check, checkAll, checkAllFrom, runProg
   ) where
 
 import           Control.Exception

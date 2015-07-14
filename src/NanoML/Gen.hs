@@ -57,7 +57,7 @@ genADT c ts e n = do
     = Nothing
     | otherwise
     = Just $ do
-      vs <- mapM (resize (n-1) . (`genExpr` e) . subst (zip tvs ts)) dArgs
+      vs <- mapM (resize (prev n) . (`genExpr` e) . subst (zip tvs ts)) dArgs
       let v = case dArgs of
             [_] -> head vs
             _   -> Tuple vs
@@ -67,7 +67,9 @@ genADT c ts e n = do
   isRec (TTup ts)   = any isRec ts
   isRec _           = False
 
-  genField (f, _, t) = (f,) <$> resize (n-1) (genExpr t e)
+  genField (f, _, t) = (f,) <$> resize (prev n) (genExpr t e)
+
+prev n = max 0 (n-1)
 
 -- genList :: Type -> TypeEnv -> Int -> Gen Expr
 -- genList _ e 0 = return (mkConApp "[]" [])
