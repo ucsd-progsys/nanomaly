@@ -47,9 +47,6 @@ record xs = text "{" <> (hsep $ intersperse semi $ map prettyField xs) <> text "
 
 prettyField (f,x) = text f <+> text "=" <+> pretty x
 
-instance Pretty MValue where
-  pretty = pretty . mvalue
-
 instance Pretty Literal where
   pretty l = case l of
     LI i -> pretty i

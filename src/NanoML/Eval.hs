@@ -14,6 +14,7 @@ import Control.Monad.RWS   hiding (Alt)
 import Data.IORef
 import Data.Maybe
 import qualified Data.Vector as Vector
+import System.IO.Unsafe
 import Text.Printf
 
 import NanoML.Misc
@@ -27,15 +28,15 @@ import Debug.Trace
 -- Evaluation
 ----------------------------------------------------------------------
 
-type Eval = ExceptT NanoError (RWST NanoOpts [Doc] EvalState IO)
+type Eval = ExceptT NanoError (RWS NanoOpts [Doc] EvalState)
 
-runEval :: NanoOpts -> Eval a -> IO (Either (NanoError, [Doc]) a)
-runEval opts x = evalRWST (runExceptT x) opts initState >>= \case
-  (Left e, tr) -> return $ Left (e, tr)
-  (Right v, _) -> return $ Right v
+runEval :: NanoOpts -> Eval a -> Either (NanoError, [Doc]) a
+runEval opts x = case evalRWS (runExceptT x) opts initState of
+  (Left e, tr) -> Left (e, tr)
+  (Right v, _) -> Right v
 
-runEvalFull :: NanoOpts -> Eval a -> IO (Either NanoError a, EvalState, [Doc])
-runEvalFull opts x = runRWST (runExceptT x) opts initState
+runEvalFull :: NanoOpts -> Eval a -> (Either NanoError a, EvalState, [Doc])
+runEvalFull opts x = runRWS (runExceptT x) opts initState
 
 evalString :: MonadEval m => String -> m Value
 evalString s = case parseExpr s of
@@ -160,9 +161,9 @@ eval expr = logExpr expr $ case expr of
       let e = fromJust $ lookup f flds
       v <- eval e
       su <- unify t (typeOf v)
-      case m of
-        NonMut -> return ((f,V v), su)
-        Mut -> liftIO (newIORef v) >>= \x -> return ((f, R x), su)
+      i <- fresh
+      writeStore i (m,v)
+      return ((f,i),su)
     let t = subst (mconcat sus) $ typeDeclType td
     return (VR vs t)
   Field e f -> do
@@ -187,16 +188,14 @@ eval expr = logExpr expr $ case expr of
         _              -> throwError e
   Prim1 (P1 p f) e -> do
     v <- eval e
-    x <- liftIO $ try $ evaluate (f v)
-    case x of
+    case unsafePerformIO $ try $ evaluate $ f v of
       Right x -> x
       Left (PatternMatchFail _) ->
         typeError $ printf "invalid argument to %s: %s" p (show $ pretty v)
   Prim2 (P2 p f) e1 e2 -> do
     v1 <- eval e1
     v2 <- eval e2
-    x <- liftIO $ try $ evaluate (f v1 v2)
-    case x of
+    case unsafePerformIO $ try $ evaluate $ f v1 v2 of
       Right x -> x
       Left (PatternMatchFail _) ->
         typeError $ printf "invalid arguments to %s: %s, %s"
@@ -257,13 +256,13 @@ evalUop Neg (VI i) = return (VI (negate i))
 evalUop FNeg (VD d) = return (VD (negate d))
 
 
-ltVal (VI x) (VI y) = return (x < y)
-ltVal (VD x) (VD y) = return (x < y)
-ltVal x      y      = typeError "cannot compare ordering of non-numeric types"
+ltVal x y = do
+  VI i <- cmpVal x y
+  return (i == (-1))
 
-gtVal (VI x) (VI y) = return (x > y)
-gtVal (VD x) (VD y) = return (x > y)
-gtVal x      y      = typeError "cannot compare ordering of non-numeric types"
+gtVal x y = do
+  VI i <- cmpVal x y
+  return (i == 1)
 
 plusVal (VI i) (VI j) = return $ VI (i+j)
 plusVal (VD i) (VD j) = return $ VD (i+j)
@@ -389,4 +388,4 @@ matchLit v       l       = typeError (printf "type error: tried to match %s agai
 
 testEval :: String -> IO ()
 testEval s = let Right e = parseExpr s
-             in print =<< runEval stdOpts (eval e)
+             in print $ runEval stdOpts (eval e)

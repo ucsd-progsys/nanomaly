@@ -92,14 +92,14 @@ safeTail (x:xs) = xs
 
 runProg :: Prog -> IO Result
 runProg prog = quickCheckWithResult (stdArgs { chatty = False, maxSuccess = 1 })
-             $ within sec $ nanoCheck $ run $ runEval stdOpts $ do
+             $ within sec $ nanoCheck $ run $ evaluate $ runEval stdOpts $ do
                  mapM evalDecl prog
                  -- liftIO $ putStrLn $ render $ pretty $ last vs
 
 checkFunc :: Var -> Type -> Prog -> IO Result
 checkFunc f t prog = quickCheckWithResult (stdArgs { chatty = False, maxSize = 10, maxSuccess = 1000 })
                    $ within sec $ nanoCheck $ do
-                     (x, st, log) <- run $ runEvalFull stdOpts $ mapM_ evalDecl prog
+                     (x, st, log) <- run $ evaluate $ runEvalFull stdOpts $ mapM_ evalDecl prog
                      case x of
                        Right _ -> continue st log
                        -- Left (MLException _) -> continue st log
@@ -114,7 +114,7 @@ checkFunc f t prog = quickCheckWithResult (stdArgs { chatty = False, maxSize = 1
   continue st log = do
     args <- pick (genArgs t $ stTypeEnv st)
     monitor $ counterexample (show . pretty $ mkApps (Var f) args)
-    run $ runEval stdOpts $ do
+    run $ evaluate $ runEval stdOpts $ do
       put st; tell log -- first of all, restore the state and log
       v <- eval (mkApps (Var f) args)
       b <- v `checkType` resTy t

@@ -17,7 +17,8 @@ import           Control.Monad.Reader
 import           Control.Monad.State
 import           Control.Monad.Writer         hiding (Alt)
 import           Data.Char
-import           Data.IORef
+import           Data.IntMap                  (IntMap)
+import qualified Data.IntMap                  as IntMap
 import           Data.List
 import           Data.Map                     (Map)
 import qualified Data.Map                     as Map
@@ -29,6 +30,7 @@ import           GHC.Generics
 import           System.IO.Unsafe
 import           Text.PrettyPrint.ANSI.Leijen (Doc)
 import           Text.Printf
+import           Text.Read                    (readMaybe)
 
 import           Debug.Trace
 
@@ -40,7 +42,7 @@ type MonadEval m = ( MonadError NanoError m
                    , MonadReader NanoOpts m
                    , MonadWriter [Doc] m
                    , MonadState EvalState m
-                   , MonadFix m, MonadIO m
+                   , MonadFix m
                    )
 
 type Var = String
@@ -83,7 +85,11 @@ data EvalState = EvalState
   , stTypeEnv  :: !(Map TCon TypeDecl)
   , stDataEnv  :: !(Map DCon DataDecl)
   , stFieldEnv :: !(Map String TypeDecl)
+  , stFresh    :: !Ref
+  , stStore    :: !(IntMap (MutFlag, Value))
   }
+
+type Ref = Int
 
 initState :: EvalState
 initState = EvalState
@@ -91,7 +97,21 @@ initState = EvalState
   , stTypeEnv = baseTypeEnv
   , stDataEnv = baseDataEnv
   , stFieldEnv = baseFieldEnv
+  , stFresh = 0
+  , stStore = mempty
   }
+
+fresh :: MonadEval m => m Ref
+fresh = do
+  i <- gets stFresh
+  modify' $ \ s -> s { stFresh = 1 + stFresh s }
+  return i
+
+readStore :: MonadEval m => Ref -> m (MutFlag, Value)
+readStore i = (IntMap.! i) <$> gets stStore
+
+writeStore :: MonadEval m => Ref -> (MutFlag,Value) -> m ()
+writeStore i mv = modify' $ \s -> s { stStore = IntMap.insert i mv (stStore s) }
 
 setVarEnv :: MonadEval m => Env -> m ()
 setVarEnv env = modify' $ \ s -> s { stVarEnv = env }
@@ -526,7 +546,9 @@ pint_of_char :: MonadEval m => Value -> m Value
 pint_of_char (VC c) = return (VI (ord c))
 
 pint_of_string :: MonadEval m => Value -> m Value
-pint_of_string (VS s) = return (VI (read s))
+pint_of_string (VS s) = case readMaybe s of
+  Just i  -> return (VI i)
+  Nothing -> throwError $ MLException (mkExn "Failure" [VS "int_of_string"])
 
 pint_of_float :: MonadEval m => Value -> m Value
 pint_of_float (VD d) = return (VI (truncate d))
@@ -538,7 +560,9 @@ pfloat :: MonadEval m => Value -> m Value
 pfloat = pfloat_of_int
 
 pfloat_of_string :: MonadEval m => Value -> m Value
-pfloat_of_string (VS s) = return (VD (read s))
+pfloat_of_string (VS s) = case readMaybe s of
+  Just d  -> return (VD d)
+  Nothing -> throwError $ MLException (mkExn "Failure" [VS "float_of_string"])
 
 pstring_of_int :: MonadEval m => Value -> m Value
 pstring_of_int (VI i) = return (VS (show i))
@@ -577,44 +601,44 @@ parray_get (VV a _) (VI i)
 
 pprint_string :: MonadEval m => Value -> m Value
 pprint_string (VS s) = do
-  opts <- ask
-  when (enablePrint opts) $
-    liftIO $ putStr s
+  -- opts <- ask
+  -- when (enablePrint opts) $
+  --   liftIO $ putStr s
   return VU
 
 pprint_endline :: MonadEval m => Value -> m Value
 pprint_endline (VS s) = do
-  opts <- ask
-  when (enablePrint opts) $
-    liftIO $ putStrLn s
+  -- opts <- ask
+  -- when (enablePrint opts) $
+  --   liftIO $ putStrLn s
   return VU
 
 pprint_newline :: MonadEval m => Value -> m Value
-pprint_newline (VS s) = do
-  opts <- ask
-  when (enablePrint opts) $
-    liftIO $ putStrLn ""
+pprint_newline VU = do
+  -- opts <- ask
+  -- when (enablePrint opts) $
+  --   liftIO $ putStrLn ""
   return VU
 
 pprint_int :: MonadEval m => Value -> m Value
 pprint_int (VI i) = do
-  opts <- ask
-  when (enablePrint opts) $
-    liftIO $ putStr $ show i
+  -- opts <- ask
+  -- when (enablePrint opts) $
+  --   liftIO $ putStr $ show i
   return VU
 
 pprint_float :: MonadEval m => Value -> m Value
 pprint_float (VD f) = do
-  opts <- ask
-  when (enablePrint opts) $
-    liftIO $ putStr $ show f
+  -- opts <- ask
+  -- when (enablePrint opts) $
+  --   liftIO $ putStr $ show f
   return VU
 
 pprint_char :: MonadEval m => Value -> m Value
 pprint_char (VC c) = do
-  opts <- ask
-  when (enablePrint opts) $
-    liftIO $ putStr $ [c]
+  -- opts <- ask
+  -- when (enablePrint opts) $
+  --   liftIO $ putStr $ [c]
   return VU
 
 pchar_code :: MonadEval m => Value -> m Value
@@ -685,18 +709,20 @@ pprintexc_to_string x@(VA {}) = return $ VS $ show x
 
 getField :: MonadEval m => Value -> String -> m Value
 getField x@(VR fs _) f = case lookup f fs of
-  Just (V v) -> return v
-  Just (R x) -> liftIO $ readIORef x
-  Nothing    -> typeError $ printf "record %s does not have a field '%s'"
-                                   (show x) f
+  Just i  -> snd <$> readStore i
+  Nothing -> typeError $ printf "record %s does not have a field '%s'"
+                                (show x) f
 getField x f = typeError $ printf "%s is not a record" (show x)
 
 setField :: MonadEval m => Value -> String -> Value -> m ()
 setField x@(VR fs _) f v = case lookup f fs of
-  Just (R x) -> liftIO $ writeIORef x v
-  Just (V v) -> typeError $ printf "field '%s' is not mutable" f
   Nothing    -> typeError $ printf "record %s does not have a field '%s'"
                                    (show x) f
+  Just i -> do
+    (m, _) <- readStore i
+    case m of
+      Mut -> writeStore i (m,v)
+      _   -> typeError $ printf "field '%s' is not mutable" f
 setField x _ _ = typeError $ printf "%s is not a record" (show x)
 
 mkNonRec :: Expr -> Value
@@ -741,22 +767,12 @@ data Value
   | VL [Value] Type
   | VT Int [Value] [Type] -- VT sz:{Nat | sz >= 2} (ListN Value sz)
   | VA DCon (Maybe Value) Type
-  | VR [(String, MValue)] Type
+  | VR [(String, Ref)] Type
   | VV (Vector Value) Type
   | VF Func
   | VH -- ^ A "hole" that will be filled in later, on demand.
   deriving (Show, Generic)
 
-data MValue
-  = V Value
-  | R (IORef Value)
-
-mvalue :: MValue -> Value
-mvalue (V v) = v
-mvalue (R r) = unsafePerformIO $ readIORef r
-
-instance Show MValue where
-  show = show . mvalue
 
 data Func
   = Func Expr Env
