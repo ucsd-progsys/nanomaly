@@ -127,8 +127,9 @@ sec = 1000000 * 60
 nanoCheck m = monadicIO $ m >>= \case
   Right x    -> monitor (collect "no error") >> return ()
   Left (MLException e, t) -> monitor (collect "MLException") >> return ()
-  Left (e, t) -> monitor (collect "failure") >> (fail $ "*** Exception: " ++ show e)
---                      ++ "\n" ++ (render $ vsep $ intersperse mempty t)
+  Left (e, t) -> monitor (collect "failure") >> (fail $ "*** Exception: " ++ show e
+                       -- ++ "\n" ++ (render $ vsep $ intersperse mempty t)
+                       )
 
 checkAll = checkAllFrom "../yunounderstand/data/sp14/prog/unify"
 

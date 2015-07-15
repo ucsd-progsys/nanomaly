@@ -424,8 +424,8 @@ unify t (TVar a) = unifyVar a t
 unify (TCon x) (TCon y)
   | x == y
   = return []
-unify (TCon x) t = unifyAlias x [] t
-unify t (TCon x) = unifyAlias x [] t
+unify x@(TCon c) y = unifyAlias c [] y x
+unify x y@(TCon c) = unifyAlias c [] x y
 unify (xi :-> xo) (yi :-> yo)
   = mappend <$> unify xi yi <*> unify xo yo
 unify (TTup xs) (TTup ys)
@@ -433,8 +433,8 @@ unify (TTup xs) (TTup ys)
 unify (TApp xc xts) (TApp yc yts)
   | xc == yc
   = mconcat <$> zipWithM unify xts yts
-unify (TApp c ts) t = unifyAlias c ts t
-unify t (TApp c ts) = unifyAlias c ts t
+unify x@(TApp c ts) y = unifyAlias c ts y x
+unify x y@(TApp c ts) = unifyAlias c ts x y
 unify x y
   = typeError $ printf "could not match %s against %s" (show x) (show y)
 
@@ -444,11 +444,11 @@ unifyVar a t
   -- FIXME: occurs check
   | otherwise   = return [(a,t)]
 
-unifyAlias c ts t = do
+unifyAlias c ts x y = do
   TypeDecl {..} <- lookupType c
   case tyRhs of
-    Alias t' -> unify t (subst (zip tyVars ts) t')
-    _ -> typeError $ printf "could not match %s against %s" (show (TCon c)) (show t)
+    Alias ty -> unify x (subst (zip tyVars ts) ty)
+    _ -> typeError $ printf "could not match %s against %s" (show x) (show y)
 
 typeOf :: Value -> Type
 typeOf v = case v of
