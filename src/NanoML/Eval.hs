@@ -20,6 +20,7 @@ import Text.Printf
 import NanoML.Misc
 import NanoML.Parser
 import NanoML.Pretty
+import NanoML.Prim
 import NanoML.Types
 
 import Debug.Trace
@@ -34,6 +35,16 @@ runEval :: NanoOpts -> Eval a -> Either (NanoError, [Doc]) a
 runEval opts x = case evalRWS (runExceptT x) opts initState of
   (Left e, tr) -> Left (e, tr)
   (Right v, _) -> Right v
+
+initState :: EvalState
+initState = EvalState
+  { stVarEnv = baseEnv
+  , stTypeEnv = baseTypeEnv
+  , stDataEnv = baseDataEnv
+  , stFieldEnv = baseFieldEnv
+  , stFresh = 0
+  , stStore = mempty
+  }
 
 runEvalFull :: NanoOpts -> Eval a -> (Either NanoError a, EvalState, [Doc])
 runEvalFull opts x = runRWS (runExceptT x) opts initState
@@ -369,6 +380,7 @@ matchPat v p = logMaybeEnv $ case p of
 safeMatch [] Nothing = True
 safeMatch [t] (Just p) = True
 safeMatch ts (Just (TuplePat ps)) = True
+safeMatch ts (Just WildPat) = True
 safeMatch _ _ = False
 
 unconsVal :: MonadEval m => Value -> m (Value, Value)

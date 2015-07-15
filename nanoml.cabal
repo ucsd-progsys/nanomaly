@@ -23,6 +23,7 @@ library
                      , NanoML.Misc
                      , NanoML.Parser
                      , NanoML.Pretty
+                     , NanoML.Prim
                      , NanoML.Types
   -- other-modules:
   -- other-extensions:
