@@ -4,7 +4,7 @@
 {-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE RecordWildCards #-}
-module NanoML.Eval where
+module NanoML.Eval (module NanoML.Eval, runEval, runEvalFull) where
 
 import Control.Exception
 import Control.Monad
@@ -18,6 +18,7 @@ import System.IO.Unsafe
 import Text.Printf
 
 import NanoML.Misc
+import NanoML.Monad
 import NanoML.Parser
 import NanoML.Pretty
 import NanoML.Prim
@@ -29,25 +30,25 @@ import Debug.Trace
 -- Evaluation
 ----------------------------------------------------------------------
 
-type Eval = ExceptT NanoError (RWS NanoOpts [Doc] EvalState)
+-- type Eval = ExceptT NanoError (RWS NanoOpts [Doc] EvalState)
 
-runEval :: NanoOpts -> Eval a -> Either (NanoError, [Doc]) a
-runEval opts x = case evalRWS (runExceptT x) opts initState of
-  (Left e, tr) -> Left (e, tr)
-  (Right v, _) -> Right v
+-- runEval :: NanoOpts -> Eval a -> Either (NanoError, [Doc]) a
+-- runEval opts x = case evalRWS (runExceptT x) opts initState of
+--   (Left e, tr) -> Left (e, tr)
+--   (Right v, _) -> Right v
 
-initState :: EvalState
-initState = EvalState
-  { stVarEnv = baseEnv
-  , stTypeEnv = baseTypeEnv
-  , stDataEnv = baseDataEnv
-  , stFieldEnv = baseFieldEnv
-  , stFresh = 0
-  , stStore = mempty
-  }
+-- initState :: EvalState
+-- initState = EvalState
+--   { stVarEnv = baseEnv
+--   , stTypeEnv = baseTypeEnv
+--   , stDataEnv = baseDataEnv
+--   , stFieldEnv = baseFieldEnv
+--   , stFresh = 0
+--   , stStore = mempty
+--   }
 
-runEvalFull :: NanoOpts -> Eval a -> (Either NanoError a, EvalState, [Doc])
-runEvalFull opts x = runRWS (runExceptT x) opts initState
+-- runEvalFull :: NanoOpts -> Eval a -> (Either NanoError a, EvalState, [Doc])
+-- runEvalFull opts x = runRWS (runExceptT x) opts initState
 
 evalString :: MonadEval m => String -> m Value
 evalString s = case parseExpr s of
