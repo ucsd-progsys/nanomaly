@@ -33,19 +33,31 @@ main = do
     html . renderText . doctypehtml_ $ do
       head_ $ do
         title_ "NanoMaLy"
+        -- script_ [ src_ "/static/jquery.min.js", type_ "text/javascript" ] ("" :: Text)
         link_ [ href_ "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css", rel_ "stylesheet", type_ "text/css" ]
         link_ [ href_ "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css", rel_ "stylesheet", type_ "text/css" ]
         script_ [ src_ "//code.jquery.com/jquery-2.1.4.min.js", type_ "text/javascript" ] ("" :: Text)
+        script_ [ src_ "//raw.github.com/lodash/lodash/3.10.1/lodash.min.js", type_ "text/javascript" ] ("" :: Text)        
+        script_ [ src_ "//backbonejs.org/backbone-min.js", type_ "text/javascript" ] ("" :: Text)
         script_ [ src_ "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js", type_ "text/javascript" ] ("" :: Text)
-        script_ [ src_ "/zepto.min.js", type_ "text/javascript" ] ("" :: Text)
-        link_ [ href_ "/vis.css", rel_ "stylesheet", type_ "text/css" ]
-        script_ [ src_ "/vis.js", type_ "text/javascript" ] ("" :: Text)
-        script_ [ src_ "/codemirror-min.js", type_ "text/javascript" ] ("" :: Text)
-        link_ [ href_ "/codemirror.css", rel_ "stylesheet", type_ "text/css" ]
-        link_ [ href_ "/dialog.css", rel_ "stylesheet", type_ "text/css" ]
-        link_ [ href_ "/lint.css", rel_ "stylesheet", type_ "text/css" ]
-        link_ [ href_ "/nanoml.css", rel_ "stylesheet", type_ "text/css" ]
-        script_ [ src_ "/nanoml.js", type_ "text/javascript" ] ("" :: Text)
+        -- script_ [ src_ "/zepto.min.js", type_ "text/javascript" ] ("" :: Text)
+        -- link_ [ href_ "/vis.css", rel_ "stylesheet", type_ "text/css" ]
+        -- script_ [ src_ "/vis.js", type_ "text/javascript" ] ("" :: Text)
+
+        script_ [ src_ "/static/codemirror-min.js", type_ "text/javascript" ] ("" :: Text)
+        -- script_ [ src_ "/static/lodash.min.js", type_ "text/javascript" ] ("" :: Text)
+        -- script_ [ src_ "/static/backbone.min.js", type_ "text/javascript" ] ("" :: Text)
+        script_ [ src_ "/static/dagre.min.js", type_ "text/javascript" ] ("" :: Text)
+        script_ [ src_ "/static/graphlib.min.js", type_ "text/javascript" ] ("" :: Text)
+        script_ [ src_ "/static/joint.min.js", type_ "text/javascript" ] ("" :: Text)
+        script_ [ src_ "/static/joint.layout.DirectedGraph.min.js", type_ "text/javascript" ] ("" :: Text)
+
+        link_ [ href_ "/static/codemirror.css", rel_ "stylesheet", type_ "text/css" ]
+        link_ [ href_ "/static/dialog.css", rel_ "stylesheet", type_ "text/css" ]
+        link_ [ href_ "/static/lint.css", rel_ "stylesheet", type_ "text/css" ]
+        link_ [ href_ "/static/joint.min.css", rel_ "stylesheet", type_ "text/css" ]
+        link_ [ href_ "/static/nanoml.css", rel_ "stylesheet", type_ "text/css" ]
+
 
       body_ [class_ "container-fluid", onload_ "setup()"] $ do
         nav_ [class_ "navbar navbar-default"] $ do
@@ -116,18 +128,28 @@ main = do
             div_ [ id_ "unsafe-banner", class_ "alert alert-warning"
                  , style_ "display: none;" ] $ do
               "Your program contains a type error!"
-            div_ [ id_ "vis", class_ "mybody", style_ "border: 1px solid lightgray;"
+            div_ [ id_ "paper", class_ "mybody", style_ "border: 1px solid lightgray;"
                  ] ""
+        div_ [id_ "width-calc"] ""
+        script_ [ src_ "/static/nanoml.js", type_ "text/javascript" ] ("" :: Text)
 
-  get "/zepto.min.js"  $ file "bin/dist/zepto.min.js"
-  get "/vis.css" $ file "bin/dist/vis.css"
-  get "/vis.js"  $ file "bin/dist/vis.js"
-  get "/codemirror-min.js"  $ file "bin/dist/codemirror-min.js"
-  get "/codemirror.css"  $ file "bin/dist/codemirror.css"
-  get "/dialog.css" $ file "bin/dist/dialog.css"
-  get "/lint.css" $ file "bin/dist/lint.css"
-  get "/nanoml.css"  $ file "bin/nanoml.css"
-  get "/nanoml.js"  $ file "bin/nanoml.js"
+  -- get "/static/zepto.min.js"  $ file "bin/dist/zepto.min.js"
+  -- get "/static/vis.css" $ file "bin/dist/vis.css"
+  -- get "/static/vis.js"  $ file "bin/dist/vis.js"
+  get "/static/backbone.min.js"  $ file "bin/dist/backbone-min.js"
+  get "/static/codemirror-min.js"  $ file "bin/dist/codemirror-min.js"
+  get "/static/codemirror.css"  $ file "bin/dist/codemirror.css"
+  get "/static/dialog.css" $ file "bin/dist/dialog.css"
+  get "/static/dagre.min.js"  $ file "bin/dist/dagre.min.js"
+  get "/static/graphlib.min.js"  $ file "bin/dist/graphlib.min.js"
+  get "/static/joint.layout.DirectedGraph.min.js"  $ file "bin/dist/joint.layout.DirectedGraph.min.js"
+  get "/static/joint.min.css"  $ file "bin/dist/joint.min.css"
+  get "/static/joint.min.js"  $ file "bin/dist/joint.js"
+  get "/static/jquery.min.js"  $ file "bin/dist/jquery.min.js"
+  get "/static/lint.css" $ file "bin/dist/lint.css"
+  get "/static/lodash.min.js"  $ file "bin/dist/lodash.min.js"
+  get "/static/nanoml.css"  $ file "bin/nanoml.css"
+  get "/static/nanoml.js"  $ file "bin/nanoml.js"
 
   post "/check" $ do
     prog <- param "prog"
@@ -162,6 +184,9 @@ run p var = do
     case res of
       Success n finalState v -> do
         -- liftIO $ print v
+        -- liftIO $ putStrLn "Root, Stuck:"
+        -- liftIO $ print $ pretty $ stRoot finalState
+        -- liftIO $ print $ pretty $ v
         gr <- liftIO $ buildGraph (stEdges finalState)
         st <- liftIO $ findRoot gr v -- (stCurrentExpr finalState)
         root <- liftIO $ findRoot gr (stRoot finalState)
@@ -189,15 +214,17 @@ run p var = do
         --   toHtml (show n)
         --   "tests.."
       Failure {..} -> do
-        -- FIXME: handle programs that time out!!!
-        liftIO $ print $ pretty errorMsg
-        liftIO $ print counterExample
+        -- liftIO $ print $ pretty errorMsg
+        -- liftIO $ print counterExample
         case errorMsg of
           TimeoutError -> json $ object [ "result" .= ("timeout" :: String)
                                         , "root" .= show counterExample
                                         ]
           _ -> do
             gr <- liftIO $ buildGraph (stEdges finalState)
+            -- liftIO $ putStrLn "Root, Stuck:"
+            -- liftIO $ print $ pretty $ stRoot finalState
+            -- liftIO $ print $ pretty $ stCurrentExpr finalState
             bad <- liftIO $ findRoot gr (stCurrentExpr finalState)
             root <- liftIO $ findRoot gr (stRoot finalState)
             let st = ancestor gr bad
@@ -212,8 +239,8 @@ run p var = do
             -- let root = backback gr'' st
             let stuck = st
 
-            -- let dot = Graph.showDot (Graph.fglToDotGeneric gr'' id show id)
-            -- liftIO $ writeFile "tmp.dot" dot
+            let dot = Graph.showDot (Graph.fglToDotGeneric gr (show.pretty) show id)
+            liftIO $ writeFile "tmp.dot" dot
             json $ object [ -- ("dot" :: String, dot)
                             "nodes"  .= map mkNode nodes
                           , "edges"  .= map mkEdge edges

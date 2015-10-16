@@ -1,13 +1,104 @@
 // start Mixpanel
 (function(e,b){if(!b.__SV){var a,f,i,g;window.mixpanel=b;b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b.push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var a="mixpanel";"mixpanel"!==d&&(a+="."+d);b||(a+=" (stub)");return a};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
 for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=e.createElement("script");a.type="text/javascript";a.async=!0;a.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===e.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";f=e.getElementsByTagName("script")[0];f.parentNode.insertBefore(a,f)}})(document,window.mixpanel||[]);
-mixpanel.init("fdb0d3d364100623a32292ece89884e2",{debug:true});
+mixpanel.init("fdb0d3d364100623a32292ece89884e2");
 // end Mixpanel
+
+// Create a custom element.
+// ------------------------
+
+joint.shapes.html = {};
+joint.shapes.html.Element = joint.shapes.basic.Rect.extend({
+    defaults: joint.util.deepSupplement({
+        type: 'html.Element',
+        attrs: {
+            rect: { stroke: 'none', 'fill-opacity': 0 }
+        }
+    }, joint.shapes.basic.Rect.prototype.defaults)
+});
+
+// Create a custom view for that element that displays an HTML div above it.
+// -------------------------------------------------------------------------
+
+joint.shapes.html.ElementView = joint.dia.ElementView.extend({
+
+    template: [
+        '<div class="html-element">',
+        '<pre><code></code></pre>',
+        '</div>'
+    ].join(''),
+
+    initialize: function() {
+        _.bindAll(this, 'updateBox');
+        joint.dia.ElementView.prototype.initialize.apply(this, arguments);
+
+        this.$box = $(_.template(this.template)());
+        // Update the box position whenever the underlying model changes.
+        this.model.on('change', this.updateBox, this);
+        // Remove the box when the model gets removed from the graph.
+        this.model.on('remove', this.removeBox, this);
+
+        this.updateBox();
+    },
+    render: function() {
+        joint.dia.ElementView.prototype.render.apply(this, arguments);
+        this.paper.$el.prepend(this.$box);
+        this.updateBox();
+        return this;
+    },
+    updateBox: function() {
+        // Set the position and dimension of the box so that it covers the JointJS element.
+        var bbox = this.model.getBBox();
+        this.$box.find
+        // Example of updating the HTML with a data stored in the cell model.
+        this.$box.find('code').html(this.model.get('term'));
+        this.$box.css({ width: bbox.width, height: bbox.height, left: bbox.x, top: bbox.y, transform: 'rotate(' + (this.model.get('angle') || 0) + 'deg)' });
+    },
+    removeBox: function(evt) {
+        this.$box.remove();
+    }
+});
+
+function computeBBox(el) {
+    var box = document.getElementById("width-calc");
+    box.innerHTML = '<pre><code>' + el + '</code></pre>';
+    return { width: box.offsetWidth * 1.05, height: box.offsetHeight };
+}
+
+var network = new joint.dia.Graph;
+
+var graph = new joint.dia.Graph;
+var paper = new joint.dia.Paper({
+    el: $('#paper'),
+    model: graph,
+    gridSize: 1,
+    height: 600,
+    width: 800,
+});
+
+// var node1 = new joint.shapes.html.Element({
+//     size: computeBBox('let x = <b>1 + 1</b> in\nx + y'),
+//     term: 'let x = <b>1 + 1</b> in\nx + y'
+// });
+// var node2 = new joint.shapes.html.Element({
+//     size: computeBBox('let x = 2 in\n<b>x + y</b>'),
+//     term: 'let x = 2 in\n<b>x + y</b>'
+// });
+// var edge = new joint.dia.Link({
+//     source: {id: node1.id},
+//     target: {id: node2.id},
+//         // attrs: { '.marker-target': { d: 'M 4 0 L 0 2 L 4 4 z' } },
+//         // smooth: true
+// });
+// graph.addCells([node1,node2,edge]);
+
+// joint.layout.DirectedGraph.layout(graph, { setLinkVertices: false });
+
 
 var nodes = undefined;
 var edges = undefined;
 var steps = undefined;
-var network = undefined;
+// var network = undefined;
 var stack = [];
 var errors = [];
 
@@ -562,6 +653,7 @@ function setup() {
 }
 
 function draw(data) {
+  console.log(data);
   // ctxmenu = document.getElementById('menu');
   var container = document.getElementById('vis');
   // var dot = data.dot; //document.getElementById('reduction-graph').text;
@@ -571,30 +663,76 @@ function draw(data) {
   // data.nodes.forEach(function(n) {
   //   n.label = n.label.replace(/\\n/g, "\n");
   // });
-  allNodes = new vis.DataSet(data.nodes);
-  allEdges = new vis.DataSet(data.edges);
+  // allNodes = new vis.DataSet(data.nodes);
+  // allEdges = new vis.DataSet(data.edges);
   //console.log(allNodes, allEdges, root, stuck);
-  var nodes = new vis.DataSet(allNodes.get({filter: function(x) {
-    return x.id === root || x.id === stuck;
-  }}));
+
+  allNodes = _.map(data.nodes, function(node) {
+      return new joint.shapes.html.Element({
+          id: node.id.toString(),
+          size: computeBBox(node.label),
+          term: node.label,
+      });
+  });
+  allEdges = _.map(data.edges, function(edge) {
+      return new joint.dia.Link({
+          source: {id: edge.from.toString()},
+          target: {id: edge.to.toString()},
+          attrs: { '.marker-target': { d: 'M 4 0 L 0 2 L 4 4 z' } },
+          // smooth: true
+      });
+  });
+
+  // console.log(allNodes.concat(allEdges));
+
+  graph.clear();
+  graph.resetCells(allNodes.concat(allEdges));
+  joint.layout.DirectedGraph.layout(graph, { setLinkVertices: false });
+  // paper.scaleContentToFit({ preserveAspectRatio: true });
+
+// var foo = [network.getCell(root),
+//                     network.getCell(stuck),
+//                     new joint.dia.Link({
+//                         source: {id: root.toString()},
+//                         target: {id: stuck.toString()},
+//                     })];
+//   console.log(foo)
+// //  graph.resetCells(foo);
+
+//   graph.addCell(network.getCell(root));
+//   graph.addCell(network.getCell(stuck));
+
+  // var edge = new joint.dia.Link({
+  //     source: {id: root},
+  //     target: {id: stuck},
+  //        attrs: { '.marker-target': { d: 'M 4 0 L 0 2 L 4 4 z' } },
+  //        smooth: true
+  // });
+  // console.log(edge);
+  // graph.addCell(edge);
+  // console.log('die');
+
+  // var nodes = new vis.DataSet(allNodes.get({filter: function(x) {
+  //   return x.id === root || x.id === stuck;
+  // }}));
   // color the stuck node red
-  if (data.result === "stuck") {
-    var stuckNode = nodes.get(stuck);
-    var redBG = "#FFD2E5", redBD = "#E92B7C";
-    stuckNode.color = { background: redBG, border: redBD,
-                        highlight: { background: redBG, border: redBD }
-                      };
-    nodes.update(stuckNode);
-  }
-  //console.log(nodes);
-  if (allEdges.get({filter: function(x) {
-        return x.from === root && x.to === stuck;
-      }}).length > 0) {
-    var width = single_width;
-  } else {
-    var width = multi_width;
-  }
-  var edges = new vis.DataSet([{ arrows: 'to', from: root, to: stuck, width: width}]);
+  // if (data.result === "stuck") {
+  //   var stuckNode = nodes.get(stuck);
+  //   var redBG = "#FFD2E5", redBD = "#E92B7C";
+  //   stuckNode.color = { background: redBG, border: redBD,
+  //                       highlight: { background: redBG, border: redBD }
+  //                     };
+  //   nodes.update(stuckNode);
+  // }
+  // //console.log(nodes);
+  // if (allEdges.get({filter: function(x) {
+  //       return x.from === root && x.to === stuck;
+  //     }}).length > 0) {
+  //   var width = single_width;
+  // } else {
+  //   var width = multi_width;
+  // }
+  // var edges = new vis.DataSet([{ arrows: 'to', from: root, to: stuck, width: width}]);
   // steps = new vis.DataSet(data.edges).get({filter: function (x) {
   //   return x.label.indexOf("StepsTo") === 0;
   // }});
@@ -615,9 +753,27 @@ function draw(data) {
     // },
     // physics: { enabled: false},
   };
-  var newData = {nodes: nodes, edges: edges};
-  // stack.push(newData);
-  network = new vis.Network(container, newData, options);
+
+  // var data = '<svg xmlns="http://www.w3.org/2000/svg" width="390" height="65">' +
+  //           '<rect x="0" y="0" width="100%" height="100%"></rect>' +
+  //           '<foreignObject width="100%" height="100%">' +
+  //           '<div xmlns="http://www.w3.org/1999/xhtml">' +
+  //           '<pre><code>let x = <b>1 + 1</b> in x + y</code></pre>' +
+  //           '</div>' +
+  //           '</foreignObject>' +
+  //           '</svg>';
+
+  //       var DOMURL = window.URL || window.webkitURL || window;
+
+  //       var img = new Image();
+  //       var svg = new Blob([data], {type: 'image/svg+xml;charset=utf-8'});
+  //       var url = DOMURL.createObjectURL(svg);
+  // nodes.add({label: 'placeholder', image: url, shape: 'image'});
+
+
+  // var newData = {nodes: nodes, edges: edges};
+  // // stack.push(newData);
+  // network = new vis.Network(container, newData, options);
     // network.on("hidePopup", function () {
     //     console.log('hidePopup Event');
     // });
