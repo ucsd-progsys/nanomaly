@@ -2,25 +2,26 @@
 
 ** Syntax
 
-#+BEGIN_SRC
-E ::= V
-   |  E E
-   |  if E then E else E
-   |  E + E
+#+BEGIN_SRC text
+  E ::= V
+     |  E E
+     |  if E then E else E
+     |  E + E
+     |  let X = E in E
 
-V ::= N
-   |  B
-   |  \X. E
-   |  _
-   |  stuck T T
+  V ::= N
+     |  B
+     |  \X. E
+     |  _
+     |  stuck T T
 
-N ::= 0..
+  N ::= 0..
 
-B ::= true | false
+  B ::= true | false
 
-T ::= bool
-   |  nat
-   |  T -> T
+  T ::= bool
+     |  nat
+     |  T -> T
 #+END_SRC
 
 - probably want to add datatypes
@@ -117,7 +118,7 @@ v1 v2
 (stuck t1 t2) v2
 #+END_SRC
 
-**** `stuck` bubbles up
+**** =stuck= bubbles up
 #+BEGIN_SRC
 if stuck t1 t2 then e1 else e2
 ~>
@@ -132,6 +133,10 @@ e + stuck t1 t2
 stuck t1 t2
 
 (stuck t1 t2) v
+~>
+stuck t1 t2
+
+let x = stuck t1 t2 in e
 ~>
 stuck t1 t2
 #+END_SRC
@@ -161,12 +166,22 @@ e1 ~> e2
 e1 e3
 ~>
 e2 e3
+
+e1 ~> e2
+--------
+let x = e1 in e3
+~>
+let x = e2 in e2
+
+let x = v in e
+~>
+e[x/v]
 #+END_SRC
 
 
-** Search Algorithm
+* Search Algorithm
 
-*** Input
+** Input
 sequence of binders
 #+BEGIN_SRC
 let x1 = e1
@@ -175,17 +190,17 @@ let x2 = e2
 let xn = en
 #+END_SRC
 
-*** Output
+** Output
 either
 
-1. expression =e1 e2 .. en= such that
+1. expression =e1 e2 .. en= (closed in input binders) such that
 #+BEGIN_SRC
 e1 e2 .. en ~>* stuck t1 t2
 #+END_SRC
 
 2. =SAFE= if no witness found
 
-*** Outline
+** Outline
 
 #+BEGIN_SRC haskell
 -- | transitive small-step evaluation.
@@ -194,25 +209,29 @@ eval :: E -> (V, Subst)
 
 subst :: Subst -> [V] -> [V]
 
-apply :: V -> [V] -> E
+mkApps :: V -> [V] -> E
 
 data Result = Safe | Unsafe E
 
-check :: [E] -> Result
--- FIXME: the treatment of the input binders is super hand-wavy,
--- the syntax doesn't even mention `let` binders
-check bnds = fillInLams (last bnds) []
+-- | stitches a sequence of binders and a body expression into
+-- nested `let` binders
+stitchProgram :: [(X,E)] -> E -> E
+
+check :: [(X,E)] -> Result
+check bnds = fillInLams (fst (last bnds)) []
   where
-  fillInLams f args = case eval (apply f args) of
+  build f args = stitchProgram bnds (mkApps f args)
+
+  fillInLams f args = case eval (build f args) of
     ([[\x. e]], _)        -> fillInLams f (args `snoc` [[_]])
-    ([[stuck t1 t2]], su) -> Unsafe (apply f (subst su args))
+    ([[stuck t1 t2]], su) -> Unsafe (mkApps f (subst su args))
     ([[v]], _)            -> loop 1 f args
 
   loop n f args
     | n == numTries = Safe
-    | otherwise     = case eval (apply f args) of
+    | otherwise     = case eval (build f args) of
                         ([[stuck t1 t2]], su)
-                          -> Unsafe (apply f (subst su args))
+                          -> Unsafe (mkApps f (subst su args))
                         _ -> loop (n+1) f args
 #+END_SRC
 
