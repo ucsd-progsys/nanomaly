@@ -1,5 +1,4 @@
 * Type-Carrying
-
 ** Syntax
 
 #+BEGIN_SRC text
@@ -178,9 +177,7 @@ let x = v in e
 e[x/v]
 #+END_SRC
 
-
 * Search Algorithm
-
 ** Input
 sequence of binders
 #+BEGIN_SRC
