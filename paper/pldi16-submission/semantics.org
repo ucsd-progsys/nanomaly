@@ -163,6 +163,59 @@ e1 e3
 e2 e3
 #+END_SRC
 
+
+** Search Algorithm
+
+*** Input
+sequence of binders
+#+BEGIN_SRC
+let x1 = e1
+let x2 = e2
+...
+let xn = en
+#+END_SRC
+
+*** Output
+either
+
+1. expression =e1 e2 .. en= such that
+#+BEGIN_SRC
+e1 e2 .. en ~>* stuck t1 t2
+#+END_SRC
+
+2. =SAFE= if no witness found
+
+*** Outline
+
+#+BEGIN_SRC haskell
+-- | transitive small-step evaluation.
+-- returns final value and mapping from holes to concrete values
+eval :: E -> (V, Subst)
+
+subst :: Subst -> [V] -> [V]
+
+apply :: V -> [V] -> E
+
+data Result = Safe | Unsafe E
+
+check :: [E] -> Result
+-- FIXME: the treatment of the input binders is super hand-wavy,
+-- the syntax doesn't even mention `let` binders
+check bnds = fillInLams (last bnds) []
+  where
+  fillInLams f args = case eval (apply f args) of
+    ([[\x. e]], _)        -> fillInLams f (args `snoc` [[_]])
+    ([[stuck t1 t2]], su) -> Unsafe (apply f (subst su args))
+    ([[v]], _)            -> loop 1 f args
+
+  loop n f args
+    | n == numTries = Safe
+    | otherwise     = case eval (apply f args) of
+                        ([[stuck t1 t2]], su)
+                          -> Unsafe (apply f (subst su args))
+                        _ -> loop (n+1) f args
+#+END_SRC
+
 * Notes
 - HOW DO YOU FORMALIZE "no false positives"??
 
