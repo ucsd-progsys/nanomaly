@@ -42,7 +42,7 @@ force B bool
 force B t
   = stuck bool t
 force (_ : t1) t2
-  | unify t1 t2
+  | t1 ~ t2
   = gen t2
   | otherwise
   = stuck t1 t2
@@ -53,7 +53,7 @@ force (_ : t1) t2
 ```
 v1 + v2
 ~>
-[[force v1 nat + force v2 nat]]
+force v1 nat + force v2 nat
 
 if v1 then e1 else e2, true = force v1 bool
 ~>
@@ -67,9 +67,10 @@ if v1 then e1 else e2, stuck t1 t2 = force v1 bool
 ~>
 if stuck t1 t2 then e1 else e2
 
-(\x -> e) v
+v1 v2, (\x -> e) = force v1 (a -> b)
 ~>
 e[x/v]
+
 ```
 
 - note that we can get only get stuck at "primitive" operations

@@ -1,0 +1,173 @@
+* Type-Carrying
+
+** Syntax
+
+#+BEGIN_SRC
+E ::= V
+   |  E E
+   |  if E then E else E
+   |  E + E
+
+V ::= N
+   |  B
+   |  \X. E
+   |  _
+   |  stuck T T
+
+T ::= bool
+   |  nat
+   |  T -> T
+   |  a
+#+END_SRC
+
+- probably want to add datatypes
+- do we want to deal with env-passing in the description? or leave as implementation detail?
+
+** Semantics
+
+*** relies on `force` and `gen` helpers
+
+#+BEGIN_SRC
+gen : T -> V
+gen int      = N
+gen bool     = B
+gen a        = _
+gen (_ -> t) = \x. gen t
+
+force : V -> T -> V
+force N int
+  = N
+force N t
+  = stuck int t
+force B bool
+  = B
+force B t
+  = stuck bool t
+force (\x. e) (t1 -> t2)
+  = \x -> e
+force (\x. e) t
+  = stuck (a -> b) t
+force _ t
+  = gen t
+#+END_SRC
+
+*** Important single-step rules
+
+- note that we can get only get stuck at "primitive" operations
+- beta-reduction *does not* type-check the argument
+
+**** nats
+#+BEGIN_SRC
+n1 = force v1 nat
+n2 = force v2 nat
+n  = n1+n2
+-----------------------------------------------
+v1 + v2
+~>
+n
+
+stuck t1 t2 = force v1 nat
+--------------------------
+v1 + v2
+~>
+stuck t1 t2
+
+stuck t1 t2 = force v2 nat
+--------------------------
+v1 + v2
+~>
+stuck t1 t2
+#+END_SRC
+
+**** bools
+#+BEGIN_SRC
+true = force v1 bool
+--------------------
+if v1 then e1 else e2
+~>
+e1
+
+false = force v1 bool
+---------------------
+if v1 then e1 else e2
+~>
+e2
+
+stuck t1 t2 = force v1 bool
+---------------------------
+if v1 then e1 else e2
+~>
+stuck t1 t2
+#+END_SRC
+
+**** lambdas
+#+BEGIN_SRC
+(\x. e) = force v1 (a -> b)
+-----------------------------
+v1 v2
+~>
+e[x/v2]
+
+stuck t1 t2 = force v1 (a -> b)
+-------------------------------
+v1 v2
+~>
+(stuck t1 t2) v2
+#+END_SRC
+
+**** `stuck` bubbles up
+#+BEGIN_SRC
+if stuck t1 t2 then e1 else e2
+~>
+stuck t1 t2
+
+stuck t1 t2 + e
+~>
+stuck t1 t2
+
+e + stuck t1 t2
+~>
+stuck t1 t2
+
+(stuck t1 t2) v
+~>
+stuck t1 t2
+#+END_SRC
+
+**** other rules
+#+BEGIN_SRC
+e1 ~> e2
+--------
+if e1 then e3 else e4
+~>
+if e2 then e3 else e4
+
+e1 ~> e2
+--------
+e1 + e3
+~>
+e2 + e3
+
+e1 ~> e2
+--------
+v + e1
+~>
+v + e2
+
+e1 ~> e2
+--------
+e1 e3
+~>
+e2 e3
+#+END_SRC
+
+* Notes
+- HOW DO YOU FORMALIZE "no false positives"??
+
+- make a lattice of types?
+  - what is the edge relation?
+
+- failing "as late as possible"
+  - given a path through CFG that crashes at location 't'
+  - there is no input that goes beyond 't'
+  - t < t'
