@@ -14,10 +14,13 @@ V ::= N
    |  _
    |  stuck T T
 
+N ::= 0..
+
+B ::= true | false
+
 T ::= bool
    |  nat
    |  T -> T
-   |  a
 #+END_SRC
 
 - probably want to add datatypes
@@ -25,13 +28,12 @@ T ::= bool
 
 ** Semantics
 
-*** relies on `force` and `gen` helpers
+*** relies on =force= and =gen= helpers
 
 #+BEGIN_SRC
 gen : T -> V
 gen int      = N
 gen bool     = B
-gen a        = _
 gen (_ -> t) = \x. gen t
 
 force : V -> T -> V
@@ -46,7 +48,7 @@ force B t
 force (\x. e) (t1 -> t2)
   = \x -> e
 force (\x. e) t
-  = stuck (a -> b) t
+  = stuck (T -> T) t
 force _ t
   = gen t
 #+END_SRC
@@ -102,13 +104,13 @@ stuck t1 t2
 
 **** lambdas
 #+BEGIN_SRC
-(\x. e) = force v1 (a -> b)
+(\x. e) = force v1 (T -> T)
 -----------------------------
 v1 v2
 ~>
 e[x/v2]
 
-stuck t1 t2 = force v1 (a -> b)
+stuck t1 t2 = force v1 (T -> T)
 -------------------------------
 v1 v2
 ~>
