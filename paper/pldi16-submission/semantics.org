@@ -11,7 +11,7 @@
      |  B
      |  \X. E
      |  _
-     | stuck T T
+     |  stuck
 
   N ::= 0..
 
@@ -38,18 +38,18 @@ gen (_ -> t) = \x. gen t
 force : V -> T -> V
 force _ t
   = gen t
-force N int
-  = N
+force n int
+  = n
 force v int
-  = stuck int (typeof v)
-force B bool
-  = B
+  = stuck
+force b bool
+  = b
 force v bool
-  = stuck bool (typeof v)
+  = stuck
 force (\x. e) (t1 -> t2)
   = \x -> e
 force v (t1 -> t2)
-  = stuck (T -> T) (typeof v)
+  = stuck
 #+END_SRC
 
 *** Important single-step rules
@@ -69,18 +69,18 @@ v1 + v2
 n
 
 Rule EPlus-Bad1
-stuck t1 t2 = force v1 nat
+stuck = force v1 nat
 --------------------------
 v1 + v2
 ~>
-stuck t1 t2
+stuck
 
 Rule EPlus-Bad2
-stuck t1 t2 = force v2 nat
+stuck = force v2 nat
 --------------------------
 v1 + v2
 ~>
-stuck t1 t2
+stuck
 #+END_SRC
 
 **** bools
@@ -100,11 +100,11 @@ if v1 then e1 else e2
 e2
 
 EIf-Bad
-stuck t1 t2 = force v1 bool
+stuck = force v1 bool
 ---------------------------
 if v1 then e1 else e2
 ~>
-stuck t1 t2
+stuck
 #+END_SRC
 
 **** lambdas
@@ -117,34 +117,38 @@ v1 v2
 e[x/v2]
 
 EApp-Bad
-stuck t1 t2 = force v1 (T -> T)
+stuck = force v1 (T -> T)
 -------------------------------
 v1 v2
 ~>
-(stuck t1 t2) v2
+stuck v2
 #+END_SRC
 
 **** =stuck= bubbles up
 #+BEGIN_SRC
-if stuck t1 t2 then e1 else e2
+if stuck then e1 else e2
 ~>
-stuck t1 t2
+stuck
 
-stuck t1 t2 + e
+stuck + e
 ~>
-stuck t1 t2
+stuck
 
-e + stuck t1 t2
+e + stuck
 ~>
-stuck t1 t2
+stuck
 
-(stuck t1 t2) v
+stuck e
 ~>
-stuck t1 t2
+stuck
 
-let x = stuck t1 t2 in e
+e stuck
 ~>
-stuck t1 t2
+stuck
+
+let x = stuck in e
+~>
+stuck
 #+END_SRC
 
 **** other rules
@@ -205,7 +209,7 @@ either
 
 1. expression =e1 e2 .. en= (closed in input binders) such that
 #+BEGIN_SRC
-e1 e2 .. en ~>* stuck t1 t2
+e1 e2 .. en ~>* stuck
 #+END_SRC
 
 2. =SAFE= if no witness found
@@ -234,14 +238,14 @@ check bnds = fillInLams (fst (last bnds)) []
   build f args = stitchProgram bnds (mkApps f args)
 
   fillInLams f args = case eval (build f args) of
-    ([[\x. e]], _)        -> fillInLams f (args `snoc` [[_]])
-    ([[stuck t1 t2]], su) -> Unsafe (mkApps f (subst su args))
-    ([[v]], _)            -> loop 1 f args
+    ([[\x. e]], _)  -> fillInLams f (args `snoc` [[_]])
+    ([[stuck]], su) -> Unsafe (mkApps f (subst su args))
+    ([[v]], _)      -> loop 1 f args
 
   loop n f args
     | n == numTries = Safe
     | otherwise     = case eval (build f args) of
-                        ([[stuck t1 t2]], su)
+                        ([[stuck]], su)
                           -> Unsafe (mkApps f (subst su args))
                         _ -> loop (n+1) f args
 #+END_SRC
@@ -249,7 +253,7 @@ check bnds = fillInLams (fst (last bnds)) []
 * Notes
 - HOW DO YOU FORMALIZE "no false positives"??
   1. every =E= reduces to some =V= (aka every normal form is a =V=)
-    - ie the only way to get stuck is by stepping to =stuck T T=
+    - ie the only way to get stuck is by stepping to =stuck=
     - only way to step to =stuck= is via a "failed" call to =force=
   2. if =e ~>* stuck=, then type-checker would have rejected =e=
     - strange formulation..
@@ -286,6 +290,14 @@ check bnds = fillInLams (fst (last bnds)) []
   # - case EPlus-{Good,Bad1,Bad2}: single-step produces a value directly
   # - case EIf-{Bad}: single-step produces a value directly
 
+- Proof of (2)
+  - want to do some induction on eval derivation
+  - note that =force= encapsulates places where program could get stuck
+    - ie all =stuck= terms are created by =force=
+  - note that =gen= is permissive, ie =gen a = _=
+    - (only relevant for polymorphic lang)
+  - note that =EApp= *does not* do any type checking beyond ensuring
+    that =e1= is a function
 
 - make a lattice of types?
   - what is the edge relation?
@@ -293,4 +305,5 @@ check bnds = fillInLams (fst (last bnds)) []
 - failing "as late as possible"
   - given a path through CFG that crashes at location 't'
   - there is no trace that goes beyond 't'
-    - ¬∃t'. t < t' 
+    - ¬∃t'. t < t'
+
