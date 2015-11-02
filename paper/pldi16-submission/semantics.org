@@ -1,6 +1,5 @@
 * Type-Carrying
 ** Syntax
-
 #+BEGIN_SRC text
   E ::= V
      |  E E
@@ -12,7 +11,7 @@
      |  B
      |  \X. E
      |  _
-     |  stuck T T
+     | stuck T T
 
   N ::= 0..
 
@@ -37,20 +36,20 @@ gen bool     = B
 gen (_ -> t) = \x. gen t
 
 force : V -> T -> V
-force N int
-  = N
-force N t
-  = stuck int t
-force B bool
-  = B
-force B t
-  = stuck bool t
-force (\x. e) (t1 -> t2)
-  = \x -> e
-force (\x. e) t
-  = stuck (T -> T) t
 force _ t
   = gen t
+force N int
+  = N
+force v int
+  = stuck int (typeof v)
+force B bool
+  = B
+force v bool
+  = stuck bool (typeof v)
+force (\x. e) (t1 -> t2)
+  = \x -> e
+force v (t1 -> t2)
+  = stuck (T -> T) (typeof v)
 #+END_SRC
 
 *** Important single-step rules
@@ -60,6 +59,7 @@ force _ t
 
 **** nats
 #+BEGIN_SRC
+Rule EPlus-Good
 n1 = force v1 nat
 n2 = force v2 nat
 n  = n1+n2
@@ -68,12 +68,14 @@ v1 + v2
 ~>
 n
 
+Rule EPlus-Bad1
 stuck t1 t2 = force v1 nat
 --------------------------
 v1 + v2
 ~>
 stuck t1 t2
 
+Rule EPlus-Bad2
 stuck t1 t2 = force v2 nat
 --------------------------
 v1 + v2
@@ -83,18 +85,21 @@ stuck t1 t2
 
 **** bools
 #+BEGIN_SRC
+EIf-Good1
 true = force v1 bool
 --------------------
 if v1 then e1 else e2
 ~>
 e1
 
+EIf-Good2
 false = force v1 bool
 ---------------------
 if v1 then e1 else e2
 ~>
 e2
 
+EIf-Bad
 stuck t1 t2 = force v1 bool
 ---------------------------
 if v1 then e1 else e2
@@ -104,12 +109,14 @@ stuck t1 t2
 
 **** lambdas
 #+BEGIN_SRC
+EApp-Good
 (\x. e) = force v1 (T -> T)
 -----------------------------
 v1 v2
 ~>
 e[x/v2]
 
+EApp-Bad
 stuck t1 t2 = force v1 (T -> T)
 -------------------------------
 v1 v2
@@ -168,6 +175,12 @@ e2 e3
 
 e1 ~> e2
 --------
+v e1
+~>
+v e2
+
+e1 ~> e2
+--------
 let x = e1 in e3
 ~>
 let x = e2 in e2
@@ -198,7 +211,6 @@ e1 e2 .. en ~>* stuck t1 t2
 2. =SAFE= if no witness found
 
 ** Outline
-
 #+BEGIN_SRC haskell
 -- | transitive small-step evaluation.
 -- returns final value and mapping from holes to concrete values
@@ -213,6 +225,8 @@ data Result = Safe | Unsafe E
 -- | stitches a sequence of binders and a body expression into
 -- nested `let` binders
 stitchProgram :: [(X,E)] -> E -> E
+stitchProgram []           b = b
+stitchProgram ((x,e):bnds) b = [[let x = e in]] (stitchProgram bnds b)
 
 check :: [(X,E)] -> Result
 check bnds = fillInLams (fst (last bnds)) []
@@ -234,11 +248,49 @@ check bnds = fillInLams (fst (last bnds)) []
 
 * Notes
 - HOW DO YOU FORMALIZE "no false positives"??
+  1. every =E= reduces to some =V= (aka every normal form is a =V=)
+    - ie the only way to get stuck is by stepping to =stuck T T=
+    - only way to step to =stuck= is via a "failed" call to =force=
+  2. if =e ~>* stuck=, then type-checker would have rejected =e=
+    - strange formulation..
+  3. better than (2), if we find =v1..vn= s.t.
+     =f v1 .. vn ~>* stuck, tr=, there is no =v1'..vn'= s.t.
+     =f v1' .. vn' ~>* v, tr'= where =tr < tr'=
+    - ie no other inputs could make further progress /along the same path/
+
+
+- Proof of (1)
+  - Suppose =t= not a value, =t= cannot be a normal form
+  - Lemma =Stuck-Bubble=: any term containing =stuck= will reduce to =stuck=
+  - case =v=: trivial
+  - case =e1 e2=: 
+    1. if =e1 = v1= and =e2 = v2=:
+       either =EApp-Good= or =EApp-Bad= must apply, as =force v (T -> T)=
+       returns =(\x.e)= or =stuck= for all =v=.
+    2. if =e1 = v=: then =e2 ~> e3= by ind.hyp., so =EApp-Step2= applies
+    3. otherwise =e1 ~> e3= by ind.hyp., so =EApp-Step1= applies
+  - case =if e1 then e2 else e2=:
+    1. if =e1 = v=:
+       either =EIf-Good1= or =EIf-Good2= or =EIf-Bad= must apply, as =force v bool=
+       returns =true= =false= or =stuck= for all =v=.
+    2. otherwise =e1 ~> e11= by ind.hyp. so =EIf-Step= applies.
+  - case =e1 + e2=:
+    1. if =e1 = v1= and =e2 = v2=:
+       either =EPlus-Good= or =EPlus-Bad1= or =EPlus-Bad2= must apply, as =force v int=
+       returns =n= or =stuck= for all =v=.
+    2. if =e1 = v=: then =e2 ~> e3= by ind.hyp., so =EPlus-Step2= applies
+    3. otherwise =e1 ~> e3= by ind.hyp., so =EPlus-Step1= applies
+  - case =let x = e1 in e2=:
+    1. if =e1 = v1=, =ELet-Sub= applies
+    2. otherwise =e1 ~> e3= by ind.hyp., so =ELet-Step= applies
+  # - case EPlus-{Good,Bad1,Bad2}: single-step produces a value directly
+  # - case EIf-{Bad}: single-step produces a value directly
+
 
 - make a lattice of types?
   - what is the edge relation?
 
 - failing "as late as possible"
   - given a path through CFG that crashes at location 't'
-  - there is no input that goes beyond 't'
-  - t < t'
+  - there is no trace that goes beyond 't'
+    - ¬∃t'. t < t' 
