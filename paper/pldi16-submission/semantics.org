@@ -283,7 +283,7 @@ check numTries bnds = case find (isStuck . fst) (take numTries results) of
      relaxed signature that would have been reasonable, but even that
      failed.
   5. if =f v1 .. vn ~>* stuck=, no matter what type you try to assign
-     to =f=, there exists some inputs =v1 .. vn= that will make =f= stuck.
+     to =f=, there exists some inputs =w1 .. wn= that will make =f= stuck.
      - not necessarily true if we use js-style =fun= type.
        - could stop at lambda, waiting for inputs
 
@@ -350,11 +350,36 @@ check numTries bnds = case find (isStuck . fst) (take numTries results) of
   - suppose =f : s -> r, s </t=, \forall =v : s=. =f v ~> stuck=
   - Lemma: only =force= instantiates hole with concrete value
     - Proof: by case analysis on rules
+    - Corollary 1: only =force= causes refinement of "inferred" type
   - Lemma: if we infer a non-fully polymorphic type for =t=
     (i.e. anything other than =forall a. a=), we *must* have
     called =force= on the argument.
     - Proof: by induction on eval derivation?
-  -
+  - in the following, ~k~ is evaluation-step index
+  - Lemma: \forall k. t_k+1 < t_k
+    - Proof: simple induction on evaluation rules
+  - Lemma: \forall 0 \leq k \leq n. any v : s </ t_k
+    will get *stuck* before *k* steps.
+    - Proof: suppose v : s </ t_k+1, show that f v ~>_k+1 stuck
+        ie. f v gets stuck in *at most* k+1 steps
+      1. case s </ t_k:
+         apply inductive hypothesis, f v ~>_k stuck
+      2. case s < t_k, *but* s </ t_k+1:
+         - by corollary 1 we must have called =force= at step k+1
+         - examine rules that use =force=:
+           - Rule EPlus-Good:
+             forces v1 and v2 to be nat, but we assumed s </ nat, so =force= could not have succeeded, impossible.
+           - Rule EPlus-Bad1 (EPlus-Bad2):
+             forces v1 to be nat. possible since we assumed s </ nat, but gets stuck.
+           - Rule EIf-Good1 (EIf-Good2):
+             similar to EPlus-Good, impossible
+           - Rule EIf-Bad:
+             similar to EPlus-Bad, possible and we get stuck
+           - Rule EApp-Good:
+             forces v1 to be (_ -> _), we assumed s </ (_ -> _), so =force= could not have succeeded, impossible.
+           - Rule EApp-Bad:
+             
+
 
 - make a lattice of types?
   - what is the edge relation?

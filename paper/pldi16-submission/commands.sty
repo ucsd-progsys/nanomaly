@@ -1,0 +1,65 @@
+\usepackage{xcolor}
+\definecolor{green}{rgb}{0,1,0}
+\definecolor{red}{rgb}{1,0,0}
+\definecolor{green}{rgb}{0,0,1}
+\definecolor{orange}{rgb}{1,0.5,0}
+\definecolor{dvcolor}{rgb}{1,0.5,0.5}
+\def\mynote#1{{\sf $\clubsuit$ #1$\clubsuit$}}
+\def\RJ#1{\textcolor{red}{\sf RJ:$\clubsuit$ #1$\clubsuit$}}
+\def\ES#1{\textcolor{blue}{\sf ES:$\clubsuit$ #1$\clubsuit$}}
+
+\newcommand\etc{\textit{etc.}\xspace}
+\newcommand\eg{\textit{e.g.}\xspace}
+\newcommand\ie{\textit{i.e.}\xspace}
+\newcommand\ala{\textit{a la}\xspace}
+\newcommand\etal{\textit{et al.}\xspace}
+
+\def\emphbf#1{\textbf{\emph{#1}}}
+\def\spmid{\ \mid \ }
+
+\newcommand{\C}{\textsc{C}\xspace}
+
+% Expressions
+\newcommand\efun[2]{\ensuremath{\lambda #1. #2}}
+\newcommand\eapp[2]{\ensuremath{#1 \ #2}}
+\newcommand\eplus[2]{\ensuremath{#1 + #2}}
+% \newcommand\edapp[2]{\ensuremath{#1 \ \overline{#2}}}
+\newcommand\eif[3]{\ensuremath{\mathtt{if}\ #1\ \mathtt{then}\ #2\ \mathtt{else}\ #3}}
+\newcommand\elet[3]{\ensuremath{\mathtt{let}\ #1 = #2\ \mathtt{in}\ #3}}
+% \newcommand\erec[3]{\ensuremath{\mu #1.\lambda #2. #3}}
+% \newcommand\etabs[2]{\ensuremath{\left[\Lambda #1\right] #2}}
+% \newcommand\etapp[2]{\ensuremath{#1 \left[ #2 \right]}}
+\newcommand\etrue{\ensuremath{\mathtt{true}}\xspace}
+\newcommand\efalse{\ensuremath{\mathtt{false}}\xspace}
+% \newcommand\ptrue{\ensuremath{\mathit{true}}\xspace}
+% \newcommand\pfalse{\ensuremath{\mathit{false}}\xspace}
+% \newcommand\eletsub[2]{\ensuremath{#1 #2}}
+\newcommand\hole[1]{\ensuremath{\square_{#1}}\xspace}
+\newcommand\stuck{\ensuremath{\mathtt{stuck}\xspace}}
+
+% Types
+\newcommand\tbool{\ensuremath{\mathtt{bool}}\xspace}
+\newcommand\tnat{\ensuremath{\mathtt{nat}}\xspace}
+% \newcommand\tref[4]{\ensuremath{\{ \tbind{#1}{#2^{#3}} \mid #4 \}}}
+% \newcommand\tttref[4]{\ensuremath{{\{ \ttbind{#1}{#2^{#3}} \mid \mathtt{#4} \}}}}
+\newcommand\tfun[2]{\ensuremath{{#1} \rightarrow #2}}
+% \newcommand\tfun[3]{\ensuremath{\tbind{#1}{#2} \rightarrow #3}}
+% \newcommand\tabs[2]{\ensuremath{\forall #1 . #2}}
+
+% Evaluation
+\newcommand\stepsto[2]{\ensuremath{#1 \hookrightarrow #2}}
+\newcommand\forcesym{\ensuremath{\mathtt{narrow}}}
+\newcommand\force[2]{\ensuremath{\forcesym\ #1\ #2}}
+\newcommand\su{\ensuremath{\theta}}
+\newcommand\rulename[1]{\textsc{#1}\xspace}
+\newcommand{\recontext}{\rulename{E-Context}}
+\newcommand{\restuck}{\rulename{E-Stuck}}
+\newcommand{\replusgood}{\rulename{E-Plus-Good}}
+\newcommand{\replusbadone}{\rulename{E-Plus-Bad1}}
+\newcommand{\replusbadtwo}{\rulename{E-Plus-Bad2}}
+\newcommand{\reifgoodone}{\rulename{E-If-Good1}}
+\newcommand{\reifgoodtwo}{\rulename{E-If-Good2}}
+\newcommand{\reifbad}{\rulename{E-If-Bad}}
+
+\newcommand{\relDescription}[1]{\ensuremath{\textrm{\textbf{#1}}}}
+\newcommand{\judgementHead}[2]{\ensuremath{\relDescription{#1}\hfill\fbox{#2}}}

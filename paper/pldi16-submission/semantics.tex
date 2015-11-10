@@ -1,0 +1,51 @@
+
+\begin{itemize}
+\item how do we run ill-typed programs?
+\item for a lang like ocaml, dynamic semantics are independent of static
+  semantics, just lambda calculus. so no problem to run ill-typed
+  program
+\item but what about functions? what type of arguments should we pass? consider
+
+\begin{lstlisting}
+let f x = 
+  let y = 1 + x in
+    1. +. y
+\end{lstlisting}
+
+does \texttt{f} take an int, float, string? int and float are both
+somewhat plausible, but string or anything else is ``clearly'' bogus. so
+we cannot provide \emph{completely arbitrary} inputs to
+\texttt{f}. Instead, we call \texttt{f} with a \emph{hole}, written
+\hole{}, which is a placeholder for a value whose type we have not
+yet determined. As we execute the program, we instantiate holes with
+concrete values as demanded by the primitive operations in the
+program. For example, the hole we pass to f will be instantiated to an
+int when we reach the \lstinline{1 + x} term. Thus, y will be an int as
+well, and the program will get stuck at \lstinline{1. +. y}. \ES{this
+  reads more like overview text..}
+
+Next, we formalize our search for witnesses to type-errors. We present
+the syntax and dynamic semantics of a simple lambda calculus with
+integers and booleans, extended with our notion of holes, as well as our
+search algorithm. We prove that our system \emph{soundly} finds
+witnesses, \ie if we find a witness then there is no possible typing for
+the input program.
+
+\subsection{Syntax}
+\label{sec:syntax}
+\input{syntax.tex}
+
+\subsection{Semantics}
+\label{sec:semantics}
+\input{evaluation.tex}
+
+
+\item values are tagged with their types, just like ``untyped'' langs
+\item special ``hole'' value whose type is not yet known, used for function args
+\item on-the-fly unification to determine ``correct'' type for holes
+\end{itemize}
+
+% Algorithm:
+%   Input: ML Program (let f1 = e1 in let f2 = e2 in ... e)
+%   Output: 'safe' or 'fn v1 .. vn' where 'fn v1 .. vn' gets stuck
+

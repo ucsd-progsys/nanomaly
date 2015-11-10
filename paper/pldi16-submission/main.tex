@@ -9,7 +9,8 @@
 %
 % the following standard packages may be helpful, but are not required
 %
-\usepackage{SIunits}            % typset units correctly
+\usepackage{amssymb}
+% \usepackage{SIunits}            % typset units correctly
 \usepackage{courier}            % standard fixed width font
 \usepackage[scaled]{helvet} % see www.ctan.org/get/macros/latex/required/psnfss/psnfss2e.pdf
 \usepackage{url}                  % format URLs
@@ -18,8 +19,15 @@
 \usepackage[colorlinks=true,allcolors=blue,breaklinks,draft=false]{hyperref}   % hyperlinks, including DOIs and URLs in bibliography
 % known bug: http://tex.stackexchange.com/questions/1522/pdfendlink-ended-up-in-different-nesting-level-than-pdfstartlink
 \newcommand{\doi}[1]{doi:~\href{http://dx.doi.org/#1}{\Hurl{#1}}}   % print a hyperlinked DOI
+\usepackage{xspace}
+\usepackage{commands}
 
-
+\usepackage{amsthm}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\usepackage[inference]{semantic}
 
 \begin{document}
 
@@ -56,15 +64,7 @@
 \section{Introduction}          % 1 page
 \section{Overview}              % 2 pages?
 \section{Type-carrying Semantics} % 2 pages
-\begin{itemize}
-\item values are tagged with their types, just like ``untyped'' langs
-\item special ``hole'' value whose type is not yet known, used for function args
-\item on-the-fly unification to determine ``correct'' type for holes
-\end{itemize}
-
-% Algorithm:
-%   Input: ML Program (let f1 = e1 in let f2 = e2 in ... e)
-%   Output: 'safe' or 'fn v1 .. vn' where 'fn v1 .. vn' gets stuck
+\input{semantics.tex}
 
 
 

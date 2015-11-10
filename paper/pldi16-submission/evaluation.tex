@@ -1,0 +1,50 @@
+\begin{figure}
+\judgementHead{Evaluation}{\stepsto{e, \su}{e, \su}}
+$$
+\inference[\recontext]{\stepsto{e, \su}{e_1, \su_1}}{\stepsto{C[e], \su}{C[e_1], \su_1}}
+$$
+
+$$
+\inference[\restuck]{}{\stepsto{C[\stuck], \su}{\stuck, \su}}
+$$
+
+$$
+\inference[\replusgood]
+  {n_1, \su_2 = \force{v_1}{\tnat} \\
+   n_2, \su_3 = \force{v_2}{\tnat} \\ 
+   n = \eplus{n_1}{n_2}}
+  {\stepsto{\eplus{v_1}{v_2}, \su_1}{n, \su_1\su_2\su_3}}
+$$
+
+$$
+\inference[\replusbadone]
+  {\stuck, \su_2 = \force{v_1}{\tnat}}
+  {\stepsto{\eplus{v_1}{v_2}, \su_1}{\stuck, \su_1\su_2}}
+$$
+
+$$
+\inference[\replusbadtwo]
+  {\stuck, \su_2 = \force{v_2}{\tnat}}
+  {\stepsto{\eplus{v_1}{v_2}, \su_1}{\stuck, \su_1\su_2}}
+$$
+
+$$
+\inference[\reifgoodone]
+  {\etrue, \su_2 = \force{v}{\tbool}}
+  {\stepsto{\eif{v}{e_1}{e_2}, \su_1}{e_1, \su_1\su_2}}
+$$
+
+$$
+\inference[\reifgoodtwo]
+  {\efalse, \su_2 = \force{v}{\tbool}}
+  {\stepsto{\eif{v}{e_1}{e_2}, \su_1}{e_2, \su_1\su_2}}
+$$
+
+$$
+\inference[\reifbad]
+  {\stuck, \su_2 = \force{v}{\tbool}}
+  {\stepsto{\eif{v}{e_1}{e_2}, \su_1}{\stuck, \su_1\su_2}}
+$$
+\caption{Evaluation relation}
+\label{fig:evaluation}
+\end{figure}
