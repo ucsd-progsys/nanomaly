@@ -16,7 +16,7 @@ does \texttt{f} take an int, float, string? int and float are both
 somewhat plausible, but string or anything else is ``clearly'' bogus. so
 we cannot provide \emph{completely arbitrary} inputs to
 \texttt{f}. Instead, we call \texttt{f} with a \emph{hole}, written
-\hole{}, which is a placeholder for a value whose type we have not
+\ehole{}, which is a placeholder for a value whose type we have not
 yet determined. As we execute the program, we instantiate holes with
 concrete values as demanded by the primitive operations in the
 program. For example, the hole we pass to f will be instantiated to an
@@ -37,7 +37,7 @@ the input program.
 
 \subsection{Semantics}
 \label{sec:semantics}
-\input{evaluation.tex}
+\input{operational.tex}
 
 
 \item values are tagged with their types, just like ``untyped'' langs
