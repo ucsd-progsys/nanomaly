@@ -348,7 +348,7 @@ check numTries bnds = case find (isStuck . fst) (take numTries results) of
 - Proof of (5)
   - what is the inductive argument for case =s </ t=??
   - suppose =f : s -> r, s </t=, \forall =v : s=. =f v ~> stuck=
-  - Lemma: only =force= instantiates hole with concrete value
+  - Lemma: only =force= instantiates holes with concrete value
     - Proof: by case analysis on rules
     - Corollary 1: only =force= causes refinement of "inferred" type
   - Lemma: if we infer a non-fully polymorphic type for =t=

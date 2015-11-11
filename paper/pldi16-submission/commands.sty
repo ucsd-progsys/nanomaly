@@ -19,6 +19,8 @@
 
 \newcommand{\C}{\textsc{C}\xspace}
 
+\newcommand{\lang}{\ensuremath{\lambda^{H}}\xspace}
+
 % Expressions
 \newcommand\efun[2]{\ensuremath{\lambda #1. #2}}
 \newcommand\eapp[2]{\ensuremath{#1 \ #2}}
@@ -35,7 +37,7 @@
 % \newcommand\pfalse{\ensuremath{\mathit{false}}\xspace}
 % \newcommand\eletsub[2]{\ensuremath{#1 #2}}
 \newcommand\ehole[1]{\ensuremath{\square_{#1}}\xspace}
-\newcommand\stuck{\ensuremath{\mathtt{stuck}\xspace}}
+\newcommand\stuck{\ensuremath{\mathtt{stuck}}\xspace}
 
 % Types
 \newcommand\tbool{\ensuremath{\mathtt{bool}}\xspace}
@@ -46,17 +48,29 @@
 % \newcommand\tfun[3]{\ensuremath{\tbind{#1}{#2} \rightarrow #3}}
 % \newcommand\tabs[2]{\ensuremath{\forall #1 . #2}}
 \newcommand\thole[1]{\ensuremath{\square_{#1}}\xspace}
+\newcommand\hastype[2]{\ensuremath{{#1} \colon {#2}}}
+\newcommand\tsub[2]{\ensuremath{{#1} \preceq {#2}}}
+\newcommand\tnsub[2]{\ensuremath{{#1} \npreceq {#2}}}
+\newcommand\tincompat[2]{\ensuremath{\tnsub{#1}{#2} \land \tnsub{#2}{#1}}}
+\newcommand\typeof[1]{\ensuremath{\mathsf{typeof}(#1)}\xspace}
+\newcommand\ptype[2]{\ensuremath{\mathsf{partial}_{#1}(#2)}\xspace}
+
 
 % Evaluation
 \newcommand\pair[2]{\langle #1, #2 \rangle}
 \newcommand\step[4]{\stepsto{\pair{#1}{#2}}{\pair{#3}{#4}}}
+\newcommand\stepi[5]{\stepstoi{#1}{\pair{#2}{#3}}{\pair{#4}{#5}}}
+\newcommand\steps[4]{\stepstot{\pair{#1}{#2}}{\pair{#3}{#4}}}
 \newcommand\stepsto[2]{\ensuremath{#1 \hookrightarrow #2}}
+\newcommand\stepstot[2]{\ensuremath{#1 \hookrightarrow^{*} #2}}
+\newcommand\stepstoi[3]{\ensuremath{#2 \hookrightarrow^{#1} #3}}
 \newcommand\forcesym{\ensuremath{\mathtt{narrow}}\xspace}
 \newcommand\gensym{\ensuremath{\mathtt{gen}}\xspace}
 \newcommand\force[2]{\ensuremath{\forcesym(#1, #2)}}
 \newcommand\gen[1]{\ensuremath{\gensym\ #1}}
 \newcommand\su{\ensuremath{\theta}}
 \newcommand\emptysu{\ensuremath{\varnothing}}
+\newcommand\subst[2]{\ensuremath{#1(#2)}}
 \newcommand\sub[2]{\ensuremath{\left[#2/#1\right]}}
 \newcommand\rulename[1]{\textsc{#1}\xspace}
 \newcommand{\recontext}{\rulename{E-Context}}

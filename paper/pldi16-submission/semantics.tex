@@ -24,9 +24,14 @@ int when we reach the \lstinline{1 + x} term. Thus, y will be an int as
 well, and the program will get stuck at \lstinline{1. +. y}. \ES{this
   reads more like overview text..}
 
+% \item values are tagged with their types, just like ``untyped'' langs
+% \item special ``hole'' value whose type is not yet known, used for function args
+% \item on-the-fly unification to determine ``correct'' type for holes
+\end{itemize}
+
 Next, we formalize our search for witnesses to type-errors. We present
-the syntax and dynamic semantics of a simple lambda calculus with
-integers and booleans, extended with our notion of holes, as well as our
+the syntax and dynamic semantics of \lang -- a simple lambda calculus with
+integers and booleans, extended with our notion of holes -- as well as our
 search algorithm. We prove that our system \emph{soundly} finds
 witnesses, \ie if we find a witness then there is no possible typing for
 the input program.
@@ -35,15 +40,133 @@ the input program.
 \label{sec:syntax}
 \input{syntax.tex}
 
+\autoref{fig:syntax} describes the syntax of \lang, a simple lambda
+calculus with numbers and booleans. As we are specifically interested in
+programs that \emph{do} go wrong, we include an explicit \stuck state in
+our syntax.
+
+\paragraph{Holes}
+\label{sec:holes}
+The main novelty in our system is the notion of a ``hole'', written
+\ehole{}, which represents an uninstantiated value. Importantly, we do
+not even know what type the value should have. Holes may also appear in
+types, where they may be thought of as type variables that we will not
+generalize over.
+
 \subsection{Semantics}
 \label{sec:semantics}
 \input{operational.tex}
 
+\autoref{fig:operational} describes the small-step contextual reduction
+semantics for \lang. The evaluation relation is parameterized by a pair
+of \forcesym and \gensym functions that handle runtime type-checking and
+instantiation of holes respectively. The relation must also maintain a
+substitution \su, mapping holes to concrete values, so that we do not
+instantiate the same hole with different values in different contexts,
+and importantly, so that we can report a concrete witness to any
+discovered type errors.
 
-\item values are tagged with their types, just like ``untyped'' langs
-\item special ``hole'' value whose type is not yet known, used for function args
-\item on-the-fly unification to determine ``correct'' type for holes
-\end{itemize}
+Note that each primitive reduction step -- addition, if-elimination, and
+function application -- uses \forcesym to ensure that values have the
+appropriate type (and that holes are instantiated) before continuing the
+computation. Additionally, beta-reduction \emph{does not} type-check its
+argument, it only ensures that the function can be applied.
+
+\begin{thm}
+\label{thm:all-reduce}
+  Every closed expression $e$ reduces to a value $v$ (which may be \stuck).
+\end{thm}
+% \begin{proof}%[Proof of \autoref{thm:all-reduce}]
+%   Simple induction on the evaluation relation.
+% \end{proof}
+
+\subsection{Soundness}
+\label{sec:soundness}
+We now show that our evaluation relation conservatively instantiates
+holes, \ie if, given a function $f$, we report that 
+$\steps{\eapp{f}{\ehole{}}}{\emptysu}{\stuck}{\su}$,
+then for any type $t$ you assign to $f$, there exists an input \hastype{v}{t} such that
+$\steps{\eapp{f}{v}}{\emptysu}{\stuck}{\su}$.
+
+Intuitively, we can think of the evaluation of \eapp{f}{\ehole{}} as
+computing a \emph{partial type} -- a type that may contain holes -- for
+$f$. We can extract this type from the result of evaluation as follows.
+
+\begin{defn}
+\label{defn:partial-type}
+  If \stepi{i}{\eapp{f}{\ehole{}}}{\emptysu}{e}{\su}, then the $i$th
+  \emph{partial type} of f, written \ptype{i}{f},
+  is \tfun{\typeof{\subst{\su}{\ehole{}}}}{\typeof{e}}.
+
+  We will omit the subscript when we wish to refer to the final partial
+  type. \ES{need to define typeof..}
+\end{defn}
+
+We also define a refinement relation between types.
+
+\begin{defn}
+\label{defn:subtyping}
+  A type $s$ is a \emph{refinement} of a type $t$, written \tsub{s}{t}, if
+  $\exists \su.\ t = \subst{\su}{s}$.
+\end{defn}
+
+Given these two definitions, we show that each evaluation step
+refines the partial type of $f$.
+
+\begin{lem}
+\label{lem:refine-partial}
+  For all $k$, \tsub{\ptype{k+1}{f}}{\ptype{k}{f}}.
+\end{lem}
+
+Finally, we show that any value that is not compatible with the $k$th
+partial type of $f$ will cause $f$ to get stuck in \emph{at most} $k$
+steps.
+
+\begin{lem}
+\label{lem:k-stuck}
+  For any \hastype{v}{t} that is not compatible with
+  the input of \ptype{k}{f}, \stepi{k}{\eapp{f}{v}}{\emptysu}{\stuck}{\su}.
+\end{lem}
+\begin{proof}
+  By induction on $k$.
+  
+  Let $s_k = \ptype{k}{f}$. Suppose \hastype{v}{\tnsub{t}{s_{k+1}}}, we
+  will show that \stepi{k+1}{\eapp{f}{v}}{\emptysu}{\stuck}{\su}.
+
+  \begin{description}
+  \item[Case \tnsub{t}{s_k}:] 
+    The inductive hypothesis applies.
+  \item[Case \tsub{t}{s_k} but \tnsub{t}{s_{k+1}}:]
+    By \autoref{cor:force} we must have called \forcesym at step $k+1$. A
+    case analysis of the applicable rules shows that \forcesym cannot
+    have succeeded.
+  \end{description}
+\end{proof}
+
+Now we can prove our soundness theorem.
+
+\begin{thm}
+\label{thm:soundness}
+  For any function $f$, if \steps{\eapp{f}{\ehole{}}}{\emptysu}{\stuck}{\su},
+  then
+
+$$
+  \forall t. \exists \hastype{v}{t}. \steps{\eapp{f}{v}}{\emptysu}{\stuck}{\su}
+$$
+\end{thm}
+\begin{proof}
+  Let $\tfun{s}{\_} = \ptype{}{f}$.
+  \begin{description}
+  \item[Case \tsub{s}{t} or \tsub{t}{s}:] Our witness is already valid.
+  \item[Case \tincompat{s}{t}:] We can apply Lemma~\ref{lem:k-stuck} and
+    use \emph{any} \hastype{v}{t} as a witness for $f$.
+  \end{description}
+\end{proof}
+
+% \item values are tagged with their types, just like ``untyped'' langs
+% \item special ``hole'' value whose type is not yet known, used for function args
+% \item on-the-fly unification to determine ``correct'' type for holes
+% \end{itemize}
 
 % Algorithm:
 %   Input: ML Program (let f1 = e1 in let f2 = e2 in ... e)

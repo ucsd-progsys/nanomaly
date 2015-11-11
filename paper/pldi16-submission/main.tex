@@ -24,10 +24,19 @@
 \usepackage{commands}
 
 \usepackage{amsthm}
-\newtheorem{lemma}{Lemma}
-\newtheorem{corollary}{Corollary}
-\newtheorem{theorem}{Theorem}
-\newtheorem{definition}{Definition}
+% \newtheorem{lemma}{Lemma}
+% \newtheorem{corollary}{Corollary}
+% \newtheorem{theorem}{Theorem}
+% \newtheorem{definition}{Definition}
+\theoremstyle{plain}% default 
+\newtheorem{thm}{Theorem} % [section] 
+\newtheorem{lem}[thm]{Lemma} 
+\newtheorem{prop}[thm]{Proposition} 
+\newtheorem*{cor}{Corollary} 
+\theoremstyle{definition}
+\newtheorem{defn}{Definition} % [section]
+
+
 \usepackage[inference]{semantic}
 
 \begin{document}
