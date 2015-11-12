@@ -51,9 +51,10 @@
 \newcommand\hastype[2]{\ensuremath{{#1} \colon {#2}}}
 \newcommand\tsub[2]{\ensuremath{{#1} \preceq {#2}}}
 \newcommand\tnsub[2]{\ensuremath{{#1} \npreceq {#2}}}
-\newcommand\tincompat[2]{\ensuremath{\tnsub{#1}{#2} \land \tnsub{#2}{#1}}}
+\newcommand\tcompat[2]{\ensuremath{#1 \sim #2}}
+\newcommand\tincompat[2]{\ensuremath{#1 \nsim #2}}
 \newcommand\typeof[1]{\ensuremath{\mathsf{typeof}(#1)}\xspace}
-\newcommand\ptype[2]{\ensuremath{\mathsf{partial}_{#1}(#2)}\xspace}
+\newcommand\ptype[2]{\ensuremath{\rho_{#1}(#2)}\xspace}
 
 
 % Evaluation
@@ -67,7 +68,7 @@
 \newcommand\forcesym{\ensuremath{\mathsf{narrow}}\xspace}
 \newcommand\gensym{\ensuremath{\mathsf{gen}}\xspace}
 \newcommand\force[2]{\ensuremath{\forcesym(#1, #2)}}
-\newcommand\gen[1]{\ensuremath{\gensym\ #1}}
+\newcommand\gen[1]{\ensuremath{\gensym(#1)}}
 \newcommand\su{\ensuremath{\theta}}
 \newcommand\emptysu{\ensuremath{\varnothing}}
 \newcommand\subst[2]{\ensuremath{#1(#2)}}
