@@ -118,7 +118,7 @@ We can extract this type from the result of evaluation as follows.
   is \tfun{\typeof{\subst{\su}{\ehole{}}}}{\typeof{e}}.
 
   We will omit the subscript when we wish to refer to the final partial
-  type. \ES{need to define typeof..}
+  type.
 \end{defn}
 %
 The \typeof{} function is an approximation of the type of an expression.
@@ -219,10 +219,16 @@ Now we can prove our soundness theorem.
   \end{description}
 \end{proof}
 
-% \item values are tagged with their types, just like ``untyped'' langs
-% \item special ``hole'' value whose type is not yet known, used for function args
-% \item on-the-fly unification to determine ``correct'' type for holes
-% \end{itemize}
+\subsection{Search Algorithm}
+\label{sec:search-algorithm}
+%
+We have shown how to find a witness for a function of a single argument,
+but in a language with higher-order functions and currying it may not be
+clear \emph{syntactically} how many arguments a function takes.
+%
+Thus, we wrap our operational semantics for \lang in a search loop that
+supplies an increasing number of arguments until the function returns a
+value that is not a lambda.
 
 % Algorithm:
 %   Input: ML Program (let f1 = e1 in let f2 = e2 in ... e)
