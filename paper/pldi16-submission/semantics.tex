@@ -106,9 +106,10 @@ $\steps{\eapp{f}{\ehole{}}}{\emptysu}{\stuck}{\su}$,
 then for any type $\tfun{s}{t}$ you assign to $f$, there exists an input \hastype{v}{s} such that
 $\steps{\eapp{f}{v}}{\emptysu}{\stuck}{\su}$.
 
-We can think of the evaluation of \eapp{f}{\ehole{}} as
-computing a \emph{partial type} -- a type that may contain holes -- for
-$f$. We can extract this type from the result of evaluation as follows.
+We can think of the evaluation of \eapp{f}{\ehole{}} as computing a
+\emph{partial type} -- a type that may contain holes -- for $f$.
+%
+We can extract this type from the result of evaluation as follows.
 %
 \begin{defn}
 \label{defn:partial-type}
@@ -118,6 +119,19 @@ $f$. We can extract this type from the result of evaluation as follows.
 
   We will omit the subscript when we wish to refer to the final partial
   type. \ES{need to define typeof..}
+\end{defn}
+%
+The \typeof{} function is an approximation of the type of an expression.
+\begin{defn}
+\label{def:typeof}
+  \[
+  \begin{array}{lcll}
+    \typeof{n}   & \defeq & \tint & \\
+    \typeof{b}   & \defeq & \tbool & \\
+    \typeof{\efun{x}{e}} & \defeq & \tfun{\thole{i}}{\typeof{e}}, & \quad \text{$i$ is fresh} \\
+    \typeof{e} & \defeq & \thole{i}, & \quad \text{$i$ is fresh} \\
+  \end{array}
+  \]
 \end{defn}
 %
 We also define a compatibility relation between types.
