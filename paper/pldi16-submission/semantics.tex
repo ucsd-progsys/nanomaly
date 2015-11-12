@@ -29,49 +29,67 @@ well, and the program will get stuck at \lstinline{1. +. y}. \ES{this
 % \item on-the-fly unification to determine ``correct'' type for holes
 \end{itemize}
 
-Next, we formalize our search for witnesses to type-errors. We present
-the syntax and operational semantics of \lang -- a simple lambda calculus with
-integers and booleans, extended with our notion of holes -- as well as our
-search algorithm. We prove that our system \emph{soundly} finds
-witnesses, \ie if we find a witness then there is no possible typing for
-the input program.
-
+Next, we formalize our search for witnesses to type-errors.
+%
+We present the syntax and operational semantics of \lang -- a simple
+lambda calculus with integers and booleans, extended with our notion of
+holes -- as well as our search algorithm.
+%
+We prove that our system \emph{soundly} finds witnesses, \ie if we find
+a witness then there is no possible typing for the input program.
+%
 \subsection{Syntax}
 \label{sec:syntax}
 \input{syntax.tex}
-
+%
 Figure~\ref{fig:syntax} describes the syntax of \lang, a simple lambda
-calculus with numbers and booleans. As we are specifically interested in
+calculus with numbers and booleans.
+%
+As we are specifically interested in
 programs that \emph{do} go wrong, we include an explicit \stuck state in
 our syntax.
-
+%
 \paragraph{Holes}
 \label{sec:holes}
 The main novelty in our system is the notion of a ``hole'', written
-\ehole{}, which represents an uninstantiated value. Importantly, we do
-not even know what type the value should have. Holes may also appear in
-types, where they may be thought of as type variables that we will not
-generalize over.
-
+\ehole{}, which represents an uninstantiated value.
+%
+Importantly, we do not even know what type the value should have.
+%
+Holes may also appear in types, where they may be thought of as type
+variables that we will not generalize over.
+%
 \subsection{Semantics}
 \label{sec:semantics}
 \input{operational.tex}
-
+%
 Figure~\ref{fig:operational} describes the small-step contextual
-reduction semantics for \lang. The evaluation relation is parameterized
-by a pair of \forcesym and \gensym functions that handle runtime
-type-checking and instantiation of holes respectively. The relation must
-also maintain a substitution \su, mapping holes to concrete values, so
-that we do not instantiate the same hole with different values in
-different contexts, and so that we can report a concrete witness to any
-discovered type errors.
+reduction semantics for \lang.
+%
+We write \stepi{j}{e}{\su}{e'}{\su'} if there exist $e_1,\ldots,e_j$ such that
+$e$ is $e_1$, $e'$ is $e_j$ and $\forall i,j, 1 \leq i < j$, we have
+\step{e_i}{\su_i}{e_{i+1}}{\su_{i+1}}.
+%
+We write \steps{e}{\su}{e'}{\su'} if there exists some (finite) $j$ such that
+$\stepi{j}{e}{\su}{e'}{\su'}$.
+%
+The evaluation relation is parameterized by a pair of \forcesym and
+\gensym functions that handle runtime type-checking and instantiation of
+holes respectively.
+%
+The relation must also maintain a substitution \su, mapping holes to
+concrete values, so that we do not instantiate the same hole with
+different values in different contexts, and so that we can report a
+concrete witness to any discovered type errors.
 
 Note that each primitive reduction step -- addition, if-elimination, and
 function application -- uses \forcesym to ensure that values have the
 appropriate type (and that holes are instantiated) before continuing the
-computation. Additionally, beta-reduction \emph{does not} type-check its
-argument, it only ensures that the value being applied is a function.
-
+computation.
+%
+Additionally, beta-reduction \emph{does not} type-check its argument, it
+only ensures that the value being applied is a function.
+%
 \begin{thm}
 \label{thm:all-reduce}
   Every closed expression $e$ reduces to a value $v$ (which may be \stuck).
@@ -80,7 +98,7 @@ argument, it only ensures that the value being applied is a function.
 % \begin{proof}%[Proof of \autoref{thm:all-reduce}]
 %   Simple induction on the evaluation relation.
 % \end{proof}
-
+%
 \subsection{Soundness}
 \label{sec:soundness}
 We now show that our evaluation relation conservatively instantiates
@@ -92,7 +110,7 @@ $\steps{\eapp{f}{v}}{\emptysu}{\stuck}{\su}$.
 We can think of the evaluation of \eapp{f}{\ehole{}} as
 computing a \emph{partial type} -- a type that may contain holes -- for
 $f$. We can extract this type from the result of evaluation as follows.
-
+%
 \begin{defn}
 \label{defn:partial-type}
   If \stepi{i}{\eapp{f}{\ehole{}}}{\emptysu}{e}{\su}, then the $i$th
@@ -102,41 +120,43 @@ $f$. We can extract this type from the result of evaluation as follows.
   We will omit the subscript when we wish to refer to the final partial
   type. \ES{need to define typeof..}
 \end{defn}
-
+%
 We also define a compatibility relation between types.
-
+%
 \begin{defn}
 \label{defn:type-compat}
   A type $s$ is \emph{compatible} with a type $t$, written \tcompat{s}{t}, if
   $\exists \su.\ t = \subst{\su}{s} \lor s = \subst{\su}{t}$.
 \end{defn}
-
+%
 Given these two definitions, we show that each evaluation step
 refines the partial type of $f$.
-
+%
 \begin{lem}
 \label{lem:refine-partial}
   For all $k$, \tcompat{\ptype{k}{f}}{\ptype{k+1}{f}}.
 \end{lem}
-
+%
 \begin{lem}
 \label{lem:force-inst}
   For all $k$, if $\ptype{k}{f} \neq \ptype{k+1}{f}$, then \forcesym must
   have been called at step $k+1$.
 \end{lem}
 \begin{proof}
-  By case analysis on the evaluation rules. If 
-  $\ptype{k}{f} \neq \ptype{k+1}{f}$ then one of the holes in 
-  $f$'s argument must have been instantiated with a concrete value at step $k+1$.
+  By case analysis on the evaluation rules. 
+  % 
+  If $\ptype{k}{f} \neq \ptype{k+1}{f}$ then one of the holes in $f$'s
+  argument must have been instantiated with a concrete value at step
+  $k+1$.
+  %
   An examination of the rules shows that only place this happens is 
   in the first case of \forcesym.
 \end{proof}
-
-
+%
 Finally, we show that any value that is not compatible with the $k$th
 partial type of $f$ will cause $f$ to get stuck in \emph{at most} $k$
 steps.
-
+%
 \begin{lem}
 \label{lem:k-stuck}
   For any \hastype{v}{t} that is not compatible with
@@ -147,7 +167,6 @@ steps.
   
   Let $s_k = \ptype{k}{f}$. Suppose \hastype{v}{\tincompat{t}{s_{k+1}}}, we
   will show that \stepi{k+1}{\eapp{f}{v}}{\emptysu}{\stuck}{\su}.
-
   \begin{description}
   \item[Case \tincompat{t}{s_k}:] 
     The inductive hypothesis applies.
@@ -157,9 +176,9 @@ steps.
     cannot have succeeded.
   \end{description}
 \end{proof}
-
+%
 Now we can prove our soundness theorem.
-
+%
 \begin{thm}
 \label{thm:soundness}
   For any function $f$, if \steps{\eapp{f}{\ehole{}}}{\emptysu}{\stuck}{\su},
