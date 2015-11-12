@@ -14,21 +14,21 @@ $$
 
 $$
 \inference[\replusgood]
-  {\pair{n_1}{\su_2} = \force{v_1}{\tnat} \\
-   \pair{n_2}{\su_3} = \force{v_2}{\tnat} \\ 
+  {\pair{n_1}{\su_2} = \force{v_1}{\tint} \\
+   \pair{n_2}{\su_3} = \force{v_2}{\tint} \\ 
    n = \eplus{n_1}{n_2}}
   {\step{\eplus{v_1}{v_2}}{\su_1}{n}{\su_1\su_2\su_3}}
 $$
 
 $$
 \inference[\replusbadone]
-  {\pair{\stuck}{\su_2} = \force{v_1}{\tnat}}
+  {\pair{\stuck}{\su_2} = \force{v_1}{\tint}}
   {\step{\eplus{v_1}{v_2}}{\su_1}{\stuck}{\su_1\su_2}}
 $$
 
 $$
 \inference[\replusbadtwo]
-  {\pair{\stuck}{\su_2} = \force{v_2}{\tnat}}
+  {\pair{\stuck}{\su_2} = \force{v_2}{\tint}}
   {\step{\eplus{v_1}{v_2}}{\su_1}{\stuck}{\su_1\su_2}}
 $$
 
@@ -75,8 +75,8 @@ $$
 \begin{array}{lcl}
 \force{\ehole{i}}{t} & \defeq & \elet{v}{\gen{t}}{\pair{v}{\ehole{i} \mapsto v}} \\
 \force{v}{\ehole{}}  & \defeq & \pair{v}{\emptysu} \\
-\force{n}{\tnat}    & \defeq & \pair{n}{\emptysu} \\
-\force{v}{\tnat}    & \defeq & \pair{\stuck}{\emptysu} \\
+\force{n}{\tint}    & \defeq & \pair{n}{\emptysu} \\
+\force{v}{\tint}    & \defeq & \pair{\stuck}{\emptysu} \\
 \force{b}{\tbool}   & \defeq & \pair{b}{\emptysu} \\
 \force{v}{\tbool}   & \defeq & \pair{\stuck}{\emptysu} \\
 \force{\efun{x}{e}}{\tfun{\thole{}}{\thole{}}} & \defeq & \pair{\efun{x}{e}}{\emptysu} \\
@@ -85,7 +85,7 @@ $$
 $$
 $$
 \begin{array}{lcll}
-\gen{\tnat}   & \defeq & n & \\
+\gen{\tint}   & \defeq & n & \\
 \gen{\tbool}  & \defeq & b & \\
 \gen{\tfun{t_1}{t_2}} & \defeq & \efun{x}{\ehole{i}}, & \quad \text{$i$ is fresh} \\
 \gen{\thole{}} & \defeq & \ehole{i}, & \quad \text{$i$ is fresh} \\

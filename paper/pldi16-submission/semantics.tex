@@ -30,7 +30,7 @@ well, and the program will get stuck at \lstinline{1. +. y}. \ES{this
 \end{itemize}
 
 Next, we formalize our search for witnesses to type-errors. We present
-the syntax and dynamic semantics of \lang -- a simple lambda calculus with
+the syntax and operational semantics of \lang -- a simple lambda calculus with
 integers and booleans, extended with our notion of holes -- as well as our
 search algorithm. We prove that our system \emph{soundly} finds
 witnesses, \ie if we find a witness then there is no possible typing for
@@ -40,7 +40,7 @@ the input program.
 \label{sec:syntax}
 \input{syntax.tex}
 
-\autoref{fig:syntax} describes the syntax of \lang, a simple lambda
+Figure~\ref{fig:syntax} describes the syntax of \lang, a simple lambda
 calculus with numbers and booleans. As we are specifically interested in
 programs that \emph{do} go wrong, we include an explicit \stuck state in
 our syntax.
@@ -57,24 +57,25 @@ generalize over.
 \label{sec:semantics}
 \input{operational.tex}
 
-\autoref{fig:operational} describes the small-step contextual reduction
-semantics for \lang. The evaluation relation is parameterized by a pair
-of \forcesym and \gensym functions that handle runtime type-checking and
-instantiation of holes respectively. The relation must also maintain a
-substitution \su, mapping holes to concrete values, so that we do not
-instantiate the same hole with different values in different contexts,
-and importantly, so that we can report a concrete witness to any
+Figure~\ref{fig:operational} describes the small-step contextual
+reduction semantics for \lang. The evaluation relation is parameterized
+by a pair of \forcesym and \gensym functions that handle runtime
+type-checking and instantiation of holes respectively. The relation must
+also maintain a substitution \su, mapping holes to concrete values, so
+that we do not instantiate the same hole with different values in
+different contexts, and so that we can report a concrete witness to any
 discovered type errors.
 
 Note that each primitive reduction step -- addition, if-elimination, and
 function application -- uses \forcesym to ensure that values have the
 appropriate type (and that holes are instantiated) before continuing the
 computation. Additionally, beta-reduction \emph{does not} type-check its
-argument, it only ensures that the function can be applied.
+argument, it only ensures that the value being applied is a function.
 
 \begin{thm}
 \label{thm:all-reduce}
   Every closed expression $e$ reduces to a value $v$ (which may be \stuck).
+  \ES{do we really need to state this, or is it obvious?}
 \end{thm}
 % \begin{proof}%[Proof of \autoref{thm:all-reduce}]
 %   Simple induction on the evaluation relation.
@@ -85,10 +86,10 @@ argument, it only ensures that the function can be applied.
 We now show that our evaluation relation conservatively instantiates
 holes, \ie if, given a function $f$, we report that 
 $\steps{\eapp{f}{\ehole{}}}{\emptysu}{\stuck}{\su}$,
-then for any type $t$ you assign to $f$, there exists an input \hastype{v}{t} such that
+then for any type $\tfun{s}{t}$ you assign to $f$, there exists an input \hastype{v}{s} such that
 $\steps{\eapp{f}{v}}{\emptysu}{\stuck}{\su}$.
 
-Intuitively, we can think of the evaluation of \eapp{f}{\ehole{}} as
+We can think of the evaluation of \eapp{f}{\ehole{}} as
 computing a \emph{partial type} -- a type that may contain holes -- for
 $f$. We can extract this type from the result of evaluation as follows.
 
