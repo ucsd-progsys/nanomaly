@@ -1,34 +1,33 @@
-
-\begin{itemize}
-\item how do we run ill-typed programs?
-\item for a lang like ocaml, dynamic semantics are independent of static
-  semantics, just lambda calculus. so no problem to run ill-typed
-  program
-\item but what about functions? what type of arguments should we pass? consider
-
-\begin{lstlisting}
-let f x = 
-  let y = 1 + x in
-    1. +. y
-\end{lstlisting}
-
-does \texttt{f} take an int, float, string? int and float are both
-somewhat plausible, but string or anything else is ``clearly'' bogus. so
-we cannot provide \emph{completely arbitrary} inputs to
-\texttt{f}. Instead, we call \texttt{f} with a \emph{hole}, written
-\ehole{}, which is a placeholder for a value whose type we have not
-yet determined. As we execute the program, we instantiate holes with
-concrete values as demanded by the primitive operations in the
-program. For example, the hole we pass to f will be instantiated to an
-int when we reach the \lstinline{1 + x} term. Thus, y will be an int as
-well, and the program will get stuck at \lstinline{1. +. y}. \ES{this
-  reads more like overview text..}
-
-% \item values are tagged with their types, just like ``untyped'' langs
-% \item special ``hole'' value whose type is not yet known, used for function args
-% \item on-the-fly unification to determine ``correct'' type for holes
-\end{itemize}
-
+% \begin{itemize}
+% \item how do we run ill-typed programs?
+% \item for a lang like ocaml, dynamic semantics are independent of static
+%   semantics, just lambda calculus. so no problem to run ill-typed
+%   program
+% \item but what about functions? what type of arguments should we pass? consider
+%
+% \begin{lstlisting}
+% let f x = 
+%   let y = 1 + x in
+%     1. +. y
+% \end{lstlisting}
+%
+% does \texttt{f} take an int, float, string? int and float are both
+% somewhat plausible, but string or anything else is ``clearly'' bogus. so
+% we cannot provide \emph{completely arbitrary} inputs to
+% \texttt{f}. Instead, we call \texttt{f} with a \emph{hole}, written
+% \ehole{}, which is a placeholder for a value whose type we have not
+% yet determined. As we execute the program, we instantiate holes with
+% concrete values as demanded by the primitive operations in the
+% program. For example, the hole we pass to f will be instantiated to an
+% int when we reach the \lstinline{1 + x} term. Thus, y will be an int as
+% well, and the program will get stuck at \lstinline{1. +. y}. \ES{this
+%   reads more like overview text..}
+%
+% % \item values are tagged with their types, just like ``untyped'' langs
+% % \item special ``hole'' value whose type is not yet known, used for function args
+% % \item on-the-fly unification to determine ``correct'' type for holes
+% \end{itemize}
+%
 Next, we formalize our search for witnesses to type-errors.
 %
 We present the syntax and operational semantics of \lang -- a simple
@@ -136,6 +135,17 @@ refines the partial type of $f$.
 \label{lem:refine-partial}
   For all $k$, \tcompat{\ptype{k}{f}}{\ptype{k+1}{f}}.
 \end{lem}
+\begin{proof}
+  By case analysis on the evaluation rules. 
+  %
+  Note that all rules are type-preserving with the exception of when
+  \forcesym is called on a hole, which case we instantiate the hole with
+  a concrete value.
+  %
+  But \hastype{\ehole{}}{\thole{}}, which is compatible with any type.
+\end{proof}
+%
+Furthermore, only a call to \forcesym can change the partial type of $f$.
 %
 \begin{lem}
 \label{lem:force-inst}
@@ -172,8 +182,10 @@ steps.
     The inductive hypothesis applies.
   \item[Case \tcompat{t}{s_k} but \tincompat{t}{s_{k+1}}:] 
     By Lemma~\ref{lem:force-inst} we must have called \forcesym at step
-    $k+1$. A case analysis of the applicable rules shows that \forcesym
-    cannot have succeeded.
+    $k+1$. 
+    %
+    A case analysis of the applicable rules shows that \forcesym cannot
+    have succeeded.
   \end{description}
 \end{proof}
 %
