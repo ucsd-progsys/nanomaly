@@ -189,7 +189,7 @@ steps.
 \begin{proof}
   By induction on $k$.
   
-  Let $s_k = \ptype{k}{f}$. Suppose \hastype{v}{\tincompat{t}{s_{k+1}}}, we
+  Let $\tfun{s_k}{\_} = \ptype{k}{f}$. Suppose \hastype{v}{\tincompat{t}{s_{k+1}}}, we
   will show that \stepi{k+1}{\eapp{f}{v}}{\emptysu}{\stuck}{\su}.
   \begin{description}
   \item[Case \tincompat{t}{s_k}:] 
