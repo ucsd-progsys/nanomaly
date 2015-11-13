@@ -1,0 +1,19 @@
+digraph G {
+u0[label="(1 + 2) + 3"];
+u1[label="3"];
+u2[label="3 + 3"];
+u3[label="1 + 2"];
+u4[label="3"];
+u5[label="2"];
+u6[label="1"];
+u7[label="6"];
+u0 -> u1[label="SubTerm 1"];
+u0 -> u2[label="StepsTo"];
+u0 -> u3[label="SubTerm 0"];
+u2 -> u1[label="SubTerm 1"];
+u2 -> u4[label="SubTerm 0"];
+u2 -> u7[label="StepsTo"];
+u3 -> u4[label="StepsTo"];
+u3 -> u5[label="SubTerm 1"];
+u3 -> u6[label="SubTerm 0"];
+}

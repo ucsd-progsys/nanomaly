@@ -17,8 +17,17 @@ rules to collect a trace that we can present to the user, demonstrating
 precisely \emph{how} their program goes wrong.
 
 The trace takes the form of a \emph{reduction graph}, where the nodes
-are terms and the edges represent either the single-step $\hookrightarrow$
-or a ``sub-term'' relation.
+are terms and the edges represent either the single-step
+$\hookrightarrow$ or a ``sub-term'' relation. For example, evaluating
+the expression @1 + 2 + 3@ would produce the graph in
+Figure~\ref{fig:simple-reduction}.
+%
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{simple.png}
+\caption{The reduction graph for \texttt{1 + 2 + 3}.}
+\label{fig:simple-reduction}
+\end{figure}
 
 \begin{itemize}
 \item extend operational semantics to collect reduction graph
