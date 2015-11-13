@@ -1,3 +1,5 @@
+\section{Searching for Type-Error Witnesses}
+\label{sec:searching-witness}
 % \begin{itemize}
 % \item how do we run ill-typed programs?
 % \item for a lang like ocaml, dynamic semantics are independent of static
@@ -316,6 +318,12 @@ Figure~\ref{fig:search-algo} summarizes the overall implementation of
 our search for witnesses, which takes as input a sequences of binders
 and returns either @Safe@ if no witness could be found, or |Unsafe $e$|
 where $e$ is a term that causes the input program to get stuck.
+%
+The search is split into two phases: (1) we supply an increasing number
+of arguments until we find a saturated application, and (2) we search
+through the list of results from the non-deterministic evaluator for a
+witness.
+
 
 % Algorithm:
 %   Input: ML Program (let f1 = e1 in let f2 = e2 in ... e)
