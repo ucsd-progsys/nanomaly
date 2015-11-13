@@ -230,6 +230,93 @@ Thus, we wrap our operational semantics for \lang in a search loop that
 supplies an increasing number of arguments until the function returns a
 value that is not a lambda.
 
+The top-level search loop takes as input an open program -- a sequence
+of binders -- and searches for an expression that closes the input
+program and gets stuck. Concretely, given an input
+%
+\begin{code}
+  let f1 = e1 in
+  let f2 = e2 in
+  ...
+  let fn = en in
+\end{code}
+%
+we will search for an expression of the form:
+%
+\begin{code}
+  fn v1 ... vn
+\end{code}
+%
+Figure~\ref{fig:expression-api} describes a small API for manipulating
+and evaluating \lang expressions, which we will use to define our search
+algorithm.
+%
+The bulk of the search is performed by @eval@, which
+implements our operational semantics from \S\ref{sec:semantics}.
+%
+The operational semantics is non-deterministic due to \gensym,
+thus @eval@ returns a list of possible results.
+%
+\begin{figure}[t]
+  \centering
+  \begin{mcode}
+  -- transitive small-step reduction, 
+  -- returning a list of results
+  eval :: ($e$, $\su$) -> [($v$, $\su$)]
+  
+  -- manipulating expressions
+  subst   :: $\su$ -> $v$ -> $v$
+  mkApps  :: $e$ -> [$e$] -> $e$
+  mkLets  :: [($x$, $e$)] -> $e$ -> $e$
+  isStuck :: $v$ -> Bool
+  \end{mcode}
+  \caption{Expression API}
+  \label{fig:expression-api}
+\end{figure}
+%
+We also define a few helper functions for manipulating expressions:
+\begin{itemize}
+\item @subst@ applies a substitution of holes to a value,
+\item @mkApps@ creates a nested sequence of applications in the usual
+  left-associative style,
+\item @mkLets@ takes a list of binders and a body expression, and
+  creates a sequence of nested let-binders, and
+\item @isStuck@ tests whether a value is the \stuck term.
+\end{itemize}
+%
+\begin{figure*}[t]
+  \centering
+  \begin{mcode}
+  check :: [($x$, $e$)] -> Result
+  check bnds =
+    -- (2) search for a witness
+    case find (isStuck . fst) results of
+      Nothing      -> Safe
+      Just (_, su) -> Unsafe (mkApps f (subst su args))
+    where
+      (args, results) = loop []
+      f               = snd (last bnds)
+      build args      = mkLets bnds (mkApps f args)
+
+      -- (1) find the correct number of arguments
+      loop :: [$v$] -> ([$v$], [($v$, $\su$)])
+      loop args = case eval (build args, []) of 
+        ($\efun{x}{e}$, _) : _ -> loop (args `snoc` $\ehole{}$)
+        results      -> (args, results)  
+  \end{mcode}
+  \caption{Implementing our counter-example search in terms of the
+    operational semantics. 
+    \ES{1 and 2 are backwards, ugh...}
+    \ES{should address case where output types of successive runs dont match}
+  }
+  \label{fig:search-algo}
+\end{figure*}
+%
+Figure~\ref{fig:search-algo} summarizes the overall implementation of
+our search for witnesses, which takes as input a sequences of binders
+and returns either @Safe@ if no witness could be found, or |Unsafe $e$|
+where $e$ is a term that causes the input program to get stuck.
+
 % Algorithm:
 %   Input: ML Program (let f1 = e1 in let f2 = e2 in ... e)
 %   Output: 'safe' or 'fn v1 .. vn' where 'fn v1 .. vn' gets stuck
