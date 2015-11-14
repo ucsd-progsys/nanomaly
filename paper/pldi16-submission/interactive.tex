@@ -14,7 +14,7 @@ program, so unfortunately we cannot use them off-the-shelf.
 %
 Instead we return to our semantics for \lang and extend the evaluation
 rules to collect a trace that we can present to the user, demonstrating
-precisely \emph{how} their program goes wrong.
+precisely \emph{how} their program went wrong.
 
 The trace takes the form of a \emph{reduction graph}, where the nodes
 are terms and the edges represent either the single-step
@@ -28,6 +28,8 @@ Figure~\ref{fig:simple-reduction}.
 \caption{The reduction graph for \texttt{1 + 2 + 3}.}
 \label{fig:simple-reduction}
 \end{figure}
+%
+
 
 \begin{itemize}
 \item extend operational semantics to collect reduction graph
