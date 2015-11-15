@@ -68,11 +68,11 @@ $$
 \inference[\reappgood]
   {\pair{\efun{x}{e}}{\su_2} = \force{v_1}{\tfun{\thole{}}{\thole{}}}}
   {\stepg{\eapp{v_1}{v_2}}{\su_1}{\tr}
-         {e\sub{x}{v_2}}{\su_1\su_2}{\singlestep{\eapp{v_1}{v_2}}{e\sub{x}{v_2}}; \subterms{e\sub{x}{v_2}}; \tr}}
+         {e\sub{x}{v_2}}{\su_1;\su_2}{\singlestep{\eapp{v_1}{v_2}}{e\sub{x}{v_2}}; \subterms{e\sub{x}{v_2}}; \tr}}
 \\ \\
 \inference[\reappbad]
   {\pair{\stuck}{\su_2} = \force{v_1}{\tfun{\thole{}}{\thole{}}}}
-  {\stepg{\eapp{v_1}{v_2}}{\su_1}{\tr}{\stuck}{\su_1\su_2}{\singlestep{\eapp{v_1}{v_2}}{\stuck}; \tr}}
+  {\stepg{\eapp{v_1}{v_2}}{\su_1}{\tr}{\stuck}{\su_1;\su_2}{\singlestep{\eapp{v_1}{v_2}}{\stuck}; \tr}}
 \end{gather*}
 \caption{A selection of the operational semantics from
   Figure~\ref{fig:operational}, extended to collect a full reduction

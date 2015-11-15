@@ -8,7 +8,7 @@
 % \item but what about functions? what type of arguments should we pass? consider
 %
 % \begin{lstlisting}
-% let f x = 
+% let f x =
 %   let y = 1 + x in
 %     1. +. y
 % \end{lstlisting}
@@ -103,7 +103,7 @@ only ensures that the value being applied is a function.
 \subsection{Soundness}
 \label{sec:soundness}
 We now show that our evaluation relation conservatively instantiates
-holes, \ie if, given a function $f$, we report that 
+holes, \ie if, given a function $f$, we report that
 $\steps{\eapp{f}{\ehole{}}}{\emptysu}{\stuck}{\su}$,
 then for any type $\tfun{s}{t}$ you assign to $f$, there exists an input \hastype{v}{s} such that
 $\steps{\eapp{f}{v}}{\emptysu}{\stuck}{\su}$.
@@ -142,6 +142,7 @@ We also define a compatibility relation between types.
 \label{defn:type-compat}
   A type $s$ is \emph{compatible} with a type $t$, written \tcompat{s}{t}, if
   $\exists \su.\ t = \subst{\su}{s} \lor s = \subst{\su}{t}$.
+  \ES{we're abusing the \su notation here..}
 \end{defn}
 %
 Given these two definitions, we show that each evaluation step
@@ -152,7 +153,7 @@ refines the partial type of $f$.
   For all $k$, \tcompat{\ptype{k}{f}}{\ptype{k+1}{f}}.
 \end{lem}
 \begin{proof}
-  By case analysis on the evaluation rules. 
+  By case analysis on the evaluation rules.
   %
   Note that all rules preserve partial types with the exception of when
   \forcesym is called on a hole, which case we instantiate the hole with
@@ -169,13 +170,13 @@ Furthermore, only a call to \forcesym can change the partial type of $f$.
   have been called at step $k+1$.
 \end{lem}
 \begin{proof}
-  By case analysis on the evaluation rules. 
-  % 
+  By case analysis on the evaluation rules.
+  %
   If $\ptype{k}{f} \neq \ptype{k+1}{f}$ then one of the holes in $f$'s
   argument must have been instantiated with a concrete value at step
   $k+1$.
   %
-  An examination of the rules shows that only place this happens is 
+  An examination of the rules shows that only place this happens is
   in the first case of \forcesym.
 \end{proof}
 %
@@ -190,15 +191,15 @@ steps.
 \end{lem}
 \begin{proof}
   By induction on $k$.
-  
+
   Let $\tfun{s_k}{\_} = \ptype{k}{f}$. Suppose \hastype{v}{\tincompat{t}{s_{k+1}}}, we
   will show that \stepi{k+1}{\eapp{f}{v}}{\emptysu}{\stuck}{\su}.
   \begin{description}
-  \item[Case \tincompat{t}{s_k}:] 
+  \item[Case \tincompat{t}{s_k}:]
     The inductive hypothesis applies.
-  \item[Case \tcompat{t}{s_k} but \tincompat{t}{s_{k+1}}:] 
+  \item[Case \tcompat{t}{s_k} but \tincompat{t}{s_{k+1}}:]
     By Lemma~\ref{lem:force-inst} we must have called \forcesym at step
-    $k+1$. 
+    $k+1$.
     %
     A case analysis of the applicable rules shows that \forcesym cannot
     have succeeded.
@@ -262,10 +263,10 @@ thus @eval@ returns a list of possible results.
 \begin{figure}[t]
   \centering
   \begin{mcode}
-  -- transitive small-step reduction, 
+  -- transitive small-step reduction,
   -- returning a list of results
   eval :: ($e$, $\su$) -> [($v$, $\su$)]
-  
+
   -- manipulating expressions
   subst   :: $\su$ -> $v$ -> $v$
   mkApps  :: $e$ -> [$e$] -> $e$
@@ -302,12 +303,12 @@ We also define a few helper functions for manipulating expressions:
 
       -- (1) find the correct number of arguments
       loop :: [$v$] -> ([$v$], [($v$, $\su$)])
-      loop args = case eval (build args, []) of 
+      loop args = case eval (build args, []) of
         ($\efun{x}{e}$, _) : _ -> loop (args `snoc` $\ehole{}$)
-        results      -> (args, results)  
+        results      -> (args, results)
   \end{mcode}
   \caption{Implementing our counter-example search in terms of the
-    operational semantics. 
+    operational semantics.
     \ES{1 and 2 are backwards, ugh...}
     \ES{should address case where output types of successive runs dont match}
   }
@@ -328,4 +329,3 @@ witness.
 % Algorithm:
 %   Input: ML Program (let f1 = e1 in let f2 = e2 in ... e)
 %   Output: 'safe' or 'fn v1 .. vn' where 'fn v1 .. vn' gets stuck
-

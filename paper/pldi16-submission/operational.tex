@@ -13,35 +13,35 @@
   {\pair{n_1}{\su_2} = \force{v_1}{\tint} \\
    \pair{n_2}{\su_3} = \force{v_2}{\tint} \\ 
    n = \eplus{n_1}{n_2}}
-  {\step{\eplus{v_1}{v_2}}{\su_1}{n}{\su_1\su_2\su_3}}
+  {\step{\eplus{v_1}{v_2}}{\su_1}{n}{\su_1;\su_2;\su_3}}
 \qquad
 \inference[\replusbadone]
   {\pair{\stuck}{\su_2} = \force{v_1}{\tint}}
-  {\step{\eplus{v_1}{v_2}}{\su_1}{\stuck}{\su_1\su_2}}
+  {\step{\eplus{v_1}{v_2}}{\su_1}{\stuck}{\su_1;\su_2}}
 \\ \\
 \inference[\replusbadtwo]
   {\pair{\stuck}{\su_2} = \force{v_2}{\tint}}
-  {\step{\eplus{v_1}{v_2}}{\su_1}{\stuck}{\su_1\su_2}}
+  {\step{\eplus{v_1}{v_2}}{\su_1}{\stuck}{\su_1;\su_2}}
 \qquad
 \inference[\reifgoodone]
   {\pair{\etrue}{\su_2} = \force{v}{\tbool}}
-  {\step{\eif{v}{e_1}{e_2}}{\su_1}{e_1}{\su_1\su_2}}
+  {\step{\eif{v}{e_1}{e_2}}{\su_1}{e_1}{\su_1;\su_2}}
 \\ \\
 \inference[\reifgoodtwo]
   {\pair{\efalse}{\su_2} = \force{v}{\tbool}}
-  {\step{\eif{v}{e_1}{e_2}}{\su_1}{e_2}{\su_1\su_2}}
+  {\step{\eif{v}{e_1}{e_2}}{\su_1}{e_2}{\su_1;\su_2}}
 \qquad
 \inference[\reifbad]
   {\pair{\stuck}{\su_2} = \force{v}{\tbool}}
-  {\step{\eif{v}{e_1}{e_2}}{\su_1}{\stuck}{\su_1\su_2}}
+  {\step{\eif{v}{e_1}{e_2}}{\su_1}{\stuck}{\su_1;\su_2}}
 \\ \\
 \inference[\reappgood]
   {\pair{\efun{x}{e}}{\su_2} = \force{v_1}{\tfun{\thole{}}{\thole{}}}}
-  {\step{\eapp{v_1}{v_2}}{\su_1}{e\sub{x}{v_2}}{\su_1\su_2}}
+  {\step{\eapp{v_1}{v_2}}{\su_1}{e\sub{x}{v_2}}{\su_1;\su_2}}
 \qquad
 \inference[\reappbad]
   {\pair{\stuck}{\su_2} = \force{v_1}{\tfun{\thole{}}{\thole{}}}}
-  {\step{\eapp{v_1}{v_2}}{\su_1}{\stuck}{\su_1\su_2}}
+  {\step{\eapp{v_1}{v_2}}{\su_1}{\stuck}{\su_1;\su_2}}
 \\ \\
 \inference[\relet]
   {}
