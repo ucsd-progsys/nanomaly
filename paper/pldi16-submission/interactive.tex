@@ -131,6 +131,8 @@ have multiple incoming $\leadsto$ edges, \eg
 The sub-term edges $\searrow$ allow us to decompose an expression into a
 sub-expression and the surrounding context, thus enabling the \stepintosym
 and \stepoversym traversals.
+%
+
 
 \begin{figure*}[t]
 \centering
@@ -156,9 +158,13 @@ and \stepoversym traversals.
 \]
 \caption{Rules for traversing the reduction graph. \stepintosym and \stepoversym
   require a traversal of the sub-term edges to decompose $e_i$ into the
-  target expression \eapp{v_1}{v_2} and the context $C$.}
+  target expression \eapp{v_1}{v_2} and the context $C$.
+  \ES{need to mention $G$ and $p$ in these rules}
+}
 \label{fig:traversing-graph}
 \end{figure*}
+
+
 % \begin{itemize}
 % \item extend operational semantics to collect reduction graph
 % \item nodes are terms, edges indicate ``steps-to'' and ``sub-term'' relations
