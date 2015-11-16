@@ -1,0 +1,98 @@
+\begin{figure}
+\judgementHead{Evaluation}{\step{e}{\su}{e}{\su}}
+$$
+\inference[\recontext]
+  {\step{e}{\su}{e_1}{\su_1}}
+  {\step{C[e]}{\su}{C[e_1]}{\su_1}}
+$$
+
+$$
+\inference[\restuck]
+  {}
+  {\step{C[\stuck]}{\su}{\stuck}{\su}}
+$$
+
+$$
+\inference[\replusgood]
+  {\pair{n_1}{\su_2} = \force{v_1}{\tnat} \\
+   \pair{n_2}{\su_3} = \force{v_2}{\tnat} \\ 
+   n = \eplus{n_1}{n_2}}
+  {\step{\eplus{v_1}{v_2}}{\su_1}{n}{\su_1\su_2\su_3}}
+$$
+
+$$
+\inference[\replusbadone]
+  {\pair{\stuck}{\su_2} = \force{v_1}{\tnat}}
+  {\step{\eplus{v_1}{v_2}}{\su_1}{\stuck}{\su_1\su_2}}
+$$
+
+$$
+\inference[\replusbadtwo]
+  {\pair{\stuck}{\su_2} = \force{v_2}{\tnat}}
+  {\step{\eplus{v_1}{v_2}}{\su_1}{\stuck}{\su_1\su_2}}
+$$
+
+$$
+\inference[\reifgoodone]
+  {\pair{\etrue}{\su_2} = \force{v}{\tbool}}
+  {\step{\eif{v}{e_1}{e_2}}{\su_1}{e_1}{\su_1\su_2}}
+$$
+
+$$
+\inference[\reifgoodtwo]
+  {\pair{\efalse}{\su_2} = \force{v}{\tbool}}
+  {\step{\eif{v}{e_1}{e_2}}{\su_1}{e_2}{\su_1\su_2}}
+$$
+
+$$
+\inference[\reifbad]
+  {\pair{\stuck}{\su_2} = \force{v}{\tbool}}
+  {\step{\eif{v}{e_1}{e_2}}{\su_1}{\stuck}{\su_1\su_2}}
+$$
+
+$$
+\inference[\reappgood]
+  {\pair{\efun{x}{e}}{\su_2} = \force{v_1}{\tfun{\hole{}}{\hole{}}}}
+  {\step{\eapp{v_1}{v_2}}{\su_1}{e\sub{x}{v_2}}{\su_1\su_2}}
+$$
+
+$$
+\inference[\reappbad]
+  {\pair{\stuck}{\su_2} = \force{v_1}{\tfun{\hole{}}{\hole{}}}}
+  {\step{\eapp{v_1}{v_2}}{\su_1}{\stuck}{\su_1\su_2}}
+$$
+
+$$
+\inference[\relet]
+  {}
+  {\step{\elet{x}{v}{e}}{\su}{e\sub{x}{v}}{\su}}
+$$
+\\ [0.1in]
+
+\relDescription{\forcesym and \gensym}
+
+$$
+\begin{array}{lcl}
+\force{\hole{i}}{t} & \defeq & \elet{v}{\gen{t}}{\pair{v}{\hole{i} \mapsto v}} \\
+\force{v}{\hole{}}  & \defeq & \pair{v}{\emptysu} \\
+\force{n}{\tnat}    & \defeq & \pair{n}{\emptysu} \\
+\force{v}{\tnat}    & \defeq & \pair{\stuck}{\emptysu} \\
+\force{b}{\tbool}   & \defeq & \pair{b}{\emptysu} \\
+\force{v}{\tbool}   & \defeq & \pair{\stuck}{\emptysu} \\
+\force{\efun{x}{e}}{\tfun{\hole{}}{\hole{}}} & \defeq & \pair{\efun{x}{e}}{\emptysu} \\
+\force{v}{\tfun{\hole{}}{\hole{}}} & \defeq & \pair{\stuck}{\emptysu} \\
+\end{array}
+$$
+$$
+\begin{array}{lcll}
+\gen{\tnat}   & \defeq & n & \\
+\gen{\tbool}  & \defeq & b & \\
+\gen{\tfun{t_1}{t_2}} & \defeq & \efun{x}{\hole{i}}, & \quad \text{$i$ is fresh} \\
+\gen{\hole{}} & \defeq & \hole{i}, & \quad \text{$i$ is fresh} \\
+\end{array}
+$$
+
+
+\caption{Evaluation relation}
+\label{fig:evaluation}
+\end{figure}

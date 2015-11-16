@@ -4,12 +4,14 @@
 % Requires temporary version of sigplanconf style file provided on
 % PLDI'15 web site.
 % 
-\documentclass[pldi,indentedstyle=false]{sigplanconf-pldi15}
+\documentclass[10pt,pldi,indentedstyle=false]{sigplanconf-pldi15}
 
 %
 % the following standard packages may be helpful, but are not required
 %
-\usepackage{SIunits}            % typset units correctly
+\usepackage{amsmath}
+\usepackage{amssymb}
+% \usepackage{SIunits}            % typset units correctly
 \usepackage{courier}            % standard fixed width font
 \usepackage[scaled]{helvet} % see www.ctan.org/get/macros/latex/required/psnfss/psnfss2e.pdf
 \usepackage{url}                  % format URLs
@@ -18,8 +20,27 @@
 \usepackage[colorlinks=true,allcolors=blue,breaklinks,draft=false]{hyperref}   % hyperlinks, including DOIs and URLs in bibliography
 % known bug: http://tex.stackexchange.com/questions/1522/pdfendlink-ended-up-in-different-nesting-level-than-pdfstartlink
 \newcommand{\doi}[1]{doi:~\href{http://dx.doi.org/#1}{\Hurl{#1}}}   % print a hyperlinked DOI
+\usepackage{xspace}
+\usepackage{commands}
+\usepackage{graphicx}
+
+\usepackage{amsthm}
+% \newtheorem{lemma}{Lemma}
+% \newtheorem{corollary}{Corollary}
+% \newtheorem{theorem}{Theorem}
+% \newtheorem{definition}{Definition}
+\theoremstyle{plain}% default 
+\newtheorem{thm}{Theorem} % [section] 
+\newtheorem{lem}[thm]{Lemma} 
+\newtheorem{prop}[thm]{Proposition} 
+\newtheorem*{cor}{Corollary} 
+\theoremstyle{definition}
+\newtheorem{defn}{Definition} % [section]
 
 
+\usepackage[inference]{semantic}
+
+\input{haskellListings}
 
 \begin{document}
 
@@ -55,38 +76,20 @@
 
 \section{Introduction}          % 1 page
 \section{Overview}              % 2 pages?
-\section{Type-carrying Semantics} % 2 pages
-\begin{itemize}
-\item values are tagged with their types, just like ``untyped'' langs
-\item special ``hole'' value whose type is not yet known, used for function args
-\item on-the-fly unification to determine ``correct'' type for holes
-\end{itemize}
+% \section{Type-carrying Semantics} % 2 pages
+\input{semantics.tex}
 
-% Algorithm:
-%   Input: ML Program (let f1 = e1 in let f2 = e2 in ... e)
-%   Output: 'safe' or 'fn v1 .. vn' where 'fn v1 .. vn' gets stuck
+% \section{Evalution: Recasting Type Errors as Runtime Errors} % 1 page
+\input{evaluation-witness.tex}
 
+%\section{``Interactive'' Semantics \& Trace Exploration} % 2 pages
+\input{interactive.tex}
 
+\input{nanomaly.tex}
 
+% \section{Evaluation: \nanomaly}                % 1 page
+\input{evaluation-nanomaly.tex}
 
-\section{Evalution: Recasting Type Errors as Runtime Errors} % 1 page
-\label{sec:eval-recast-type}
-\begin{itemize}
-\item benchmarks: our data + seminal data
-\item both cases: \textbf{random} search sufficient to trigger runtime crash in 80\% of programs
-\item how many of the ``safe'' programs are actually safe??
-\end{itemize}
-
-\section{``Interactive'' Semantics \& Trace Exploration} % 2 pages
-\begin{itemize}
-\item extend operational semantics to collect reduction graph
-\item nodes are terms, edges indicate ``steps-to'' and ``sub-term'' relations
-\item visualize path through reduction graph
-\item expand edges to reveal more fine-grained steps (step/jump forward/backward)
-\item never lose context (unlike traditional debugger)
-\end{itemize}
-
-\section{Evaluation: NanoMaLy}                % 1 page
 \section{Related Work}              % 1 pages
 
 \subsection{Type Error Localization}

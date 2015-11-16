@@ -1,0 +1,331 @@
+\section{Searching for Type-Error Witnesses}
+\label{sec:searching-witness}
+% \begin{itemize}
+% \item how do we run ill-typed programs?
+% \item for a lang like ocaml, dynamic semantics are independent of static
+%   semantics, just lambda calculus. so no problem to run ill-typed
+%   program
+% \item but what about functions? what type of arguments should we pass? consider
+%
+% \begin{lstlisting}
+% let f x =
+%   let y = 1 + x in
+%     1. +. y
+% \end{lstlisting}
+%
+% does \texttt{f} take an int, float, string? int and float are both
+% somewhat plausible, but string or anything else is ``clearly'' bogus. so
+% we cannot provide \emph{completely arbitrary} inputs to
+% \texttt{f}. Instead, we call \texttt{f} with a \emph{hole}, written
+% \ehole{}, which is a placeholder for a value whose type we have not
+% yet determined. As we execute the program, we instantiate holes with
+% concrete values as demanded by the primitive operations in the
+% program. For example, the hole we pass to f will be instantiated to an
+% int when we reach the \lstinline{1 + x} term. Thus, y will be an int as
+% well, and the program will get stuck at \lstinline{1. +. y}. \ES{this
+%   reads more like overview text..}
+%
+% % \item values are tagged with their types, just like ``untyped'' langs
+% % \item special ``hole'' value whose type is not yet known, used for function args
+% % \item on-the-fly unification to determine ``correct'' type for holes
+% \end{itemize}
+%
+Next, we formalize our search for witnesses to type-errors.
+%
+We present the syntax and operational semantics of \lang -- a simple
+lambda calculus with integers and booleans, extended with our notion of
+holes -- as well as our search algorithm.
+%
+We prove that our system \emph{soundly} finds witnesses, \ie if we find
+a witness then there is no possible typing for the input program.
+%
+\subsection{Syntax}
+\label{sec:syntax}
+\input{syntax.tex}
+%
+Figure~\ref{fig:syntax} describes the syntax of \lang, a simple lambda
+calculus with numbers and booleans.
+%
+As we are specifically interested in
+programs that \emph{do} go wrong, we include an explicit \stuck state in
+our syntax.
+%
+\paragraph{Holes}
+\label{sec:holes}
+The main novelty in our system is the notion of a ``hole'', written
+\ehole{}, which represents an uninstantiated value.
+%
+Importantly, we do not even know what type the value should have.
+%
+Holes may also appear in types, where they may be thought of as type
+variables that we will not generalize over.
+%
+\subsection{Semantics}
+\label{sec:semantics}
+\input{operational.tex}
+%
+Figure~\ref{fig:operational} describes the small-step contextual
+reduction semantics for \lang.
+%
+We write \stepi{j}{e}{\su}{e'}{\su'} if there exist $e_1,\ldots,e_j$ such that
+$e$ is $e_1$, $e'$ is $e_j$ and $\forall i,j, 1 \leq i < j$, we have
+\step{e_i}{\su_i}{e_{i+1}}{\su_{i+1}}.
+%
+We write \steps{e}{\su}{e'}{\su'} if there exists some (finite) $j$ such that
+$\stepi{j}{e}{\su}{e'}{\su'}$.
+%
+The evaluation relation is parameterized by a pair of \forcesym and
+\gensym functions that handle runtime type-checking and instantiation of
+holes respectively.
+%
+The relation must also maintain a substitution \su, mapping holes to
+concrete values, so that we do not instantiate the same hole with
+different values in different contexts, and so that we can report a
+concrete witness to any discovered type errors.
+
+Note that each primitive reduction step -- addition, if-elimination, and
+function application -- uses \forcesym to ensure that values have the
+appropriate type (and that holes are instantiated) before continuing the
+computation.
+%
+Additionally, beta-reduction \emph{does not} type-check its argument, it
+only ensures that the value being applied is a function.
+%
+\begin{thm}
+\label{thm:all-reduce}
+  Every closed expression $e$ reduces to a value $v$ (which may be \stuck).
+  \ES{do we really need to state this, or is it obvious?}
+\end{thm}
+% \begin{proof}%[Proof of \autoref{thm:all-reduce}]
+%   Simple induction on the evaluation relation.
+% \end{proof}
+%
+\subsection{Soundness}
+\label{sec:soundness}
+We now show that our evaluation relation conservatively instantiates
+holes, \ie if, given a function $f$, we report that
+$\steps{\eapp{f}{\ehole{}}}{\emptysu}{\stuck}{\su}$,
+then for any type $\tfun{s}{t}$ you assign to $f$, there exists an input \hastype{v}{s} such that
+$\steps{\eapp{f}{v}}{\emptysu}{\stuck}{\su}$.
+
+We can think of the evaluation of \eapp{f}{\ehole{}} as computing a
+\emph{partial type} -- a type that may contain holes -- for $f$.
+%
+We can extract this type from the result of evaluation as follows.
+%
+\begin{defn}
+\label{defn:partial-type}
+  If \stepi{i}{\eapp{f}{\ehole{}}}{\emptysu}{e}{\su}, then the $i$th
+  \emph{partial type} of f, written \ptype{i}{f},
+  is \tfun{\typeof{\subst{\su}{\ehole{}}}}{\typeof{e}}.
+
+  We will omit the subscript when we wish to refer to the final partial
+  type.
+\end{defn}
+%
+The \typeof{} function is an approximation of the type of an expression.
+\begin{defn}
+\label{def:typeof}
+  \[
+  \begin{array}{lcll}
+    \typeof{n}   & \defeq & \tint & \\
+    \typeof{b}   & \defeq & \tbool & \\
+    \typeof{\efun{x}{e}} & \defeq & \tfun{\thole{i}}{\typeof{e}}, & \quad \text{$i$ is fresh} \\
+    \typeof{e} & \defeq & \thole{i}, & \quad \text{$i$ is fresh} \\
+  \end{array}
+  \]
+\end{defn}
+%
+We also define a compatibility relation between types.
+%
+\begin{defn}
+\label{defn:type-compat}
+  A type $s$ is \emph{compatible} with a type $t$, written \tcompat{s}{t}, if
+  $\exists \su.\ t = \subst{\su}{s} \lor s = \subst{\su}{t}$.
+  \ES{we're abusing the \su notation here..}
+\end{defn}
+%
+Given these two definitions, we show that each evaluation step
+refines the partial type of $f$.
+%
+\begin{lem}
+\label{lem:refine-partial}
+  For all $k$, \tcompat{\ptype{k}{f}}{\ptype{k+1}{f}}.
+\end{lem}
+\begin{proof}
+  By case analysis on the evaluation rules.
+  %
+  Note that all rules preserve partial types with the exception of when
+  \forcesym is called on a hole, which case we instantiate the hole with
+  a concrete value.
+  %
+  But \hastype{\ehole{}}{\thole{}}, which is compatible with any type.
+\end{proof}
+%
+Furthermore, only a call to \forcesym can change the partial type of $f$.
+%
+\begin{lem}
+\label{lem:force-inst}
+  For all $k$, if $\ptype{k}{f} \neq \ptype{k+1}{f}$, then \forcesym must
+  have been called at step $k+1$.
+\end{lem}
+\begin{proof}
+  By case analysis on the evaluation rules.
+  %
+  If $\ptype{k}{f} \neq \ptype{k+1}{f}$ then one of the holes in $f$'s
+  argument must have been instantiated with a concrete value at step
+  $k+1$.
+  %
+  An examination of the rules shows that only place this happens is
+  in the first case of \forcesym.
+\end{proof}
+%
+Finally, we show that any value that is not compatible with the $k$th
+partial type of $f$ will cause $f$ to get stuck in \emph{at most} $k$
+steps.
+%
+\begin{lem}
+\label{lem:k-stuck}
+  For any \hastype{v}{t} that is not compatible with
+  the input of \ptype{k}{f}, \stepi{k}{\eapp{f}{v}}{\emptysu}{\stuck}{\su}.
+\end{lem}
+\begin{proof}
+  By induction on $k$.
+
+  Let $\tfun{s_k}{\_} = \ptype{k}{f}$. Suppose \hastype{v}{\tincompat{t}{s_{k+1}}}, we
+  will show that \stepi{k+1}{\eapp{f}{v}}{\emptysu}{\stuck}{\su}.
+  \begin{description}
+  \item[Case \tincompat{t}{s_k}:]
+    The inductive hypothesis applies.
+  \item[Case \tcompat{t}{s_k} but \tincompat{t}{s_{k+1}}:]
+    By Lemma~\ref{lem:force-inst} we must have called \forcesym at step
+    $k+1$.
+    %
+    A case analysis of the applicable rules shows that \forcesym cannot
+    have succeeded.
+  \end{description}
+\end{proof}
+%
+Now we can prove our soundness theorem.
+%
+\begin{thm}
+\label{thm:soundness}
+  For any function $f$, if \steps{\eapp{f}{\ehole{}}}{\emptysu}{\stuck}{\su},
+  then $\forall t. \exists \hastype{v}{t}. \steps{\eapp{f}{v}}{\emptysu}{\stuck}{\su}$.
+\end{thm}
+\begin{proof}
+  Let $\tfun{s}{\_} = \ptype{}{f}$.
+  \begin{description}
+  \item[Case \tcompat{s}{t}:] Our witness is already valid.
+  \item[Case \tincompat{s}{t}:] We can apply Lemma~\ref{lem:k-stuck} and
+    use \emph{any} \hastype{v}{t} as a witness for $f$.
+  \end{description}
+\end{proof}
+
+\subsection{Search Algorithm}
+\label{sec:search-algorithm}
+%
+We have shown how to find a witness for a function of a single argument,
+but in a language with higher-order functions and currying it may not be
+clear \emph{syntactically} how many arguments a function takes.
+%
+Thus, we wrap our operational semantics for \lang in a search loop that
+supplies an increasing number of arguments until the function returns a
+value that is not a lambda.
+
+The top-level search loop takes as input an open program -- a sequence
+of binders -- and searches for an expression that closes the input
+program and gets stuck. Concretely, given an input
+%
+\begin{code}
+  let f1 = e1 in
+  let f2 = e2 in
+  ...
+  let fn = en in
+\end{code}
+%
+we will search for an expression of the form:
+%
+\begin{code}
+  fn v1 ... vn
+\end{code}
+%
+Figure~\ref{fig:expression-api} describes a small API for manipulating
+and evaluating \lang expressions, which we will use to define our search
+algorithm.
+%
+The bulk of the search is performed by @eval@, which
+implements our operational semantics from \S\ref{sec:semantics}.
+%
+The operational semantics is non-deterministic due to \gensym,
+thus @eval@ returns a list of possible results.
+%
+\begin{figure}[t]
+  \centering
+  \begin{mcode}
+  -- transitive small-step reduction,
+  -- returning a list of results
+  eval :: ($e$, $\su$) -> [($v$, $\su$)]
+
+  -- manipulating expressions
+  subst   :: $\su$ -> $v$ -> $v$
+  mkApps  :: $e$ -> [$e$] -> $e$
+  mkLets  :: [($x$, $e$)] -> $e$ -> $e$
+  isStuck :: $v$ -> Bool
+  \end{mcode}
+  \caption{Expression API}
+  \label{fig:expression-api}
+\end{figure}
+%
+We also define a few helper functions for manipulating expressions:
+\begin{itemize}
+\item @subst@ applies a substitution of holes to a value,
+\item @mkApps@ creates a nested sequence of applications in the usual
+  left-associative style,
+\item @mkLets@ takes a list of binders and a body expression, and
+  creates a sequence of nested let-binders, and
+\item @isStuck@ tests whether a value is the \stuck term.
+\end{itemize}
+%
+\begin{figure*}[t]
+  \centering
+  \begin{mcode}
+  check :: [($x$, $e$)] -> Result
+  check bnds =
+    -- (2) search for a witness
+    case find (isStuck . fst) results of
+      Nothing      -> Safe
+      Just (_, su) -> Unsafe (mkApps f (subst su args))
+    where
+      (args, results) = loop []
+      f               = snd (last bnds)
+      build args      = mkLets bnds (mkApps f args)
+
+      -- (1) find the correct number of arguments
+      loop :: [$v$] -> ([$v$], [($v$, $\su$)])
+      loop args = case eval (build args, []) of
+        ($\efun{x}{e}$, _) : _ -> loop (args `snoc` $\ehole{}$)
+        results      -> (args, results)
+  \end{mcode}
+  \caption{Implementing our counter-example search in terms of the
+    operational semantics.
+    \ES{1 and 2 are backwards, ugh...}
+    \ES{should address case where output types of successive runs dont match}
+  }
+  \label{fig:search-algo}
+\end{figure*}
+%
+Figure~\ref{fig:search-algo} summarizes the overall implementation of
+our search for witnesses, which takes as input a sequences of binders
+and returns either @Safe@ if no witness could be found, or |Unsafe $e$|
+where $e$ is a term that causes the input program to get stuck.
+%
+The search is split into two phases: (1) we supply an increasing number
+of arguments until we find a saturated application, and (2) we search
+through the list of results from the non-deterministic evaluator for a
+witness.
+
+
+% Algorithm:
+%   Input: ML Program (let f1 = e1 in let f2 = e2 in ... e)
+%   Output: 'safe' or 'fn v1 .. vn' where 'fn v1 .. vn' gets stuck

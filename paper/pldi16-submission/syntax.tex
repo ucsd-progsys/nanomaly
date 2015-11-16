@@ -1,0 +1,58 @@
+\begin{figure}
+% \hrule width 0.48\textwidth \vspace{0.05in}
+$$
+\begin{array}{rrcl}
+\emphbf{Expressions} \quad 
+  & e & ::=    & v \spmid x \spmid \eapp{e}{e} \spmid \eplus{e}{e}\\
+  &   & \spmid & \eif{e}{e}{e} \\
+  &   & \spmid & \elet{x}{e}{e} \\[0.05in] 
+
+\emphbf{Values} \quad 
+  & v & ::= &  n \spmid b \spmid \efun{x}{e} \spmid \ehole{n} \spmid \stuck \\[0.05in] 
+
+\emphbf{Integers} \quad
+  & n & ::= &  0,1,-1,\ldots \\[0.05in]
+
+\emphbf{Booleans} \quad
+  & b & ::= &  \etrue \spmid \efalse \\[0.05in]
+
+\emphbf{Types} \quad 
+  & t & ::= & \tbool \spmid \tint \spmid \tfun{t}{t} \spmid \thole{n} \\[0.05in]
+
+\emphbf{Substitutions} \quad
+  & \su & ::= & \emptysu \spmid \mksub{n}{e}; \su \\[0.1in]
+\end{array}
+$$
+% \hrule width 0.48\textwidth
+
+$$
+\begin{array}{rrcl}
+\emphbf{Contexts} \quad 
+  & C
+  & ::= 
+  &   	 \bullet 
+  \spmid \eapp{C}{e}
+  \spmid \eapp{v}{C} \\
+  & & \spmid & \eplus{C}{e} \spmid \eplus{v}{C} \\
+  & & \spmid & \eif{C}{e}{e} \\
+  & & \spmid & \elet{x}{C}{e}
+  \\[0.05in] 
+\end{array}
+$$
+
+% \judgementHead{Reduction}{\eval{e}{e}}
+
+% $$
+% \begin{array}{rcl}
+% \eval{C[e]&}{&C[e']} \qquad \text{if}\ \eval{e}{e'} \\
+% 	\eval{\eapp{c}{v}&}{& \ceval{c}{v}}\\
+% \eval{\eapp{(\efun{x}{\tau_x}{e})}{e_x}&}{&e\sub{x}{e_x}}\\
+% 	\eval{\elet{x}{e_x}{e}&}{&e\sub{x}{e_x}} \\
+% 	\eval{\ecase{D_j\ \overline{e}}{D_i}{\overline{y_i}}{e_i}{x}&}
+% 	{&e_j\sub{x}{D_j\ \overline{e}}\sub{\overline{y_j}}{\overline{e}}} \\
+% \end{array}
+% $$
+
+\caption{Syntax of \lang \ES{it's a bit weird to call \stuck a ``value''}}
+\label{fig:syntax}
+\end{figure}
