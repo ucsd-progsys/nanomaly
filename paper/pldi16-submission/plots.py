@@ -33,6 +33,7 @@ def plot_coverage(data):
     ind = np.arange(N)    # the x locations for the groups
     width = 0.5       # the width of the bars: can also be len(x) sequence
 
+    fig = plt.figure()
     p1 = plt.bar(ind, [r[1] for r in xy], width,
                  color=COLORS[0])
 
@@ -44,7 +45,8 @@ def plot_coverage(data):
     plt.legend((p1[0],), ('Seminal',))
     # plt.legend((p1[0], p2[0]), ('Men', 'Women'))
 
-    plt.show()
+    # plt.show()
+    fig.savefig('coverage.png', dpi=300)
 
 def plot_trace_size(data, label):
     # xy = cumulative_coverage(data)
@@ -82,7 +84,8 @@ def plot_trace_size(data, label):
     # plt.legend((p1[0],), ('Seminal',))
     plt.legend((p1[0], p2[0]), ('Steps', 'Jumps'))
 
-    plt.show()
+    # plt.show()
+    fig.savefig('trace_size_%s.png' % label.lower(), dpi=300)
 
 def plot_distrib(data, label):
     data = data[1:]
@@ -92,7 +95,7 @@ def plot_distrib(data, label):
     # N = len(xy)
     # ind = np.arange(N)    # the x locations for the groups
     # width = 0.5       # the width of the bars: can also be len(x) sequence
-
+    fig = plt.figure()
     plt.axes(aspect=1)
     p1 = plt.pie(rs, labels=ALL_L,
                  autopct='%.1f%%',
@@ -112,5 +115,6 @@ def plot_distrib(data, label):
     # plt.legend((p1[0],), ('Seminal',))
     # plt.legend((p1[0], p2[0]), ('Men', 'Women'))
 
-    plt.show()
+    # plt.show()
+    fig.savefig('distrib_%s.png' % label.lower(), dpi=300)
 
