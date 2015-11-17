@@ -1,0 +1,151 @@
+\section{Introduction}
+\label{sec:introduction}
+
+% \paragraph{Problem}
+Type errors are a common stumbling block for students trying to learn
+typed functional languages like \ocaml and \haskell.
+%
+The compiler imposes a strict discipline that prevents novices from
+running their programs until the type-checker has been appeased.
+%
+In effect this prioritizes the \emph{static} semantics of the language
+over the \emph{dynamic} semantics.
+%
+This is fine for expert users who are already familiar with the language
+and type system, but seems backwards for novices, who are typically
+introduced to the dynamic semantics first.
+
+Consider the following ill-typed @factorial@ function, where we return
+@true@ in the base case instead of @1@.
+%
+\begin{code}
+  let rec factorial n =
+    if n <= 0 then
+      true
+    else
+      n * factorial (n-1)
+\end{code}
+%
+\ocaml's response is to tell us that on line 5, the recursive call to
+@factorial@ returns a @bool@, but we needed an @int@ for the
+multiplication.
+%
+\begin{verbatim}
+File "fac.ml", line 5, characters 8-23:
+Error: This expression has type bool
+       but an expression was expected
+       of type int
+\end{verbatim}
+%
+\ocaml is correct, but we may ask \emph{why} @factorial@ returns a
+@bool@ instead of an @int@.
+
+Contrast this \emph{static} type error to the \emph{dynamic} type error
+that arises in the equivalent \ruby function, when we call
+@factorial(1)@.
+%
+\begin{verbatim}
+fac.rb:5:in `*': true can't be coerced
+                 into Fixnum (TypeError)
+  from fac.rb:5:in `factorial'
+  from fac.rb:10:in `<main>'
+\end{verbatim}
+%
+The same basic information is there, @*@ was given a @bool@ (@true@)
+when it expected an @int@ (@FixNum@), but since the error occurred at
+runtime, \ruby is able to provide a stack trace that provides important
+contextual information about the error.
+%
+More importantly, being able to \emph{run} the bad program means we can
+also test it on other inputs, \eg @0@, or we can load it into a debugger
+and step through the execution to see concretely how the error arises.
+
+To make matters worse, it is well known that type inference algorithms
+based on unification have a penchant for \emph{reporting} errors far
+from their source.
+%
+This further increases the novice's confusion and can actively mislead
+them to focus their investigation on an irrelevant piece of code.
+%
+Much work has been done on pinpointing the \emph{source} of a type
+error~\cite{zhang-myers, maxsmt, counterfactual}, but an accurate source
+location still does not explain \emph{why} the program is wrong.
+
+% \paragraph{Contributions}
+In this paper we propose exposing \emph{static} type errors for the
+\emph{runtime} crashes that they are.
+%
+Our first contribution is an algorithm for searching for
+\emph{witnesses} to type errors, \ie input vectors that cause a program
+to crash with a type error.
+%
+This is not as trivial as it sounds.
+%
+While one can indeed execute an \ocaml program without type-checking it
+-- the dynamic semantics do not depend on the static semantics -- what
+types of values should one pass to the program?
+%
+We do not want to generate \emph{spurious} witnesses, inputs that the
+type-checker would have excluded, so we introduce a semantics for
+executing \ocaml programs with ``holes'', values whose type we do not
+yet know.
+%
+% A hole can be passed around through the program until it is demanded by
+% a primitive operation, \eg addition, function application, branching,
+% etc., at which point we know from the context what type it must have,
+% and can instantiate it with a concrete value.
+%
+Our semantics \emph{conservatively} instantiates holes with concrete
+values, if we can find a witness to a type error then there is no valid
+typing for the program.
+
+Given a witness to a type error, the prospective \ocaml student may
+still be at a loss.
+%
+The standard \ocaml interpreter and debugging infrastructure expect
+well-typed programs, so they cannot be used to investigate \emph{how}
+the witness causes the program to crash.
+%
+Thus, our second contribution is an interactive visualization of the
+execution of \ocaml programs (well-typed or not).
+%
+We present the execution as a \emph{reduction graph}, in which the nodes
+are expressions and the edges indicate either a single-step reduction or
+a sub-term relation.
+%
+This graph is easy to generate during the execution and admits many of
+the standard debugging steps, \eg ``step forward'', ``step into'', and
+``step over'', as well as backwards motion and jumping to the next (or
+previous) function call.
+%
+The visualization initially shows the source term (\ie the witness) and
+the stuck term (or the final value), and allows the novice to
+iteratively expand the computation to show intermediate steps by
+selecting an expression and choosing an strategy for picking the next
+node to insert into the graph.
+%
+This process of iterative expansion of the trace ensures that the
+context of intermediate steps is not lost; whereas traditional debuggers
+force one to move between statements, in our visualization you never
+lose sight of where you came from.
+
+\paragraph{Outline}
+We begin the rest of the paper with an overview of our search algorithm
+and trace visualization (\S~\ref{sec:overview}).
+%
+Then, we formalize our algorithm and prove it sound
+(\S~\ref{sec:searching-witness}), and evaluate it on a large set of real
+student programs (\S~\ref{sec:eval-witness}).
+%
+Next, we extend the search algorithm to collect the reduction graph and
+formalize a set of traversals (\S~\ref{sec:explaining}), and measure the
+complexity of these traces on our benchmarks
+(\S~\ref{sec:evaluation-nanomaly}).
+%
+Finally, we present the results of a preliminary user study on the full
+system (\S~\ref{sec:user-study}).
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
