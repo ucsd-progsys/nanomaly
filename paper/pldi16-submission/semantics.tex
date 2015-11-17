@@ -1,5 +1,43 @@
-\section{Searching for Type-Error Witnesses}
+\section{Type-Error Witnesses}
 \label{sec:searching-witness}
+
+Our goal is to find concrete values that demonstrate how a
+program ``goes wrong''.
+
+\paragraph{Problem: Which inputs are bad?}
+%
+One approach is to randomly generate input values and use
+them to execute the program until we find one that causes
+the program to go wrong. However, to see why this approach
+is naive, consider the following example:
+%
+\begin{lstlisting}
+  let f x =
+    let y = 1 + x in
+      1. +. y
+\end{lstlisting}
+%
+What \emph{types} of inputs should we test \texttt{f} with?
+Values of type \texttt{int} and \texttt{float} are fair game,
+but values of type say, \texttt{string} or \texttt{int list}
+will cause the program to go wrong in an \emph{irrelevant}
+manner.
+
+\paragraph{Solution:} \RJ{STOP}
+
+
+% we cannot provide \emph{completely arbitrary} inputs to
+% \texttt{f}. Instead, we call \texttt{f} with a \emph{hole}, written
+% \ehole{}, which is a placeholder for a value whose type we have not
+% yet determined. As we execute the program, we instantiate holes with
+% concrete values as demanded by the primitive operations in the
+% program. For example, the hole we pass to f will be instantiated to an
+% int when we reach the \lstinline{1 + x} term. Thus, y will be an int as
+% well, and the program will get stuck at \lstinline{1. +. y}. \ES{this
+%   reads more like overview text..}
+%
+
+
 % \begin{itemize}
 % \item how do we run ill-typed programs?
 % \item for a lang like ocaml, dynamic semantics are independent of static
@@ -29,37 +67,68 @@
 % % \item special ``hole'' value whose type is not yet known, used for function args
 % % \item on-the-fly unification to determine ``correct'' type for holes
 % \end{itemize}
+
+
+Next, we formalize the notion of type error witnesses as follows.
 %
-Next, we formalize our search for witnesses to type-errors.
+First, we define a core calculus within which we will work~\S~\ref{sec:syntax}.
 %
-We present the syntax and operational semantics of \lang -- a simple
-lambda calculus with integers and booleans, extended with our notion of
-holes -- as well as our search algorithm.
+Second, we develop a (non-deterministic) operational semantics
+for ill-typed programs that precisely defines the notion
+of a \emph{witness}~\S~\ref{sec:semantics},
 %
-We prove that our system \emph{soundly} finds witnesses, \ie if we find
-a witness then there is no possible typing for the input program.
+Third, we formalize and prove a notion of \emph{generality} for
+witnesses, which states, intuitively that if we find a
+single witness then for \emph{every possible} type
+assignment, there exist inputs that are guaranteed to make
+the program ``go wrong''~\S~\ref{sec:soundness}, and finally,
 %
+Fourth, we refine the operational semantics into a
+\emph{search procedure} that returns concrete (general)
+witnesses for ill-typed programs~\S~\ref{sec:search-algorithm}.
+
 \subsection{Syntax}
 \label{sec:syntax}
 \input{syntax.tex}
 %
 Figure~\ref{fig:syntax} describes the syntax of \lang, a simple lambda
-calculus with numbers and booleans.
+calculus with integers and booleans.
 %
-As we are specifically interested in
-programs that \emph{do} go wrong, we include an explicit \stuck state in
-our syntax.
-%
+As we are specifically interested in programs that \emph{do} go wrong,
+we include an explicit \stuck\ state in our syntax.
+
 \paragraph{Holes}
 \label{sec:holes}
-The main novelty in our system is the notion of a ``hole'', written
-\ehole{}, which represents an uninstantiated value.
 %
-Importantly, we do not even know what type the value should have.
+Recall that a key challenge in our setting is to find witnesses
+that are meaningful and do not arise from choosing values from
+irrelevant types.
 %
-Holes may also appear in types, where they may be thought of as type
-variables that we will not generalize over.
+We solve this problem be equipping our term language with a notion
+of a \emph{hole}, written \ehole{}, which represent \emph{unconstrained}
+values that may replaced with values from \emph{any} type.
 %
+Dually, holes may also appear in types, where they may be thought
+of as type variables that we will not generalize over.
+%
+
+\paragraph{Substitutions}
+%
+Our semantics ensure the generality of witnesses by incrementally
+\emph{refining} holes filling in just as much information as is
+needed locally to make progress (inspired by the manner in
+which SmallCheck uses lazy evaluation~\cite{smallcheck}).
+%
+We track how the holes are incrementally filled in, by using
+(value) \emph{substitutions} that map holes (denoted by their index)
+to values which may, in turn, contain holes.
+%
+The substitutions let us ensure that we instantiate each hole
+with the same (partially defined) value, regardless of the multiple
+contexts in which the hole appears, and hence, ensures we can
+report a concrete (and general) witness for any (dynamically)
+discovered type errors.
+
 \subsection{Semantics}
 \label{sec:semantics}
 \input{operational.tex}
@@ -67,21 +136,61 @@ variables that we will not generalize over.
 Figure~\ref{fig:operational} describes the small-step contextual
 reduction semantics for \lang.
 %
+A \emph{closed expression} is a pair $\pair{e}{\vsu}$ of an expression $e$
+and a substitution $\vsu$.
+%
+We write $\step{e}{\vsu}{e'}{\vsu'}$ if the closed expression $\pair{e}{\vsu}$
+transitions in a \emph{small step} to $\pair{e'}{\vsu'}$.
+%
 We write \stepi{j}{e}{\su}{e'}{\su'} if there exist $e_1,\ldots,e_j$ such that
-$e$ is $e_1$, $e'$ is $e_j$ and $\forall i,j, 1 \leq i < j$, we have
+$e$ is $e_0$, $e'$ is $e_j$ and $\forall 0 \leq i < j$, we have
 \step{e_i}{\su_i}{e_{i+1}}{\su_{i+1}}.
 %
 We write \steps{e}{\su}{e'}{\su'} if there exists some (finite) $j$ such that
 $\stepi{j}{e}{\su}{e'}{\su'}$.
 %
-The evaluation relation is parameterized by a pair of \forcesym and
-\gensym functions that handle runtime type-checking and instantiation of
-holes respectively.
+The evaluation relation is parameterized by a pair of functions:
+called \emph{narrow} (\forcesym) and \emph{generate} (\gensym),
+that ``dynamically'' perform type-checking and hole-filling
+respectively.
+
+\paragraph{Narrowing Types} The function $\force{e}{t}$ takes as
+input an term \texttt{e} and refines it to have the type \texttt{t}
+by yielding a pair of either the same expression and a value substitution
+the refines the holes in \texttt{e} to ensure it has type \texttt{t},
+or yields the stuck term if no such refinement is possible:
 %
-The relation must also maintain a substitution \su, mapping holes to
-concrete values, so that we do not instantiate the same hole with
-different values in different contexts, and so that we can report a
-concrete witness to any discovered type errors.
+$$
+\begin{array}{lcl}
+\forcesym            & ::     & (e, t) \rightarrow \pair{e}{\vsu} \\
+\force{\ehole{i}}{t} & \defeq & \elet{v}{\gen{t}}{\pair{v}{\ehole{i} \mapsto v}} \\
+\force{v}{\ehole{}}  & \defeq & \pair{v}{\emptysu} \\
+\force{n}{\tint}     & \defeq & \pair{n}{\emptysu} \\
+\force{v}{\tint}     & \defeq & \pair{\stuck}{\emptysu} \\
+\force{b}{\tbool}    & \defeq & \pair{b}{\emptysu} \\
+\force{v}{\tbool}    & \defeq & \pair{\stuck}{\emptysu} \\
+\force{\efun{x}{e}}{\tfun{\thole{}}{\thole{}}} & \defeq & \pair{\efun{x}{e}}{\emptysu} \\
+\force{v}{\tfun{\thole{}}{\thole{}}} & \defeq & \pair{\stuck}{\emptysu} \\
+\end{array}
+$$
+
+\paragraph{Generating Values} The function $\gen{t}$ takes as input a type
+\texttt{t} and returns \RJ{HEREHERE}
+
+$$
+\begin{array}{lcll}
+\gensym       & ::      & t \rightarrow v \\
+\gen{\tint}   & \defeq  & n & \quad \text{non-deterministic} \\
+\gen{\tbool}  & \defeq  & b & \quad \text{non-deterministic} \\
+\gen{\tfun{t_1}{t_2}}   & \defeq & \efun{x}{\ehole{i}}, & \quad \text{$i$ is fresh} \\
+\gen{\thole{}} & \defeq & \ehole{i}, & \quad \text{$i$ is fresh} \\
+\end{array}
+$$
+
+
+
+
+%
 
 Note that each primitive reduction step -- addition, if-elimination, and
 function application -- uses \forcesym to ensure that values have the
@@ -96,6 +205,8 @@ only ensures that the value being applied is a function.
   Every closed expression $e$ reduces to a value $v$ (which may be \stuck).
   \ES{do we really need to state this, or is it obvious?}
 \end{thm}
+
+%
 % \begin{proof}%[Proof of \autoref{thm:all-reduce}]
 %   Simple induction on the evaluation relation.
 % \end{proof}
@@ -329,3 +440,5 @@ witness.
 % Algorithm:
 %   Input: ML Program (let f1 = e1 in let f2 = e2 in ... e)
 %   Output: 'safe' or 'fn v1 .. vn' where 'fn v1 .. vn' gets stuck
+
+% !TEX root = main.tex

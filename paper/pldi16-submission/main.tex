@@ -3,8 +3,8 @@
 %
 % Requires temporary version of sigplanconf style file provided on
 % PLDI'15 web site.
-% 
-\documentclass[10pt,pldi,indentedstyle=false]{sigplanconf-pldi15}
+%
+\documentclass[10pt,pldi,nocopyrightspace,indentedstyle=false]{sigplanconf-pldi15}
 
 %
 % the following standard packages may be helpful, but are not required
@@ -29,18 +29,23 @@
 % \newtheorem{corollary}{Corollary}
 % \newtheorem{theorem}{Theorem}
 % \newtheorem{definition}{Definition}
-\theoremstyle{plain}% default 
-\newtheorem{thm}{Theorem} % [section] 
-\newtheorem{lem}[thm]{Lemma} 
-\newtheorem{prop}[thm]{Proposition} 
-\newtheorem*{cor}{Corollary} 
+\theoremstyle{plain}% default
+\newtheorem{thm}{Theorem} % [section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem*{cor}{Corollary}
 \theoremstyle{definition}
 \newtheorem{defn}{Definition} % [section]
 
+\usepackage{pgfplots}
+\usepackage{pgfkeys}
+%\pgfplotsset{width=0.38\linewidth,compat=1.11}
 
 \usepackage[inference]{semantic}
 
 \input{haskellListings}
+
+
 
 \begin{document}
 
@@ -74,15 +79,19 @@
 %  1p : related work
 %  1p : conclusion
 
-\section{Introduction}          % 1 page
-\section{Overview}              % 2 pages?
+% \section{Introduction}          % 1 page
+\input{introduction.tex}
+
+% \section{Overview}              % 2 pages?
+\input{overview.tex}
+
 % \section{Type-carrying Semantics} % 2 pages
 \input{semantics.tex}
 
 % \section{Evalution: Recasting Type Errors as Runtime Errors} % 1 page
 \input{evaluation-witness.tex}
 
-%\section{``Interactive'' Semantics \& Trace Exploration} % 2 pages
+% \section{``Interactive'' Semantics \& Trace Exploration} % 2 pages
 \input{interactive.tex}
 
 \input{nanomaly.tex}
