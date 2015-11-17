@@ -44,23 +44,26 @@ While not a \emph{type error}, infinite recursion is still a clear bug
 in the program, and thus valuable feedback for the user.
 
 \begin{figure}[t]
-  \centering 
+  \centering
 
-\begin{tikzpicture} 
-\begin{axis}[
-  title=Cumulative Coverage,
-  ybar interval,
-  xticklabel=
-\pgfmathprintnumber\tick--\pgfmathprintnumber\nexttick
-]
-    \addplot+[hist={bins=3, cumulative}]
-        table[row sep=\\,y index=0] {
-        data\\
-        1\\ 2\\ 1\\ 5\\ 4\\ 10\\
-        7\\ 10\\ 9\\ 8\\ 9\\ 9\\
-    };
-\end{axis}
-\end{tikzpicture}
+  \includegraphics[width=\linewidth]{coverage.png}
+  \includegraphics[width=\linewidth]{distrib_seminal.png}
+
+% \begin{tikzpicture} 
+% \begin{axis}[
+%   title=Cumulative Coverage,
+%   ybar interval,
+%   xticklabel=
+% \pgfmathprintnumber\tick--\pgfmathprintnumber\nexttick
+% ]
+%     \addplot+[hist={bins=3, cumulative}]
+%         table[row sep=\\,y index=0] {
+%         data\\
+%         1\\ 2\\ 1\\ 5\\ 4\\ 10\\
+%         7\\ 10\\ 9\\ 8\\ 9\\ 9\\
+%     };
+% \end{axis}
+% \end{tikzpicture}
 
 % \begin{tikzpicture} \begin{axis}[
 %   title=Result Distribution,
