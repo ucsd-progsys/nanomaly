@@ -1,4 +1,4 @@
-\section{Implementation: \nanomaly}
+\section{Our Implementation: \nanomaly}
 \label{sec:impl-nanomaly}
 We have implemented our interactive semantics for the pure subset of
 \ocaml with a web-based visualization of the generated traces in a tool
@@ -38,7 +38,7 @@ if-expression is faded out, this tells the user that the program got
 stuck while trying to evaluate the sub-expression.
 
 Upon seeing the stuck term, one might wonder where the @function@
-came from. 
+came from.
 %
 To investigate we select the stuck term and click the ``jump backward''
 button to search backwards from the stuck term for the most recent
@@ -67,14 +67,14 @@ decide that @listReverse@ is safe to run.
 \centering
 \begin{code}
   let listReverse l =
-    let rec helper xs = function 
-      | [] -> xs 
-      | hd::tl -> helper (hd :: xs) tl 
+    let rec helper xs = function
+      | [] -> xs
+      | hd::tl -> helper (hd :: xs) tl
     in helper []
-  
+
   let palindrome w =
-    if listReverse w = w 
-    then true 
+    if listReverse w = w
+    then true
     else false
 \end{code}
 \caption{Ill-typed \texttt{palindrome} function. The error lies in the
@@ -97,3 +97,5 @@ After ``stepping forward'' twice from @listReverse []@: \\
 \caption{Sample interaction}
 \label{fig:nanomaly-palindrome}
 \end{figure}
+
+% !TEX root = main.tex
