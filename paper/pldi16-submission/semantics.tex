@@ -23,7 +23,7 @@ but values of type say, \texttt{string} or \texttt{int list}
 will cause the program to go wrong in an \emph{irrelevant}
 manner.
 
-\paragraph{Solution:} \rj{STOP}
+\paragraph{Solution:} \RJ{STOP}
 
 
 % we cannot provide \emph{completely arbitrary} inputs to
@@ -123,7 +123,11 @@ We track how the holes are incrementally filled in, by using
 (value) \emph{substitutions} that map holes (denoted by their index)
 to values which may, in turn, contain holes.
 %
-
+The substitutions let us ensure that we instantiate each hole
+with the same (partially defined) value, regardless of the multiple
+contexts in which the hole appears, and hence, ensures we can
+report a concrete (and general) witness for any (dynamically)
+discovered type errors.
 
 \subsection{Semantics}
 \label{sec:semantics}
@@ -144,17 +148,49 @@ $e$ is $e_0$, $e'$ is $e_j$ and $\forall 0 \leq i < j$, we have
 %
 We write \steps{e}{\su}{e'}{\su'} if there exists some (finite) $j$ such that
 $\stepi{j}{e}{\su}{e'}{\su'}$.
-
-
-
-The evaluation relation is parameterized by a pair of \forcesym and
-\gensym functions that handle runtime type-checking and instantiation of
-holes respectively.
 %
-The relation must also maintain a substitution \su, mapping holes to
-concrete values, so that we do not instantiate the same hole with
-different values in different contexts, and so that we can report a
-concrete witness to any discovered type errors.
+The evaluation relation is parameterized by a pair of functions:
+called \emph{narrow} (\forcesym) and \emph{generate} (\gensym),
+that ``dynamically'' perform type-checking and hole-filling
+respectively.
+
+\paragraph{Narrowing Types} The function $\force{e}{t}$ takes as
+input an term \texttt{e} and refines it to have the type \texttt{t}
+by yielding a pair of either the same expression and a value substitution
+the refines the holes in \texttt{e} to ensure it has type \texttt{t},
+or yields the stuck term if no such refinement is possible:
+%
+$$
+\begin{array}{lcl}
+\forcesym            & ::     & (e, t) \rightarrow \pair{e}{\vsu} \\
+\force{\ehole{i}}{t} & \defeq & \elet{v}{\gen{t}}{\pair{v}{\ehole{i} \mapsto v}} \\
+\force{v}{\ehole{}}  & \defeq & \pair{v}{\emptysu} \\
+\force{n}{\tint}     & \defeq & \pair{n}{\emptysu} \\
+\force{v}{\tint}     & \defeq & \pair{\stuck}{\emptysu} \\
+\force{b}{\tbool}    & \defeq & \pair{b}{\emptysu} \\
+\force{v}{\tbool}    & \defeq & \pair{\stuck}{\emptysu} \\
+\force{\efun{x}{e}}{\tfun{\thole{}}{\thole{}}} & \defeq & \pair{\efun{x}{e}}{\emptysu} \\
+\force{v}{\tfun{\thole{}}{\thole{}}} & \defeq & \pair{\stuck}{\emptysu} \\
+\end{array}
+$$
+
+\paragraph{Generating Values} The function $\gen{t}$ takes as input a type
+\texttt{t} and returns \RJ{HEREHERE}
+
+$$
+\begin{array}{lcll}
+\gensym       & ::      & t \rightarrow v \\
+\gen{\tint}   & \defeq  & n & \quad \text{non-deterministic} \\
+\gen{\tbool}  & \defeq  & b & \quad \text{non-deterministic} \\
+\gen{\tfun{t_1}{t_2}}   & \defeq & \efun{x}{\ehole{i}}, & \quad \text{$i$ is fresh} \\
+\gen{\thole{}} & \defeq & \ehole{i}, & \quad \text{$i$ is fresh} \\
+\end{array}
+$$
+
+
+
+
+%
 
 Note that each primitive reduction step -- addition, if-elimination, and
 function application -- uses \forcesym to ensure that values have the
@@ -169,6 +205,8 @@ only ensures that the value being applied is a function.
   Every closed expression $e$ reduces to a value $v$ (which may be \stuck).
   \ES{do we really need to state this, or is it obvious?}
 \end{thm}
+
+%
 % \begin{proof}%[Proof of \autoref{thm:all-reduce}]
 %   Simple induction on the evaluation relation.
 % \end{proof}
