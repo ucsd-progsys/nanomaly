@@ -17,22 +17,23 @@ programs that were rejected by the \ocaml compiler because of a type
 error.
 %
 The first dataset comes from the Spring 2014 undergraduate Programming
-Languages course at UC San Diego (IRB \#XXXXX). 
+Languages course at UC San Diego (IRB \#140608). 
 %
 We recorded each interaction with the \ocaml top-level system over the
 course of the first three assignments, from which we extracted XXXX
 distinct, ill-typed \ocaml programs.
 %
 The second dataset -- widely used in the literature -- comes from a
-similar course at the University of Washington~\cite{XXXXX}, from which
-we extracted XXXX ill-typed programs.
+similar course at the University of
+Washington~\cite{lerner_seminal:_2006}, from which we extracted 284
+ill-typed programs.
 
 We ran our search algorithm on each program with the entry point set to
 the function that \ocaml had identified as containing a type error. 
 %
 Due to the possibility of non-termination we set a limit on the number
-of reductions to perform, increasing in 1,000-step increments from 1,000
-steps to 10,000 steps total.
+of reductions to perform, increasing in 500-step increments from 500
+steps to 3,000 steps total.
 %
 We also added a na\"ive check for infinite recursion; at each recursive
 function call we check whether the new arguments are identical to the
@@ -44,51 +45,23 @@ While not a \emph{type error}, infinite recursion is still a clear bug
 in the program, and thus valuable feedback for the user.
 
 \begin{figure}[t]
-  \centering
-
+\centering
 \begin{minipage}{\linewidth}
 \includegraphics[width=\linewidth]{coverage.pdf}
 \end{minipage}
 \begin{minipage}{\linewidth}
-\includegraphics[width=\linewidth]{distrib_seminal.pdf}
+\includegraphics[width=\linewidth]{distrib.pdf}
 \end{minipage}
-  % \includegraphics[width=\linewidth]{coverage.png}
-  % \includegraphics[width=\linewidth]{distrib_seminal.png}
-
-% \begin{tikzpicture} 
-% \begin{axis}[
-%   title=Cumulative Coverage,
-%   ybar interval,
-%   xticklabel=
-% \pgfmathprintnumber\tick--\pgfmathprintnumber\nexttick
-% ]
-%     \addplot+[hist={bins=3, cumulative}]
-%         table[row sep=\\,y index=0] {
-%         data\\
-%         1\\ 2\\ 1\\ 5\\ 4\\ 10\\
-%         7\\ 10\\ 9\\ 8\\ 9\\ 9\\
-%     };
-% \end{axis}
-% \end{tikzpicture}
-
-% \begin{tikzpicture} \begin{axis}[
-%   title=Result Distribution,
-% %  ybar interval,
-% %  symbolic hist/data coords={S,U,B,O,D,T},
-%   hist/symbolic coords={S,U,B,O,D,T},
-% %  xticklabel={[\tick--\nexttick[}],
-% ]
-%     \addplot+[hist={bins=3}]
-%         table[row sep=\\,y index=0] {
-%         data\\
-%         S\\ S\\ U\\
-%     };
-% \end{axis}
-% \end{tikzpicture}
-
-  % Have a table or graph! \ES{graph of cumulative errors per timeout? \ie
-  %   monotonically increasing, with a cap of 90\% or so}
-\caption{Experimental results}
+\vspace{-8ex}
+\caption{Experimental results. Our random search successfully finds
+  witnesses for over 85\% of the programs at the lowest timeout and
+  improves slightly to 88\% at the next level. In both datasets we
+  detect actual type errors about 82\% of the time, unbound variables or
+  constructors 3-4\% of the time, and diverging loops 2-3\% of the
+  time. For the remaining 11-12\% of the programs we are unable to
+  provide any useful feedback. \ES{TODO: the timeout number for ucsd is
+    a bit misleading due to a mistake in the benchmarking code. re-running to fix..}
+}
 \label{fig:results-witness}
 \end{figure}
 
@@ -104,7 +77,7 @@ Interestingly, while the vast majority of witnesses corresponded to a
 type-error, as expected, X\% triggered an unbound variable error and X\%
 triggered an infinite recursion error.
 %
-XX programs were deemed safe and XX timed out even at 10,000 steps, \ie
+XX programs were deemed safe and XX timed out even at 3,000 steps, \ie
 we could not provide any useful feedback for XX\% of the total programs.
 %
 While a more advanced search procedure, \eg dynamic-symbolic execution,

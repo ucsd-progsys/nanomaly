@@ -34,30 +34,35 @@ def cumulative_coverage(data):
                           / float(len(data))))
             for l in BUCKETS]
 
-def plot_coverage(data):
-    xy = cumulative_coverage(data)
+def plot_coverage(seminal, ucsd):
+    xy_s = cumulative_coverage(seminal)
+    xy_u = cumulative_coverage(ucsd)
 
-    N = len(xy)
+
+    N = len(xy_s)
     ind = np.arange(N)    # the x locations for the groups
-    width = 0.5       # the width of the bars: can also be len(x) sequence
+    width = 0.35       # the width of the bars: can also be len(x) sequence
 
     fig = plt.figure()
-    p1 = plt.bar(ind, [r[1] for r in xy], width,
+    p1 = plt.bar(ind, [r[1] for r in xy_s], width,
                  color=COLORS[0])
+    p2 = plt.bar(ind + width, [r[1] for r in xy_u], width,
+                 color=COLORS[1])
 
     plt.xlabel('Timeout (steps)')
     plt.ylabel('% witnesses found')
     plt.title('Cumulative Coverage')
-    plt.xticks(ind + width/2.0, [r[0] for r in xy])
+    plt.xticks(ind + width/2.0, [r[0] for r in xy_s])
     plt.yticks(np.arange(0, 101, 10))
-    plt.legend((p1[0],), ('Seminal',))
+    plt.legend((p1[0], p2[0]), ('Seminal', 'UCSD'))
     # plt.legend((p1[0], p2[0]), ('Men', 'Women'))
     autolabel(plt, p1)
+    autolabel(plt, p2)
 
     # plt.show()
     fig.savefig('coverage.pdf', dpi=300)
 
-def plot_trace_size(data, label, steporjump):
+def plot_trace_size(data, label):
     # xy = cumulative_coverage(data)
 
     # N = len(xy)
@@ -112,34 +117,68 @@ def plot_trace_size(data, label, steporjump):
     plt.savefig('trace_size_%s.pdf' % (label.lower()), dpi=300)
     plt.close()
 
-def plot_distrib(data, label):
-    data = data[1:]
-    rs = [len([r for r in data if r[4] == o])
-          for o in ALL]
+def plot_distrib(seminal, ucsd):
+    # data = data[1:]
+    rs_s = [len([r for r in seminal[1:] if r[4] == o])
+            for o in ALL]
+    rs_u = [len([r for r in ucsd[1:] if r[4] == o])
+            for o in ALL]
 
     # N = len(xy)
     # ind = np.arange(N)    # the x locations for the groups
     # width = 0.5       # the width of the bars: can also be len(x) sequence
-    fig = plt.figure()
-    plt.axes(aspect=1)
-    p1 = plt.pie(rs, labels=ALL_L,
+
+    ax = plt.subplot(1,2,1, aspect=1)
+    #plt.figure(figsize=(1,1))
+    #plt.axes(aspect=1)
+    p1 = ax.pie(rs_s, labels=ALL_L,
                  autopct='%.1f%%',
-                 pctdistance=1.15,
+                 pctdistance=1.3,
                  labeldistance=10,
                  colors=COLORS,
                  shadow=True)
+    ax.set_title('Seminal')
+
+    ax = plt.subplot(1,2,2, aspect=1)
+    #ax.figure(figsize=(1,1))
+    #plt.axes(aspect=1)
+    p2 = ax.pie(rs_u, labels=ALL_L,
+                 autopct='%.1f%%',
+                 pctdistance=1.3,
+                 labeldistance=10,
+                 colors=COLORS,
+                 shadow=True)
+    ax.set_title('UCSD')
+
+    #plt.tight_layout()
+
+    #plt.title('Distribution of Results')
+    plt.figlegend(p1[0], ALL_L, 'upper right')
+
 
     # p2 = plt.pie(rs, labels=ALL_L,
     #              autopct='%.1f%%',
     #              shadow=True)
 
-    plt.title('Distribution of Results (%s)' % label)
-    plt.legend()
     # plt.xticks(ind + width/2.0, [r[0] for r in xy])
     # plt.yticks(np.arange(0.0, 1.1, 0.1))
     # plt.legend((p1[0],), ('Seminal',))
     # plt.legend((p1[0], p2[0]), ('Men', 'Women'))
 
-    # plt.show()
-    fig.savefig('distrib_%s.pdf' % label.lower(), dpi=300)
 
+
+    # plt.show()
+    plt.savefig('distrib.pdf')
+    plt.close()
+
+
+if __name__ == '__main__':
+    seminal = read_csv('../../seminal.csv')
+    ucsd = read_csv('../../ucsd.csv')
+
+    plot_distrib(seminal, ucsd)
+
+    plot_trace_size(seminal, 'Seminal')
+    plot_trace_size(ucsd, 'UCSD')
+
+    plot_coverage(seminal, ucsd)
