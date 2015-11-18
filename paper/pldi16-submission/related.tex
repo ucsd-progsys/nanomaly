@@ -1,24 +1,114 @@
 \section{Related Work}
 \label{sec:related-work}
 
-
 \subsection{Type Error Localization}
 \label{sec:type-error-local}
+It is well known that unification-based type inference procedures can
+produce poor error messages, and in particular, can misidentify the
+\emph{source} of the type error.
+%
+
+
 \begin{itemize}
-\item \cite{lerner_searching_2007}
-\item \cite{zhang_toward_2014}
-\item \cite{pavlinovic_finding_2014}
-\item \cite{chen_counter-factual_2014}
+\item Lerner \etal~\cite{lerner_searching_2007} attempt to localize the
+  type error and suggest a fix by replacing expressions (or removing
+  them entirely) with alternatives based on the surrounding program
+  context.
+\item Chen and Erwig~\cite{chen_counter-factual_2014} use a variational
+  type system represent the possibility that the inferred type of an
+  expression may be incorrect, because the expression may be the source
+  of the error. It then attempts to deduce the error source by searching
+  for an expression whose type can be changed such that type inference
+  would succeed. In contrast to Seminal, which searches for changes at
+  the value-level, by searching at the type level the search is complete
+  due the finite universe of types in a program.
+\item Neubauer and Thiemann~\cite{neubauer_discriminative_2003} present
+  a decidable type system based on discriminative sum types, in which
+  all terms are typeable and type derivations contain all type errors in
+  a program. They then use the typing derivation to slice out the parts
+  of the expression related to each error.
+\item Zhang and Myers~\cite{zhang_toward_2014} present an algorithm for
+  identifying the most likely culprit in a system of unsatisfiable
+  constraints (\eg type equalities), based on Bayesian reasoning.
+\item Pavlinovic \etal~\cite{pavlinovic_finding_2014} translate the
+  error localization problem to a MaxSMT optimization problem, using
+  compiler-provided weights to rank the possible sources.
+% \item \cite{chen_error-tolerant_2012}
+% \item \cite{okeefe_type_1992}
+% \item \cite{gomard_partial_1990}
+% \item \cite{thatte_type_1988}
 \end{itemize}
+
+In contrast to these approaches, we do not attempt to localize or fix
+the type error. Instead we try to explain it to the novice user using a
+dynamic witness that demonstrates how their program is not just
+ill-typed but truly wrong. In addition, allowing users to run their
+program (even knowing that it is wrong) enables experimentation and the
+use of debuggers to step through the program and investigate its
+evolution.
 
 \subsection{Testing}
 \label{sec:testing}
+\nanomaly is at its heart a test generator, and builds on a rich line of
+work.
+%
+Our use of holes to represent unknown values is inspired by the work of
+Runciman, Naylor, and Lindblad~\cite{runciman_smallcheck_2008,naylor_finding_2007,lindblad_property_2007},
+%
+who use lazy evaluation to drastically reduce the search space for
+exhaustive test generation, by grouping together equivalent inputs by
+the set of values they force. An exhaustive search is complete (up to
+the depth bound), if a witness exists it will be found, but due to the
+exponential blowup in the search space the depth bound can be quite
+limited without advanced grouping and filtering techniques.
+%
+Our search is not exhaustive; instead we use random generation to fill
+in holes on demand.
+%
+Random test generation~\cite{claessen_quickcheck:_2000,csallner_jcrasher:_2004,pacheco_feedback-directed_2007}
+%
+is by its nature incomplete, but is able to check larger inputs than
+exhaustive testing as a result.
+
+Instead of enumerating values, which may trigger the same path through
+the program, one might enumerate paths. 
+%
+Dynamic-symbolic execution~\cite{godefroid_dart:_2005,cadar_klee:_2008,tillmann_pex_2008}
+%
+enables this by symbolic execution (to track which path a given input
+vector triggers) with concrete execution (to ensure test failures are
+not spurious). The system collects a path condition during execution,
+which tracks symbolically what conditions must be met to trigger the
+current path. Upon successfully completing a test run, it negates the
+path condition and queries a solver for another set of inputs that
+satisfy the negated path condition, \ie inputs that will not trigger the
+same path. Thus, dynamic-symbolic execution can prune the search space
+much faster than techniques based on enumerating values, but is limited
+by the expressiveness of the underlying solver. Our operational
+semantics is amenable to dynamic-symbolic execution, one would just need
+to collect the path condition and replace our implementation of \gensym
+by a call to the solver. We chose to use lazy, random generation instead
+because it does not incur the overhead of an external solver, and
+produces high coverage for our domain of novice programs.
+
+% \begin{itemize}
+% \item \cite{claessen_quickcheck:_2000}
+% \item 
+% \item \cite{godefroid_dart:_2005}
+% \item \cite{cadar_klee:_2008}
+% \item \cite{tillmann_pex_2008}
+% \end{itemize}
+
+\subsection{Misc}
 \begin{itemize}
-\item \cite{claessen_quickcheck:_2000}
-\item \cite{runciman_smallcheck_2008}
-\item \cite{godefroid_dart:_2005}
-\item \cite{cadar_klee:_2008}
-\item \cite{tillmann_pexwhite_2008}
+\item \cite{vytiniotis_equality_2012} extend the Haskell compiler GHC to
+  support compiling ill-typed programs, but their intent is rather
+  different from ours. Their goal was to allow programmers to
+  incrementally test refactorings, which often cause type errors in
+  distant pieces of code. They replace any expression that fails to
+  type check with a \emph{runtime} error, but do not perform
+  any type checking at runtime.
+\item \cite{perera_functional_2012}
 \end{itemize}
 
 
