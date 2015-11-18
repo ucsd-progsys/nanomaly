@@ -140,10 +140,13 @@ that ``dynamically'' perform type-checking and hole-filling
 respectively.
 
 \paragraph{Narrowing Types} The procedure $\force{e}{t}{\vsu}$ takes as
-input an term \texttt{e} and refines it to have the type \texttt{t}
-by yielding a pair of either the same expression and a value substitution
-the refines the holes in \texttt{e} to ensure it has type \texttt{t},
-or yields the stuck term if no such refinement is possible:
+input an term \texttt{e} and refines it to have the type \texttt{t} by
+yielding a pair of either the same expression and a value substitution
+the refines the holes in \texttt{e} to ensure it has type \texttt{t}, or
+yields the stuck term if no such refinement is possible. In the case
+where \texttt{e} is a hole, it first checks in the given $\vsu$ to see
+if the hole has already been instantiated and, if so, returns the
+existing instantiation:
 %
 $$
 \begin{array}{lcl}
@@ -203,7 +206,7 @@ for some trace $\trace$.
 
 \paragraph{Primitive Reductions}
 Primitive reduction steps -- addition, if-elimination, and
-function application -- uses \forcesym to ensure that values have the
+function application -- use \forcesym to ensure that values have the
 appropriate type (and that holes are instantiated) before continuing the
 computation. Importantly, beta-reduction \emph{does not} type-check its
 argument, it only ensures that the value being applied is a function.
@@ -227,7 +230,7 @@ arise from picking irrelevant values, when instead there exist
 perfectly good values of a \emph{different} type, under which
 the program would not go wrong.
 
-\paragraph{Witness Generality} We can now define
+\paragraph{Witness Generality}
 We now show that our evaluation relation instantiates holes in a
 \emph{general} manner. That is, given a function $f$, if we have
 $\steps{\eapp{f}{\ehole{}}}{\emptysu}{\stuck}{\su}$, then for every
@@ -265,7 +268,7 @@ for $f$.
 We can extract this type from evaluation traces.
 %
 Formally, we say that if \steptr{\trace}{\eapp{f}{\ehole{}}}{\emptysu}{e}{\su},
-then the \emph{partial type of} $f$ upto $\trace$, written \ptype{\trace}{f},
+then the \emph{partial type} of $f$ upto $\trace$, written \ptype{\trace}{f},
 is \tfun{\typeof{\subst{\su}{\ehole{}}}}{\typeof{e}}.
 %
 %We will omit the subscript when we wish to refer to the final partial
@@ -298,7 +301,7 @@ then \tcompat{\ptype{\trace}{f}}{\ptype{\trace'}{f}}.
   By induction on the length of $\trace$ and case analysis on the evaluation rules.
   %
   Note that all rules preserve partial types with the exception of when
-  \forcesym is called on a hole, which case we instantiate the hole with
+  \forcesym is called on a hole, in which case we instantiate the hole with
   a concrete value.
   %
   But \hastype{\ehole{}}{\thole{}}, which is compatible with any type.
@@ -313,10 +316,10 @@ Furthermore, only a call to \forcesym can change the partial type of $f$.
 If
 $\trace \defeq \pair{\eapp{f}{\ehole{}}}{\emptysu}, \ldots,\pair{e}{\vsu}$
 and
-$\trace' = \trace, \steps{e}{\vsu}{e'}{\vsu'}$
+$\trace' \defeq \trace, \step{e}{\vsu}{e'}{\vsu'}$
 and
 $\ptype{\trace}{f} \neq \ptype{\trace'}{f}$,
-then the final step $\steps{e}{\vsu}{e'}{\vsu'}$ invokes \forcesym.
+then the final step $\step{e}{\vsu}{e'}{\vsu'}$ invokes \forcesym.
 \end{lem}
 
 \begin{proof}
@@ -339,22 +342,23 @@ trace $\trace$.
 \begin{lem}
 \label{lem:k-stuck}
   If \steptr{\trace}{\eapp{f}{\ehole{}}}{\emptysu}{e}{\vsu},
-     not \tcompat{t}{\ptype{\trace}{f}} and
-     \hastype{v}{t}
+     \tincompat{t}{\ptype{\trace}{f}}, and
+     \hastype{v}{t},
   then
      \steps{\eapp{f}{v}}{\emptysu}{\stuck}{\su}.
 \end{lem}
-
+\ES{self-todo: take a close look at the $\trace$'s vs k's}
 \begin{proof}
   By induction on $k$, the length of $\trace$.
-  Let $\tfun{s_k}{\_} = \ptype{\trace}{f}$.
+
+  Let $\tfun{s_{\trace}}{\_} = \ptype{\trace}{f}$.
   Suppose \hastype{v}{\tincompat{t}{s_{\trace'}}}, we
   will show that \steps{\eapp{f}{v}}{\emptysu}{\stuck}{\su'}
   in at most $k+1$ steps:
   \begin{description}
-  \item[Case \tincompat{t}{s_k}:]
+  \item[Case \tincompat{t}{s_{\trace}}:]
     The inductive hypothesis applies.
-  \item[Case \tcompat{t}{s_k} but \tincompat{t}{s_{k+1}}:]
+  \item[Case \tcompat{t}{s_{\trace}} but \tincompat{t}{s_{\trace'}}:]
     By Lemma~\ref{lem:force-inst} we must have called \forcesym at step
     $k+1$.
     %
@@ -502,9 +506,9 @@ witness bs vs = mkApps target vs
 % Procedure \texttt{genWitness}}
 %
 Finally, Figure~\ref{fig:algo-gen-witness} summarizes the overall
-implementation of our search for witnesses, in procedure @genWitness@
+implementation of our search for witnesses, in the procedure @genWitness@,
 which takes as input a bound @n@ and a list of top level binders, and
-returns a list of witness expressions $e$ which demonstrate how the input
+returns a list of witness expressions $e$ that demonstrate how the input
 program gets stuck.
 %
 The search proceeds as follows.
