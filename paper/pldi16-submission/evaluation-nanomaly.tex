@@ -1,5 +1,15 @@
 \section{Evaluation: \nanomaly}
 \label{sec:evaluation-nanomaly}
+We have implemented our interactive semantics for the pure subset of
+\ocaml with a web-based visualization of the generated traces in a tool
+called \nanomaly.
+%
+It takes as input an \ocaml program and a function to check, searches
+for a witness as described in \S~\ref{sec:searching-witness}, and
+produces as output an interactive trace of the (possibly buggy)
+execution~\footnote{If no witness could be found we simply return a trace
+  of the last attempt.}.
+
 We have not really (\ES{huh?}) evaluated our prototype of \nanomaly in two phases:
 %
 \begin{enumerate}

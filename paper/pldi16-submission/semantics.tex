@@ -1,29 +1,29 @@
 \section{Type-Error Witnesses}
 \label{sec:searching-witness}
 
-Our goal is to find concrete values that demonstrate how a
-program ``goes wrong''.
+% Our goal is to find concrete values that demonstrate how a
+% program ``goes wrong''.
 
-\paragraph{Problem: Which inputs are bad?}
-%
-One approach is to randomly generate input values and use
-them to execute the program until we find one that causes
-the program to go wrong. However, to see why this approach
-is naive, consider the following example:
-%
-\begin{lstlisting}
-  let f x =
-    let y = 1 + x in
-      1. +. y
-\end{lstlisting}
-%
-What \emph{types} of inputs should we test \texttt{f} with?
-Values of type \texttt{int} and \texttt{float} are fair game,
-but values of type say, \texttt{string} or \texttt{int list}
-will cause the program to go wrong in an \emph{irrelevant}
-manner.
+% \paragraph{Problem: Which inputs are bad?}
+% %
+% One approach is to randomly generate input values and use
+% them to execute the program until we find one that causes
+% the program to go wrong. However, to see why this approach
+% is naive, consider the following example:
+% %
+% \begin{lstlisting}
+%   let f x =
+%     let y = 1 + x in
+%       1. +. y
+% \end{lstlisting}
+% %
+% What \emph{types} of inputs should we test \texttt{f} with?
+% Values of type \texttt{int} and \texttt{float} are fair game,
+% but values of type say, \texttt{string} or \texttt{int list}
+% will cause the program to go wrong in an \emph{irrelevant}
+% manner.
 
-\paragraph{Solution:} \RJ{STOP}
+% \paragraph{Solution:} \RJ{STOP}
 
 
 % we cannot provide \emph{completely arbitrary} inputs to
