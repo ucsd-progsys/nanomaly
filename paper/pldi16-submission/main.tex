@@ -4,7 +4,7 @@
 % Requires temporary version of sigplanconf style file provided on
 % PLDI'15 web site.
 %
-\documentclass[10pt,pldi,nocopyrightspace,indentedstyle=false]{sigplanconf-pldi15}
+\documentclass[blind,preprint,nocopyrightspace,10pt,squareay,clearpagebib,explicitsize]{sigplanconf-pldi15}
 
 %
 % the following standard packages may be helpful, but are not required
@@ -24,6 +24,7 @@
 \usepackage{commands}
 \usepackage{graphicx}
 \usepackage{pdfpages}
+%\usepackage[doi]{natbib}
 
 \usepackage{amsthm}
 % \newtheorem{lemma}{Lemma}
@@ -100,22 +101,14 @@
 % \section{Evaluation: \nanomaly}                % 1 page
 \input{evaluation-nanomaly.tex}
 
-\section{Related Work}              % 1 pages
-
-\subsection{Type Error Localization}
-\label{sec:type-error-local}
-\begin{itemize}
-\item seminal
-\item bayesian (Zhang+Myers)
-\item MaxSMT
-\item counterfactual (Chen+Erwig)
-\end{itemize}
-\subsection{Debugging \& Program Understanding}
-\label{sec:debugging}
-
-
+% \section{Related Work}              % 1 pages
+\input{related.tex}
 
 \section{Conclusion}                % 1 page
 
+{
+\bibliographystyle{abbrvnat}
+\bibliography{main}
+}
 
 \end{document}
