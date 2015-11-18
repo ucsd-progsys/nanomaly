@@ -54,7 +54,7 @@ def plot_coverage(seminal, ucsd):
     plt.title('Cumulative Coverage')
     plt.xticks(ind + width/2.0, [r[0] for r in xy_s])
     plt.yticks(np.arange(0, 101, 10))
-    plt.legend((p1[0], p2[0]), ('Seminal', 'UCSD'))
+    plt.legend((p1[0], p2[0]), ('Seminal', 'UCSD'), 'lower right')
     # plt.legend((p1[0], p2[0]), ('Men', 'Women'))
     autolabel(plt, p1)
     autolabel(plt, p2)
@@ -90,6 +90,7 @@ def plot_trace_size(data, label):
     ax.legend((p1[0],), ('Steps',))
     plt.ylabel('Traces')
     ax.set_xlim(0,6)
+    ax.set_ylim(0,len(step))
     plt.xticks(ind + width/2.0, binlabels)
     # autolabel(ax, p1)
 
@@ -101,6 +102,7 @@ def plot_trace_size(data, label):
     ax.legend((p2[0],), ('Jumps',))
     plt.ylabel('Traces')
     ax.set_xlim(0,6)
+    ax.set_ylim(0,len(step))
     plt.xticks(ind + width/2.0, binlabels)
     # autolabel(ax, p2)
 
