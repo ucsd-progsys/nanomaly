@@ -60,10 +60,12 @@
 
 
 % Evaluation
+\newcommand\trace{\tau}
 \newcommand\pair[2]{\langle #1, #2 \rangle}
 \newcommand\triple[3]{\langle #1, #2, #3 \rangle}
 \newcommand\step[4]{\stepsto{\pair{#1}{#2}}{\pair{#3}{#4}}}
-\newcommand\stepi[5]{\stepstoi{#1}{\pair{#2}{#3}}{\pair{#4}{#5}}}
+%\newcommand\stepi[5]{\stepstoi{#1}{\pair{#2}{#3}}{\pair{#4}{#5}}}
+\newcommand\steptr[5]{\stepstoi{#1}{\pair{#2}{#3}}{\pair{#4}{#5}}}
 \newcommand\steps[4]{\stepstot{\pair{#1}{#2}}{\pair{#3}{#4}}}
 \newcommand\stepg[6]{\stepsto{\triple{#1}{#2}{#3}}{\triple{#4}{#5}{#6}}}
 \newcommand\stepsg[6]{\stepstot{\triple{#1}{#2}{#3}}{\triple{#4}{#5}{#6}}}
