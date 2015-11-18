@@ -139,7 +139,7 @@ called \emph{narrow} (\forcesym) and \emph{generate} (\gensym),
 that ``dynamically'' perform type-checking and hole-filling
 respectively.
 
-\paragraph{Narrowing Types} The procedure $\force{e}{t}$ takes as
+\paragraph{Narrowing Types} The procedure $\force{e}{t}{\vsu}$ takes as
 input an term \texttt{e} and refines it to have the type \texttt{t}
 by yielding a pair of either the same expression and a value substitution
 the refines the holes in \texttt{e} to ensure it has type \texttt{t},
@@ -149,14 +149,17 @@ $$
 \begin{array}{lcl}
 % \multicolumn{3}{l}{\forcesym \ :: \  (e, t) \rightarrow \pair{e}{\vsu}} \\
 % \forcesym            & ::     & (e, t) \rightarrow \pair{e}{\vsu} \\
-\force{\ehole{i}}{t} & \defeq & \elet{v}{\gen{t}}{\pair{v}{\ehole{i} \mapsto v}} \\
-\force{v}{\ehole{}}  & \defeq & \pair{v}{\emptysu} \\
-\force{n}{\tint}     & \defeq & \pair{n}{\emptysu} \\
-\force{v}{\tint}     & \defeq & \pair{\stuck}{\emptysu} \\
-\force{b}{\tbool}    & \defeq & \pair{b}{\emptysu} \\
-\force{v}{\tbool}    & \defeq & \pair{\stuck}{\emptysu} \\
-\force{\efun{x}{e}}{\tfun{\thole{}}{\thole{}}} & \defeq & \pair{\efun{x}{e}}{\emptysu} \\
-\force{v}{\tfun{\thole{}}{\thole{}}} & \defeq & \pair{\stuck}{\emptysu} \\
+\force{\ehole{i}}{t}{\vsu} & \defeq & \hspace{-1ex} \begin{array}{l}
+    \mathtt{if}\ i \in \vsu\ \mathtt{then}\ \pair{\vsu(i)}{\emptysu}\ \mathtt{else} \\
+         \elet{v}{\gen{t}}{\pair{v}{\ehole{i} \mapsto v}}
+  \end{array} \\
+\force{v}{\ehole{}}{\vsu}  & \defeq & \pair{v}{\emptysu} \\
+\force{n}{\tint}{\vsu}     & \defeq & \pair{n}{\emptysu} \\
+\force{v}{\tint}{\vsu}     & \defeq & \pair{\stuck}{\emptysu} \\
+\force{b}{\tbool}{\vsu}    & \defeq & \pair{b}{\emptysu} \\
+\force{v}{\tbool}{\vsu}    & \defeq & \pair{\stuck}{\emptysu} \\
+\force{\efun{x}{e}}{\tfun{\thole{}}{\thole{}}}{\vsu} & \defeq & \pair{\efun{x}{e}}{\emptysu} \\
+\force{v}{\tfun{\thole{}}{\thole{}}}{\vsu} & \defeq & \pair{\stuck}{\emptysu} \\
 \end{array}
 $$
 
@@ -170,8 +173,8 @@ types (denoted by $\thole{}$) yield fresh, unconstrained values
 $$
 \begin{array}{lcll}
 % \gensym       & ::      & t \rightarrow v \\
-\gen{\tint}   & \defeq  & n & \quad \text{non-deterministic} \\
-\gen{\tbool}  & \defeq  & b & \quad \text{non-deterministic} \\
+\gen{\tint}   & \defeq  & n, & \quad \text{non-deterministic} \\
+\gen{\tbool}  & \defeq  & b, & \quad \text{non-deterministic} \\
 \gen{\tfun{t_1}{t_2}}   & \defeq & \efun{x}{\ehole{i}}, & \quad \text{$i$ is fresh} \\
 \gen{\thole{}} & \defeq & \ehole{i}, & \quad \text{$i$ is fresh} \\
 \end{array}
@@ -235,7 +238,7 @@ such that $\eapp{f}{v}$ goes wrong.
 \label{thm:soundness}
   For any function $f$, if \steptr{\trace}{\eapp{f}{\ehole{}}}{\emptysu}{\stuck}{\su},
   then for every type $t$ there exists $\hastype{v}{t}$ such that
-  \steps{\eapp{f}{v}}{\emptysu}{\stuck}{\su}$.
+  $\steps{\eapp{f}{v}}{\emptysu}{\stuck}{\su}$.
 \end{thm}
 
 We need to develop some machinery in order to prove this theorem.
@@ -442,7 +445,7 @@ We resolve the non-determinism in the operational semantics
   eval :: ($e$, $\su$) -> [($v$, $\su$)]
 \end{mcode}
 %
-Due to the non-determinism introduced by \gensym, a call @eval($e$, $\vsu$)@
+Due to the non-determinism introduced by \gensym, a call \hbox{|eval($e$, $\vsu$)|}
 returns the \emph{list} possible results of the form $\pair{e'}{\vsu'}$ such
 that $\steps{e}{\vsu}{e'}{\vsu'}$.
 %
@@ -454,9 +457,9 @@ We determine whether a given value is stuck by using the predicate
 
 \paragraph{Generating Target Arguments}
 %
-We address the issue of currying by defining a procedure @genArgs@ such that
-@genArgs [(f1,e1),...,(fn, en)]@ yields a list of holes @[v1,...,vk]@
-such that @fn v1 ... vk@ \emph{does not} evaluate to a lambda.
+We address the issue of currying by defining a procedure @genArgs@ such that \\
+\hbox{@genArgs [(f1,e1),...,(fn,en)]@} yields a list of holes @[v1,...,vk]@
+such that \hbox{@fn v1 ... vk@} \emph{does not} evaluate to a lambda.
 %
 This is achieved via a simple @loop@ that keeps adding holes until
 @eval@uating the closed term yields a non-lambda value.
@@ -523,7 +526,7 @@ We obtain the following as a corrollary of Theorem~\ref{thm:soundness}:
 \label{thm:generation}
   If @genWitness k@ $[(f_1, e_1), \ldots, (f_n, e_n)]$ is non-empty,
   then for every type $t$ there exists $\hastype{v}{t}$ such that
-  \steps{\eapp{f_n}{v}}{\emptysu}{\stuck}{\su}$.
+  $\steps{\eapp{f_n}{v}}{\emptysu}{\stuck}{\su}$.
 \end{thm}
 
 \begin{figure}[ht]
