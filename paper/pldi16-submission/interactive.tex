@@ -1,10 +1,11 @@
 \section{Explaining Type Errors With Traces}
 \label{sec:explaining}
 
-A trace, on its own, is likely too detailed to be a good
-explanation of the type error. One approach is to use the
-witness input to step through the program with a
-\emph{debugger} to observe how the program evolves.
+A trace, on its own, is likely too detailed to be
+a good explanation of the type error. One approach
+is to use the witness input to step through the
+program with a \emph{debugger} to observe how
+the program evolves.
 %
 This route is problematic for two reasons.
 %
@@ -22,11 +23,12 @@ Next, we present a novel way to debug executions.
 First, we develop a notion of a
 \emph{reduction graph}~(\S~\ref{sec:reduction-graph}).
 %
-Second, we extend our semantics so that they incrementally
-collect the edges in the graph (\S~\ref{sec:inter-semant}).
+Second, we extend our semantics with a form of \emph{tracing}
+so that they incrementally collect the edges in the graph
+(\S~\ref{sec:inter-semant}).
 %
-Finally, we express a set of common debugging steps as
-graph traversals (\S~\ref{sec:traversing-graph}), yielding
+Finally, we express a set of common \emph{interactive debugging}
+steps as graph traversals (\S~\ref{sec:traversing-graph}), yielding
 an novel visual interactive debugger that allows the user
 to effectively visualize \emph{how} the program goes (wrong.)
 
@@ -47,6 +49,8 @@ to effectively visualize \emph{how} the program goes (wrong.)
 % of expressions because it will allow us to express a variety of
 % traversals, such as ``step into'' and ``step over'' -- commonly found in
 % traditional debuggers.
+
+\subsection{Reduction Graphs}
 
 \subsection{Tracing Semantics}
 \label{sec:inter-semant}
@@ -129,8 +133,10 @@ the trace $\tr$ as follows:
 G(\tr) = \pair{\{e \spmid e \in \tr\}}{\tr}
 \]
 
-\subsection{Traversing the Reduction Graph}
+% \subsection{Traversing the Reduction Graph}
+\subsection{Interactive Debugging}
 \label{sec:traversing-graph}
+
 Given a reduction graph $G$ and an initial path
 $p = \singlestep{e_1}{\singlestep{e_2}{e_n}}$, such that
 \stepsg{e_1}{\emptysu}{\bullet}{e_n}{\su}{\tr}, we define the following
