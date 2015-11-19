@@ -1,6 +1,21 @@
 \section{Explaining Type Errors With Traces}
 \label{sec:explaining}
-%
+
+Edges  = Step (e ~> e')  | Subterm (e in e')
+
+Trace  = \steptr{e}{\vsu}{e'}{\vsu'}
+
+DTrace = Reduction Graph = (Expr, Set Edges)
+
+1. Defining DTrace
+
+2. Creating DTrace (debugTrace :: Trace -> Dtrace)
+
+3. Using DTrace (Interactive Debugging using DTrace)
+
+
+
+
 We have shown how to reliably find witnesses to type errors in \ocaml,
 but this not fully address our original goal -- to \emph{explain} the
 errors.
