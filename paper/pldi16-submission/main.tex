@@ -67,6 +67,22 @@
 
 \maketitle
 \begin{abstract}
+  Type errors are a common stumbling block for newcomers to typed
+  functional languages.
+  % 
+  Compilers prevent standard debugging techniques by refusing to run
+  ill-typed programs.
+  %
+  We demonstrate how to expose static type errors for the runtime
+  crashes they hide, by searching for a witness that will trigger the
+  error.
+  %
+  Our search procedure collects an execution trace for which we have
+  developed an interactive visualization to demonstrate precisely
+  \emph{how} the witness makes the program ``go wrong''.
+  %
+  We have implemented our system for \ocaml and demonstrate its efficacy
+  on a large set of real student programs.
 \end{abstract}
 
 
@@ -105,7 +121,7 @@
 % \section{Related Work}              % 1 pages
 \input{related.tex}
 
-\section{Conclusion}                % 1 page
+% \section{Conclusion}                % 1 page
 
 {
 \bibliographystyle{abbrvnat}
