@@ -1,20 +1,34 @@
 \section{Explaining Type Errors With Traces}
 \label{sec:explaining}
 
-% We have shown how to reliably find witnesses to type errors in \ocaml,
-% but this not fully address our original goal -- to \emph{explain} the
-% errors.
-% %
-% Having identified an input vector that triggers a bug, a common next
-% step is to step through the program with a \emph{debugger} to observe
-% how the program evolves.
-% %
-% The existing debuggers and interpreters for \ocaml assume a type-correct
-% program, so unfortunately we cannot use them off-the-shelf.
-% %
-% Instead we return to our semantics for \lang and extend the evaluation
-% rules to collect a trace that we can present to the user, demonstrating
-% precisely \emph{how} their program went wrong.
+A trace, on its own, is likely too detailed to be a good
+explanation of the type error. One approach is to use the
+witness input to step through the program with a
+\emph{debugger} to observe how the program evolves.
+%
+This route is problematic for two reasons.
+%
+First, existing debuggers and interpreters for
+typed languages (\eg\ \ocaml) typically require
+a type-correct program as input.
+%
+Second, we wish to have a quicker way to get
+to the essence of the error, \eg\ by skipping
+over irrelevant sub-computations, and focusing
+on the important ones.
+
+Next, we present a novel way to debug executions.
+%
+First, we develop a notion of a
+\emph{reduction graph}~(\S~\ref{sec:reduction-graph}).
+%
+Second, we extend our semantics so that they incrementally
+collect the edges in the graph (\S~\ref{sec:inter-semant}).
+%
+Finally, we express a set of common debugging steps as
+graph traversals (\S~\ref{sec:traversing-graph}), yielding
+an novel visual interactive debugger that allows the user
+to effectively visualize \emph{how} the program goes (wrong.)
 
 % The trace takes the form of a \emph{reduction graph}, where the nodes
 % are terms and the edges represent either the single-step
@@ -33,15 +47,6 @@
 % of expressions because it will allow us to express a variety of
 % traversals, such as ``step into'' and ``step over'' -- commonly found in
 % traditional debuggers.
->>>>>>> 8bffd296d9a45d936befb58888432d3d99153b97
-
-In this section we formalize the collection and traversal of the reduction graph.
-%
-First, we extend our semantics from \S~\ref{sec:semantics} to collect
-the edges in the graph (\S~\ref{sec:inter-semant}).
-%
-Then, we express a set of common debugging steps as graph traversals
-(\S~\ref{sec:traversing-graph}).
 
 \subsection{Tracing Semantics}
 \label{sec:inter-semant}
