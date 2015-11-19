@@ -155,7 +155,7 @@ $$
 \force{\ehole{i}}{t}{\vsu} & \defeq & \hspace{-1ex}
 \begin{cases}
   \pair{\vsu(i)}{\emptysu}        & \mbox{if}\ i \in \vsu \\
-  \pair{v}{\ehole{i} \mapsto v}   & \mbox{o.w.} v = \gen{t}\\
+  \pair{v}{\ehole{i} \mapsto v}   & v = \gen{t}\\
 \end{cases} \\
  % \begin{array}{l}
     % \mathtt{if}\ i \in \vsu\ \mathtt{then}\ \pair{\vsu(i)}{\emptysu}\ \mathtt{else} \\
@@ -228,7 +228,7 @@ argument, it only ensures that the value being applied is a function.
 %
 \subsection{Generality}\label{sec:soundness}
 
-Recall that a key technical challenge in generating witnesses is
+A key technical challenge in generating witnesses is
 that we have no (static) type information to rely upon. Thus, we
 must avoid the trap of generating \emph{spurious} witnesses that
 arise from picking irrelevant values, when instead there exist
