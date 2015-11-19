@@ -152,10 +152,15 @@ $$
 \begin{array}{lcl}
 % \multicolumn{3}{l}{\forcesym \ :: \  (e, t) \rightarrow \pair{e}{\vsu}} \\
 % \forcesym            & ::     & (e, t) \rightarrow \pair{e}{\vsu} \\
-\force{\ehole{i}}{t}{\vsu} & \defeq & \hspace{-1ex} \begin{array}{l}
-    \mathtt{if}\ i \in \vsu\ \mathtt{then}\ \pair{\vsu(i)}{\emptysu}\ \mathtt{else} \\
-         \elet{v}{\gen{t}}{\pair{v}{\ehole{i} \mapsto v}}
-  \end{array} \\
+\force{\ehole{i}}{t}{\vsu} & \defeq & \hspace{-1ex}
+\begin{cases}
+  \pair{\vsu(i)}{\emptysu}        & \mbox{if}\ i \in \vsu \\
+  \pair{v}{\ehole{i} \mapsto v}   & \mbox{o.w.} v = \gen{t}\\
+\end{cases} \\
+ % \begin{array}{l}
+    % \mathtt{if}\ i \in \vsu\ \mathtt{then}\ \pair{\vsu(i)}{\emptysu}\ \mathtt{else} \\
+         % \elet{v}{\gen{t}}{\pair{v}{\ehole{i} \mapsto v}}
+  % \end{array} \\
 \force{v}{\ehole{}}{\vsu}  & \defeq & \pair{v}{\emptysu} \\
 \force{n}{\tint}{\vsu}     & \defeq & \pair{n}{\emptysu} \\
 \force{v}{\tint}{\vsu}     & \defeq & \pair{\stuck}{\emptysu} \\
@@ -301,7 +306,7 @@ then \tcompat{\ptype{\trace}{f}}{\ptype{\trace'}{f}}.
   By induction on the length of $\trace$ and case analysis on the evaluation rules.
   %
   Note that all rules preserve partial types with the exception of when
-  \forcesym is called on a hole, in which case we instantiate the hole with
+  \forcesym\ is called on a hole, in which case we instantiate the hole with
   a concrete value.
   %
   But \hastype{\ehole{}}{\thole{}}, which is compatible with any type.
@@ -334,10 +339,9 @@ then the final step $\step{e}{\vsu}{e'}{\vsu'}$ invokes \forcesym.
 
 \paragraph{Incompatible Values Are Wrong}
 %
-We show that \emph{any} value that is \emph{incompatible} with
-the partial type upto $\trace$ will cause $f$ to get stuck
-in \emph{at most} $k+1$ steps where $k$ is the length of the
-trace $\trace$.
+\emph{Any} value that is \emph{incompatible} with
+the partial type upto trace $\trace$ will cause $f$ to get stuck
+in \emph{at most} $k+1$ steps where $k$ is the length of $\trace$.
 %
 \begin{lem}
 \label{lem:k-stuck}
@@ -350,39 +354,43 @@ trace $\trace$.
 \ES{self-todo: take a close look at the $\trace$'s vs k's}
 \begin{proof}
   By induction on $k$, the length of $\trace$.
-
   Let $\tfun{s_{\trace}}{\_} = \ptype{\trace}{f}$.
   Suppose \hastype{v}{\tincompat{t}{s_{\trace'}}}, we
   will show that \steps{\eapp{f}{v}}{\emptysu}{\stuck}{\su'}
   in at most $k+1$ steps:
-  \begin{description}
-  \item[Case \tincompat{t}{s_{\trace}}:]
+%
+  %\begin{description}
+  % \item
+  [Case \tincompat{t}{s_{\trace}}:]
     The inductive hypothesis applies.
-  \item[Case \tcompat{t}{s_{\trace}} but \tincompat{t}{s_{\trace'}}:]
+  %\item
+  [Case \tcompat{t}{s_{\trace}} but \tincompat{t}{s_{\trace'}}:]
     By Lemma~\ref{lem:force-inst} we must have called \forcesym at step
     $k+1$.
     %
     A case analysis of the applicable rules shows that \forcesym cannot
     have succeeded.
-  \end{description}
+  %\end{description}
 \end{proof}
 
 \paragraph{Proof of Theorem~\ref{thm:soundness}}
 %
-Now we can prove our soundness theorem. Intuitively, suppose $\trace$
-witnesses that $f$ gets stuck, and let $t$ be the partial type of $f$
-upto $\trace$. We show that \emph{all} types $s$ have stuck-inducing
-values by splitting cases on whether the type is compatible with the
-partial type upto $\trace$.
+Suppose $\trace$ witnesses that $f$ gets stuck,
+and let $t$ be the partial type of $f$ upto $\trace$.
+We show that \emph{all} types $s$ have stuck-inducing
+values by splitting cases on whether the type is
+compatible with the partial type upto $\trace$.
 %
-\begin{description}
-  \item[Case \tcompat{s}{t}:]
+% \begin{description}
+  %\item
+  [Case \tcompat{s}{t}:]
    The value $\hastype{v}{t}$ suffices to demonstrate that $\eapp{f}{v}$
    gets stuck.
-  \item[Case \tincompat{s}{t}:]
+  %\item
+  [Case \tincompat{s}{t}:]
    By Lemma~\ref{lem:k-stuck}, every \hastype{v}{t} demonstrates that
    $\eapp{f}{v}$ gets stuck.
-\end{description}
+%\end{description}
 
 
 \subsection{Search Algorithm}
@@ -477,7 +485,7 @@ the usual left-associative style, and @mkLets@ takes a list of
 binders and a body expression, and creates a sequence of nested
 let-binders that close the body expression.
 
-\begin{figure}[ht]
+\begin{figure}[t]
 \centering
 \begin{mcode}
 genArgs :: [($x$, $e$)] -> [$v$]
@@ -533,7 +541,7 @@ We obtain the following as a corrollary of Theorem~\ref{thm:soundness}:
   $\steps{\eapp{f_n}{v}}{\emptysu}{\stuck}{\su}$.
 \end{thm}
 
-\begin{figure}[ht]
+\begin{figure}[t]
 \centering
 \begin{mcode}
 genWitness :: Nat -> [($x$, $e$)] -> [$v$]
