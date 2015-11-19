@@ -1,98 +1,217 @@
-\begin{figure}
-\judgementHead{Evaluation}{\step{e}{\su}{e}{\su}}
-$$
-\inference[\recontext]
-  {\step{e}{\su}{e_1}{\su_1}}
-  {\step{C[e]}{\su}{C[e_1]}{\su_1}}
-$$
+% \section{Evaluation: Recasting Type Errors as Runtime Errors}
+\section{Evaluation}
+\label{sec:evaluation}
 
-$$
-\inference[\restuck]
-  {}
-  {\step{C[\stuck]}{\su}{\stuck}{\su}}
-$$
+%
+% The immediate question is ``What fraction of type errors admit
+% witnesses?''
+%
+We have implemented a prototype of our search procedure and trace
+visualization for the pure subset of \ocaml, in a tool called \nanomaly.
+% , \ie \lang extended with
+% algebraic datatypes and records. 
+%
+In our implementation we instantiated \gensym with a simple random
+generation of values, which we will show is more than sufficient for the
+majority of type errors.
 
-$$
-\inference[\replusgood]
-  {\pair{n_1}{\su_2} = \force{v_1}{\tnat} \\
-   \pair{n_2}{\su_3} = \force{v_2}{\tnat} \\ 
-   n = \eplus{n_1}{n_2}}
-  {\step{\eplus{v_1}{v_2}}{\su_1}{n}{\su_1\su_2\su_3}}
-$$
+There are two questions we seek to answer with our evaluation:
+\begin{enumerate}
+\item What fraction of type errors \emph{admit} witnesses?
+\item How \emph{complex} are the traces our witnesses produce?
+\end{enumerate}
 
-$$
-\inference[\replusbadone]
-  {\pair{\stuck}{\su_2} = \force{v_1}{\tnat}}
-  {\step{\eplus{v_1}{v_2}}{\su_1}{\stuck}{\su_1\su_2}}
-$$
+We answer these questions on two sets of known-bad programs, \ie
+programs that were rejected by the \ocaml compiler because of a type
+error.
+%
+The first dataset comes from the Spring 2014 undergraduate Programming
+Languages course at UC San Diego. 
+%
+We recorded each interaction with the \ocaml top-level system over the
+course of the first three assignments (IRB \#140608), from which we
+extracted 4,407 distinct, ill-typed \ocaml programs.
+%
+The second dataset -- widely used in the literature -- comes from a
+similar course at the University of
+Washington~\cite{lerner_seminal:_2006}, from which we extracted 284
+ill-typed programs.
 
-$$
-\inference[\replusbadtwo]
-  {\pair{\stuck}{\su_2} = \force{v_2}{\tnat}}
-  {\step{\eplus{v_1}{v_2}}{\su_1}{\stuck}{\su_1\su_2}}
-$$
+\subsection{Witness Coverage}
+\label{sec:eval:witness-coverage}
+%
+We ran our search algorithm on each program for 1,000 iterations, with
+the entry point set to the function that \ocaml had identified as
+containing a type error.
+%
+Due to the possibility of non-termination we set a timeout of 10 minutes
+per program.
+% Due to the possibility of non-termination we set a limit on the number
+% of reductions to perform, increasing in 500-step increments from 500
+% steps to 3,000 steps total.
+%
+We also added a na\"ive check for infinite recursion; at each recursive
+function call we check whether the new arguments are identical to the
+current arguments.
+%
+If so, the function cannot possibly terminate and we report an error.
+%
+While not a \emph{type error}, infinite recursion is still a clear bug
+in the program, and thus valuable feedback for the user.
 
-$$
-\inference[\reifgoodone]
-  {\pair{\etrue}{\su_2} = \force{v}{\tbool}}
-  {\step{\eif{v}{e_1}{e_2}}{\su_1}{e_1}{\su_1\su_2}}
-$$
-
-$$
-\inference[\reifgoodtwo]
-  {\pair{\efalse}{\su_2} = \force{v}{\tbool}}
-  {\step{\eif{v}{e_1}{e_2}}{\su_1}{e_2}{\su_1\su_2}}
-$$
-
-$$
-\inference[\reifbad]
-  {\pair{\stuck}{\su_2} = \force{v}{\tbool}}
-  {\step{\eif{v}{e_1}{e_2}}{\su_1}{\stuck}{\su_1\su_2}}
-$$
-
-$$
-\inference[\reappgood]
-  {\pair{\efun{x}{e}}{\su_2} = \force{v_1}{\tfun{\hole{}}{\hole{}}}}
-  {\step{\eapp{v_1}{v_2}}{\su_1}{e\sub{x}{v_2}}{\su_1\su_2}}
-$$
-
-$$
-\inference[\reappbad]
-  {\pair{\stuck}{\su_2} = \force{v_1}{\tfun{\hole{}}{\hole{}}}}
-  {\step{\eapp{v_1}{v_2}}{\su_1}{\stuck}{\su_1\su_2}}
-$$
-
-$$
-\inference[\relet]
-  {}
-  {\step{\elet{x}{v}{e}}{\su}{e\sub{x}{v}}{\su}}
-$$
-\\ [0.1in]
-
-\relDescription{\forcesym and \gensym}
-
-$$
-\begin{array}{lcl}
-\force{\hole{i}}{t} & \defeq & \elet{v}{\gen{t}}{\pair{v}{\hole{i} \mapsto v}} \\
-\force{v}{\hole{}}  & \defeq & \pair{v}{\emptysu} \\
-\force{n}{\tnat}    & \defeq & \pair{n}{\emptysu} \\
-\force{v}{\tnat}    & \defeq & \pair{\stuck}{\emptysu} \\
-\force{b}{\tbool}   & \defeq & \pair{b}{\emptysu} \\
-\force{v}{\tbool}   & \defeq & \pair{\stuck}{\emptysu} \\
-\force{\efun{x}{e}}{\tfun{\hole{}}{\hole{}}} & \defeq & \pair{\efun{x}{e}}{\emptysu} \\
-\force{v}{\tfun{\hole{}}{\hole{}}} & \defeq & \pair{\stuck}{\emptysu} \\
-\end{array}
-$$
-$$
-\begin{array}{lcll}
-\gen{\tnat}   & \defeq & n & \\
-\gen{\tbool}  & \defeq & b & \\
-\gen{\tfun{t_1}{t_2}} & \defeq & \efun{x}{\hole{i}}, & \quad \text{$i$ is fresh} \\
-\gen{\hole{}} & \defeq & \hole{i}, & \quad \text{$i$ is fresh} \\
-\end{array}
-$$
-
-
-\caption{Evaluation relation}
-\label{fig:evaluation}
+\begin{figure}[t]
+\centering
+\begin{minipage}{\linewidth}
+\includegraphics[width=\linewidth]{coverage.pdf}
+\end{minipage}
+\begin{minipage}{\linewidth}
+\includegraphics[width=\linewidth]{distrib.pdf}
+\end{minipage}
+% \vspace{-8ex}
+\caption{Results of our coverage testing and the distribution of test
+  outcomes. Our random search successfully finds witnesses for 83\% of
+  the programs in under one second, improving slightly to 87\% in under
+  10 seconds. In both datasets we detect actual type errors about 82\%
+  of the time, unbound variables or constructors 3-4\% of the time, and
+  diverging loops 2-3\% of the time. For the remaining 11-12\% of the
+  programs we are unable to provide any useful feedback.  }
+\label{fig:results-witness}
 \end{figure}
+
+\paragraph{Results}
+\label{sec:results-witness}
+The results of our experiments are summarized in
+Figure~\ref{fig:results-witness}.
+%
+In both datasets our tool was able to find a witness for 83\% of the
+programs in under one second, \ie fast enough to be integrated as a
+compile-time check. If we extend our tolerance to a 10 second timeout,
+we hit a maximum of 87\% coverage.
+%
+Interestingly, while the vast majority of witnesses corresponded to a
+type-error, as expected, 3-4\% triggered an unbound variable error and
+2-3\% triggered an infinite recursion error.
+%
+For the remaining 12\% of programs we were unable to provide any useful
+feedback as they either completed 1,000 tests successfully, or timed out
+after 10 minutes.
+%
+% XX programs were deemed safe and XX timed out even at 3,000 steps, \ie
+% we could not provide any useful feedback for XX\% of the total programs.
+%
+While a more advanced search procedure, \eg dynamic-symbolic execution,
+could likely trigger more of the type errors, our experiments show that
+type errors are coarse enough (or that novice programs are \emph{simple}
+enough) that these techniques are not necessary.
+
+
+\subsection{Trace Complexity}
+\label{sec:trace-complexity}
+For each of the ill-typed programs for which we could find a witness, we
+measure the complexity of the generated trace according to the following
+metrics:
+%
+\begin{enumerate}
+\item The number of single-step reductions along the path from the
+  witness to the stuck term. This can be thought of as a worst-case
+  complexity, \ie ``How big is the fully-expanded trace?''
+\item The number forward (or backward) jumps that can be taken along the
+  path from the witness to the stuck term\footnote{This is not quite the same as
+  a stack-trace as it shows \emph{all} function calls, including those
+  that returned successfully.}.
+  % These abstract many details of the computation that are often
+  % uninteresting or irrelevant to the explanation.
+% \item \ES{others?}
+\end{enumerate}
+%
+\begin{figure}[t]
+\centering
+% \includegraphics[width=\linewidth]{trace_size.pdf}
+% \begin{minipage}{0.49\linewidth}
+\includegraphics[width=\linewidth]{trace_size_step.pdf}
+% \end{minipage}
+% \begin{minipage}{0.49\linewidth}
+\includegraphics[width=\linewidth]{trace_size_jump.pdf}
+% \end{minipage}
+\caption{Complexity of the generated traces. At least 90\% of the traces
+  have a jump complexity of less than 10, with an average of 3.}
+\label{fig:results-complexity}
+\end{figure}
+%
+
+\paragraph{Results}
+\label{sec:results-complexity}
+The results of the experiment are summarized in
+Figure~\ref{fig:results-complexity}.
+%
+The average number of single-step reductions per trace is 26 for the
+UCSD dataset (27 for the Seminal dataset) with a maximum of 2,744 (659
+for Seminal). The average number of jumps per trace is 3 (also 3 for
+Seminal) with a maximium of 177 (52 for Seminal). In both datasets at
+least 90\% of the traces contain fewer than 10 jumps.
+%
+
+\subsection{Discussion}
+\label{sec:discussion}
+To summarize, our experiments demonstrate that \nanomaly finds witnesses
+to type errors: (1) with high coverage in a timespan amenable to
+compile-time analysis, and (2) with traces that have a low average
+complexity of 3 function calls.
+
+There are, of course, drawbacks to our approach. Three that stand out
+are: (1) coverage limits due to random generation, (2) the inability to
+handle certain instances of infinite types, and (3) dealing with an
+explosion in the size of generated traces.
+
+\paragraph{Random Generation}
+Random test generation has difficulty generating highly constrained
+values, \eg red-black trees or a pair of equal integers. If the type
+error is hidden behind a complex branch condition \nanomaly may not be
+able to trigger it. Exhaustive testing and dynamic-symbolic execution
+can address this short-coming by performing an exhaustive search for
+inputs (\emph{resp}. paths through the program). As our experiments
+show, however, novice programs do not appear to require more advanced
+search techniques, likely because the novice programs tend to be simple.
+
+\paragraph{Infinite Types}
+Our implementation does check for infinite types inside \forcesym, but
+there are some degenerate cases where it is unable to detect
+them. Consider, for example, the following buggy version of @replicate@,
+which is supposed to produce a list containing @n@ copies of @x@.
+%
+\begin{code}
+  let rec replicate n x =
+    if n <= 0 then
+      []
+    else
+      replicate (n-1) [x]
+\end{code}
+%
+This code produces a nested list (with @n@ levels of nesting) containing
+a single copy of @x@. \ocaml detects a cyclic \hbox{@'a = 'a list@}
+constraint in the recursive call and throws a type error, whereas
+\nanomaly happily recurses @n@ times to produce the nested list.
+Strictly speaking, this function itself cannot ``go wrong'', the
+program would not get stuck until a \emph{client} attempted to use the
+result expecting a flat list. But this is not very satisfying as
+@replicate@ is clearly to blame. Furthermore, in our experience,
+infinite-type errors are some of the more difficult ones to debug (and
+to explain to novices), so better support for this scenario would be
+useful.
+
+\paragraph{Trace Explosion}
+Though the average complexity of our generated traces is low in terms of
+jumps, there are some extreme outliers. We cannot reasonably expect a
+novice user to explore a trace containing 50+ terms and draw a
+conclusion about which pieces contributed to the bug in their
+program. Enhancing our visualization to slice out program paths relevant
+to specific values, \eg in the style of~\cite{perera_functional_2012},
+would likely help alleviate this issue, allowing users to
+highlight a confusing value and ask: ``Where did this come from?''
+
+
+% \begin{itemize}
+% \item benchmarks: our data + seminal data
+% \item both cases: \textbf{random} search sufficient to trigger runtime crash in 80\% of programs
+% \item how many of the ``safe'' programs are actually safe??
+% \end{itemize}

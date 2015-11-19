@@ -3,7 +3,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-BUCKETS = range(500, 3001, 500)
+BUCKETS = [0.1, 0.2, 1.0, 10.0, 60.0 ] # range(500, 3001, 500)
 COLORS=['#348ABD', '#7A68A6', '#A60628', '#467821', '#CF4457', '#188487', '#E24A33']
 
 SAFE = ['S', 'T']
@@ -12,6 +12,10 @@ UNSAFE = ['U', 'B', 'D'] #, 'O']
 UNSAFE_L = ['Unsafe', 'Unbound', 'Diverge'] #, 'Output']
 ALL = UNSAFE + SAFE
 ALL_L = UNSAFE_L + SAFE_L
+
+ALL_D = [ ['S', 'T'], ['U'], ['B'], ['D'] ]
+ALL_DL = [ 'No Witness', 'Witness', 'Unbound', 'Diverge' ] #   ['S', 'T'], ['U'], ['B'], ['D'] ]
+
 
 def read_csv(f):
     with open(f) as f:
@@ -29,7 +33,7 @@ def cumulative_coverage(data):
     headers = data[0]
     data = data[1:]
     return [(l, int(100 * len([r for r in data
-                               if int(r[1]) <= l
+                               if float(r[2]) <= l
                                and r[4] in UNSAFE])
                           / float(len(data))))
             for l in BUCKETS]
@@ -49,20 +53,21 @@ def plot_coverage(seminal, ucsd):
     p2 = plt.bar(ind + width, [r[1] for r in xy_u], width,
                  color=COLORS[1])
 
-    plt.xlabel('Timeout (steps)')
-    plt.ylabel('% witnesses found')
-    plt.title('Cumulative Coverage')
-    plt.xticks(ind + width/2.0, [r[0] for r in xy_s])
-    plt.yticks(np.arange(0, 101, 10))
-    plt.legend((p1[0], p2[0]), ('Seminal', 'UCSD'), 'lower right')
+    plt.xlabel('Witness found in <x seconds', fontsize=20)
+    plt.ylabel('Witnesses Found (% of total programs)', fontsize=20)
+    plt.title('Cumulative Coverage', fontsize=24)
+    plt.xticks(ind + width, [r[0] for r in xy_s], fontsize='large')
+    plt.yticks(np.arange(0, 101, 10), fontsize='large')
+    plt.legend((p1[0], p2[0]), ('Seminal', 'UCSD'), 'lower right', fontsize=16)
     # plt.legend((p1[0], p2[0]), ('Men', 'Women'))
     autolabel(plt, p1)
     autolabel(plt, p2)
 
     # plt.show()
-    fig.savefig('coverage.pdf', dpi=300)
+    fig.savefig('coverage.pdf')
+    plt.close()
 
-def plot_trace_size(data, label):
+def plot_trace_size(seminal, ucsd):
     # xy = cumulative_coverage(data)
 
     # N = len(xy)
@@ -72,39 +77,76 @@ def plot_trace_size(data, label):
     # p1 = plt.bar(ind, [r[1] for r in xy], width,
     #              color=COLORS[0])
 
-    step = [int(r[5]) for r in data[1:] if r[4] in UNSAFE and int(r[5]) > 0]
-    jump = [int(r[6]) for r in data[1:] if r[4] in UNSAFE and int(r[6]) > 0]
+    step_s = [int(r[5]) for r in seminal[1:] if r[4] in UNSAFE and int(r[5]) > 0]
+    jump_s = [int(r[6]) for r in seminal[1:] if r[4] in UNSAFE and int(r[6]) > 0]
+
+    step_u = [int(r[5]) for r in ucsd[1:] if r[4] in UNSAFE and int(r[5]) > 0]
+    jump_u = [int(r[6]) for r in ucsd[1:] if r[4] in UNSAFE and int(r[6]) > 0]
     
     bins = [0, 5, 10, 20, 50, 100, 1000]
-    binlabels = ['<5', '5-9', '10-19', '20-49', '50-99', '>=100']
+    binlabels = ['[0,5)', '[5,10)', '[10,20)', '[20,50)', '[50,100)', '>=100']
     ind = np.arange(0, len(binlabels))
-    width = 0.5
-    # plt.figure(figsize=(10,5))
+    width = 0.35
+    # plt.figure(figsize=(100,50))
+
 
     # fig, ax = plt.subplots()
-    ax = plt.subplot(2,1,1)
-    plt.title('Size of generated traces (%s)' % label)
+    # fig, axes = plt.subplots(ncols=2, sharex=True, sharey=True)
+    # ax = plt.subplot(1,2,1, aspect='equal', adjustable='box-forced')
+    # ax = axes[0]
+    # ax.set(adjustable='box-forced', aspect=4)
 
-    y,binEdges=np.histogram(step,bins=bins)
-    p1 = ax.bar(ind, y, label='Steps', width=width, color=COLORS[0])
-    ax.legend((p1[0],), ('Steps',))
-    plt.ylabel('Traces')
-    ax.set_xlim(0,6)
-    ax.set_ylim(0,len(step))
-    plt.xticks(ind + width/2.0, binlabels)
+    fig = plt.figure()
+    y,binEdges=np.histogram(step_s,bins=bins)
+    p1 = plt.bar(ind, y / float(len(step_s)), label='Seminal', width=width, color=COLORS[0])
+
+    y,binEdges=np.histogram(step_u,bins=bins)
+    p2 = plt.bar(ind + width, y / float(len(step_u)), label='UCSD', width=width, color=COLORS[1])
+    plt.legend((p1[0],p2[0]), ('Seminal','UCSD'), fontsize=16)
+    plt.title('Trace Complexity', fontsize=24)
+    plt.xlabel('Total Steps', fontsize=20)
+    plt.ylabel('Traces (%)', fontsize=20)
+    # ax.set_xlim(0,6)
+    # ax.set_ylim(0,len(step))
+    plt.ylim(0.0,1.0)
+    plt.xticks(ind + width, binlabels, fontsize='large')
+    plt.yticks(fontsize='large')
+
     # autolabel(ax, p1)
 
+    plt.savefig('trace_size_step.pdf')
+    plt.close()
 
-    ax = plt.subplot(2,1,2)
 
-    y,binEdges=np.histogram(jump,bins=bins)
-    p2 = ax.bar(ind, y, label='Jumps', width=width, color=COLORS[1])
-    ax.legend((p2[0],), ('Jumps',))
-    plt.ylabel('Traces')
-    ax.set_xlim(0,6)
-    ax.set_ylim(0,len(step))
-    plt.xticks(ind + width/2.0, binlabels)
+    fig = plt.figure()
+
+    # ax = plt.subplot(1,2,2, aspect='equal', adjustable='box-forced', sharex=ax, sharey=ax)
+    # ax = axes[1]
+    # ax.set(adjustable='box-forced', aspect=4)
+
+    y,binEdges=np.histogram(jump_s,bins=bins)
+    foo = y / float(len(jump_s)) 
+    print(foo[0] + foo[1])
+    p1 = plt.bar(ind, y / float(len(jump_s)), label='Seminal', width=width, color=COLORS[0])
+
+    y,binEdges=np.histogram(jump_u,bins=bins)
+    foo = y / float(len(jump_u)) 
+    print(foo[0] + foo[1])
+    p2 = plt.bar(ind + width, y / float(len(jump_u)), label='UCSD', width=width, color=COLORS[1])
+    plt.legend((p1[0],p2[0]), ('Seminal','UCSD'), fontsize=16)
+    # plt.title('Complexity of Traces (in jumps)', fontsize=24)
+    plt.xlabel('Total Jumps', fontsize=20)
+    # plt.xlabel('Jumps', fontsize=20)
+    plt.ylabel('Traces (%)', fontsize=20)
+    # plt.ylabel('Traces')
+    # ax.set_xlim(0,6)
+    # fig.set_ylim(0.0,1.0)
+    plt.ylim(0.0,1.0)
+    plt.xticks(ind + width, binlabels, fontsize='large')
+    plt.yticks(fontsize='large')
     # autolabel(ax, p2)
+
+    # plt.suptitle('Size of generated traces', fontsize=16)
 
     # p1 = plt.bar(0.5*(binEdges[1:]+binEdges[:-1]), y, label='Steps')
     # p1 = plt.hist([step,jump], bins=bins, label=['Steps', 'Jumps'], range=(0,300), color=COLORS[:2])
@@ -116,15 +158,15 @@ def plot_trace_size(data, label):
     # autolabel(ax, p2)
 
     # plt.show()
-    plt.savefig('trace_size_%s.pdf' % (label.lower()), dpi=300)
+    plt.savefig('trace_size_jump.pdf')
     plt.close()
 
 def plot_distrib(seminal, ucsd):
     # data = data[1:]
-    rs_s = [len([r for r in seminal[1:] if r[4] == o])
-            for o in ALL]
-    rs_u = [len([r for r in ucsd[1:] if r[4] == o])
-            for o in ALL]
+    rs_s = [len([r for r in seminal[1:] if r[4] in o])
+            for o in ALL_D]
+    rs_u = [len([r for r in ucsd[1:] if r[4] in o])
+            for o in ALL_D]
 
     # N = len(xy)
     # ind = np.arange(N)    # the x locations for the groups
@@ -133,29 +175,29 @@ def plot_distrib(seminal, ucsd):
     ax = plt.subplot(1,2,1, aspect=1)
     #plt.figure(figsize=(1,1))
     #plt.axes(aspect=1)
-    p1 = ax.pie(rs_s, labels=ALL_L,
+    p1 = ax.pie(rs_s, labels=ALL_DL,
                  autopct='%.1f%%',
                  pctdistance=1.3,
                  labeldistance=10,
                  colors=COLORS,
                  shadow=True)
-    ax.set_title('Seminal')
+    ax.set_title('Seminal', fontsize=20)
 
     ax = plt.subplot(1,2,2, aspect=1)
     #ax.figure(figsize=(1,1))
     #plt.axes(aspect=1)
-    p2 = ax.pie(rs_u, labels=ALL_L,
+    p2 = ax.pie(rs_u, labels=ALL_DL,
                  autopct='%.1f%%',
                  pctdistance=1.3,
                  labeldistance=10,
                  colors=COLORS,
                  shadow=True)
-    ax.set_title('UCSD')
+    ax.set_title('UCSD', fontsize=20)
 
     #plt.tight_layout()
 
-    #plt.title('Distribution of Results')
-    plt.figlegend(p1[0], ALL_L, 'upper right')
+    plt.suptitle('Distribution of Results', fontsize=24, y=0.9)
+    plt.figlegend(p1[0], ALL_DL, 'lower center', fontsize=16, ncol=4)
 
 
     # p2 = plt.pie(rs, labels=ALL_L,
@@ -180,7 +222,8 @@ if __name__ == '__main__':
 
     plot_distrib(seminal, ucsd)
 
-    plot_trace_size(seminal, 'Seminal')
-    plot_trace_size(ucsd, 'UCSD')
+    plot_trace_size(seminal, ucsd)
+    # plot_trace_size(seminal, 'Seminal')
+    # plot_trace_size(ucsd, 'UCSD')
 
     plot_coverage(seminal, ucsd)

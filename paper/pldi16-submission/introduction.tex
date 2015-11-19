@@ -15,19 +15,24 @@ This is fine for expert users who are already familiar with the language
 and type system, but seems backwards for novices, who are typically
 introduced to the dynamic semantics first.
 
-Consider the following ill-typed @factorial@ function, where we return
+Consider the following ill-typed @fac@ function, where we return
 @true@ in the base case instead of @1@.
 %
+\begin{figure}[h!]
 \begin{code}
-  let rec factorial n =
+  let rec fac n =
     if n <= 0 then
       true
     else
-      n * factorial (n-1)
+      n * fac (n-1)
 \end{code}
-%
+\caption{Ill-typed \texttt{fac} function that mistakenly
+  returns \texttt{true} in the base case instead of \texttt{1}.}
+\label{fig:factorial}
+\end{figure}
+
 \ocaml's response is to tell us that on line 5, the recursive call to
-@factorial@ returns a @bool@, but we needed an @int@ for the
+@fac@ returns a @bool@, but we needed an @int@ for the
 multiplication.
 %
 \begin{verbatim}
@@ -37,17 +42,17 @@ Error: This expression has type bool
        of type int
 \end{verbatim}
 %
-\ocaml is correct, but we may ask \emph{why} @factorial@ returns a
+\ocaml is correct, but we may ask \emph{why} @fac@ returns a
 @bool@ instead of an @int@.
 
 Contrast this \emph{static} type error to the \emph{dynamic} type error
 that arises in the equivalent \ruby function, when we call
-@factorial(1)@.
+@fac(1)@.
 %
 \begin{verbatim}
 fac.rb:5:in `*': true can't be coerced
                  into Fixnum (TypeError)
-  from fac.rb:5:in `factorial'
+  from fac.rb:5:in `fac'
   from fac.rb:10:in `<main>'
 \end{verbatim}
 %
@@ -97,7 +102,7 @@ yet know.
 % and can instantiate it with a concrete value.
 %
 Our semantics \emph{conservatively} instantiates holes with concrete
-values, if we can find a witness to a type error then there is no valid
+values; if we can find a witness to a type error then there is no valid
 typing for the program.
 
 Given a witness to a type error, the prospective \ocaml student may
@@ -110,9 +115,12 @@ the witness causes the program to crash.
 Thus, our second contribution is an interactive visualization of the
 execution of \ocaml programs (well-typed or not).
 %
-We present the execution as a \emph{reduction graph}, in which the nodes
-are expressions and the edges indicate either a single-step reduction or
-a sub-term relation.
+We present the execution as a \emph{reduction graph}, which records
+all of the small-step reductions in the context in which they occur.
+%
+%  in which the nodes
+% are expressions and the edges indicate either a single-step reduction or
+% a sub-term relation.
 %
 This graph is easy to generate during the execution and admits many of
 the standard debugging steps, \eg ``step forward'', ``step into'', and
@@ -120,10 +128,9 @@ the standard debugging steps, \eg ``step forward'', ``step into'', and
 previous) function call.
 %
 The visualization initially shows the source term (\ie the witness) and
-the stuck term (or the final value), and allows the novice to
-iteratively expand the computation to show intermediate steps by
-selecting an expression and choosing an strategy for picking the next
-node to insert into the graph.
+the stuck term (or the final value), and allows the user to iteratively
+expand the computation to expose intermediate steps, by selecting an
+expression and choosing a traversal strategy (\eg ``step forward'').
 %
 This process of iterative expansion of the trace ensures that the
 context of intermediate steps is not lost; whereas traditional debuggers
@@ -134,17 +141,25 @@ lose sight of where you came from.
 We begin the rest of the paper with an overview of our search algorithm
 and trace visualization (\S~\ref{sec:overview}).
 %
+% Then, we formalize our algorithm and prove it sound
+% (\S~\ref{sec:searching-witness}), and evaluate it on a large set of real
+% student programs (\S~\ref{sec:eval}).
+% %
+% Next, we extend the search algorithm to collect the reduction graph and
+% formalize a set of traversals (\S~\ref{sec:explaining}), and measure the
+% complexity of these traces on our benchmarks
+% (\S~\ref{sec:evaluation-nanomaly}).
 Then, we formalize our algorithm and prove it sound
-(\S~\ref{sec:searching-witness}), and evaluate it on a large set of real
-student programs (\S~\ref{sec:eval-witness}).
+(\S~\ref{sec:searching-witness}).
 %
-Next, we extend the search algorithm to collect the reduction graph and
-formalize a set of traversals (\S~\ref{sec:explaining}), and measure the
-complexity of these traces on our benchmarks
-(\S~\ref{sec:evaluation-nanomaly}).
+Next, we extend the algorithm to collect a reduction graph and formalize
+a set of traversals over the graph (\S~\ref{sec:explaining}).
 %
-Finally, we present the results of a preliminary user study on the full
-system (\S~\ref{sec:user-study}).
+Finally, we evaluate our search algorithm and trace generation on a
+large set of real student programs (\S~\ref{sec:evaluation}).
+%
+% Finally, we present the results of a preliminary user study on the full
+% system (\S~\ref{sec:user-study}).
 
 %%% Local Variables:
 %%% mode: latex
