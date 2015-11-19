@@ -137,7 +137,6 @@ to get the following template for the small-step relation:
 \[
 \stepg{e}{\vsu}{\tr}{e'}{\vsu'}{\singlestep{e}{e'}; \subterms{e'}; \tr}
 \]
-\RJ{shouldn't this be $\subterms{e}$?}
 
 
 % After evaluation the reduction graph can be constructed directly from
@@ -150,28 +149,62 @@ to get the following template for the small-step relation:
 \subsection{Interactive Debugging}
 \label{sec:traversing-graph}
 
-Given a reduction graph $G$ and an initial path
-$p = \singlestep{e_1}{\singlestep{e_2}{e_n}}$, such that
-\stepsg{e_1}{\emptysu}{\bullet}{e_n}{\su}{\tr}, we define the following
-traversals in Figure~\ref{fig:traversing-graph}:
-%
+Next, we show how to build an visual interactive debugger
+from the traced semantics, by describing the visualization
+\emph{state} \ie\ what the user sees at any given moment,
+the set of \emph{commands} available to user, and what
+they do, and finally how we use a command to \emph{update}
+the visualization state. In the sequel, for clarity of
+exposition, we assume we have a (global) trace:
+$\stepg{e}{\emptysu}{\bullet}{e'}{\vsu'}{\tr}$.
+
+\paragraph{State}
+A \emph{visualization state} is ...
+The \emph{initial state} is the graph containing the single edge
+${e \hookrightarrow \stuck}$.
++ Visualization = ExprGraph + invariants (unique predecessor) -- link to figure.
+
+\paragraph{Commands}
 \begin{itemize}
-\item \stepforwardsym takes a single step forward.
-\item \stepbackwardsym takes a single step backward.
-\item \jumpforwardsym takes a ``big'' step forward to the next function call.
-\item \jumpbackwardsym takes a ``big'' step backward to the previous function call.
-\item \stepintosym steps into a function call in a sub-term, isolating it from the context.
-\item \stepoversym steps over a function call in a sub-term.
+\item \stepforwardsym\ takes a single step forward.
+\item \stepbackwardsym\ takes a single step backward.
+\item \jumpforwardsym\ takes a ``big'' step forward to the next function call.
+\item \jumpbackwardsym\ takes a ``big'' step backward to the previous function call.
+\item \stepintosym\ steps into a function call in a sub-term, isolating it from the context.
+\item \stepoversym\ steps over a function call in a sub-term.
 \end{itemize}
+
+\paragraph{Update}
+Figure~\ref{fig:traversing-graph} shows how we update the state for each
+command...
+%
+find   :: Vis -> Cmd -> Expr
+update :: Vis -> Cmd -> Vis
 %
 The initial path $p$ is required for the backward-steps as a node may
 have multiple incoming $\leadsto$ edges, \eg
 \singlestep{\eplus{1}{2}}{3} and \singlestep{\eplus{2}{1}}{3}.
 %
-The sub-term edges $\searrow$ allow us to decompose an expression into a
+Note that the sub-term edges $\searrow$ allow us to decompose an expression into a
 sub-expression and the surrounding context, thus enabling the \stepintosym
 and \stepoversym traversals.
-%
+
+
+
+data Sel = Expr
+
+data Vis = { graph :: TraceGraph, edges = ExprGraph  }
+
+path :: Vis -> Expr -> [Expr]
+stepX :: Sel -> Vis -> Vis(edited)
+
+path v e = graphPath (graph v,  root (v, e),  e)
+
+putBefore, putAfter :: EGraph -> Expr -> Expr -> EGraph
+putRoot  :: EGraph -> Expr -> EGraph
+getRoot  :: EGraph -> Expr -> Expr
+
+pathToRoot  ::
 
 
 \begin{figure*}[t]
@@ -208,12 +241,3 @@ and \stepoversym traversals.
   \eapp{v_1}{v_2} and the context $C$.  \ES{these rules are quite ugly and waste space..} }
 \label{fig:traversing-graph}
 \end{figure*}
-
-
-% \begin{itemize}
-% \item extend operational semantics to collect reduction graph
-% \item nodes are terms, edges indicate ``steps-to'' and ``sub-term'' relations
-% \item visualize path through reduction graph
-% \item expand edges to reveal more fine-grained steps (step/jump forward/backward)
-% \item never lose context (unlike traditional debugger)
-% \end{itemize}
