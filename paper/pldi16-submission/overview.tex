@@ -1,26 +1,34 @@
 \section{Overview}
 \label{sec:overview}
-We start with an overview of our contributions.
+
+We start with an overview of our approach to
+explaining (static) type errors using \emph{witnesses}
+that (dynamically) show how the program goes wrong.
 %
-First we illustrate why generating suitable inputs to functions in the
-absense of type information is tricky. 
+We illustrate why generating suitable inputs
+to functions is tricky in the absence of type
+information.
 %
-Then we describe our solution to the problem and highlight the
-similarity to static type inference.
+Then we describe our solution to the problem
+and highlight the similarity to static type
+inference,
 %
 Finally, we demonstrate our visualization of the witnesses we produce.
 
 \subsection{Generating Witnesses}
 \label{sec:generating-witnesses}
-Our goal is to find concrete values that demonstrate how a
-program ``goes wrong''.
+Our goal is to find concrete values
+that demonstrate how a program ``goes wrong''.
 
 \paragraph{Problem: Which inputs are bad?}
 %
-One approach is to randomly generate input values and use them to
-execute the program until we find one that causes the program to go
-wrong. However, to see why this approach is naive, consider the
-@fac@ function from Figure~\ref{fig:factorial}, reproduced here.
+One approach is to randomly generate input values and
+use them to execute the program until we find one that
+causes the program to go wrong.
+%
+Unfortunately, this approach quickly runs aground.
+Consider the @fac@ function from Figure~\ref{fig:factorial},
+reproduced here.
 
 \begin{code}
   let rec fac n =
@@ -54,7 +62,7 @@ This is actually quite similar in spirit to type inference.
 To defer input generation, we borrow the notion of a ``hole'' from
 SmallCheck~\cite{runciman_smallcheck_2008}.
 %
-A hole -- written \ehole{} -- is a \emph{placeholder} for a value; in
+A hole --- written \ehole{} --- is a \emph{placeholder} for a value; in
 our case we do not even know its type.
 %
 We leave all inputs as uninstantiated holes until they are demanded by
@@ -62,7 +70,7 @@ the program, \eg due to a primitive operation like the @<=@ test.
 
 \paragraph{Narrowing Input Types}
 Primitive operations, data construction, and case-analysis \emph{narrow}
-the types of values. 
+the types of values.
 %
 For concrete values this amounts to a runtime type check, we ensure that
 the value has a type compatible with the expected type.
@@ -85,7 +93,7 @@ The case analysis tells us that @p@ must be a pair, but it says
 \emph{nothing} about the contents of the pair.
 %
 Thus, upon reaching the case-analysis we would generate a pair
-containing fresh holes for the @fst@ and @snd@ component. 
+containing fresh holes for the @fst@ and @snd@ component.
 %
 Notice the similarity between instantiation of type variables and
 instantiation of holes.
@@ -108,23 +116,28 @@ At this point we choose a random @int@ for the instantiation and
 concrete execution takes over entirely leading us to the expected crash
 in the multiplication.
 
-As we show in \S~\ref{sec:soundness} our lazy instantiation of holes is
-\emph{conservative}.
+\paragraph{Witness Generality}
+We show in \S~\ref{sec:soundness} our lazy instantiation of holes
+produces \emph{general witnesses}.
 %
-We prove that if calling a function with a hole as input causes the
-function to ``go wrong'', then there is \emph{no possible} type for the
-function.
+That is, we show that if ``executing''
+a function with a hole as input causes the
+function to ``go wrong'', then there is
+\emph{no possible} type for the function.
 %
-In other words, for any type you might assign to the function, there
-exist valid inputs that will cause it to crash.
+In other words, for \emph{any} type you might
+assign to the function, there exist inhabitants
+that will cause the function to go wrong.
 
 \paragraph{Problem: How many inputs does a function take?}
-There is another wrinkle though, how did we know that @fac@ takes
-a single argument instead of two (or none)?
+%
+There is another wrinkle though, how did we know
+that @fac@ takes a single argument instead of two
+(or none)?
 %
 It is clear, syntactically, that @fac@ takes \emph{at least} one
 argument, but in a higher-order language with currying syntax can be
-deceiving. 
+deceiving.
 %
 Consider the following definition:
 %
@@ -141,13 +154,14 @@ because @List.map@'s \emph{type} says it takes two arguments, and it is
 partially applied to @(+ 1)@.
 %
 As we are dealing with ill-typed programs we do not have the luxury of
-typing information, so we must deduce the number of arguments by
-experimentation.
+typing information.
 
 \paragraph{Solution: Search for saturated application.}
-Luckily the solution is straightforward, we add arguments one-by-one
-until we reach a \emph{saturated} application, \ie until evaluating the
-application returns a value other than a lambda.
+We solve this problem by deducing the number of arguments
+via an iterative process. We add arguments one-by-one
+until we reach a \emph{saturated} application, \ie\
+until evaluating the application returns a value
+other than a lambda.
 
 \subsection{Visualizing Witnesses}
 \label{sec:visual-witness}
@@ -169,7 +183,7 @@ trace.
 Our trace takes the form of a reduction graph, which records small-step
 reductions in the context in which they occur.
 %
-These graphs have two types of edges: 
+These graphs have two types of edges:
 %
 (1) ``steps-to'' edges that capture the small-step transition between
 two terms, and
@@ -206,8 +220,8 @@ witness followed by the stuck term.
 %
 The user can then progressively fill in the hidden steps of the
 computation by selecting a visible term and choosing one of the
-applicable traversal strategies -- formalized in
-\S~\ref{sec:traversing-graph} -- to insert another term into the
+applicable traversal strategies --- formalized in
+\S~\ref{sec:explaining} --- to insert another term into the
 visualization.
 
 A sample interaction with the trace of @fac 1@ can be seen in
@@ -216,13 +230,13 @@ Figure~\ref{fig:nanomaly-factorial}.
 \begin{figure*}[t]
 \centering
 \includegraphics[width=0.8\linewidth]{fac-steps.png}
-\caption{A sequence of interactions with the trace of 
+\caption{A sequence of interactions with the trace of
   \texttt{fac 1}. The stuck term is red, in each node the redex is
   highlighted. Thick arrows denote a multi-step transition, thin arrows
   denote a single-step transition. We start in step 1. In step 2 we jump
   forward from the witness to the next function call. In step 3 we step
   into the recursive \texttt{fac 0} call, which spawns a new ``thread''
-  of execution. In step 4 we take a single step forward from 
+  of execution. In step 4 we take a single step forward from
   \texttt{fac 0} (hiding the context for space).}
 \label{fig:nanomaly-factorial}
 \end{figure*}
@@ -279,7 +293,7 @@ instead return an @int@.
 
 
 
-%%% Local Variables: 
+%%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "main"
-%%% End: 
+%%% End:

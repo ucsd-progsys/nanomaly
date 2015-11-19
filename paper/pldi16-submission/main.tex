@@ -57,71 +57,27 @@
 
 \title{NanoMaLy}
 
-\authorinfo{Eric L. Seidel\and Ranjit Jhala}
+\authorinfo{Eric L. Seidel}
            {UC San Diego}
-           {{eseidel,rjhala}@cs.ucsd.edu}
+           {eseidel@cs.ucsd.edu}
+
+\authorinfo{Ranjit Jhala}
+           {UC San Diego}
+           {jhala@cs.ucsd.edu}
 
 \authorinfo{Westley Weimer}
            {University of Virginia}
            {weimer@viginia.edu}
 
 \maketitle
-\begin{abstract}
-  Type errors are a common stumbling block for newcomers to typed
-  functional languages.
-  % 
-  Compilers prevent standard debugging techniques by refusing to run
-  ill-typed programs.
-  %
-  We demonstrate how to expose static type errors for the runtime
-  crashes they hide, by searching for a witness that will trigger the
-  error.
-  %
-  Our search procedure collects an execution trace for which we have
-  developed an interactive visualization to demonstrate precisely
-  \emph{how} the witness makes the program ``go wrong''.
-  %
-  We have implemented our system for \ocaml and demonstrate its efficacy
-  on a large set of real student programs.
-\end{abstract}
 
-
-% 11 pages total (not including bib)
-% ----------------------------------
-%  1p : intro
-%  2p : overview
-%  2p : type-carrying semantics
-%  1p : evaluation: quickchecking type errors
-%  2p : interactive semantics
-%  1p : evaluation: nanomaly
-%  1p : related work
-%  1p : conclusion
-
-% \section{Introduction}          % 1 page
-\input{introduction.tex}
-
-% \section{Overview}              % 2 pages?
-\input{overview.tex}
-
-% \section{Type-carrying Semantics} % 2 pages
-\input{semantics.tex}
-
-% \section{Evalution: Recasting Type Errors as Runtime Errors} % 1 page
-% \input{evaluation-witness.tex}
-
-% \section{``Interactive'' Semantics \& Trace Exploration} % 2 pages
-\input{interactive.tex}
-
-% \input{nanomaly.tex}
-
-% \section{Evaluation: \nanomaly}                % 1 page
-% \input{evaluation-nanomaly.tex}
-\input{evaluation.tex}
-
-% \section{Related Work}              % 1 pages
-\input{related.tex}
-
-% \section{Conclusion}                % 1 page
+\input{abstract}
+\input{introduction}
+\input{overview}
+\input{semantics}
+% \section{interactive}
+\input{evaluation}
+\input{related}
 
 {
 \bibliographystyle{abbrvnat}
