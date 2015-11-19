@@ -124,9 +124,13 @@ def plot_trace_size(seminal, ucsd):
     # ax.set(adjustable='box-forced', aspect=4)
 
     y,binEdges=np.histogram(jump_s,bins=bins)
+    foo = y / float(len(jump_s)) 
+    print(foo[0] + foo[1])
     p1 = plt.bar(ind, y / float(len(jump_s)), label='Seminal', width=width, color=COLORS[0])
 
     y,binEdges=np.histogram(jump_u,bins=bins)
+    foo = y / float(len(jump_u)) 
+    print(foo[0] + foo[1])
     p2 = plt.bar(ind + width, y / float(len(jump_u)), label='UCSD', width=width, color=COLORS[1])
     plt.legend((p1[0],p2[0]), ('Seminal','UCSD'), fontsize=16)
     plt.xlabel('Jumps', fontsize=20)
@@ -189,7 +193,7 @@ def plot_distrib(seminal, ucsd):
     #plt.tight_layout()
 
     plt.suptitle('Distribution of Results', fontsize=24, y=0.9)
-    plt.figlegend(p1[0], ALL_DL, 'lower right', fontsize=16)
+    plt.figlegend(p1[0], ALL_DL, 'lower center', fontsize=16, ncol=4)
 
 
     # p2 = plt.pie(rs, labels=ALL_L,
