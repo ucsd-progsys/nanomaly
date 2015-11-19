@@ -53,7 +53,7 @@ def plot_coverage(seminal, ucsd):
     p2 = plt.bar(ind + width, [r[1] for r in xy_u], width,
                  color=COLORS[1])
 
-    plt.xlabel('Timeout (seconds)', fontsize=20)
+    plt.xlabel('Witness found in <x seconds', fontsize=20)
     plt.ylabel('Witnesses Found (% of total programs)', fontsize=20)
     plt.title('Cumulative Coverage', fontsize=24)
     plt.xticks(ind + width, [r[0] for r in xy_s], fontsize='large')

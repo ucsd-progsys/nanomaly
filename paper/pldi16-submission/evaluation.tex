@@ -3,27 +3,34 @@
 \label{sec:evaluation}
 
 %
-The immediate question is ``What fraction of type errors admit
-witnesses?''
+% The immediate question is ``What fraction of type errors admit
+% witnesses?''
 %
-To answer this question we implemented a prototype of our search
-procedure for the pure subset of \ocaml, \ie \lang extended with
-algebraic datatypes and records. 
+We have implemented a prototype of our search procedure and trace
+visualization for the pure subset of \ocaml, in a tool called \nanomaly.
+% , \ie \lang extended with
+% algebraic datatypes and records. 
 %
 In our implementation we instantiated \gensym with a simple random
 generation of values, which we will show is more than sufficient for the
 majority of type errors.
-%
-We evaluated our implementation of two sets of known-bad programs, \ie
+
+There are two questions we seek to answer with our evaluation:
+\begin{enumerate}
+\item What fraction of type errors \emph{admit} witnesses?
+\item How \emph{complex} are the traces our witnesses produce?
+\end{enumerate}
+
+We answer these questions on two sets of known-bad programs, \ie
 programs that were rejected by the \ocaml compiler because of a type
 error.
 %
 The first dataset comes from the Spring 2014 undergraduate Programming
-Languages course at UC San Diego (IRB \#140608). 
+Languages course at UC San Diego. 
 %
 We recorded each interaction with the \ocaml top-level system over the
-course of the first three assignments, from which we extracted 4,407
-distinct, ill-typed \ocaml programs.
+course of the first three assignments (IRB \#140608), from which we
+extracted 4,407 distinct, ill-typed \ocaml programs.
 %
 The second dataset -- widely used in the literature -- comes from a
 similar course at the University of
@@ -62,12 +69,12 @@ in the program, and thus valuable feedback for the user.
 \end{minipage}
 % \vspace{-8ex}
 \caption{Results of our coverage testing and the distribution of test
-  outcomes. Our random search successfully finds witnesses for over 85\%
-  of the programs at the lowest timeout and improves slightly to 88\% at
-  the next level. In both datasets we detect actual type errors about
-  82\% of the time, unbound variables or constructors 3-4\% of the time,
-  and diverging loops 2-3\% of the time. For the remaining 11-12\% of
-  the programs we are unable to provide any useful feedback.  }
+  outcomes. Our random search successfully finds witnesses for 83\% of
+  the programs in under one second, improving slightly to 87\% in under
+  10 seconds. In both datasets we detect actual type errors about 82\%
+  of the time, unbound variables or constructors 3-4\% of the time, and
+  diverging loops 2-3\% of the time. For the remaining 11-12\% of the
+  programs we are unable to provide any useful feedback.  }
 \label{fig:results-witness}
 \end{figure}
 
@@ -76,8 +83,10 @@ in the program, and thus valuable feedback for the user.
 The results of our experiments are summarized in
 Figure~\ref{fig:results-witness}.
 %
-In both datasets our tool was able to find a witness for at least 87\%
-of the programs in under 10 seconds.
+In both datasets our tool was able to find a witness for 83\% of the
+programs in under one second, \ie fast enough to be integrated as a
+compile-time check. If we extend our tolerance to a 10 second timeout,
+we hit a maximum of 87\% coverage.
 %
 Interestingly, while the vast majority of witnesses corresponded to a
 type-error, as expected, 3-4\% triggered an unbound variable error and
@@ -107,9 +116,9 @@ metrics:
   witness to the stuck term. This can be thought of as a worst-case
   complexity, \ie ``How big is the fully-expanded trace?''
 \item The number forward (or backward) jumps that can be taken along the
-  path from the witness to the stuck term. This is not quite the same as
+  path from the witness to the stuck term\footnote{This is not quite the same as
   a stack-trace as it shows \emph{all} function calls, including those
-  that returned successfully.
+  that returned successfully.}.
   % These abstract many details of the computation that are often
   % uninteresting or irrelevant to the explanation.
 % \item \ES{others?}
@@ -149,7 +158,10 @@ to type errors: (1) with high coverage in a timespan amenable to
 compile-time analysis, and (2) with traces that have a low average
 complexity of 3 function calls.
 
-There are, of course, drawbacks to our approach.
+There are, of course, drawbacks to our approach. Three that stand out
+are: (1) coverage limits due to random generation, (2) the inability to
+handle certain instances of infinite types, and (3) dealing with an
+explosion in the size of generated traces.
 
 \paragraph{Random Generation}
 Random test generation has difficulty generating highly constrained
@@ -162,10 +174,10 @@ show, however, novice programs do not appear to require more advanced
 search techniques, likely because the novice programs tend to be simple.
 
 \paragraph{Infinite Types}
-Our algorithm does check for infinite types inside \forcesym, but there
-are some degenerate cases where it is unable to detect them. Consider,
-for example, the following buggy version of @replicate@ which is
-supposed to produce a list containing @n@ copies of @x@.
+Our implementation does check for infinite types inside \forcesym, but
+there are some degenerate cases where it is unable to detect
+them. Consider, for example, the following buggy version of @replicate@,
+which is supposed to produce a list containing @n@ copies of @x@.
 %
 \begin{code}
   let rec replicate n x =
@@ -178,13 +190,14 @@ supposed to produce a list containing @n@ copies of @x@.
 This code produces a nested list (with @n@ levels of nesting) containing
 a single copy of @x@. \ocaml detects a cyclic \hbox{@'a = 'a list@}
 constraint in the recursive call and throws a type error, whereas
-\nanomaly happily recurses as many times as necessary. Strictly
-speaking, this function itself cannot ``go wrong'', the program would
-not get stuck until a \emph{client} attempted to use the result
-expecting a flat list. But this is not very satisfying as @replicate@ is
-clearly to blame. Furthermore, in our experience, infinite-type errors
-are some of the more difficult ones to debug (and to explain to
-novices), so better support for this scenario would be useful.
+\nanomaly happily recurses @n@ times to produce the nested list.
+Strictly speaking, this function itself cannot ``go wrong'', the
+program would not get stuck until a \emph{client} attempted to use the
+result expecting a flat list. But this is not very satisfying as
+@replicate@ is clearly to blame. Furthermore, in our experience,
+infinite-type errors are some of the more difficult ones to debug (and
+to explain to novices), so better support for this scenario would be
+useful.
 
 \paragraph{Trace Explosion}
 Though the average complexity of our generated traces is low in terms of
