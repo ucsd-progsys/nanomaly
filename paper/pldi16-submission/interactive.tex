@@ -1,7 +1,7 @@
 \section{Explaining Type Errors With Traces}
 \label{sec:explaining}
 
-A trace, on its own, is likely too detailed to be
+A trace, on its own, is too detailed to be
 a good explanation of the type error. One approach
 is to use the witness input to step through the
 program with a \emph{debugger} to observe how
@@ -20,16 +20,14 @@ on the important ones.
 
 Next, we present a novel way to debug executions.
 %
-First, we develop a notion of a
-\emph{reduction graph}~(\S~\ref{sec:reduction-graph}).
+First, we develop a notion of a \emph{reduction graphs}
+and extend our semantics with a form of \emph{tracing}
+so that they incrementally collect the edges
+in the graph (\S~\ref{sec:inter-semant}).
 %
-Second, we extend our semantics with a form of \emph{tracing}
-so that they incrementally collect the edges in the graph
-(\S~\ref{sec:inter-semant}).
-%
-Finally, we express a set of common \emph{interactive debugging}
+Next, we express a set of common \emph{interactive debugging}
 steps as graph traversals (\S~\ref{sec:traversing-graph}), yielding
-an novel visual interactive debugger that allows the user
+an novel interactive debugger that allows the user
 to effectively visualize \emph{how} the program goes (wrong.)
 
 % The trace takes the form of a \emph{reduction graph}, where the nodes
@@ -50,20 +48,20 @@ to effectively visualize \emph{how} the program goes (wrong.)
 % traversals, such as ``step into'' and ``step over'' -- commonly found in
 % traditional debuggers.
 
-\subsection{Reduction Graphs}
+
 
 \subsection{Tracing Semantics}
 \label{sec:inter-semant}
 %
 \begin{figure*}[t]
-\relDescription{Trace Syntax}
-$$
-\begin{array}{rrcl}
-  & \tr & ::= & \bullet \spmid \singlestep{e}{e}; \tr \spmid \subterm{e}{e}; \tr
-\end{array}
-$$
-\\
-\relDescription{\subtermssym}
+% \relDescription{Trace Syntax}
+% $$
+% \begin{array}{rrcl}
+  % & \tr & ::= & \bullet \spmid \singlestep{e}{e}; \tr \spmid \subterm{e}{e}; \tr
+% \end{array}
+% $$
+% \\
+\relDescription{Computing Sub-Terms}
 \begin{gather*}
 \begin{array}{lcl}
 \subtermssym                 & \dcolon & e \to \tr \\
@@ -78,7 +76,7 @@ $$
 \subterms{e}                 & \defeq & \bullet
 \end{array}
 \end{gather*}
-\judgementHead{Evaluation}{\stepg{e}{\su}{\tr}{e}{\su}{\tr}}
+\judgementHead{Traced Evaluation}{\stepg{e}{\su}{\tr}{e}{\su}{\tr}}
 \begin{gather*}
 \inference[\recontext]
   {\stepg{e}{\su}{\tr}{e_1}{\su_1}{\tr_1}}
@@ -98,40 +96,55 @@ $$
   graph.}
 \label{fig:interactive}
 \end{figure*}
-%
-The changes to the operational semantics of \S~\ref{sec:semantics} are
-mechanical, so we will not reproduce them in full; instead we describe
-the procedure for extending a transition rule and provide a selection of
-examples in Figure~\ref{fig:interactive}.
 
-First, we extend the transition relation to collect a set of edges from
-which we will construct the graph.
+\paragraph{Reduction Graphs}
 %
-An edge between two expressions is either a ``steps-to'' edge -- written
-\singlestep{e_1}{e_2} -- indicating that $e_1$ transitions to $e_2$ in a
-single step, or a ``sub-term'' edge -- written \subterm{e_1}{e_2} --
-indicating that $e_1$ contains $e_2$ as a sub-expression.
+A \emph{steps-to} edge is a pair of expressions \singlestep{e_1}{e_2}, which
+intuitively indicates that $e_1$ steps, in a single step, to $e_2$.
 %
-Collecting the steps-to edges is a simple matter of recording the
-consequent of each original rule in the trace; each original judgment
-\step{e_1}{\su_1}{e_2}{\su_2} becomes
-\stepg{e_1}{\su_1}{\tr_1}{e_2}{\su_2}{\singlestep{e_1}{e_2}; \tr_1}.
+A \emph{sub-term} edge is a pair of expressions \subterm{e_1}{e_2}, which
+intuitively indicates that $e_1$ contains $e_2$ as a sub-expression.
 %
-The sub-term edges can be delegated to a new \subtermssym helper
-function, which adds edges from an expression to each of its
+A \emph{reduction graph} is a set of edges:
+$$\tr ::= \bullet \spmid \singlestep{e}{e}; \tr \spmid \subterm{e}{e}; \tr$$
+
+\paragraph{Tracing Semantics}
+%
+We extend the transition relation (\S~\ref{sec:semantics}) to
+collect the set of edges corresponding to the reduction graph.
+%
+Concretely, we extend the operational semantics to
+a relation of the form $\stepg{e}{\vsu}{\tr}{e'}{\vsu'}{\tr'}$
+where $\tr'$ collects the edges of the transition.
+
+\paragraph{Collecting Edges}
+%
+Next, we describe the general recipe for extending a transition
+rule to collect edges, and provide a selection of examples
+in Figure~\ref{fig:interactive}.
+%
+The steps-to edges are collected by recording the consequent of
+each original rule in the trace. That is, each original judgment
+\step{e}{\vsu}{e'}{\vsu'} becomes
+\stepg{e}{\vsu}{\tr}{e'}{\vsu'}{\singlestep{e}{e'}; \tr}.
+%
+The sub-term edges are delegated to a helper function \subtermssym\
+which adds edges from an expression to each of its
 \emph{immediate} sub-expressions.
 %
-We collect new sub-term edges after each transition, thus the final
-template for the small-step relation is:
+We collect \subtermssym edges after each transition,
+to get the following template for the small-step relation:
 \[
-\stepg{e_1}{\su_1}{\tr_1}{e_2}{\su_2}{\singlestep{e_1}{e_2}; \subterms{e_2}; \tr_1}
+\stepg{e}{\vsu}{\tr}{e'}{\vsu'}{\singlestep{e}{e'}; \subterms{e'}; \tr}
 \]
+\RJ{shouldn't this be $\subterms{e}$?}
 
-After evaluation the reduction graph can be constructed directly from
-the trace $\tr$ as follows:
-\[
-G(\tr) = \pair{\{e \spmid e \in \tr\}}{\tr}
-\]
+
+% After evaluation the reduction graph can be constructed directly from
+% the trace $\tr$ as follows:
+% \[
+% G(\tr) = \pair{\{e \spmid e \in \tr\}}{\tr}
+% \]
 
 % \subsection{Traversing the Reduction Graph}
 \subsection{Interactive Debugging}
