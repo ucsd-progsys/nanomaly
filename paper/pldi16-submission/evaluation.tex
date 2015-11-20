@@ -115,7 +115,7 @@ trace according to two metrics.
 %
 A jump compressed trace is one whose edges are limited to forward
 or backward jumps. (The sizes of these traces is equal to the jump
-metric above.)
+metric below.)
 %
 In our experience, jump compression abstracts many details of the
 computation that are often uninteresting or irrelevant to the
@@ -126,9 +126,9 @@ Note that jump compressed traces are not quite the same as
 stack-traces as they show \emph{all} function calls, including
 those that returned successfully.
 %
-For example, the display on the right in Figure shows
+For example, the display on the right in Figure~\ref{fig:factorial} shows
 a jump-compressed trace, of size 4. The full trace for
-the same example has size \RJ{Eric please fix this...}
+the same example has size 19.
 
 \paragraph{Metrics} Thus, our two metrics are:
 % size of the full trace,
@@ -143,7 +143,7 @@ the same example has size \RJ{Eric please fix this...}
   % complexity, \ie ``How big is the fully-expanded trace?''
 \item \emphbf{Jump Metric}
       The size of the jump-compressed trace for the given witness execution,
-      \ie\ the number forward (or backward) jumps that can be taken along the
+      \ie\ the number of forward (or backward) jumps that can be taken along the
       path from the witness to the stuck term.
 \end{enumerate}
 
@@ -243,3 +243,8 @@ highlight a confusing value and ask: ``Where did this come from?''
 % \item both cases: \textbf{random} search sufficient to trigger runtime crash in 80\% of programs
 % \item how many of the ``safe'' programs are actually safe??
 % \end{itemize}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End: 
