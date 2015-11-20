@@ -26,10 +26,10 @@
 \def\codesize{\normalsize}
 
 \lstdefinelanguage{HaskellUlisses}{
-	basicstyle=\codesize\ttfamily,
+	basicstyle=\footnotesize\ttfamily,
 	sensitive=true,
-	morecomment=[l][\color{gray_ulisses}\ttfamily\codesize]{--},
-	morecomment=[s][\color{gray_ulisses}\ttfamily\codesize]{\{-}{-\}},
+	morecomment=[l][\color{gray_ulisses}\ttfamily\footnotesize]{--},
+	morecomment=[s][\color{gray_ulisses}\ttfamily\footnotesize]{\{-}{-\}},
 	morestring=[b]",
 	stringstyle=\color{haskellstr},
 	showstringspaces=false,
@@ -38,6 +38,7 @@
 	showspaces=false,
 	breaklines=true,
 	showtabs=false,
+        escapeinside={(*}{*)},%
         % mathescape=true,
 	emph=
 	{[1]

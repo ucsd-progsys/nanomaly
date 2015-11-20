@@ -161,7 +161,7 @@ expressions respectively.
 
 \paragraph{Visualization State}
 %
-A \emph{visualization state} $\vstate$ is a \emph{directed graph}
+A \emph{visualization state} @VState@ is a \emph{directed graph}
 whose vertices are expressions and whose edges are such
 that each vertex has at most one predecessor and at most one
 successor. In other words, the visualization state looks
@@ -192,27 +192,42 @@ is parameterized by a single expression (vertex) selected from the
       show result of skipping over a function call in a sub-term.
 \end{itemize}
 
+\input{traversals.tex}
+
 \paragraph{Update}
 Figure~\ref{fig:traversing-graph} shows how we update the state
 for each command.
 %
-The procedure $\findExpr{\vstate}{\cmd}{e}$ traverses the $\tr$
+The procedure @findExpr vs cmd e@ traverses the $\tr$
 and the current visualization state to compute the new
 expression that should be added to the visualization state
-and $\updState{\vstate}{\cmd}{e}$ then updates the graph
+and @updState vs cmd e@ then updates the graph
 by inserting the new expression appropriately, using one of
 the following functions.
 %
-$\putBefore{\vstate}{e}{e'}$ (resp. $\putAfter{\vstate}{e}{e'}$)
-returns the modified version of $\vstate$ where $e$ is the
-immediate predecessor of $e'$ (resp. $e'$ the immediate successor of $e$);
+@putBefore vs e e'@ \hbox{(resp. @putAfter vs e e'@)}
+returns the modified version of @vs@ where @e'@ is the
+immediate predecessor of @e@ (resp. the immediate successor of @e@);
 %
-$\putRoot{\vstate}{e}$ returns the modified version of $\vstate$ extended
-with a new vertex $e$ that has no predecessor or successor, and,
+@putRoot vs e@ returns the modified version of @vs@ extended
+with a new vertex @e@ that has no predecessor or successor, and,
 %
-$\getRoot{\vstate}{e'}$ be the vertex (expression) obtained
-by transitively following the predecessors of $e'$ until a
+@getRoot vs e@ returns the vertex (expression) obtained
+by transitively following the predecessors of @e@ until a
 source vertex.
+%
+@getSubterms vs e@ traverses the sub-term edges to decompose an
+expression into a list of sub-expressions paired with their context.
+%
+@applyCtx vs e ctx@ applies @ctx@ to @e@, traversing the sub-term edges
+in reverse to find the super-term of @e@.
+%
+@findApp vs e@ builds on top of @getSubterms@ to find the first
+application sub-term (if any), \ie the first sub-term that looks like
+$\eapp{v_1}{v_2}$.
+%
+@findValue vs e@ traverses the single-step edges to find the final value
+that @e@ reduces to.
 %
 Note that the sub-term edges $\searrow$ allow us to decompose an
 expression into a sub-expression and the surrounding context, thus
