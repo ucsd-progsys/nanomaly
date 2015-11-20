@@ -11,8 +11,6 @@ Figure~\ref{fig:factorial}.
 The function returns @true@ in the base case (instead of @1@),
 and so \ocaml responds with the error message:
 %
-% WRW: This used to say 8-23 because you had it spelled "factorial", but
-% when it changed to fac, we forgot to update this.
 \begin{verbatim}
  File "fac.ml", line 5, characters 8-17:
  Error: This expression has type bool
@@ -62,7 +60,7 @@ program is wrong.
 
 In this paper we propose a new approach that explains
 static type errors by \emph{dynamically} witnessing
-how exactly an ill-typed program goes wrong.
+how an ill-typed program goes wrong.
 %
 We have developed \toolname, an interactive tool that uses
 the source of the ill-typed function to automatically synthesize
