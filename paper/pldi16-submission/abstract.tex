@@ -10,18 +10,17 @@
   First, given an ill-typed function, we first symbolically
   execute the body to dynamically synthesize witness values
   that can make the program go wrong.
-  %
-  Second, we prove that our procedure synthesizes
+  We prove that our procedure synthesizes
   \emph{general witnesses} in that if a witness is
   found, then \emph{for all} input types, there exist
   inhabitants that can make the function go wrong.
   %
-  Third, we show how to extend the above procedure to
+  Second, we show how to extend the above procedure to
   produce a \emph{reduction graph} that can be used to
   interactively visualize and debug witness executions.
   %
-  Fourth, we evaluate our approach on two data sets
-  comprising more than 5000 ill-typed student programs.
+  Third, we evaluate our approach on two data sets
+  comprising more than 4500 ill-typed student programs.
   Our technique is able to generate witnesses for
   nearly 90\% of the programs, and our reduction graph
   is yields small counterexamples for 90\% of the witnesses.
