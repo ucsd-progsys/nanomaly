@@ -145,7 +145,7 @@ metrics:
 The results of the experiment are summarized in
 Figure~\ref{fig:results-complexity}.
 %
-The average number of single-step reductions per trace is 26 for our
+The average number of single-step reductions per trace is 26 for the \ucsdbench\
 dataset (27 for the \uwbench\ dataset) with a maximum of 2,744 (659 for
 \uwbench). The average number of jumps per trace is 3 (also 3 for
 \uwbench) with a maximium of 177 (52 for \uwbench). In both datasets at
@@ -183,7 +183,10 @@ them. Consider, for example, the following buggy version of @replicate@.
 %
 \begin{code}
   let rec replicate n x =
-    if n <= 0 then [] else replicate (n-1) [x]
+    if n <= 0 then 
+      []
+    else 
+      replicate (n-1) [x]
 \end{code}
 %
 This code produces a nested list (with @n@ levels of nesting) containing

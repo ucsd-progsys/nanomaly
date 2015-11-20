@@ -143,12 +143,12 @@ edge linking the initial and final expressions.
 \paragraph{Visualization Context}
 %
 The \emph{visualization context} of each expression $e$
-in the visualization state \vstate is the (unique) linear chain
-in which it the expression $e$ belongs.
+in the visualization state $\vstate$ is the (unique) linear chain
+in which the expression $e$ belongs.
 %
 We write $\vroot{\vstate}{e}$ for the \emph{first} (or root)
 expression appearing in the visualization context of $e$ in
-\vstate.
+$\vstate$.
 
 \paragraph{Commands}
 Our debugger supports the following \emph{commands}, each of which
@@ -158,18 +158,18 @@ is parameterized by a single expression (vertex) selected from the
 \begin{itemize}
 %
 \item \stepforwardsym, \stepbackwardsym:
-      show result of a single step forward or backward respectively,
+      show the result of a single step forward or backward respectively,
 %
-\item \jumpforwardsym:
-      show result of taking multiple steps (a \emph{``big''} step)
+\item \jumpforwardsym, \jumpbackwardsym:
+      show the result of taking multiple steps (a \emph{``big''} step)
       upto the first beta-reduction forward or backward respectively,
 %
 \item \stepintosym:
-      show result of stepping into a function call in a sub-term,
+      show the result of stepping into a function call in a sub-term,
       isolating it from the context,
 
 \item \stepoversym:
-      show result of skipping over a function call in a sub-term.
+      show the result of skipping over a function call in a sub-term.
 \end{itemize}
 
 \input{traversals_new.tex}
