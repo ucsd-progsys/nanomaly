@@ -121,13 +121,17 @@ stepping or jumping \emph{backward} to understand how a particular
 value was created, while preserving a context of the intermediate
 steps that allow the user to keep track of a term's provenance.
 
-Obviously, the problem of finding witnesses is undecidable.
-In fact, due to the necessarily conservative nature of static
-typing, there may not even exist. Thus, our heuristic approach
-is only useful if it can find \emph{compact} witnesses for
-\emph{real-world} programs.
-
 \paragraph{3. Evaluating Witnesses}
+%
+Of course, the problem of finding witnesses is
+undecidable. In fact, due to the necessarily
+conservative nature of static typing, there
+may not even exist any witnesses for a given
+ill-typed program.
+%
+Thus, our approach is a heuristic that is only useful
+if it can find \emph{compact} witnesses for
+\emph{real-world} programs.
 %
 Our third contribution is an extensive evaluation of our approach
 on two different sets of ill-typed programs obtained by instrumenting
@@ -148,10 +152,10 @@ compact counterexample traces with fewer than 5 steps for 60\%
 of the programs, and under 10 steps for 90\% of the programs.
 
 \smallskip
-In short, our results show that at least for beginners, ill-typed
-programs \emph{do} go wrong, in the vast majority of cases, which,
-in turn, opens the door to a novel dynamic way to explain, understand,
-and appreciate the benefits of static typing.
+Our results show that in the vast majority of
+cases, (novices') ill-typed programs \emph{do} go wrong.
+This, in turn, opens the door to a novel dynamic way to
+explain, understand, and appreciate the benefits of static typing.
 
 %%% Local Variables:
 %%% mode: latex
