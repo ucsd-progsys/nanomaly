@@ -33,12 +33,14 @@ DTrace = Reduction Graph = (Expr, Set Edges)
       
 
 ** WRITING
-  - [-] formalize interactive semantics
+  - [X] formalize interactive semantics
     - [X] extend op-sem to collect "steps-to" and "subterm" edges
-    - [ ] describe exploration "strategies": as graph algorithms
+    - [X] describe exploration "strategies": as graph algorithms
       1. step forward/backward
       2. jump forward/backward
       3. step into
       4. step over
-  - [ ] Overview
+  - [X] Overview
   - [ ] Add more to Program Exploration related (maybe?)
+  - [ ] add average linecount for benchmarks
+  - [X] move big step 1-4 figure to trace-explore section

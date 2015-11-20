@@ -20,12 +20,16 @@ error and suggest a fix by replacing expressions (or removing them
 entirely) with alternatives based on the surrounding program context.
 %
 Chen and Erwig~\cite{chen_counter-factual_2014} use a variational type
-system represent the possibility that the inferred type of an expression
-may be incorrect, because the expression may be the source of the
-error. It then attempts to deduce the error source by searching for an
-expression whose type can be changed such that type inference would
-succeed. In contrast to Seminal, which searches for changes at the
-value-level, by searching at the type level the search is complete due
+system to allow for the possibility of changing an expression's type,
+and search for an expression whose type can be changed such that type
+inference would succeed.
+%
+% It then attempts to deduce the error source by searching for an
+% expression whose type can be changed such that type inference would
+% succeed.
+%
+In contrast to Lerner, who searches for changes at the
+value-level, by searching at the type level Chen's search is complete due
 the finite universe of types in a program.
 %
 Neubauer and Thiemann~\cite{neubauer_discriminative_2003} present a
@@ -38,7 +42,7 @@ Zhang and Myers~\cite{zhang_toward_2014} present an algorithm for
 identifying the most likely culprit in a system of unsatisfiable
 constraints (\eg type equalities), based on Bayesian reasoning.
 %
-Pavlinovic \etal~\cite{pavlinovic_finding_2014} translate the error
+Pavlinovic \etal~\cite{pavlinovic_finding_2014} translate the %error
 localization problem to a MaxSMT optimization problem, using
 compiler-provided weights to rank the possible sources.
 % \item \cite{chen_error-tolerant_2012}
@@ -60,8 +64,8 @@ Vytiniotis \etal~\cite{vytiniotis_equality_2012} extend the Haskell
 compiler GHC to support compiling ill-typed programs, but their intent
 is rather different from ours. Their goal was to allow programmers to
 incrementally test refactorings, which often cause type errors in
-distant pieces of code. They replace any expression that fails to type
-check with a \emph{runtime} error, but do not perform any type checking
+distant functions. They replace any expression that fails to type
+check with a \emph{runtime} error, but do not check types
 at runtime.
 
 \subsection{Testing}
@@ -92,20 +96,20 @@ the program, one might enumerate paths.
 %
 Dynamic-symbolic execution~\cite{godefroid_dart:_2005,cadar_klee:_2008,tillmann_pex_2008}
 %
-enables this by symbolic execution (to track which path a given input
-vector triggers) with concrete execution (to ensure test failures are
+combines symbolic execution (to track which path a given input
+triggers) with concrete execution (to ensure failures are
 not spurious). The system collects a path condition during execution,
 which tracks symbolically what conditions must be met to trigger the
 current path. Upon successfully completing a test run, it negates the
 path condition and queries a solver for another set of inputs that
 satisfy the negated path condition, \ie inputs that will not trigger the
-same path. Thus, dynamic-symbolic execution can prune the search space
+same path. Thus, it can prune the search space
 much faster than techniques based on enumerating values, but is limited
 by the expressiveness of the underlying solver. Our operational
 semantics is amenable to dynamic-symbolic execution, one would just need
 to collect the path condition and replace our implementation of \gensym
 by a call to the solver. We chose to use lazy, random generation instead
-because it does not incur the overhead of an external solver, and
+because it is efficient, and % does not incur the overhead of an external solver, and
 produces high coverage for our domain of novice programs.
 
 % \begin{itemize}
@@ -121,18 +125,17 @@ Perera \etal~\cite{perera_functional_2012} present a tracing semantics
 for functional programs that tags values with their provenance, enabling
 a form of backwards program slicing from a final value to the sequence
 of reductions that produced it. Notably, they allow the user to supply a
-\emph{partial value} -- a value containing holes -- and in turn present
-a partial slice, containing only those steps that affected the specified
-components of the partial value. This system is designed to answer
-questions of the form ``Where did this value come from?'' and thus is
-focused on backward exploration. In contrast, our trace visualization
-supports forward \emph{and} backward exploration, though our backward
-steps are more limited than Perera's. Specifically, we do not support
-selecting a value and inserting the intermediate terms that preceded it
-while ignoring unrelated computation steps; this would be interesting
-future work.
+\emph{partial value} -- containing holes -- and present a partial slice,
+containing only those steps that affected the the partial value. This
+system is designed to answer questions of the form ``Where did this
+value come from?'' and thus is focused on backward exploration. In
+contrast, our trace visualization supports forward \emph{and} backward
+exploration, though our backward steps are more limited than
+Perera's. Specifically, we do not support selecting a value and
+inserting the intermediate terms that preceded it while ignoring
+unrelated computation steps; this would be interesting future work.
 
-\ES{todo: more on program exploration}
+% \ES{todo: more on program exploration}
 
 %%% Local Variables: 
 %%% mode: latex

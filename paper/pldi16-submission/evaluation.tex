@@ -177,8 +177,9 @@ search techniques, likely because the novice programs tend to be simple.
 \paragraph{Infinite Types}
 Our implementation does check for infinite types inside \forcesym, but
 there are some degenerate cases where it is unable to detect
-them. Consider, for example, the following buggy version of @replicate@,
-which is supposed to produce a list containing @n@ copies of @x@.
+them. Consider, for example, the following buggy version of @replicate@.
+% ,
+% which is supposed to produce a list containing @n@ copies of @x@.
 %
 \begin{code}
   let rec replicate n x =
@@ -186,16 +187,16 @@ which is supposed to produce a list containing @n@ copies of @x@.
 \end{code}
 %
 This code produces a nested list (with @n@ levels of nesting) containing
-a single copy of @x@. \ocaml detects a cyclic \hbox{@'a = 'a list@}
-constraint in the recursive call and throws a type error, whereas
-\nanomaly happily recurses @n@ times to produce the nested list.
-Strictly speaking, this function itself cannot ``go wrong'', the
-program would not get stuck until a \emph{client} attempted to use the
-result expecting a flat list. But this is not very satisfying as
-@replicate@ is clearly to blame. Furthermore, in our experience,
-infinite-type errors are some of the more difficult ones to debug (and
-to explain to novices), so better support for this scenario would be
-useful.
+a single copy of @x@, instead of a list with @n@ copies of @x@. \ocaml
+detects a cyclic \hbox{@'a = 'a list@} constraint in the recursive call
+and throws a type error, whereas \nanomaly happily % recurses @n@ times to
+produces the nested list.  Strictly speaking, this function itself cannot
+``go wrong'', the program would not get stuck until a \emph{client}
+attempted to use the result expecting a flat list. But this is not very
+satisfying as @replicate@ is clearly to blame. Furthermore, in our
+experience, infinite-type errors are often difficult to %some of the more difficult ones to
+debug (and to explain to novices), so better support for this scenario
+would be useful.
 
 \paragraph{Trace Explosion}
 Though the average complexity of our generated traces is low in terms of
