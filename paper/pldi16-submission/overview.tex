@@ -225,43 +225,43 @@ applicable traversal strategies --- formalized in
 \S~\ref{sec:interactive} --- to insert another term into the
 visualization.
 
-A sample interaction with the trace of @fac 1@ can be seen in
-Figure~\ref{fig:nanomaly-factorial}.
-%
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.8\linewidth]{fac-steps.png}
-\caption{A sequence of interactions with the trace of
-  \texttt{fac 1}. The stuck term is red, in each node the redex is
-  highlighted. Thick arrows denote a multi-step transition, thin arrows
-  denote a single-step transition. We start in step 1. In step 2 we jump
-  forward from the witness to the next function call. In step 3 we step
-  into the recursive \texttt{fac 0} call, which spawns a new ``thread''
-  of execution. In step 4 we take a single step forward from
-  \texttt{fac 0} (hiding the context for space).}
-\label{fig:nanomaly-factorial}
-\end{figure*}
-%
-The initial state of the visualization tells us that after some number
-of steps -- the thick arrow denotes a multi-step transition -- we try to
-multiply @1@ by @true@.
+% A sample interaction with the trace of @fac 1@ can be seen in
+% Figure~\ref{fig:nanomaly-factorial}.
+% %
+% % \begin{figure*}[t]
+% % \centering
+% % \includegraphics[width=0.8\linewidth]{fac-steps.png}
+% % \caption{A sequence of interactions with the trace of
+% %   \texttt{fac 1}. The stuck term is red, in each node the redex is
+% %   highlighted. Thick arrows denote a multi-step transition, thin arrows
+% %   denote a single-step transition. We start in step 1. In step 2 we jump
+% %   forward from the witness to the next function call. In step 3 we step
+% %   into the recursive \texttt{fac 0} call, which spawns a new ``thread''
+% %   of execution. In step 4 we take a single step forward from
+% %   \texttt{fac 0} (hiding the context for space).}
+% % \label{fig:nanomaly-factorial}
+% % \end{figure*}
+% %
+% The initial state of the visualization tells us that after some number
+% of steps -- the thick arrow denotes a multi-step transition -- we try to
+% multiply @1@ by @true@.
 
-Upon seeing the stuck term, we might wonder where @true@ came from.
-%
-To investigate we select the stuck term and click the ``jump backward''
-button to search backwards from the stuck term for the most recent
-function call, which brings us to @1 * fac 0@. Notice at this point that
-@fac 0@ is highlighted while @1 *@ is grayed out. This tells us that
-@fac 0@ is the redex in this term.
+% Upon seeing the stuck term, we might wonder where @true@ came from.
+% %
+% To investigate we select the stuck term and click the ``jump backward''
+% button to search backwards from the stuck term for the most recent
+% function call, which brings us to @1 * fac 0@. Notice at this point that
+% @fac 0@ is highlighted while @1 *@ is grayed out. This tells us that
+% @fac 0@ is the redex in this term.
 
-@fac 0@ seems like the right thing to do so we choose to ``step into''
-it, which inserts a new multi-step transition from @fac 0@ to @true@.
-%
-Finally, we take a ``step forward'' from \hbox{@fac 0@,} bringing us to @fac@'s
-body. If we mouse over the body term we will see a popup with the
-environment at this point, notably telling us that @n = 0@. At this point
-it is clear that @fac@ handles the @n <= 0@ case incorrectly and should
-instead return an @int@.
+% @fac 0@ seems like the right thing to do so we choose to ``step into''
+% it, which inserts a new multi-step transition from @fac 0@ to @true@.
+% %
+% Finally, we take a ``step forward'' from \hbox{@fac 0@,} bringing us to @fac@'s
+% body. If we mouse over the body term we will see a popup with the
+% environment at this point, notably telling us that @n = 0@. At this point
+% it is clear that @fac@ handles the @n <= 0@ case incorrectly and should
+% instead return an @int@.
 
 % Upon seeing the stuck term, one might wonder where the @function@
 % came from.

@@ -113,8 +113,9 @@ metrics:
 %
 \begin{enumerate}
 \item The number of single-step reductions along the path from the
-  witness to the stuck term. This can be thought of as a worst-case
-  complexity, \ie ``How big is the fully-expanded trace?''
+  witness to the stuck term.
+  % This can be thought of as a worst-case
+  % complexity, \ie ``How big is the fully-expanded trace?''
 \item The number forward (or backward) jumps that can be taken along the
   path from the witness to the stuck term\footnote{This is not quite the same as
   a stack-trace as it shows \emph{all} function calls, including those
@@ -181,10 +182,7 @@ which is supposed to produce a list containing @n@ copies of @x@.
 %
 \begin{code}
   let rec replicate n x =
-    if n <= 0 then
-      []
-    else
-      replicate (n-1) [x]
+    if n <= 0 then [] else replicate (n-1) [x]
 \end{code}
 %
 This code produces a nested list (with @n@ levels of nesting) containing

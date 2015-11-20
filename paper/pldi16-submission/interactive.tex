@@ -148,10 +148,10 @@ to get the following template for the small-step relation:
 \subsection{Interactive Debugging}
 \label{sec:traversing-graph}
 
-Next, we show how to build an visual interactive debugger
+Next, we show how to build a visual interactive debugger
 from the traced semantics, by describing the visualization
 \emph{state} \ie\ what the user sees at any given moment,
-the set of \emph{commands} available to user, and what
+the set of \emph{commands} available to user and what
 they do, and finally how we use a command to \emph{update}
 the visualization state. In the sequel, for clarity of
 exposition, we assume we have a (global) trace:
@@ -165,7 +165,7 @@ A \emph{visualization state} @VState@ is a \emph{directed graph}
 whose vertices are expressions and whose edges are such
 that each vertex has at most one predecessor and at most one
 successor. In other words, the visualization state looks
-like a set of linear lists of expressions as shown in Figure~\ref{fig:FIXTHIS}.
+like a set of linear lists of expressions as shown in Figure~\ref{fig:nanomaly-factorial}.
 %
 The \emph{initial state} is the graph containing a single
 edge linking the initial and final expressions.
@@ -200,7 +200,7 @@ for each command.
 %
 The procedure @findExpr vs cmd e@ traverses $\tr$
 and the current visualization state to compute the new
-expression that should be added to the visualization state
+expression that should be added to the visualization state,
 and @updState vs cmd e@ then updates the graph
 by inserting the new expression appropriately, using one of
 the following functions.
@@ -210,12 +210,12 @@ returns the modified version of @vs@ where @e'@ is the
 immediate predecessor of @e@ (resp. the immediate successor of @e@);
 %
 @putRoot vs e e'@ returns the modified version of @vs@ extended
-with a new root vertex @e@ and its successor @e'@, and,
+with a new root vertex @e@ and its successor @e'@.
 %
 % @getRoot vs e@ returns the vertex (expression) obtained
 % by transitively following the predecessors of @e@ until a
 % source vertex.
-%
+
 @getNext vs e@ returns the immediate successor of @e@ in $\tr$.
 %
 @getPrev vs e@ computes the path @p@ between @e@ and its immediate
@@ -235,11 +235,24 @@ $\eapp{v_1}{v_2}$.
 @findVal vs e@ traverses the single-step edges to find the final value
 that @e@ reduces to.
 %
-Note that the sub-term edges $\searrow$ allow us to decompose an
-expression into a sub-expression and the surrounding context, thus
-enabling the \stepintosym\ and \stepoversym\ traversals.
+% Note that the sub-term edges $\searrow$ allow us to decompose an
+% expression into a sub-expression and the surrounding context, thus
+% enabling the \stepintosym\ and \stepoversym\ traversals.
 
-\RJ{EXAMPLE of interaction from overview goes here}
+% \RJ{EXAMPLE of interaction from overview goes here}
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.8\linewidth]{fac-steps.png}
+\caption{A sequence of interactions with the trace of
+  \texttt{fac 1}. The stuck term is red, in each node the redex is
+  highlighted. Thick arrows denote a multi-step transition, thin arrows
+  denote a single-step transition. We start in step 1. In step 2 we jump
+  forward from the witness to the next function call. In step 3 we step
+  into the recursive \texttt{fac 0} call, which spawns a new ``thread''
+  of execution. In step 4 we take a single step forward from
+  \texttt{fac 0}.} % (hiding the context for space).}
+\label{fig:nanomaly-factorial}
+\end{figure}
 
 %
 %
