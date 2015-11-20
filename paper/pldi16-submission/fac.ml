@@ -1,5 +1,5 @@
-let rec factorial n =
+let rec fac n =
   if n <= 0 then
     true
   else
-    n * factorial (n-1)
+    n * fac (n-1)
