@@ -1,146 +1,178 @@
 \section{Introduction}
 \label{sec:introduction}
 
-% \paragraph{Problem}
-Type errors are a common stumbling block for students trying to learn
-typed functional languages like \ocaml and \haskell.
+Type errors are a common stumbling block for students
+trying to learn typed functional languages like \ocaml\
+and \haskell.
 %
-The compiler imposes a strict discipline that prevents novices from
-running their programs until the type-checker has been appeased.
+Consider the ill-typed @fac@ function on the left in
+Figure~\ref{fig:factorial}.
 %
-In effect this prioritizes the \emph{static} semantics of the language
-over the \emph{dynamic} semantics.
-%
-This is fine for expert users who are already familiar with the language
-and type system, but seems backwards for novices, who are typically
-introduced to the dynamic semantics first.
-
-Consider the following ill-typed @fac@ function, where we return
-@true@ in the base case instead of @1@.
-%
-\begin{figure}[h!]
-\begin{code}
-  let rec fac n =
-    if n <= 0 then
-      true
-    else
-      n * fac (n-1)
-\end{code}
-\caption{Ill-typed \texttt{fac} function that mistakenly
-  returns \texttt{true} in the base case instead of \texttt{1}.}
-\label{fig:factorial}
-\end{figure}
-
-\ocaml's response is to tell us that on line 5, the recursive call to
-@fac@ returns a @bool@, but we needed an @int@ for the
-multiplication.
+The function returns @true@ in the base case (instead of @1@).
+and so \ocaml's responds with the error message:
 %
 \begin{verbatim}
-File "fac.ml", line 5, characters 8-23:
-Error: This expression has type bool
-       but an expression was expected
-       of type int
+  File "fac.ml", line 5, characters 8-23:
+  Error: This expression has type bool
+         but an expression was expected
+         of type int
 \end{verbatim}
-%
-\ocaml is correct, but we may ask \emph{why} @fac@ returns a
-@bool@ instead of an @int@.
 
-Contrast this \emph{static} type error to the \emph{dynamic} type error
-that arises in the equivalent \ruby function, when we call
-@fac(1)@.
+This message is makes perfect sense to an expert who is familiar
+with the language and has a good mental model of how the type
+system works.
 %
-\begin{verbatim}
-fac.rb:5:in `*': true can't be coerced
-                 into Fixnum (TypeError)
-  from fac.rb:5:in `fac'
-  from fac.rb:10:in `<main>'
-\end{verbatim}
+However, it may perplex a novice who is still to develop such a
+mental model.
 %
-The same basic information is there, @*@ was given a @bool@ (@true@)
-when it expected an @int@ (@FixNum@), but since the error occurred at
-runtime, \ruby is able to provide a stack trace that provides important
-contextual information about the error.
-%
-More importantly, being able to \emph{run} the bad program means we can
-also test it on other inputs, \eg @0@, or we can load it into a debugger
-and step through the execution to see concretely how the error arises.
-
-To make matters worse, it is well known that type inference algorithms
-based on unification have a penchant for \emph{reporting} errors far
-from their source.
+To make matters worse, unification based type inference algorithms
+often report errors far removed from their source.
 %
 This further increases the novice's confusion and can actively mislead
 them to focus their investigation on an irrelevant piece of code.
 %
-Much work has been done on pinpointing the \emph{source} of a type
-error~\cite{lerner_searching_2007,chen_counter-factual_2014,zhang_toward_2014,pavlinovic_finding_2014},
+Much recent work has focused on analyzing unification constraints
+to properly \emph{localize} a type error~\cite{lerner_searching_2007,chen_counter-factual_2014,zhang_toward_2014,pavlinovic_finding_2014},
 but an accurate source location still does not explain \emph{why} the
 program is wrong.
 
-% \paragraph{Contributions}
-In this paper we propose exposing \emph{static} type errors for the
-\emph{runtime} crashes that they are.
+
+\begin{figure}[t]
+\centering
+\begin{minipage}{.49\linewidth}
+\begin{code}
+let rec fac n =
+  if n <= 0 then
+    true
+  else
+    n * fac (n-1)
+\end{code}
+\end{minipage}
+\hspace{0.3in}
+\begin{minipage}{.3\linewidth}
+  \includegraphics[height=2.5in]{fac-overview.png}
+\end{minipage}
+\caption{(L) An ill-typed \texttt{fac} function; (R) Dynamically witnessing the type error in \texttt{fac}}
+\label{fig:factorial}
+\end{figure}
+
+In this paper we propose a new approach to explaining type
+\emph{static} type errors: by \emph{dynamically} witnessing
+how exactly an ill-typed program goes wrong.
 %
+We have developed \toolname\ an interactive tool which uses
+the source of the ill-typed function to automatically synthesize
+the result on the right in Figure~\ref{fig:factorial}, which
+shows how the recursive calls reduce to a configuration where
+the program ``goes wrong'' \ie\ the @int@ value @1@ is to be
+multiplied with the @bool@ value @true@.
+We achieve this via three concrete contributions.
+
+\paragraph{1. Finding Witnesses}
 Our first contribution is an algorithm for searching for
-\emph{witnesses} to type errors, \ie input vectors that cause a program
-to crash with a type error.
+\emph{witnesses} to type errors, \ie\ inputs that cause a
+program to go wrong~(\S~\ref{sec:semantics}).
 %
-This is not as trivial as it sounds.
+This problem is surprisingly tricky when we cannot rely on
+static type information.
 %
-While one can indeed execute an \ocaml program without type-checking it
--- the dynamic semantics do not depend on the static semantics -- what
-types of values should one pass to the program?
+In particular, we must avoid the trap of \emph{spurious} inputs
+that cause irrelevant problems that would be avoided by picking
+values of a different, relevant type.
 %
-We do not want to generate \emph{spurious} witnesses, inputs that the
-type-checker would have excluded, so we introduce a semantics for
-executing \ocaml programs with ``holes'', values whose type we do not
-yet know.
-%
-% A hole can be passed around through the program until it is demanded by
-% a primitive operation, \eg addition, function application, branching,
-% etc., at which point we know from the context what type it must have,
-% and can instantiate it with a concrete value.
+We solve this problem by developing a novel operational semantics
+that corresponds to executing the program with \emph{holes}
+values whose type is unknown.
 %
 Our semantics \emph{conservatively} instantiates holes with concrete
-values; if we can find a witness to a type error then there is no valid
-typing for the program.
-
-Given a witness to a type error, the prospective \ocaml student may
-still be at a loss.
+values; thereby dynamically inferring the type of the input type
+until the point the program goes wrong.
 %
-The standard \ocaml interpreter and debugging infrastructure expect
+We prove that our procedure synthesizes \emph{general witnesses},
+which means, intuitively, that if a witness is found for a given
+ill-typed function, then \emph{for all} input types, there exist
+inhabitants that can make the function go wrong.
+
+Given a witness to a type error, the novice may still be at a loss.
+%
+The standard \ocaml\ interpreter and debugging infrastructure expect
 well-typed programs, so they cannot be used to investigate \emph{how}
 the witness causes the program to crash.
 %
-Thus, our second contribution is an interactive visualization of the
-execution of \ocaml programs (well-typed or not).
-%
-We present the execution as a \emph{reduction graph}, which records
-all of the small-step reductions in the context in which they occur.
-%
-%  in which the nodes
-% are expressions and the edges indicate either a single-step reduction or
-% a sub-term relation.
-%
-This graph is easy to generate during the execution and admits many of
-the standard debugging steps, \eg ``step forward'', ``step into'', and
-``step over'', as well as backwards motion and jumping to the next (or
-previous) function call.
-%
-The visualization initially shows the source term (\ie the witness) and
-the stuck term (or the final value), and allows the user to iteratively
-expand the computation to expose intermediate steps, by selecting an
-expression and choosing a traversal strategy (\eg ``step forward'').
-%
-This process of iterative expansion of the trace ensures that the
-context of intermediate steps is not lost; whereas traditional debuggers
-force one to move between statements, in our visualization you never
-lose sight of where you came from.
+More importantly, the execution itself may be quite long and may contain
+details not relevant to the actual error.
 
-\paragraph{Outline}
-We begin the rest of the paper with an overview of our search algorithm
-and trace visualization (\S~\ref{sec:overview}).
+\paragraph{2. Visualizing Witnesses}
+Our second contribution is a novel interactive visualization of the
+execution of \ocaml\ programs well-typed or not~(\S~\ref{sec:interactive}).
 %
+We extend the semantics to also build a \emph{reduction graph}
+which records all of the small-step reductions and the context
+in which they occur.
+%
+The graph lets us build a visualization that shows a sequence of
+steps from the source witness to the stuck term and allows the user
+to interactively expand the  computation to expose intermediate steps,
+by selecting an expression and choosing a traversal strategy.
+%
+The strategies include many of the standard debugging moves, \eg\
+stepping \emph{forward} or \emph{into} or \emph{over} calls as well
+stepping or jumping \emph{backward} to understand how a particular
+value was created, while preserving a context of the intermediate
+steps that allow the user to keep track of a term's provenance.
+
+
+% This process of iterative expansion of the trace ensures that
+% the context of intermediate steps is not lost; whereas traditional
+% debuggers force one to move between statements, in our visualization
+% you never lose sight of where you came from.
+
+Obviously, the problem of finding witnesses is undecidable.
+In fact, due to the necessarily conservative nature of static
+typing, there may not even exist. Thus, our heuristic approach
+is only useful if it can find \emph{compact} witnesses for
+\emph{real-world} programs.
+
+\paragraph{3. Evaluating Witnesses}
+%
+Our third contribution is an extensive evaluation of our approach
+on two different sets of ill-typed programs obtained by instrumenting
+compilers used in beginner's classes~(\S~\ref{sec:evaluation}).
+%
+The first is the \uwbench\ data set~\cite{lerner_searching_2007}
+comprising \uwsize\ ill-typed programs.
+%
+The second is a new \ucsdbench\ data set, comprising \ucsdsize\
+ill-typed programs.
+%
+We show that for both data sets, our technique is able to generate
+witnesses for nearly 90\% of the programs, in under a second the
+vast majority of cases.
+%
+Furthermore, we show that a simple interactive strategy yields
+compact counterexample traces with fewer than 5 steps for 60\%
+of the programs, and under 10 steps for 90\% of the programs.
+
+\smallskip
+In short, our results show that at least for beginners, ill-typed
+programs \emph{do} go wrong, in the vast majority of cases, which,
+in turn, opens the door to a completely different, dynamic way
+to explain, understand, and appreciate the benefits of static typing.
+
+%% Then, we formalize our algorithm and prove it sound
+%% (\S~\ref{sec:searching-witness}).
+%% %
+%% Next, we extend the algorithm to collect a reduction graph and formalize
+%% a set of traversals over the graph (\S~\ref{sec:explaining}).
+%% %
+%% Finally, we evaluate our search algorithm and trace generation on a
+%% large set of real student programs (\S~\ref{sec:evaluation}).
+%%
+%% \paragraph{Outline}
+%% We begin the rest of the paper with an overview of our search algorithm
+%% and trace visualization (\S~\ref{sec:overview}).
+
+
 % Then, we formalize our algorithm and prove it sound
 % (\S~\ref{sec:searching-witness}), and evaluate it on a large set of real
 % student programs (\S~\ref{sec:eval}).
@@ -149,14 +181,6 @@ and trace visualization (\S~\ref{sec:overview}).
 % formalize a set of traversals (\S~\ref{sec:explaining}), and measure the
 % complexity of these traces on our benchmarks
 % (\S~\ref{sec:evaluation-nanomaly}).
-Then, we formalize our algorithm and prove it sound
-(\S~\ref{sec:searching-witness}).
-%
-Next, we extend the algorithm to collect a reduction graph and formalize
-a set of traversals over the graph (\S~\ref{sec:explaining}).
-%
-Finally, we evaluate our search algorithm and trace generation on a
-large set of real student programs (\S~\ref{sec:evaluation}).
 %
 % Finally, we present the results of a preliminary user study on the full
 % system (\S~\ref{sec:user-study}).

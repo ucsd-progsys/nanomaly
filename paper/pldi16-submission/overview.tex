@@ -13,7 +13,8 @@ Then we describe our solution to the problem
 and highlight the similarity to static type
 inference,
 %
-Finally, we demonstrate our visualization of the witnesses we produce.
+Finally, we demonstrate our visualization of
+the synthesized witnesses.
 
 \subsection{Generating Witnesses}
 \label{sec:generating-witnesses}
@@ -27,18 +28,18 @@ use them to execute the program until we find one that
 causes the program to go wrong.
 %
 Unfortunately, this approach quickly runs aground.
-Consider the @fac@ function from Figure~\ref{fig:factorial},
-reproduced here.
-
-\begin{code}
-  let rec fac n =
-    if n <= 0 then
-      true
-    else
-      n * fac (n-1)
-\end{code}
-\ES{having two copies of \texttt{fac} seems silly, but the back-reference across a page boundary is no good either...}
-
+Recall the erroneous @fac@ function from Figure~\ref{fig:factorial}.
+%~\S~\ref{sec:introduction}:
+%
+% \begin{code}
+  % let rec fac n =
+    % if n <= 0 then
+      % true
+    % else
+      % n * fac (n-1)
+% \end{code}
+% \ES{having two copies of \texttt{fac} seems silly, but the back-reference across a page boundary is no good either...}
+%
 What \emph{types} of inputs should we test @fac@ with?
 %
 Values of type @int@ are fair game, but values of type, say,
