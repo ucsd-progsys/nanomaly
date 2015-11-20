@@ -25,7 +25,7 @@
   & e'\sub{x}{v'} \quad \mbox{if } e = C[\eapp{v}{v'}] \mbox{ and } \singlestep{\eapp{v}{v'}}{e'\sub{x}{v'}}  \\ \\
 
 \stepover{\vstate}{e} & \defeq
-  & C[v] \quad \mbox{if } e = C[\eapp{v_1}{v_2}] \mbox{ and } \multistep{\eapp{v_1}{v_2}}{v} \in \tr \\[0.25in]
+  & C[v''] \quad \mbox{if } e = C[\eapp{v}{v'}] \mbox{ and } \multistep{\eapp{v}{v'}}{v''} \in \tr \\[0.25in]
 
 \vpath{\vstate}{e} & \defeq
   & \{e' \spmid \multistep{\vroot{\vstate}{e}}{e'} \in \tr
