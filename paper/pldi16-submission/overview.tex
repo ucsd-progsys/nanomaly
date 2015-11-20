@@ -114,11 +114,11 @@ Returning to @fac@, given a hole as input we will narrow the hole
 to an @int@ upon reaching the @<=@ test.
 %
 At this point we choose a random @int@ for the instantiation and
-concrete execution takes over entirely leading us to the expected crash
+concrete execution takes over entirely, leading us to the expected crash
 in the multiplication.
 
 \paragraph{Witness Generality}
-We show in \S~\ref{sec:soundness} our lazy instantiation of holes
+We show in \S~\ref{sec:soundness} that our lazy instantiation of holes
 produces \emph{general witnesses}.
 %
 That is, we show that if ``executing''
@@ -137,7 +137,7 @@ that @fac@ takes a single argument instead of two
 (or none)?
 %
 It is clear, syntactically, that @fac@ takes \emph{at least} one
-argument, but in a higher-order language with currying syntax can be
+argument, but in a higher-order language with currying, syntax can be
 deceiving.
 %
 Consider the following definition:
@@ -150,7 +150,7 @@ Is @incAllByOne@ a function?
 %
 If so, how many arguments does it take?
 %
-The \ocaml compiler deduces that @incAllByOne@ takes a single argument
+The \ocaml\ compiler deduces that @incAllByOne@ takes a single argument
 because @List.map@'s \emph{type} says it takes two arguments, and it is
 partially applied to @(+ 1)@.
 %
@@ -167,14 +167,14 @@ other than a lambda.
 \subsection{Visualizing Witnesses}
 \label{sec:visual-witness}
 We have shown how to reliably find witnesses to type errors in \ocaml,
-but this does not fully address our original goal -- to \emph{explain}
+but this does not fully address our original goal --- to \emph{explain}
 the errors.
 %
 Having identified an input vector that triggers a bug, a common next
 step is to step through the program with a \emph{debugger} to observe
 how the program evolves.
 %
-The existing debuggers and interpreters for \ocaml assume a type-correct
+The existing debuggers and interpreters for \ocaml\ assume a type-correct
 program, so unfortunately we cannot use them off-the-shelf.
 %
 Instead we extend our search for witnesses to produce an execution
@@ -222,7 +222,7 @@ witness followed by the stuck term.
 The user can then progressively fill in the hidden steps of the
 computation by selecting a visible term and choosing one of the
 applicable traversal strategies --- formalized in
-\S~\ref{sec:explaining} --- to insert another term into the
+\S~\ref{sec:interactive} --- to insert another term into the
 visualization.
 
 A sample interaction with the trace of @fac 1@ can be seen in
@@ -257,7 +257,7 @@ function call, which brings us to @1 * fac 0@. Notice at this point that
 @fac 0@ seems like the right thing to do so we choose to ``step into''
 it, which inserts a new multi-step transition from @fac 0@ to @true@.
 %
-Finally, we take a ``step forward'' from @fac 0@, bringing us to @fac@'s
+Finally, we take a ``step forward'' from \hbox{@fac 0@,} bringing us to @fac@'s
 body. If we mouse over the body term we will see a popup with the
 environment at this point, notably telling us that @n = 0@. At this point
 it is clear that @fac@ handles the @n <= 0@ case incorrectly and should
