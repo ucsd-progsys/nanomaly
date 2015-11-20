@@ -8,24 +8,24 @@ and \haskell.
 Consider the ill-typed @fac@ function on the left in
 Figure~\ref{fig:factorial}.
 %
-The function returns @true@ in the base case (instead of @1@).
-and so \ocaml's responds with the error message:
+The function returns @true@ in the base case (instead of @1@),
+and so \ocaml responds with the error message:
 %
 \begin{verbatim}
-  File "fac.ml", line 5, characters 8-23:
-  Error: This expression has type bool
-         but an expression was expected
-         of type int
+ File "fac.ml", line 5, characters 8-23:
+ Error: This expression has type bool
+        but an expression was expected
+        of type int
 \end{verbatim}
-
-This message is makes perfect sense to an expert who is familiar
+%
+This message makes perfect sense to an expert who is familiar
 with the language and has a good mental model of how the type
 system works.
 %
-However, it may perplex a novice who is still to develop such a
+However, it may perplex a novice who has yet to develop such a
 mental model.
 %
-To make matters worse, unification based type inference algorithms
+To make matters worse, unification-based type inference algorithms
 often report errors far removed from their source.
 %
 This further increases the novice's confusion and can actively mislead
@@ -60,11 +60,11 @@ In this paper we propose a new approach to explaining type
 \emph{static} type errors: by \emph{dynamically} witnessing
 how exactly an ill-typed program goes wrong.
 %
-We have developed \toolname\ an interactive tool which uses
+We have developed \toolname, an interactive tool that uses
 the source of the ill-typed function to automatically synthesize
 the result on the right in Figure~\ref{fig:factorial}, which
 shows how the recursive calls reduce to a configuration where
-the program ``goes wrong'' \ie\ the @int@ value @1@ is to be
+the program ``goes wrong'' --- \ie\ the @int@ value @1@ is to be
 multiplied with the @bool@ value @true@.
 We achieve this via three concrete contributions.
 
@@ -81,16 +81,16 @@ that cause irrelevant problems that would be avoided by picking
 values of a different, relevant type.
 %
 We solve this problem by developing a novel operational semantics
-that corresponds to executing the program with \emph{holes}
+that corresponds to executing the program with \emph{holes} ---
 values whose type is unknown.
 %
 Our semantics \emph{conservatively} instantiates holes with concrete
-values; thereby dynamically inferring the type of the input type
-until the point the program goes wrong.
+values; thereby dynamically inferring the type of the input
+until the program goes wrong.
 %
 We prove that our procedure synthesizes \emph{general witnesses},
 which means, intuitively, that if a witness is found for a given
-ill-typed function, then \emph{for all} input types, there exist
+ill-typed function, then, \emph{for all} input types, there exist
 inhabitants that can make the function go wrong.
 
 Given a witness to a type error, the novice may still be at a loss.
@@ -104,7 +104,7 @@ details not relevant to the actual error.
 
 \paragraph{2. Visualizing Witnesses}
 Our second contribution is a novel interactive visualization of the
-execution of \ocaml\ programs well-typed or not~(\S~\ref{sec:interactive}).
+execution of \ocaml\ programs, well-typed or not~(\S~\ref{sec:interactive}).
 %
 We extend the semantics to also build a \emph{reduction graph}
 which records all of the small-step reductions and the context
@@ -112,11 +112,11 @@ in which they occur.
 %
 The graph lets us build a visualization that shows a sequence of
 steps from the source witness to the stuck term and allows the user
-to interactively expand the  computation to expose intermediate steps,
+to interactively expand the computation to expose intermediate steps,
 by selecting an expression and choosing a traversal strategy.
 %
 The strategies include many of the standard debugging moves, \eg\
-stepping \emph{forward} or \emph{into} or \emph{over} calls as well
+stepping \emph{forward} or \emph{into} or \emph{over} calls, as well
 stepping or jumping \emph{backward} to understand how a particular
 value was created, while preserving a context of the intermediate
 steps that allow the user to keep track of a term's provenance.
