@@ -146,6 +146,11 @@ substitution, or yields the stuck term if no such refinement is
 possible. In the case where \texttt{e} is a hole, it first checks in the
 given $\vsu$ to see if the hole has already been instantiated and, if
 so, returns the existing instantiation:
+% WRW thinks we should explain why \force(\ehole,t,sigma) 
+% is just sigma(i) and not \force(sigma(i),t, sigma) -- at this
+% point the reader may not understand, especially since just two paragraphs
+% above you made a big deal about sigma mapping holes to things that
+% contain other holes.
 %
 $$
 \begin{array}{lcl}
@@ -189,6 +194,13 @@ $$
 
 \paragraph{Steps and Traces}
 %
+% WRW notes that Figure 4 does not seem to handle recursion (it's not clear
+% how the let rule would work for something "let rec"-y, and there's not
+% function call rule). I only mention this because I can imagine a reviewer
+% wondering about your ability to generate good witnesses for function
+% types. This could likely be addressed in text, by a forward reference to
+% Section 3.4 where higher-order functions are handled, without changing
+% any of the formalisms at the last minute.
 Figure~\ref{fig:operational} describes the small-step contextual
 reduction semantics for \lang.
 %
@@ -241,6 +253,9 @@ $\steps{\eapp{f}{\ehole{}}}{\emptysu}{\stuck}{\su}$, then for every
 possible input type $t$, we can find a value $\hastype{v}{t}$
 such that $\eapp{f}{v}$ goes wrong.
 
+% WRW is still minorly worried about this theorem as phrased (cf. every
+% inhabitable type). Perhaps jsut a footnote explaining why \alpha -> \beta
+% is not considered here?  
 \begin{thm}{\textbf{[Witness Generality]}}
 \label{thm:soundness}
   For any function $f$, if \steptr{\trace}{\eapp{f}{\ehole{}}}{\emptysu}{\stuck}{\su},
@@ -253,6 +268,10 @@ First, we show how our evaluation rules encode a dynamic form of
 type inference, and next, we show that the types inferred via
 evaluation are indeed maximally general.
 
+% WRW: Just to be sure, the type of "lambda x. x + 1" would seem
+% to be box_1 -> box_2 here, while one might be tempted to get
+% int -> int. Some extra prose text contrasting typeof() with
+% "apply f to box to get a partial type" would likely help. 
 \paragraph{The Type of an Expression} The (dynamic) type of an
 expression $e$ is defined as a function $\typeof{e}$ defined as:
   \[
@@ -369,6 +388,16 @@ in \emph{at most} $k$ steps where $k$ is the length of $\trace$.
     By Lemma~\ref{lem:force-inst} we must have called \forcesym at step
     $k$.
     %
+    % WRW suggests one more sentence here: do the thinking for the reader.
+    % Why does t being incompatible with s_\tau mean that narrow
+    % cannot succeed? I think officially you need to refer to Preservation
+    % here in your induction, to argue that the type being narrowed *to*
+    % is the same as the types you introduced earlier, and *thus* the
+    % narrow must fail (because they're incompatible). Otherwise readers
+    % might imagine a weird case where t and s_\tau are incompatible, but
+    % the final narrow is to some other type t'' that is compatible. 
+    %
+    % This is a primary result, so more detail may not hurt.  
     A case analysis of the rules shows that \forcesym cannot have
     succeeded.
   %\end{description}
@@ -416,15 +445,15 @@ provide this information.)
 The witness generation procedure @genWitness@ is formalized in
 Figure~\ref{fig:algo-gen-witness}.
 %
-Next, we describe what its input and output, and how it
+Next, we describe its input and output, and how it
 addresses the above challenges to search the space of possible
 executions for general type error witnesses.
 
 \paragraph{Inputs and Outputs}
 %
-Obviously, the problem of generating inputs is undecidable in general.
+The problem of generating inputs is undecidable in general.
 %
-The witness generation procedure takes two inputs.
+Our witness generation procedure takes two inputs.
 %
 First, a search bound @n@ which is used to define the \emph{number} of
 traces to explore. (We assume, without loss of generality, that all
@@ -446,7 +475,7 @@ witness expressions $e$ each of which is of the form @fn v1 ... vn@.
 The \emph{empty} list is returned when no witness can be found after
 exploring $n$ traces.
 %
-In the sequel, we refer to @fn@ as the \emph{target} of witness generation.
+In what follows, we refer to @fn@ as the \emph{target} of witness generation.
 
 \paragraph{Modeling Semantics}
 %: \texttt{eval} and \texttt{isStuck}}
@@ -459,7 +488,7 @@ We resolve the non-determinism in the operational semantics
 \end{mcode}
 %
 Due to the non-determinism introduced by \gensym, a call \hbox{|eval($e$, $\vsu$)|}
-returns the \emph{list} possible results of the form $\pair{e'}{\vsu'}$ such
+returns the \emph{list} of possible results of the form $\pair{e'}{\vsu'}$ such
 that $\steps{e}{\vsu}{e'}{\vsu'}$.
 %
 We determine whether a given value is stuck by using the predicate:
@@ -475,6 +504,7 @@ We address the issue of currying by defining a procedure @genArgs@ such that \\
 such that \hbox{@fn v1 ... vk@} \emph{does not} evaluate to a lambda.
 %
 This is achieved via a simple @loop@ that keeps adding holes until
+% WRW: Where / to what does the loop add holes? Be specific for the reader. 
 @eval@uating the closed term yields a non-lambda value.
 %
 The helper functions @witness@ and @close@ are used to respectively
