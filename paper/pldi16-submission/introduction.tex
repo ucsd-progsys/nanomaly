@@ -121,12 +121,6 @@ stepping or jumping \emph{backward} to understand how a particular
 value was created, while preserving a context of the intermediate
 steps that allow the user to keep track of a term's provenance.
 
-
-% This process of iterative expansion of the trace ensures that
-% the context of intermediate steps is not lost; whereas traditional
-% debuggers force one to move between statements, in our visualization
-% you never lose sight of where you came from.
-
 Obviously, the problem of finding witnesses is undecidable.
 In fact, due to the necessarily conservative nature of static
 typing, there may not even exist. Thus, our heuristic approach
@@ -156,34 +150,8 @@ of the programs, and under 10 steps for 90\% of the programs.
 \smallskip
 In short, our results show that at least for beginners, ill-typed
 programs \emph{do} go wrong, in the vast majority of cases, which,
-in turn, opens the door to a completely different, dynamic way
-to explain, understand, and appreciate the benefits of static typing.
-
-%% Then, we formalize our algorithm and prove it sound
-%% (\S~\ref{sec:searching-witness}).
-%% %
-%% Next, we extend the algorithm to collect a reduction graph and formalize
-%% a set of traversals over the graph (\S~\ref{sec:explaining}).
-%% %
-%% Finally, we evaluate our search algorithm and trace generation on a
-%% large set of real student programs (\S~\ref{sec:evaluation}).
-%%
-%% \paragraph{Outline}
-%% We begin the rest of the paper with an overview of our search algorithm
-%% and trace visualization (\S~\ref{sec:overview}).
-
-
-% Then, we formalize our algorithm and prove it sound
-% (\S~\ref{sec:searching-witness}), and evaluate it on a large set of real
-% student programs (\S~\ref{sec:eval}).
-% %
-% Next, we extend the search algorithm to collect the reduction graph and
-% formalize a set of traversals (\S~\ref{sec:explaining}), and measure the
-% complexity of these traces on our benchmarks
-% (\S~\ref{sec:evaluation-nanomaly}).
-%
-% Finally, we present the results of a preliminary user study on the full
-% system (\S~\ref{sec:user-study}).
+in turn, opens the door to a novel dynamic way to explain, understand,
+and appreciate the benefits of static typing.
 
 %%% Local Variables:
 %%% mode: latex
