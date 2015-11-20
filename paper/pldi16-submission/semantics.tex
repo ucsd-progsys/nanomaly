@@ -146,16 +146,12 @@ substitution, or yields the stuck term if no such refinement is
 possible. In the case where \texttt{e} is a hole, it first checks in the
 given $\vsu$ to see if the hole has already been instantiated and, if
 so, returns the existing instantiation:
-% WRW thinks we should explain why \force(\ehole,t,sigma) 
-% is just sigma(i) and not \force(sigma(i),t, sigma) -- at this
-% point the reader may not understand, especially since just two paragraphs
-% above you made a big deal about sigma mapping holes to things that
-% contain other holes.
 %
 $$
 \begin{array}{lcl}
 % \multicolumn{3}{l}{\forcesym \ :: \  (e, t) \rightarrow \pair{e}{\vsu}} \\
 % \forcesym            & ::     & (e, t) \rightarrow \pair{e}{\vsu} \\
+\force{v}{\ehole{}}{\vsu}  & \defeq & \pair{v}{\emptysu} \\
 \force{\ehole{i}}{t}{\vsu} & \defeq & \hspace{-1ex}
 \begin{cases}
   \pair{\vsu(i)}{\emptysu}        & \mbox{if}\ i \in \vsu \\
@@ -165,7 +161,6 @@ $$
     % \mathtt{if}\ i \in \vsu\ \mathtt{then}\ \pair{\vsu(i)}{\emptysu}\ \mathtt{else} \\
          % \elet{v}{\gen{t}}{\pair{v}{\ehole{i} \mapsto v}}
   % \end{array} \\
-\force{v}{\ehole{}}{\vsu}  & \defeq & \pair{v}{\emptysu} \\
 \force{n}{\tint}{\vsu}     & \defeq & \pair{n}{\emptysu} \\
 \force{v}{\tint}{\vsu}     & \defeq & \pair{\stuck}{\emptysu} \\
 \force{b}{\tbool}{\vsu}    & \defeq & \pair{b}{\emptysu} \\
@@ -174,6 +169,10 @@ $$
 \force{v}{\tfun{\thole{}}{\thole{}}}{\vsu} & \defeq & \pair{\stuck}{\emptysu} \\
 \end{array}
 $$
+%
+While a hole may map to a value that \emph{contains} another hole, \eg a
+lambda, it may not map \emph{directly} to another hole, so in the second
+case above we do not need to \forcesym\ the result of the substitution.
 
 \paragraph{Generating Values} The (non-deterministic) procedure $\gen{t}$
 takes as input a type \texttt{t} and returns a value of that type. For base
@@ -367,7 +366,6 @@ in \emph{at most} $k$ steps where $k$ is the length of $\trace$.
   then
      \steps{\eapp{f}{v}}{\emptysu}{\stuck}{\su}.
 \end{lem}
-% \ES{self-todo: take a close look at the $\trace$'s vs k's}
 \begin{proof}
   By induction on $k$, the length of $\trace$.
   Let $\tfun{s_{\trace}}{\_} = \ptype{\trace}{f}$ and
@@ -386,16 +384,10 @@ in \emph{at most} $k$ steps where $k$ is the length of $\trace$.
     By Lemma~\ref{lem:force-inst} we must have called \forcesym at step
     $k$.
     %
-    % WRW suggests one more sentence here: do the thinking for the reader.
-    % Why does t being incompatible with s_\tau mean that narrow
-    % cannot succeed? I think officially you need to refer to Preservation
-    % here in your induction, to argue that the type being narrowed *to*
-    % is the same as the types you introduced earlier, and *thus* the
-    % narrow must fail (because they're incompatible). Otherwise readers
-    % might imagine a weird case where t and s_\tau are incompatible, but
-    % the final narrow is to some other type t'' that is compatible. 
+    Lemma~\ref{lem:refine-partial} tells us
+    $\tcompat{s_{\trace'}}{s_{\trace}}$, which means we must have
+    specifically narrowed $s_{\trace'}$ to a type incompatible with $t$.
     %
-    % This is a primary result, so more detail may not hurt.  
     A case analysis of the rules shows that \forcesym cannot have
     succeeded.
   %\end{description}
@@ -501,9 +493,9 @@ We address the issue of currying by defining a procedure @genArgs@ such that \\
 \hbox{@genArgs [(f1,e1),...,(fn,en)]@} yields a list of holes @[v1,...,vk]@
 such that \hbox{@fn v1 ... vk@} \emph{does not} evaluate to a lambda.
 %
-This is achieved via a simple @loop@ that keeps adding holes until
-% WRW: Where / to what does the loop add holes? Be specific for the reader. 
-@eval@uating the closed term yields a non-lambda value.
+This is achieved via a simple @loop@ that keeps adding holes to the
+target application until @eval@uating the closed term yields a
+non-lambda value.
 %
 The helper functions @witness@ and @close@ are used to respectively
 apply the parameters to the target and close the result under the top-level

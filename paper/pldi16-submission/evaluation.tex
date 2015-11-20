@@ -124,10 +124,13 @@ In our experience, jump compression abstracts many details of the
 computation that are often uninteresting or irrelevant to the
 explanation, or at any rate, easily summarized as call-return
 pairs.
-% WRW: Say more here. This is critical to your evaluatino and to your
-% conclusion (e.g., where we say that jump-compressed traces hide boring
-% details). Why are these details boring and others relevant? Do the
-% boring ones contain less information somehow? 
+%
+Expanding the initial visualization to a jump-compressed trace is often
+an ideal first step;
+% expanding a jump-compressed traces ideal for the initial state of the
+they provide a concise overview of the execution and allow the user to
+step directly into an interesting function call, at which point the can
+proceed with more fine-grained steps.
 %
 Note that jump compressed traces are not quite the same as
 stack-traces as they show \emph{all} function calls, including
