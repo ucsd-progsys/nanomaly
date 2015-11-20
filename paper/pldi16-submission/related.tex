@@ -3,10 +3,10 @@
 In this section we connect our work to related efforts on type errors,
 testing, and program exploration.
 
-\subsection{Type Errors}
-\label{sec:type-error}
+% \paragraph{Type Errors}
+% \label{sec:type-error}
 
-\paragraph{Diagnosis and Repair}
+\paragraph{Diagnosing and Repairing Type Errors}
 \label{sec:diagnosis-repair}
 It is well known that unification-based type inference procedures can
 produce poor error messages, and in particular, can misidentify the
@@ -68,7 +68,7 @@ distant functions. They replace any expression that fails to type
 check with a \emph{runtime} error, but do not check types
 at runtime.
 
-\subsection{Testing}
+\paragraph{Testing}
 \label{sec:testing}
 \nanomaly is at its heart a test generator, and builds on a rich line of
 work.
@@ -120,7 +120,7 @@ produces high coverage for our domain of novice programs.
 % \item \cite{tillmann_pex_2008}
 % \end{itemize}
 
-\subsection{Program Exploration}
+\paragraph{Program Exploration}
 Perera \etal~\cite{perera_functional_2012} present a tracing semantics
 for functional programs that tags values with their provenance, enabling
 a form of backwards program slicing from a final value to the sequence

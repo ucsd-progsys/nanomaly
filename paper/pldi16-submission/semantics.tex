@@ -172,7 +172,8 @@ $$
 %
 While a hole may map to a value that \emph{contains} another hole, \eg a
 lambda, it may not map \emph{directly} to another hole, so in the second
-case above we do not need to \forcesym\ the result of the substitution.
+case above we do not need to \forcesym\ the result of the substitution,
+the sub-hole will be narrowed when the context demands it.
 
 \paragraph{Generating Values} The (non-deterministic) procedure $\gen{t}$
 takes as input a type \texttt{t} and returns a value of that type. For base
@@ -224,7 +225,13 @@ Primitive reduction steps --- addition, if-elimination, and
 function application --- use \forcesym to ensure that values have the
 appropriate type (and that holes are instantiated) before continuing the
 computation. Importantly, beta-reduction \emph{does not} type-check its
-argument, it only ensures that the value being applied is a function.
+argument, it only ensures that $v_1$ is a function.
+
+\paragraph{Recursion}
+Fixed-point operators often cannot be typed in static type systems, but
+we are not concerned with \emph{assigning} types to terms, rather with
+showing that \emph{no type} can be assigned. We are simply executing the
+untyped $\lambda$-calculus, which has no issue handling recursion.
 
 %% \begin{thm}
 %% \label{thm:all-reduce}
