@@ -30,37 +30,10 @@ steps as graph traversals (\S~\ref{sec:traversing-graph}), yielding
 an novel interactive debugger that allows the user
 to effectively visualize \emph{how} the program goes (wrong.)
 
-% The trace takes the form of a \emph{reduction graph}, where the nodes
-% are terms and the edges represent either the single-step
-% $\hookrightarrow$ or a ``sub-term'' relation. For example, evaluating
-% the expression @1 + 2 + 3@ would produce the graph in
-% Figure~\ref{fig:simple-reduction}.
-% %
-% \begin{figure}[t]
-%   \centering
-%   \includegraphics[width=\linewidth]{simple.png}
-% \caption{The reduction graph for \texttt{1 + 2 + 3}.}
-% \label{fig:simple-reduction}
-% \end{figure}
-% %
-% We choose this graph representation instead of a simple, linear sequence
-% of expressions because it will allow us to express a variety of
-% traversals, such as ``step into'' and ``step over'' -- commonly found in
-% traditional debuggers.
-
-
-
 \subsection{Tracing Semantics}
 \label{sec:inter-semant}
 %
 \begin{figure*}[t]
-% \relDescription{Trace Syntax}
-% $$
-% \begin{array}{rrcl}
-  % & \tr & ::= & \bullet \spmid \singlestep{e}{e}; \tr \spmid \subterm{e}{e}; \tr
-% \end{array}
-% $$
-% \\
 \relDescription{Computing Sub-Terms}
 \begin{gather*}
 \begin{array}{lcl}
@@ -138,13 +111,7 @@ to get the following template for the small-step relation:
 \stepg{e}{\vsu}{\tr}{e'}{\vsu'}{\singlestep{e}{e'}; \subterms{e'}; \tr}
 \]
 
-% After evaluation the reduction graph can be constructed directly from
-% the trace $\tr$ as follows:
-% \[
-% G(\tr) = \pair{\{e \spmid e \in \tr\}}{\tr}
-% \]
 
-% \subsection{Traversing the Reduction Graph}
 \subsection{Interactive Debugging}
 \label{sec:traversing-graph}
 
@@ -198,19 +165,19 @@ is parameterized by a single expression (vertex) selected from the
 Figure~\ref{fig:traversing-graph} shows how we update the state
 for each command.
 %
-The procedure @findExpr vs cmd e@ traverses $\tr$
+The procedure \findExpr{\vstate}{\cmd}{e} traverses $\tr$
 and the current visualization state to compute the new
-expression that should be added to the visualization state,
-and @updState vs cmd e@ then updates the graph
-by inserting the new expression appropriately, using one of
-the following functions.
+expression that should be added to the visualization state;
+and \updState{\vstate}{\cmd}{e} then updates the graph
+by inserting the new expression appropriately, using
+one of the following graph manipulating functions:
 %
-@putBefore vs e e'@ \hbox{(resp. @putAfter vs e e'@)}
-returns the modified version of @vs@ where @e'@ is the
-immediate predecessor of @e@ (resp. the immediate successor of @e@);
+\putBefore{\vstate}{e}{e'} (resp. \putAfter{\vstate}{e}{e'})
+returns the modified version of \vstate\ where $e'$ is the
+immediate predecessor of $e$ (resp.\ the immediate successor of $e$);
 %
-@putRoot vs e e'@ returns the modified version of @vs@ extended
-with a new root vertex @e@ and its successor @e'@.
+\putRoot{\vstate}{e}{e'} returns the modified version of \vstate
+extended with a new root vertex $e$ with successor $e'$.
 %
 % @getRoot vs e@ returns the vertex (expression) obtained
 % by transitively following the predecessors of @e@ until a
