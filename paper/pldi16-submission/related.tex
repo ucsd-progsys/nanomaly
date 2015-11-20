@@ -126,10 +126,12 @@ for functional programs that tags values with their provenance, enabling
 a form of backwards program slicing from a final value to the sequence
 of reductions that produced it. Notably, they allow the user to supply a
 \emph{partial value} -- containing holes -- and present a partial slice,
-containing only those steps that affected the the partial value. This
-system is designed to answer questions of the form ``Where did this
-value come from?'' and thus is focused on backward exploration. In
-contrast, our trace visualization supports forward \emph{and} backward
+containing only those steps that affected the the partial value.
+% This
+% system is designed to answer questions of the form ``Where did this
+% value come from?'' and thus is focused on backward exploration. 
+Perera's system focuses on backward exploration; in
+contrast, our visualization supports forward \emph{and} backward
 exploration, though our backward steps are more limited than
 Perera's. Specifically, we do not support selecting a value and
 inserting the intermediate terms that preceded it while ignoring
