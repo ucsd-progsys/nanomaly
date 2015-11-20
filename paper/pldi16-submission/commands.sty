@@ -118,18 +118,26 @@
 \newcommand{\judgementHead}[2]{\ensuremath{\relDescription{#1}\hfill\fbox{#2}}}
 \newcommand{\defeq}{\doteq}
 
-\newcommand\stepforwardsym{\ensuremath{\mathsf{stepforward}}\xspace}
-\newcommand\stepforward[3]{\ensuremath{\stepforwardsym(#1,#2,#3)}}
-\newcommand\stepbackwardsym{\ensuremath{\mathsf{stepbackward}}\xspace}
-\newcommand\stepbackward[3]{\ensuremath{\stepbackwardsym(#1,#2,#3)}}
-\newcommand\jumpforwardsym{\ensuremath{\mathsf{jumpforward}}\xspace}
-\newcommand\jumpforward[3]{\ensuremath{\jumpforwardsym(#1,#2,#3)}}
-\newcommand\jumpbackwardsym{\ensuremath{\mathsf{jumpbackward}}\xspace}
-\newcommand\jumpbackward[3]{\ensuremath{\jumpbackwardsym(#1,#2,#3)}}
-\newcommand\stepintosym{\ensuremath{\mathsf{stepinto}}\xspace}
-\newcommand\stepinto[3]{\ensuremath{\stepintosym(#1,#2,#3)}}
-\newcommand\stepoversym{\ensuremath{\mathsf{stepover}}\xspace}
-\newcommand\stepover[3]{\ensuremath{\stepoversym(#1,#2,#3)}}
+\newcommand\stepoversym{\ensuremath{\mathsf{StepOver}}\xspace}
+\newcommand\stepforwardsym{\ensuremath{\mathsf{StepForward}}\xspace}
+\newcommand\jumpforwardsym{\ensuremath{\mathsf{JumpForward}}\xspace}
+\newcommand\stepbackwardsym{\ensuremath{\mathsf{StepBackward}}\xspace}
+\newcommand\jumpbackwardsym{\ensuremath{\mathsf{JumpBackward}}\xspace}
+\newcommand\stepintosym{\ensuremath{\mathsf{StepInto}}\xspace}
+\newcommand\rootsym{\ensuremath{\mathsf{Root}}\xspace}
+\newcommand\pathsym{\ensuremath{\mathsf{Path}}\xspace}
+
+\newcommand\stepforward[2]{\ensuremath{\stepforwardsym(#1, #2)}}
+\newcommand\stepbackward[2]{\ensuremath{\stepbackwardsym(#1, #2)}}
+\newcommand\jumpforward[2]{\ensuremath{\jumpforwardsym(#1, #2)}}
+\newcommand\jumpbackward[2]{\ensuremath{\jumpbackwardsym(#1, #2)}}
+\newcommand\stepinto[2]{\ensuremath{\stepintosym(#1, #2)}}
+\newcommand\stepover[2]{\ensuremath{\stepoversym(#1, #2)}}
+
+\newcommand\vroot[2]{\ensuremath{\rootsym(#1, #2)}}
+\newcommand\vpath[2]{\ensuremath{\pathsym(#1, #2)}}
+\newcommand\vstate{\ensuremath{V}}
+
 
 \newcommand\nanomaly{\textsc{NanoMaLy}\xspace}
 
@@ -143,7 +151,6 @@
 \newcommand\expr{Expr}
 \newcommand\ctx{Ctx}
 \newcommand\cmd{Cmd}
-\newcommand\vstate{VState}
 \newcommand\findExpr{findExpr}
 \newcommand\updState{updState}
 
