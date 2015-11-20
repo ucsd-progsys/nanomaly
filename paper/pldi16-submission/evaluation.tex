@@ -2,50 +2,49 @@
 \section{Evaluation}
 \label{sec:evaluation}
 
-%
-% The immediate question is ``What fraction of type errors admit
-% witnesses?''
-%
 We have implemented a prototype of our search procedure and trace
 visualization for the pure subset of \ocaml, in a tool called \nanomaly.
-% , \ie \lang extended with
-% algebraic datatypes and records.
-%
-In our implementation we instantiated \gensym with a simple random
-generation of values, which we will show is more than sufficient for the
+In our implementation we instantiated \gensym\ with a simple random
+generation of values, which we will show suffices for the
 majority of type errors.
 
+\paragraph{Evaluation Goals}
+%
 There are two questions we seek to answer with our evaluation:
+%
 \begin{enumerate}
-\item What fraction of type errors \emph{admit} witnesses?
-\item How \emph{complex} are the traces our witnesses produce?
+\item \emphbf{Witness Coverage}
+      How many ill-typed programs can we find witnesses for?
+\item \emphbf{Witness Complexity}
+      How \emph{complex} are the traces produced by the witnesses?
 \end{enumerate}
 
-We answer these questions on two sets of known-bad programs, \ie
-programs that were rejected by the \ocaml compiler because of a type
-error.
+\paragraph{Benchmarks}
+We answer these questions on two sets of ill-typed programs, \ie
+programs that were rejected by the \ocaml\ compiler because of a
+type error.
 %
 The first dataset comes from the Spring 2014 undergraduate Programming
 Languages course at our institution.
 %
-We recorded each interaction with the \ocaml top-level system over the
+We recorded each interaction with the \ocaml\ top-level system over the
 course of the first three assignments (IRB \# hidden for blind review), % \#140608),
 from which we extracted \ucsdsize\ distinct, ill-typed \ocaml programs.
 %
-The second dataset -- widely used in the literature -- comes from a
-similar course at the University of
-Washington~\cite{lerner_seminal:_2006}, from which we extracted 284
-ill-typed programs.
+The second dataset --- widely used in the literature --- comes from a
+similar course at the University of Washington~\cite{lerner_seminal:_2006},
+from which we extracted 284 ill-typed programs.
 
 \subsection{Witness Coverage}
 \label{sec:eval:witness-coverage}
 %
 We ran our search algorithm on each program for 1,000 iterations, with
-the entry point set to the function that \ocaml had identified as
+the entry point set to the function that \ocaml\ had identified as
 containing a type error.
 %
 Due to the possibility of non-termination we set a timeout of 10 minutes
 per program.
+%
 % Due to the possibility of non-termination we set a limit on the number
 % of reductions to perform, increasing in 500-step increments from 500
 % steps to 3,000 steps total.
@@ -107,23 +106,49 @@ enough) that these techniques are not necessary.
 
 \subsection{Trace Complexity}
 \label{sec:trace-complexity}
-For each of the ill-typed programs for which we could find a witness, we
-measure the complexity of the generated trace according to the following
-metrics:
+
+For each of the ill-typed programs for which we could
+find a witness, we measure the complexity of the generated
+trace according to two metrics.
+
+\paragraph{Jump Compression}
+%
+A jump compressed trace is one whose edges are limited to forward
+or backward jumps. (The sizes of these traces is equal to the jump
+metric above.)
+%
+In our experience, jump compression abstracts many details of the
+computation that are often uninteresting or irrelevant to the
+explanation, or at any rate, easily summarized as call-return
+pairs.
+%
+Note that jump compressed traces are not quite the same as
+stack-traces as they show \emph{all} function calls, including
+those that returned successfully.
+%
+For example, the display on the right in Figure shows
+a jump-compressed trace, of size 4. The full trace for
+the same example has size \RJ{Eric please fix this...}
+
+\paragraph{Metrics} Thus, our two metrics are:
+% size of the full trace,
+% \ie the number of small-step reductions, and the size of the jump-compressed
+% version of the trace.
 %
 \begin{enumerate}
-\item The number of single-step reductions along the path from the
-  witness to the stuck term.
+\item \emphbf{Single-Step Metric}
+      The number of single-step reductions along the path from the
+      witness to the stuck term in the given witness execution, and
   % This can be thought of as a worst-case
   % complexity, \ie ``How big is the fully-expanded trace?''
-\item The number forward (or backward) jumps that can be taken along the
-  path from the witness to the stuck term\footnote{This is not quite the same as
-  a stack-trace as it shows \emph{all} function calls, including those
-  that returned successfully.}.
-  % These abstract many details of the computation that are often
-  % uninteresting or irrelevant to the explanation.
-% \item \ES{others?}
+\item \emphbf{Jump Metric}
+      The size of the jump-compressed trace for the given witness execution,
+      \ie\ the number forward (or backward) jumps that can be taken along the
+      path from the witness to the stuck term.
 \end{enumerate}
+
+
+% \item \ES{others?}
 %
 \begin{figure}[t]
 \centering
@@ -154,6 +179,7 @@ least 90\% of the traces contain fewer than 10 jumps.
 
 \subsection{Discussion}
 \label{sec:discussion}
+
 To summarize, our experiments demonstrate that \nanomaly finds witnesses
 to type errors: (1) with high coverage in a timespan amenable to
 compile-time analysis, and (2) with traces that have a low average
@@ -183,9 +209,9 @@ them. Consider, for example, the following buggy version of @replicate@.
 %
 \begin{code}
   let rec replicate n x =
-    if n <= 0 then 
+    if n <= 0 then
       []
-    else 
+    else
       replicate (n-1) [x]
 \end{code}
 %
@@ -207,7 +233,7 @@ jumps, there are some extreme outliers. We cannot reasonably expect a
 novice user to explore a trace containing 50+ terms and draw a
 conclusion about which pieces contributed to the bug in their
 program. Enhancing our visualization to slice out program paths relevant
-to specific values, \eg in the style of~\cite{perera_functional_2012},
+to specific values, \eg\ in the style of~\cite{perera_functional_2012},
 would likely help alleviate this issue, allowing users to
 highlight a confusing value and ask: ``Where did this come from?''
 
