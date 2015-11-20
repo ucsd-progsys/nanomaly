@@ -105,7 +105,7 @@ that are meaningful and do not arise from choosing values from
 irrelevant types.
 %
 We solve this problem be equipping our term language with a notion
-of a \emph{hole}, written \ehole{}, which represent \emph{unconstrained}
+of a \emph{hole}, written \ehole{}, which represents \emph{unconstrained}
 values that may replaced with values from \emph{any} type.
 %
 Dually, holes may also appear in types, where they may be thought
@@ -115,9 +115,9 @@ of as type variables that we will not generalize over.
 \paragraph{Substitutions}
 %
 Our semantics ensure the generality of witnesses by incrementally
-\emph{refining} holes filling in just as much information as is
+\emph{refining} holes, filling in just as much information as is
 needed locally to make progress (inspired by the manner in
-which SmallCheck uses lazy evaluation~\cite{smallcheck}).
+which SmallCheck uses lazy evaluation~\cite{runciman_smallcheck_2008}).
 %
 We track how the holes are incrementally filled in, by using
 (value) \emph{substitutions} that map holes (denoted by their index)
@@ -141,12 +141,11 @@ respectively.
 
 \paragraph{Narrowing Types} The procedure $\force{e}{t}{\vsu}$ takes as
 input an term \texttt{e} and refines it to have the type \texttt{t} by
-yielding a pair of either the same expression and a value substitution
-the refines the holes in \texttt{e} to ensure it has type \texttt{t}, or
-yields the stuck term if no such refinement is possible. In the case
-where \texttt{e} is a hole, it first checks in the given $\vsu$ to see
-if the hole has already been instantiated and, if so, returns the
-existing instantiation:
+yielding a pair of either the same expression and an empty value
+substitution, or yields the stuck term if no such refinement is
+possible. In the case where \texttt{e} is a hole, it first checks in the
+given $\vsu$ to see if the hole has already been instantiated and, if
+so, returns the existing instantiation:
 %
 $$
 \begin{array}{lcl}
@@ -206,12 +205,12 @@ $\forall 0 \leq i < n$, we have \step{e_i}{\vsu_i}{e_{i+1}}{\vsu_{i+1}}.
 We write \steptr{\trace}{e}{\vsu}{e'}{\vsu'} if $\trace$ is a trace of the form
 $\pair{e}{\vsu},\ldots,\pair{e'}{\vsu'}$.
 %
-We write \steps{e}{\vsu}{e'}{\vsu'} if \steps{e}{\vsu}{e'}{\vsu'}
+We write \steps{e}{\vsu}{e'}{\vsu'} if \steptr{\trace}{e}{\vsu}{e'}{\vsu'}
 for some trace $\trace$.
 
 \paragraph{Primitive Reductions}
-Primitive reduction steps -- addition, if-elimination, and
-function application -- use \forcesym to ensure that values have the
+Primitive reduction steps --- addition, if-elimination, and
+function application --- use \forcesym to ensure that values have the
 appropriate type (and that holes are instantiated) before continuing the
 computation. Importantly, beta-reduction \emph{does not} type-check its
 argument, it only ensures that the value being applied is a function.
@@ -294,8 +293,8 @@ refines the partial type of $f$, \ie preserves type compatibility.
 \begin{lem}
 \label{lem:refine-partial}
 If $\trace \defeq \pair{\eapp{f}{\ehole{}}}{\emptysu},\ldots$ and
-$\trace' \defeq \trace, \pair{e'}{\vsu'}$ (\ie $\trace'$ is single
-step extension of $\trace$)
+$\trace' \defeq \trace, \pair{e'}{\vsu'}$ (\ie $\trace'$ is a single-step
+extension of $\trace$)
 %
 %The partial type of $f$ upto $\trace$ is compatible
 %with the partial type upto $\trace'$, \ie\
@@ -309,7 +308,7 @@ then \tcompat{\ptype{\trace}{f}}{\ptype{\trace'}{f}}.
   \forcesym\ is called on a hole, in which case we instantiate the hole with
   a concrete value.
   %
-  But \hastype{\ehole{}}{\thole{}}, which is compatible with any type.
+  But $\typeof{\ehole{}} = \thole{}$, which is compatible with any type.
 \end{proof}
 
 \paragraph{Narrowing}
@@ -341,45 +340,47 @@ then the final step $\step{e}{\vsu}{e'}{\vsu'}$ invokes \forcesym.
 %
 \emph{Any} value that is \emph{incompatible} with
 the partial type upto trace $\trace$ will cause $f$ to get stuck
-in \emph{at most} $k+1$ steps where $k$ is the length of $\trace$.
+in \emph{at most} $k$ steps where $k$ is the length of $\trace$.
 %
 \begin{lem}
 \label{lem:k-stuck}
-  If \steptr{\trace}{\eapp{f}{\ehole{}}}{\emptysu}{e}{\vsu},
-     \tincompat{t}{\ptype{\trace}{f}}, and
-     \hastype{v}{t},
+  If \steptr{\trace}{\eapp{f}{\ehole{}}}{\emptysu}{e}{\vsu} and
+     \hastype{v}{t} and
+     \tincompat{t}{\ptype{\trace}{f}},
   then
      \steps{\eapp{f}{v}}{\emptysu}{\stuck}{\su}.
 \end{lem}
-\ES{self-todo: take a close look at the $\trace$'s vs k's}
+% \ES{self-todo: take a close look at the $\trace$'s vs k's}
 \begin{proof}
   By induction on $k$, the length of $\trace$.
-  Let $\tfun{s_{\trace}}{\_} = \ptype{\trace}{f}$.
-  Suppose \hastype{v}{\tincompat{t}{s_{\trace'}}}, we
+  Let $\tfun{s_{\trace}}{\_} = \ptype{\trace}{f}$ and
+  $\trace' = \pair{\eapp{f}{\ehole{}}}{\emptysu},...,\pair{e'}{\vsu'}$ 
+  such that $\step{e'}{\vsu'}{e}{\vsu}$.
+  Suppose \hastype{v}{\tincompat{t}{s_{\trace}}}, we
   will show that \steps{\eapp{f}{v}}{\emptysu}{\stuck}{\su'}
-  in at most $k+1$ steps:
+  in at most $k$ steps:
 %
   %\begin{description}
   % \item
-  [Case \tincompat{t}{s_{\trace}}:]
+  [Case \tincompat{t}{s_{\trace'}}:]
     The inductive hypothesis applies.
   %\item
-  [Case \tcompat{t}{s_{\trace}} but \tincompat{t}{s_{\trace'}}:]
+  [Case $\tcompat{t}{s_{\trace'}}$ but $\tincompat{t}{s_{\trace}}$:]
     By Lemma~\ref{lem:force-inst} we must have called \forcesym at step
-    $k+1$.
+    $k$.
     %
-    A case analysis of the applicable rules shows that \forcesym cannot
-    have succeeded.
+    A case analysis of the rules shows that \forcesym cannot have
+    succeeded.
   %\end{description}
 \end{proof}
 
-\paragraph{Proof of Theorem~\ref{thm:soundness}}
+\begin{proof}[\textbf{Proof of Theorem~\ref{thm:soundness}}]
 %
 Suppose $\trace$ witnesses that $f$ gets stuck,
-and let $t$ be the partial type of $f$ upto $\trace$.
+and let $t = \ptype{\trace}{f}$.
 We show that \emph{all} types $s$ have stuck-inducing
 values by splitting cases on whether the type is
-compatible with the partial type upto $\trace$.
+compatible with $t$. %the partial type upto $\trace$.
 %
 % \begin{description}
   %\item
@@ -391,7 +392,7 @@ compatible with the partial type upto $\trace$.
    By Lemma~\ref{lem:k-stuck}, every \hastype{v}{t} demonstrates that
    $\eapp{f}{v}$ gets stuck.
 %\end{description}
-
+\end{proof}
 
 \subsection{Search Algorithm}
 \label{sec:search-algorithm}
