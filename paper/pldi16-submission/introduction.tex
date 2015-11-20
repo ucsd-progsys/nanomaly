@@ -40,17 +40,19 @@ program is wrong.
 \begin{figure}[t]
 \centering
 \begin{minipage}{.49\linewidth}
+\centering
 \begin{code}
-let rec fac n =
-  if n <= 0 then
-    true
-  else
-    n * fac (n-1)
+  let rec fac n =
+    if n <= 0 then
+      true
+    else
+      n * fac (n-1)
 \end{code}
 \end{minipage}
-\hspace{0.3in}
-\begin{minipage}{.3\linewidth}
-  \includegraphics[height=2.5in]{fac-overview.png}
+% \hspace{0.3in}
+\begin{minipage}{.49\linewidth}
+\centering
+  \includegraphics[height=2in]{fac-overview.png}
 \end{minipage}
 \caption{(L) An ill-typed \texttt{fac} function; (R) Dynamically witnessing the type error in \texttt{fac}}
 \label{fig:factorial}
