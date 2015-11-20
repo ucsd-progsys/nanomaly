@@ -2,21 +2,22 @@
 \centering
 % \begin{minipage}{0.49\linewidth}
 \begin{mcode}
-(*\putBefore*) :: (*\vstate*) -> (*\expr*) -> (*\expr*) -> (*\vstate*)
-(*\putAfter*)  :: (*\vstate*) -> (*\expr*) -> (*\expr*) -> (*\vstate*)
-(*\putRoot*)   :: (*\vstate*) -> (*\expr*) -> (*\vstate*)
-(*\getRoot*)   :: (*\vstate*) -> (*\expr*) -> (*\expr*)
-(*\getPath*)      :: (*\tr*) -> (*\expr*) -> [(*\expr*)]
+ (*\putBefore*) :: (*\vstate*) -> (*\expr*) -> (*\expr*) -> (*\vstate*)
+ (*\putAfter*)  :: (*\vstate*) -> (*\expr*) -> (*\expr*) -> (*\vstate*)
+ (*\putRoot*)   :: (*\vstate*) -> (*\expr*) -> (*\expr*) -> (*\vstate*)
 
-(*\getSubterms*) :: (*\vstate*) -> (*\expr*) -> [((*\expr*),(*\ctx*))]
-(*\applyCtx*)    :: (*\vstate*) -> (*\expr*) -> (*\ctx*) -> (*\expr*)
+ getNext   :: (*\vstate*) -> (*\expr*) -> Maybe (*\expr*)
+ getPrev   :: (*\vstate*) -> (*\expr*) -> Maybe (*\expr*)
 
-findApp    :: (*\vstate*) -> (*\expr*) -> Maybe ((*\expr*),(*\ctx*))
-findValue  :: (*\vstate*) -> (*\expr*) -> (*\expr*)
-
-data (*\cmd*) = (*\stepforwardc*) | (*\stepbackwardc*)
-         | (*\jumpforwardc*) | (*\jumpbackwardc*)
-         | (*\stepoverc*)    | (*\stepintoc*)
+ (*\getSubterms*) :: (*\vstate*) -> (*\expr*) -> [((*\expr*),(*\ctx*))]
+ (*\applyCtx*)    :: (*\vstate*) -> (*\expr*) -> (*\ctx*) -> (*\expr*)
+ 
+ findApp :: (*\vstate*) -> (*\expr*) -> Maybe ((*\expr*),(*\ctx*))
+ findVal :: (*\vstate*) -> (*\expr*) -> (*\expr*)
+ 
+ data (*\cmd*) = (*\stepforwardc*) | (*\stepbackwardc*)
+          | (*\jumpforwardc*) | (*\jumpbackwardc*)
+          | (*\stepoverc*)    | (*\stepintoc*)
 \end{mcode}
 % data (*\ctx*)
 \caption{Graph manipulation and traversal API.}
@@ -28,20 +29,18 @@ data (*\cmd*) = (*\stepforwardc*) | (*\stepbackwardc*)
 \begin{mcode}
 (*\findExpr*) :: (*\vstate*) -> (*\cmd*) -> (*\expr*) -> Maybe (*\expr*)
 (*\findExpr*) v c e = case c of
-  (*\stepforwardc*) -> 
-    let p = (*\getPath*) v e in (p!!1)
-  (*\stepbackwardc*) -> 
-    let p = (*\getPath*) v ((*\getRoot*) v e) in last p
+  (*\stepforwardc*) -> getNext v e
+  (*\stepbackwardc*)    -> getPrev v e
   (*\jumpforwardc*) -> case (*\findExpr*) v (*\stepforwardc*) e of
     $\eapp{v_1}{v_2}$ -> Just ($\eapp{v_1}{v_2}$)
     e'   -> (*\findExpr*) v c e'
-  (*\jumpbackwardc*) -> case (*\findExpr*) v (*\stepbackwardc*) e of
+  (*\jumpbackwardc*)    -> case (*\findExpr*) v (*\stepbackwardc*) e of
     $\eapp{v_1}{v_2}$ -> Just ($\eapp{v_1}{v_2}$)
     e'   -> (*\findExpr*) v c e'
-  (*\stepintoc*) -> findApp v e
-  (*\stepoverc*) -> case findApp v e of
+  (*\stepintoc*)    -> findApp v e
+  (*\stepoverc*)    -> case findApp v e of
     Nothing       -> Nothing
-    Just (e', cx) -> applyCtx v (crunch v e') cx
+    Just (e', cx) -> applyCtx v (findVal v e') cx
 
 (*\updState*) :: (*\vstate*) -> (*\cmd*) -> (*\expr*) -> Maybe (*\vstate*)
 (*\updState*) v c e = case (*\findExpr*) v c e of
@@ -51,7 +50,7 @@ data (*\cmd*) = (*\stepforwardc*) | (*\stepbackwardc*)
     (*\stepbackwardc*)    -> (*\putBefore\ v e e'*)
     (*\jumpforwardc*) -> (*\putAfter\ v e e'*)
     (*\jumpbackwardc*)    -> (*\putBefore\ v e e'*)
-    (*\stepintoc*)    -> (*\putRoot\ v e' (crunch v e') *)
+    (*\stepintoc*)    -> (*\putRoot\ v e' (findVal v e') *)
     (*\stepoverc*)    -> (*\putAfter\ v e e'*)
 \end{mcode}
 % \end{minipage}
