@@ -416,7 +416,7 @@ provide this information.)
 The witness generation procedure @genWitness@ is formalized in
 Figure~\ref{fig:algo-gen-witness}.
 %
-Next, we describe what it takes as input and output, and how it
+Next, we describe what its input and output, and how it
 addresses the above challenges to search the space of possible
 executions for general type error witnesses.
 
@@ -431,7 +431,7 @@ traces to explore. (We assume, without loss of generality, that all
 traces are finite.)
 %
 Second, binder-expression tuples @[(f1,e1),...,(fn,en)]@
-denoting the list of \emph{top-level definitions}
+denoting the list of \emph{top-level definitions}:
 %
 \begin{code}
   let f1 = e1 in
@@ -462,7 +462,7 @@ Due to the non-determinism introduced by \gensym, a call \hbox{|eval($e$, $\vsu$
 returns the \emph{list} possible results of the form $\pair{e'}{\vsu'}$ such
 that $\steps{e}{\vsu}{e'}{\vsu'}$.
 %
-We determine whether a given value is stuck by using the predicate
+We determine whether a given value is stuck by using the predicate:
 %
 \begin{mcode}
   isStuck :: $v$ -> Bool
@@ -479,7 +479,7 @@ This is achieved via a simple @loop@ that keeps adding holes until
 %
 The helper functions @witness@ and @close@ are used to respectively
 apply the parameters to the target and close the result under the top-level
-let-binders, prior to invoking @eval@.
+let-binders, prior to invoking \hbox{@eval@.}
 %
 That is, @mkApps@ creates a nested sequence of applications in
 the usual left-associative style, and @mkLets@ takes a list of
@@ -535,12 +535,12 @@ and use them to return the list of witnesses.
 %
 We obtain the following corollary of Theorem~\ref{thm:soundness}:
 
-\begin{thm}{\textbf{[Witness Generation]}}
+\begin{cor}{\textbf{[Witness Generation]}}
 \label{thm:generation}
-  If @genWitness k@ $[(f_1, e_1), \ldots, (f_n, e_n)]$ is non-empty,
+  If @genWitness k [(f1,e1),...,(fn,en)]@ is non-empty,
   then for every type $t$ there exists $\hastype{v}{t}$ such that
   $\steps{\eapp{f_n}{v}}{\emptysu}{\stuck}{\su}$.
-\end{thm}
+\end{cor}
 
 \begin{figure}[t]
 \centering
