@@ -253,13 +253,10 @@ $\steps{\eapp{f}{\ehole{}}}{\emptysu}{\stuck}{\su}$, then for every
 possible input type $t$, we can find a value $\hastype{v}{t}$
 such that $\eapp{f}{v}$ goes wrong.
 
-% WRW is still minorly worried about this theorem as phrased (cf. every
-% inhabitable type). Perhaps jsut a footnote explaining why \alpha -> \beta
-% is not considered here?  
 \begin{thm}{\textbf{[Witness Generality]}}
 \label{thm:soundness}
   For any function $f$, if \steptr{\trace}{\eapp{f}{\ehole{}}}{\emptysu}{\stuck}{\su},
-  then for every type $t$ there exists $\hastype{v}{t}$ such that
+  then for every inhabitable type\footnote{We exclude builtin functions that subvert the type system, \eg \texttt{Obj.magic}, and thus consider the type $\forall a b. \tfun{a}{b}$ to be uninhabitable.}  $t$ there exists $\hastype{v}{t}$ such that
   $\steps{\eapp{f}{v}}{\emptysu}{\stuck}{\su}$.
 \end{thm}
 
@@ -268,10 +265,6 @@ First, we show how our evaluation rules encode a dynamic form of
 type inference, and next, we show that the types inferred via
 evaluation are indeed maximally general.
 
-% WRW: Just to be sure, the type of "lambda x. x + 1" would seem
-% to be box_1 -> box_2 here, while one might be tempted to get
-% int -> int. Some extra prose text contrasting typeof() with
-% "apply f to box to get a partial type" would likely help. 
 \paragraph{The Type of an Expression} The (dynamic) type of an
 expression $e$ is defined as a function $\typeof{e}$ defined as:
   \[
@@ -282,6 +275,11 @@ expression $e$ is defined as a function $\typeof{e}$ defined as:
     \typeof{e} & \defeq & \thole{i}, & \quad \text{$i$ is fresh} \\
   \end{array}
   \]
+%
+Note that we approximate the type of expressions rather than
+performing full type inference, for example
+$\typeof{\efun{x}{\eplus{x}{1}}} = \tfun{\thole{}}{\thole{}}$,
+instead of the usual $\tfun{\tint}{\tint}$.
 
 \paragraph{Dynamic Type Inference}
 We can think of the evaluation of \eapp{f}{\ehole{}} as (dynamically)
