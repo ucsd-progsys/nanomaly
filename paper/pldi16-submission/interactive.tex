@@ -28,7 +28,7 @@ in the graph (\S~\ref{sec:inter-semant}).
 Next, we express a set of common \emph{interactive debugging}
 steps as graph traversals (\S~\ref{sec:traversing-graph}), yielding
 an novel interactive debugger that allows the user
-to effectively visualize \emph{how} the program goes (wrong.)
+to effectively visualize \emph{how} the program goes (wrong).
 
 \subsection{Tracing Semantics}
 \label{sec:inter-semant}
@@ -66,6 +66,10 @@ to effectively visualize \emph{how} the program goes (wrong.)
 \end{gather*}
 \caption{A selection of the operational semantics from
   Figure~\ref{fig:operational}, extended to collect a full reduction
+  % WRW: \subterms is Used here in the figure before being Defined (indeed,
+  % it is never defined anywhere that I can see). A simple bit in text to
+  % explain what you mean would help. Why is subterms necessary? What does
+  % it collect up for you? 
   graph.}
 \label{fig:interactive}
 \end{figure*}
@@ -73,7 +77,8 @@ to effectively visualize \emph{how} the program goes (wrong.)
 \paragraph{Reduction Graphs}
 %
 A \emph{steps-to} edge is a pair of expressions \singlestep{e_1}{e_2}, which
-intuitively indicates that $e_1$ steps, in a single step, to $e_2$.
+% WRW: This was "e_1 steps, in a single step" which was circular.
+intuitively indicates that $e_1$ reduces, in a single step, to $e_2$.
 %
 %A \emph{sub-term} edge is a pair of expressions \subterm{e_1}{e_2}, which
 %intuitively indicates that $e_1$ contains $e_2$ as a sub-expression.
@@ -122,7 +127,7 @@ from the traced semantics, by describing the visualization
 \emph{state} \ie\ what the user sees at any given moment,
 the set of \emph{commands} available to user and what
 they do, and finally how we use a command to \emph{update}
-the visualization state. In the sequel, for clarity of
+the visualization state. In what follows, for clarity of
 exposition, we assume we have a (global) trace:
 $\stepg{e_0}{\emptysu}{\bullet}{e_n}{\vsu}{\tr}$, where
 $e_0$ and $e_n$ are the \emph{initial} and \emph{final}
