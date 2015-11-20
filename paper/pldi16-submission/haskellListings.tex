@@ -66,7 +66,8 @@
                 queryList,queryCtor,queryField,ctors,decodeCtor,whichOf,ctorArity,eval,
                 mkCtor,gCtors,gEncode,gEncodeFields,gDecode,gDecodeFields,reproxyRep,empty,splitCtor,checkField,scanM,
                 padAverage,focusUp,execute,checkSMT,inputTypes,outputType,toReft,app,
-								genArgs, genWitness, close, witness, mkApps, mkLets, isStuck
+                genArgs,genWitness,close,witness,mkApps,mkLets,isStuck,findExpr,updState,putBefore,putAfter,
+                putRoot,getNext,getPrev,getSubterms,applyCtx,findApp,findVal,replicate,loop,fac,incAllByOne,map
                 %, inTypes, inputTypes, outputType, execute, smtFindModel, smtRefuteModel
 	},
 	emphstyle={[1]\color{haskellblue}},
@@ -78,7 +79,8 @@
                 PtrN,ByteStringN,ByteStringEq,VO,ByteStringsEq,ByteStringNE,OrdList,Var,RType,Constrain,Gen,Var,Proxy,SMT,Targetable,RefType,Refinement,Ctor,C1,Rep,Rec0,U1,
                 GCtors,GDecode,GDecodeFields,GEncode,GEncodeFields,OrdMap,MinusKey,
                 len,isBH,isBal,bh,isRB,keys,Sorted,RBT,Col,isBlack,OrdRBT,Set,sz,
-                StackSet,NoDuplicates,Data,RBTree,XMonad,Generic,true
+                StackSet,NoDuplicates,Data,RBTree,XMonad,Generic,
+                VState,Expr,Ctx,Cmd,int,list,string,bool
 	},
 	emphstyle={[2]\color{castanho_ulisses}},
 	emph=
@@ -95,7 +97,8 @@
 	emphstyle={[4]\color{castanho_ulisses}\textbf},
 	emph=
 	{[5]
-		PS,Tip,Node,Black,Red,EQ,False,GT,Just,LT,Left,Nothing,Right,True,Show,Eq,Ord,Num,C,N,Leaf,Bin,CounterExample
+		PS,Tip,Node,Black,Red,EQ,False,GT,Just,LT,Left,Nothing,Right,True,Show,Eq,Ord,Num,C,N,Leaf,Bin,CounterExample,
+                StepForward,StepBack,JumpForward,JumpBack,StepOver,StepInto,true
 	},
 	emphstyle={[5]\color{green_ulisses}},
 	emph=

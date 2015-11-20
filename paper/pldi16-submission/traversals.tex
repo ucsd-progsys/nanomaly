@@ -2,24 +2,24 @@
 \centering
 % \begin{minipage}{0.49\linewidth}
 \begin{mcode}
- (*\putBefore*) :: (*\vstate*) -> (*\expr*) -> (*\expr*) -> (*\vstate*)
- (*\putAfter*)  :: (*\vstate*) -> (*\expr*) -> (*\expr*) -> (*\vstate*)
- (*\putRoot*)   :: (*\vstate*) -> (*\expr*) -> (*\expr*) -> (*\vstate*)
+ putBefore :: VState -> Expr -> Expr -> VState
+ putAfter  :: VState -> Expr -> Expr -> VState
+ putRoot   :: VState -> Expr -> Expr -> VState
 
- getNext   :: (*\vstate*) -> (*\expr*) -> Maybe (*\expr*)
- getPrev   :: (*\vstate*) -> (*\expr*) -> Maybe (*\expr*)
+ getNext   :: VState -> Expr -> Maybe Expr
+ getPrev   :: VState -> Expr -> Maybe Expr
 
- (*\getSubterms*) :: (*\vstate*) -> (*\expr*) -> [((*\expr*),(*\ctx*))]
- (*\applyCtx*)    :: (*\vstate*) -> (*\expr*) -> (*\ctx*) -> (*\expr*)
+ getSubterms :: VState -> Expr -> [(Expr,Ctx)]
+ applyCtx    :: VState -> Expr -> Ctx -> Expr
  
- findApp :: (*\vstate*) -> (*\expr*) -> Maybe ((*\expr*),(*\ctx*))
- findVal :: (*\vstate*) -> (*\expr*) -> (*\expr*)
+ findApp :: VState -> Expr -> Maybe (Expr,Ctx)
+ findVal :: VState -> Expr -> Expr
  
- data (*\cmd*) = (*\stepforwardc*) | (*\stepbackwardc*)
-          | (*\jumpforwardc*) | (*\jumpbackwardc*)
-          | (*\stepoverc*)    | (*\stepintoc*)
+ data Cmd = StepForward | StepBack
+          | JumpForward | JumpBack
+          | StepInto    | StepOver
 \end{mcode}
-% data (*\ctx*)
+% data \ctx
 \caption{Graph manipulation and traversal API.}
 \label{fig:graph-api}
 \end{figure}
@@ -27,31 +27,31 @@
 % \begin{minipage}{0.49\linewidth}
 \begin{figure}[t]
 \begin{mcode}
-(*\findExpr*) :: (*\vstate*) -> (*\cmd*) -> (*\expr*) -> Maybe (*\expr*)
-(*\findExpr*) v c e = case c of
-  (*\stepforwardc*) -> getNext v e
-  (*\stepbackwardc*)    -> getPrev v e
-  (*\jumpforwardc*) -> case (*\findExpr*) v (*\stepforwardc*) e of
+findExpr :: VState -> Cmd -> Expr -> Maybe Expr
+findExpr v c e = case c of
+  StepForward -> getNext v e
+  StepBack    -> getPrev v e
+  JumpForward -> case findExpr v StepForward e of
     $\eapp{v_1}{v_2}$ -> Just ($\eapp{v_1}{v_2}$)
-    e'   -> (*\findExpr*) v c e'
-  (*\jumpbackwardc*)    -> case (*\findExpr*) v (*\stepbackwardc*) e of
+    e'   -> findExpr v c e'
+  JumpBack    -> case findExpr v StepBack e of
     $\eapp{v_1}{v_2}$ -> Just ($\eapp{v_1}{v_2}$)
-    e'   -> (*\findExpr*) v c e'
-  (*\stepintoc*)    -> findApp v e
-  (*\stepoverc*)    -> case findApp v e of
+    e'   -> findExpr v c e'
+  StepInto    -> findApp v e
+  StepOver    -> case findApp v e of
     Nothing       -> Nothing
     Just (e', cx) -> applyCtx v (findVal v e') cx
 
-(*\updState*) :: (*\vstate*) -> (*\cmd*) -> (*\expr*) -> Maybe (*\vstate*)
-(*\updState*) v c e = case (*\findExpr*) v c e of
+updState :: VState -> Cmd -> Expr -> Maybe VState
+updState v c e = case findExpr v c e of
   Nothing -> Nothing
   Just e' -> Just (*\$*) case c of
-    (*\stepforwardc*) -> (*\putAfter\ v e e'*)
-    (*\stepbackwardc*)    -> (*\putBefore\ v e e'*)
-    (*\jumpforwardc*) -> (*\putAfter\ v e e'*)
-    (*\jumpbackwardc*)    -> (*\putBefore\ v e e'*)
-    (*\stepintoc*)    -> (*\putRoot\ v e' (findVal v e') *)
-    (*\stepoverc*)    -> (*\putAfter\ v e e'*)
+    StepForward -> putAfter  v e e'
+    StepBack    -> putBefore v e e'
+    JumpForward -> putAfter  v e e'
+    JumpBack    -> putBefore v e e'
+    StepInto    -> putRoot   v e' (findVal v e') 
+    StepOver    -> putAfter  v e e'
 \end{mcode}
 % \end{minipage}
 % \[
