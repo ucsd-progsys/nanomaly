@@ -1,20 +1,4 @@
 userid,snippet,r_group,time,cause,explanation,fix
-2,prog0971,nanomaly,17653,,,"
-let pipe fs = 
-  let f a x = x a in 
-  let base a = a in 
-    List.fold_left f base fs;;
-
-let _ = pipe [(fun x  -> x + x); (fun x  -> x + 3)] 3;;
-"
-4,prog0971,nanomaly,16700,,,"
-let pipe fs = 
-  let f a x = x a in 
-  let base a = a in 
-    List.fold_left f base fs;;
-
-let _ = pipe [(fun x  -> x + x); (fun x  -> x + 3)] 3;;
-"
 9,prog0971,ocaml,357038,let base a = a,"pipe is trying to add two identity functions together, like so:
 
 f (\a -> a) (\x -> x + x)
@@ -307,26 +291,6 @@ let fixpoint (f,b) =
     (t,t<>x)
   in
   wwhile (g,b);;
-"
-13,prog0971,ocaml,28660,(fun x  -> x + 3),got a function when an int was expected,"
-let pipe fs = 
-  let f a x = x a in 
-  let base a = a in 
-    List.fold_left f base fs;;
-
-let _ = pipe [(fun x  -> x + x) (fun x  -> x + 3) 3];;
-"
-13,palindrome,nanomaly,172666,hd::tl -> helper (hd :: xs) tl ,"helper operates on one parameter, not two","
-let listReverse l =
-  let rec helper xs = function 
-    | [] -> xs 
-    | hd::tl -> helper (hd :: xs :: tl)
-  in helper [];;
-
-let palindrome (w : char list) =
-  if (listReverse w) = w 
-  then true 
-  else false;;
 "
 12,prog2746,nanomaly,290861,[a + hd] :: tl,"Cons requires a single element, not a list.
 
@@ -782,14 +746,6 @@ let rec digitalRoot n =
     else digHelper (sumList n) in
   digHelper n;;
 "
-16,prog0971,nanomaly,6750838,3,"It tries to ""add"" two functions, since it uses a function as input to another function that wants an int, rather than composing the functions and taking the output of the output of the first function as input for the second.","
-let pipe fs = 
-  let f a x = (fun i -> x(a(i))) in 
-  let base a = a in 
-    List.fold_left f base fs;;
-
-let _ = pipe [(fun x  -> x + x); (fun x  -> x + 3)] 3;;
-"
 18,prog0971,nanomaly,257287,let f a x = x a in ,the code is attempting to add two identity functions,"
 let pipe fs = 
   let f a x = a x in 
@@ -910,66 +866,6 @@ let rec digitalRoot n =
     then n
     else digHelper (sumList n) in
   digHelper n;;
-"
-5,prog0971,ocaml,1022368,,,"
-let pipe fs = 
-  let f a x = x a in 
-  let base a = a in 
-    List.fold_left f base fs;;
-
-let _ = pipe [(fun x  -> x + x); (fun x  -> x + 3)] 3;;
-"
-5,palindrome,nanomaly,192652,,,"
-let listReverse l =
-  let rec helper xs = function 
-    | [] -> xs 
-    | hd::tl -> helper (hd :: xs) tl 
-  in helper [];;
-
-let palindrome (w : char list) =
-  if (listReverse w) = w 
-  then true 
-  else false;;
-"
-5,prog0223,ocaml,50261,,,"
-let bigMul l1 l2 =
-  let f a x = x in
-  let base = (0, []) in
-  let args = l1 in 
-  let (_,res) = List.fold_left f base args in
-    res;;
-
-let _ = bigMul [9] [9];;
-"
-5,prog3382,nanomaly,8997,,,"
-let rec wwhile (f,b) =
-  let rec wwhelper f b =
-    let (b',c') = f b in 
-    if c' = false 
-    then b' 
-    else wwhelper f b' in
-  wwhelper f b;;
-
-let fixpoint (f,b) = 
-  wwhile (let g x = (f x) <> x in 
-          ((g b), b));;
-"
-5,prog2746,ocaml,3002,,,"
-let rec mulByDigit i l =
-  let comb a b = 
-    match b with 
-    | [] -> [a] 
-    | hd::tl -> [a + hd] :: tl in
-
-  let rec mBDhelper i x =
-    match x with
-    | [] -> []
-    | hd::tl ->
-        if (hd * i) > 9
-        then ((hd * i) / 10) :: (comb ((hd * i) mod 10) (mBDhelper i tl))
-        else (hd * i) :: (mBDhelper i tl) in
-
-  mBDhelper i l;;
 "
 19,prog0971,ocaml,2027488,"""pipe [(fun x  -> x + x); (fun x  -> x + 3)] 3"" is at fault",The elements of the list do not match the expected type,"
 let pipe fs = 

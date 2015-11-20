@@ -3,6 +3,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
+UCSD = 'AUTHORS'
+
 BUCKETS = [0.1, 0.2, 1.0, 10.0, 60.0 ] # range(500, 3001, 500)
 COLORS=['#348ABD', '#7A68A6', '#A60628', '#467821', '#CF4457', '#188487', '#E24A33']
 
@@ -58,7 +60,7 @@ def plot_coverage(seminal, ucsd):
     plt.title('Cumulative Coverage', fontsize=24)
     plt.xticks(ind + width, [r[0] for r in xy_s], fontsize='large')
     plt.yticks(np.arange(0, 101, 10), fontsize='large')
-    plt.legend((p1[0], p2[0]), ('Seminal', 'UCSD'), 'lower right', fontsize=16)
+    plt.legend((p1[0], p2[0]), ('UW', UCSD), 'lower right', fontsize=16)
     # plt.legend((p1[0], p2[0]), ('Men', 'Women'))
     autolabel(plt, p1)
     autolabel(plt, p2)
@@ -98,11 +100,11 @@ def plot_trace_size(seminal, ucsd):
 
     fig = plt.figure()
     y,binEdges=np.histogram(step_s,bins=bins)
-    p1 = plt.bar(ind, y / float(len(step_s)), label='Seminal', width=width, color=COLORS[0])
+    p1 = plt.bar(ind, y / float(len(step_s)), label='UW', width=width, color=COLORS[0])
 
     y,binEdges=np.histogram(step_u,bins=bins)
-    p2 = plt.bar(ind + width, y / float(len(step_u)), label='UCSD', width=width, color=COLORS[1])
-    plt.legend((p1[0],p2[0]), ('Seminal','UCSD'), fontsize=16)
+    p2 = plt.bar(ind + width, y / float(len(step_u)), label=UCSD, width=width, color=COLORS[1])
+    plt.legend((p1[0],p2[0]), ('UW',UCSD), fontsize=16)
     plt.title('Trace Complexity', fontsize=24)
     plt.xlabel('Total Steps', fontsize=20)
     plt.ylabel('Traces (%)', fontsize=20)
@@ -127,13 +129,13 @@ def plot_trace_size(seminal, ucsd):
     y,binEdges=np.histogram(jump_s,bins=bins)
     foo = y / float(len(jump_s)) 
     print(foo[0] + foo[1])
-    p1 = plt.bar(ind, y / float(len(jump_s)), label='Seminal', width=width, color=COLORS[0])
+    p1 = plt.bar(ind, y / float(len(jump_s)), label='UW', width=width, color=COLORS[0])
 
     y,binEdges=np.histogram(jump_u,bins=bins)
     foo = y / float(len(jump_u)) 
     print(foo[0] + foo[1])
-    p2 = plt.bar(ind + width, y / float(len(jump_u)), label='UCSD', width=width, color=COLORS[1])
-    plt.legend((p1[0],p2[0]), ('Seminal','UCSD'), fontsize=16)
+    p2 = plt.bar(ind + width, y / float(len(jump_u)), label=UCSD, width=width, color=COLORS[1])
+    plt.legend((p1[0],p2[0]), ('UW',UCSD), fontsize=16)
     # plt.title('Complexity of Traces (in jumps)', fontsize=24)
     plt.xlabel('Total Jumps', fontsize=20)
     # plt.xlabel('Jumps', fontsize=20)
@@ -153,7 +155,7 @@ def plot_trace_size(seminal, ucsd):
 
     # plt.xlabel('Size')
     # plt.yticks(np.arange(0.0, 1.1, 0.1))
-    # plt.legend((p1[0],), ('Seminal',))
+    # plt.legend((p1[0],), ('UW',))
 
     # autolabel(ax, p2)
 
@@ -181,7 +183,7 @@ def plot_distrib(seminal, ucsd):
                  labeldistance=10,
                  colors=COLORS,
                  shadow=True)
-    ax.set_title('Seminal', fontsize=20)
+    ax.set_title('UW', fontsize=20)
 
     ax = plt.subplot(1,2,2, aspect=1)
     #ax.figure(figsize=(1,1))
@@ -192,7 +194,7 @@ def plot_distrib(seminal, ucsd):
                  labeldistance=10,
                  colors=COLORS,
                  shadow=True)
-    ax.set_title('UCSD', fontsize=20)
+    ax.set_title(UCSD, fontsize=20)
 
     #plt.tight_layout()
 
@@ -224,6 +226,6 @@ if __name__ == '__main__':
 
     plot_trace_size(seminal, ucsd)
     # plot_trace_size(seminal, 'Seminal')
-    # plot_trace_size(ucsd, 'UCSD')
+    # plot_trace_size(ucsd, UCSD)
 
     plot_coverage(seminal, ucsd)
