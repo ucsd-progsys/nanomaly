@@ -68,6 +68,9 @@ in the program, and thus valuable feedback for the user.
 \end{minipage}
 % \vspace{-8ex}
 \caption{Results of our coverage testing and the distribution of test
+  % WRW notes that the pie chart does not print on standard department
+  % printer, and is emailing a photo as proof. Possible solution:
+  % convert PDF -> PNG and include PNG? 
   outcomes. Our random search successfully finds witnesses for 83\% of
   the programs in under one second, improving slightly to 87\% in under
   10 seconds. In both datasets we detect actual type errors about 82\%
@@ -113,7 +116,7 @@ trace according to two metrics.
 
 \paragraph{Jump Compression}
 %
-A jump compressed trace is one whose edges are limited to forward
+A \emph{jump compressed} trace is one whose edges are limited to forward
 or backward jumps. (The sizes of these traces is equal to the jump
 metric below.)
 %
@@ -121,6 +124,10 @@ In our experience, jump compression abstracts many details of the
 computation that are often uninteresting or irrelevant to the
 explanation, or at any rate, easily summarized as call-return
 pairs.
+% WRW: Say more here. This is critical to your evaluatino and to your
+% conclusion (e.g., where we say that jump-compressed traces hide boring
+% details). Why are these details boring and others relevant? Do the
+% boring ones contain less information somehow? 
 %
 Note that jump compressed traces are not quite the same as
 stack-traces as they show \emph{all} function calls, including
