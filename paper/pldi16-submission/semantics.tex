@@ -141,7 +141,7 @@ respectively.
 
 \paragraph{Narrowing Types} The procedure $\force{e}{t}{\vsu}$ takes as
 input an term \texttt{e} and refines it to have the type \texttt{t} by
-yielding a pair of either the same expression and an empty value
+yielding a pair of either the same expression and value
 substitution, or yields the stuck term if no such refinement is
 possible. In the case where \texttt{e} is a hole, it first checks in the
 given $\vsu$ to see if the hole has already been instantiated and, if
@@ -149,24 +149,24 @@ so, returns the existing instantiation:
 %
 $$
 \begin{array}{lcl}
-% \multicolumn{3}{l}{\forcesym \ :: \  (e, t) \rightarrow \pair{e}{\vsu}} \\
-% \forcesym            & ::     & (e, t) \rightarrow \pair{e}{\vsu} \\
-\force{v}{\ehole{}}{\vsu}  & \defeq & \pair{v}{\emptysu} \\
+%% \multicolumn{3}{l}{\forcesym \ :: \  (e, t) \rightarrow \pair{e}{\vsu}} \\
+\forcesym            & ::     & (e, t, \vsu) \rightarrow \pair{e}{\vsu} \\
+\force{v}{\ehole{}}{\vsu}  & \defeq & \pair{v}{\vsu} \\
 \force{\ehole{i}}{t}{\vsu} & \defeq & \hspace{-1ex}
 \begin{cases}
-  \pair{\vsu(i)}{\emptysu}        & \mbox{if}\ i \in \vsu \\
-  \pair{v}{\ehole{i} \mapsto v}   & v = \gen{t}\\
+  \pair{\vsu(i)}{\vsu}        & \mbox{if}\ i \in dom(\vsu) \\
+  \pair{v}{\ehole{i} \mapsto v ; \vsu}   & v = \gen{t}\\
 \end{cases} \\
  % \begin{array}{l}
-    % \mathtt{if}\ i \in \vsu\ \mathtt{then}\ \pair{\vsu(i)}{\emptysu}\ \mathtt{else} \\
+    % \mathtt{if}\ i \in \vsu\ \mathtt{then}\ \pair{\vsu(i)}{\vsu}\ \mathtt{else} \\
          % \elet{v}{\gen{t}}{\pair{v}{\ehole{i} \mapsto v}}
   % \end{array} \\
-\force{n}{\tint}{\vsu}     & \defeq & \pair{n}{\emptysu} \\
-\force{v}{\tint}{\vsu}     & \defeq & \pair{\stuck}{\emptysu} \\
-\force{b}{\tbool}{\vsu}    & \defeq & \pair{b}{\emptysu} \\
-\force{v}{\tbool}{\vsu}    & \defeq & \pair{\stuck}{\emptysu} \\
-\force{\efun{x}{e}}{\tfun{\thole{}}{\thole{}}}{\vsu} & \defeq & \pair{\efun{x}{e}}{\emptysu} \\
-\force{v}{\tfun{\thole{}}{\thole{}}}{\vsu} & \defeq & \pair{\stuck}{\emptysu} \\
+\force{n}{\tint}{\vsu}     & \defeq & \pair{n}{\vsu} \\
+\force{v}{\tint}{\vsu}     & \defeq & \pair{\stuck}{\vsu} \\
+\force{b}{\tbool}{\vsu}    & \defeq & \pair{b}{\vsu} \\
+\force{v}{\tbool}{\vsu}    & \defeq & \pair{\stuck}{\vsu} \\
+\force{\efun{x}{e}}{\tfun{\thole{}}{\thole{}}}{\vsu} & \defeq & \pair{\efun{x}{e}}{\vsu} \\
+\force{v}{\tfun{\thole{}}{\thole{}}}{\vsu} & \defeq & \pair{\stuck}{\vsu} \\
 \end{array}
 $$
 %
