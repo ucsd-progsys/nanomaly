@@ -1,0 +1,46 @@
+We thank the reviewers for their enthusiastic comments, and will briefly
+respond to the main critiques.
+
+
+Formalism
+---------
+
+While we have implemented (and evaluated) our technique on the pure
+subset of OCaml -- including algebraic datatypes, polymorphism, and type
+annotations -- we restricted the formalism to a simpler language because
+the additional constructs do not any major complexity to the technique.
+We simply treat constructor application, case analysis, type annotation,
+etc. as primitive operations like `+` and `if`; they narrow the partial
+types of values and force instantiation. However, in light of the
+reviews it is clear that this is not obvious to the reader, so we will
+include an extended formal semantics in the next iteration of the paper.
+
+We also thank Reviewer B in particular for pointing out the two bugs in
+our proof. We have refactored the substitutions in the formalism to be
+properly threaded through `narrow` and `E-Plus-Good`, and have changed
+our definition of type compatibility to the usual one. While partial
+types do grow monotonically, in Lemma 4 specifically we are concerned
+with *any* value (and type) so the example with incompatible pair types
+applies.
+
+
+Representivity of the datasets
+------------------------------
+
+Between our dataset and the UW dataset, we have numerous instances of
+writing higher-order functions and instantiating their arguments, as
+well as two different expression evaluators. So we believe the
+benchmarks are representative of the range of programs an undergraduate
+student may have to write.
+
+
+Pedagogic motivation for witnesses and traces
+---------------------------------------------
+
+We are also convinced of the importance of witnesses and traces for
+debugging and did not intend this paper to specifically present evidence
+in their favor, rather to show that generating witnesses is feasible and
+*practical* for type errors. (This is also why we did not discuss
+producing witnesses for other runtime errors like divide-by-zero.) We
+will update the motivation to be clearer about the scope of the paper
+and results.
