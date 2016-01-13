@@ -40,7 +40,7 @@ Pedagogic motivation for witnesses and traces
 We are also convinced of the importance of witnesses and traces for
 debugging and did not intend this paper to specifically present evidence
 in their favor, rather to show that generating witnesses is feasible and
-*practical* for type errors. (This is also why we did not discuss
+practical for type errors. (This is also why we did not discuss
 producing witnesses for other runtime errors like divide-by-zero.) We
 will update the motivation to be clearer about the scope of the paper
 and results.
