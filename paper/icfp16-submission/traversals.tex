@@ -1,0 +1,88 @@
+\begin{figure}[t]
+\centering
+% \begin{minipage}{0.49\linewidth}
+\begin{mcode}
+ putBefore :: VState -> Expr -> Expr -> VState
+ putAfter  :: VState -> Expr -> Expr -> VState
+ putRoot   :: VState -> Expr -> Expr -> VState
+
+ getNext   :: VState -> Expr -> Maybe Expr
+ getPrev   :: VState -> Expr -> Maybe Expr
+
+ getSubterms :: VState -> Expr -> [(Expr,Ctx)]
+ applyCtx    :: VState -> Expr -> Ctx -> Expr
+ 
+ findApp :: VState -> Expr -> Maybe (Expr,Ctx)
+ findVal :: VState -> Expr -> Expr
+ 
+ data Cmd = StepForward | StepBack
+          | JumpForward | JumpBack
+          | StepInto    | StepOver
+\end{mcode}
+% data \ctx
+\caption{Graph manipulation and traversal API.}
+\label{fig:graph-api}
+\end{figure}
+% \end{minipage}
+% \begin{minipage}{0.49\linewidth}
+\begin{figure}[t]
+\begin{mcode}
+findExpr :: VState -> Cmd -> Expr -> Maybe Expr
+findExpr v c e = case c of
+  StepForward -> getNext v e
+  StepBack    -> getPrev v e
+  JumpForward -> case findExpr v StepForward e of
+    $\eapp{v_1}{v_2}$ -> Just ($\eapp{v_1}{v_2}$)
+    e'   -> findExpr v c e'
+  JumpBack    -> case findExpr v StepBack e of
+    $\eapp{v_1}{v_2}$ -> Just ($\eapp{v_1}{v_2}$)
+    e'   -> findExpr v c e'
+  StepInto    -> findApp v e
+  StepOver    -> case findApp v e of
+    Nothing       -> Nothing
+    Just (e', cx) -> applyCtx v (findVal v e') cx
+
+updState :: VState -> Cmd -> Expr -> Maybe VState
+updState v c e = case findExpr v c e of
+  Nothing -> Nothing
+  Just e' -> Just (*\$*) case c of
+    StepForward -> putAfter  v e e'
+    StepBack    -> putBefore v e e'
+    JumpForward -> putAfter  v e e'
+    JumpBack    -> putBefore v e e'
+    StepInto    -> putRoot   v e' (findVal v e') 
+    StepOver    -> putAfter  v e e'
+\end{mcode}
+% \end{minipage}
+% \[
+% \begin{array}{lcl}
+% \stepforward{G}{p}{e_i}  &\defeq& \left\{\begin{array}{ll}
+%     e_j, & \text{where } \singlestep{e_i}{e_j} \in G
+%                          \end{array}\right\} \\ \\
+% \stepbackward{G}{p}{e_i}  &\defeq& \left\{\begin{array}{ll}
+%     e_j, & \text{where } \singlestep{e_j}{e_i} \in G \text{ and } e_j \in p
+%                          \end{array}\right\} \\ \\
+% \jumpforward{G}{p}{e_i} &\defeq& \text{let } e_j = \stepforward{G}{p}{e_i} \text{ in }
+%                          \left\{\begin{array}{ll}
+%                          e_j, & \text{if } e_j = \eapp{v_1}{v_2} \\
+%                          \jumpforward{G}{p}{e_{j}}, & \text{otherwise}
+%                          \end{array}\right\} \\ \\
+% \jumpbackward{G}{p}{e_i} &\defeq& \text{let } e_j = \stepbackward{G}{p}{e_i} \text{ in }
+%                          \left\{\begin{array}{ll}
+%                          e_j, & \text{if } e_j = \eapp{v_1}{v_2} \\
+%                          \jumpbackward{G}{p}{e_{j}}, & \text{otherwise}
+%                          \end{array}\right\} \\ \\
+% \stepinto{G}{p}{e_i} &\defeq& \left\{\begin{array}{ll}
+%                          e\sub{x}{v_2}, & \text{if } e_i = C[\eapp{v_1}{v_2}] \text{ and } \singlestep{\eapp{v_1}{v_2}}{e\sub{x}{v_2}}
+%                          \end{array}\right\} \\ \\
+% \stepover{G}{p}{e_i} &\defeq& \left\{\begin{array}{ll}
+%                          C[v], & \text{if } e_i = C[\eapp{v_1}{v_2}] \text{ and } \multistep{\eapp{v_1}{v_2}}{v}
+%                          \end{array}\right\}
+% \end{array}
+% \]
+\caption{Rules for updating the reduction graph given a command and a selected expression. \texttt{updState} returns \texttt{Nothing} if the command was not applicable. % \stepintosym and \stepoversym require a traversal of the
+  % sub-term edges to decompose $e_i$ into the target expression
+  % \eapp{v_1}{v_2} and the context $C$.  \ES{these rules are quite ugly and waste space..}
+}
+\label{fig:traversing-graph}
+\end{figure}

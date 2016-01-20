@@ -1,0 +1,46 @@
+* Ranjit TODO
+Edges  = Step (e ~> e')  | Subterm (e in e')
+
+Trace  = \steptr{e}{\vsu}{e'}{\vsu'}
+
+DTrace = Reduction Graph = (Expr, Set Edges)
+
+1. Defining DTrace
+
+2. Creating DTrace (debugTrace :: Trace -> Dtrace)
+
+3. Using DTrace (Interactive Debugging using DTrace)
+
+
+
+
+
+* Eric TODO
+** GRAPHS
+  - [X] cumulative coverage of benchmarks vs timeout
+    - [X] use wallclock time instead
+  - [X] breakdown of error types (type/unbound/timeout/nothing)
+    - [X] collapse safe/timeout
+    - [X] witness/no-witness instead of safe/unsafe
+  - [X] runtime metrics
+    - seconds to find witness
+    - do we care about how long a SAFE (ie unsuccessful) run takes?
+  - [X] complexity of witnesses
+    - # single-steps in trace
+    - # "big"-steps in trace
+    - others?
+    - [X] collapse seminal vs ucsd into single chart, use percentage
+      
+
+** WRITING
+  - [X] formalize interactive semantics
+    - [X] extend op-sem to collect "steps-to" and "subterm" edges
+    - [X] describe exploration "strategies": as graph algorithms
+      1. step forward/backward
+      2. jump forward/backward
+      3. step into
+      4. step over
+  - [X] Overview
+  - [ ] Add more to Program Exploration related (maybe?)
+  - [ ] add average linecount for benchmarks
+  - [X] move big step 1-4 figure to trace-explore section

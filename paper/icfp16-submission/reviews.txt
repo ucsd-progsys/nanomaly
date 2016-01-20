@@ -1,0 +1,523 @@
+===========================================================================
+                           PLDI '16 Review #148A
+---------------------------------------------------------------------------
+           Paper #148: Dynamic Witnesses for Static Type Errors
+---------------------------------------------------------------------------
+
+                 Reviewer expertise: X. Expert
+                      Overall merit: C. Weak paper, though I will not fight
+                                        strongly against it
+
+                         ===== Paper summary =====
+
+This paper presents a method for finding concrete inputs that lead to dynamic
+errors corresponding to type errors in OCaml programs.  It then discusses some
+of the properties of the generated witnesses, like found errors indicating a
+guarantee of untypability for the original program.  Finally, it outlines a
+tool for exploring program traces induced by the witness inputs, and evaluates
+the coverage of witness detection across a corpus of beginning student
+programs.
+
+Pros:
+  - The central idea is well-developed and clear, and the paper is very well
+    written.
+  - The empirical evaluation is good, and its scope well-described
+
+Cons:
+  - There is an obvious question of applicability beyond the first few
+    assignments in a course – the corpus doesn't seem to include later
+    assignments, where I'd expect the tool to struggle more
+  - In general, I'd like a section what happens when this scales out to other
+    language features beyond the calculus presented.  For example, the results
+    section talks about list examples, but it's hard for me to interpret,
+    because lists are outside the scope of the presented formalism.
+
+                      ===== Comments for author =====
+
+Overall, I like this paper quite a bit, but overall I don't think it's quite
+ready for publication.  I wish it went further than the tiny core semantics,
+and I'm not sure that the trace semantics is actually a novel contribution.
+That said, I am convinced of the relevant properties about traces, and the
+empirical evaluation is very nice.
+
+I feel like the paper starts with a somewhat pedagogic motivation, and this
+isn't quite met for me.  I don't know if the resulting traces and witnesses
+are actually helpful for students based on this paper.  The strongest
+statement I think I can make is that there is at least _more_ information
+available to choose from when presenting errors, which is certainly an
+improvement.
+
+For example, the trace visualization is nice for demo purposes but not new; I
+don't see why it's specifically useful beyond the state of the art in
+algebraic step debuggers (or in a tool like Redex), and it (and its use) isn't
+really evaluated.  Certainly it probably helps to have a step debugger that
+accommodates ill-typed OCaml programs, but I feel it isn't a new contribution;
+I feel like Figures 7 and 8 added little to the paper as a result.
+
+
+Detailed comments:
+
+It would be nice if the semantics had a few terms with errors that _weren't_
+type errors.  This would make the point that the semantics, and error
+reporting, ought to distinguish between stuck-because-type-error and
+stuck-because-divide-by-zero.  The latter is another kind of failure for the
+type-error reporting framework, which has found a runtime error that isn't
+associated with narrow().  This would show up in Lemma 4, and you could even
+show that there would be stuck_T for types, and stuck_E for errors, and
+incompatible types only lead to stuck_T, not stuck_E.  I'm pretty sure that's
+the intent, and would be true, but putting it in the semantics and proofs
+would make it clearer, and I'm sure student programs use at least things like
+List.nth or division, which have runtime errors, and it seems like finding
+witnesses for those stuck states is explicitly a non-goal.
+
+
+There are a number of reasons a particular witness could cause the program to
+reach a given dynamic error.  For example, a _correct_ factorial function
+passed a boolean value will cause E-If-Bad to trigger, so if a student had
+such a call in their program, that could be detected as a witness.  But the
+erroneous call to factorial wouldn't be highlighted red as I understand this
+system, the if expression would be.  That's not necessarily bad; students need
+to learn to reason "backwards" to the place where things went wrong often.
+But the corresponding failure is one of type _preservation_ that happened when
+the call occurred, substituting the wrong type in for an identifier.  This
+system highlights the moment where the _progress_ lemma would break down,
+causing a runtime error.
+
+A few questions related to this: How can this system help students answer that
+backwards "where did it go wrong" question?  If a program has _some_ explicit
+annotations, can this framework make use of them in any way, or are they all
+ignored?  For example, if a student annotated the factorial function with
+types, could there be another E-App-Bad for the argument type not matching?
+
+
+Did the 3-4% of student programs that triggered an unbound variable error
+signal some other type error when run through the compiler?  I would think
+OCaml's compiler would report the unbound identifier first, but maybe not.  Is
+unbound identifier something that should appear in the semantics of λ^H?
+
+
+The error behavior of narrow() has some echoes of the tagcheck form of Guha et
+al. [1].  They use a narrow-like form to augment an "untyped" semantics with a
+form that would get stuck on dynamic type-tag checks.  This allowed them to
+discharge the possibility of reaching these stuck states with a separate flow
+analysis.
+
+This suggests an interesting _refactoring_ of the semantics presented here.
+Instead of augmenting each reduction rule, leave the traditional rules alone,
+and introduce a new narrow _expression_, [narrow e T], that updates the
+subsitutions and generates stuck as appropriate.  Then each position that
+cares about a type can be rewritten, in a pre-processing pass, to have an
+appropriate narrow wrapper.
+
+This would have slightly different semantics in that currently, if a program
+adds true and false, the semantics could non-deterministically choose either
+to report based on Plus-Bad(1|2).  However, it would make the semantics
+simpler, and perhaps make it more straightforward to add new reduction rules
+in a compositional way.  This is just a suggestion and there are plenty of
+details in the proofs that might change as a result, but I offer it as how I
+understood the narrow() process.
+
+[1] http://cs.brown.edu/~sk/Publications/Papers/Published/gsk-flow-typing-theory/
+
+Minor notes:
+
+I think there's a typo in the call to genArgs in figure 6 -- the empty list
+accumulator isn't required.  This confused me for a bit, especially with the
+careful discussion of currying elsewhere, I was on the lookout for genArgs
+returning a closure.
+
+It might be good to be clear about the type of narrow's first argument
+– using "e" as the variable made me think it could be any expression at
+first, when it seems it should be any _value_.
+
+I think the index on □ should be ignored for the _type_; it never seems to be
+relevant.  It's only needed for values, right?  For example, I don't see where
+it matters that the side condition "i fresh" holds in the typeof definition.
+In the semantics in figures 4, 7, and 8 it certainly isn't used.
+
+
+===========================================================================
+                           PLDI '16 Review #148B
+---------------------------------------------------------------------------
+           Paper #148: Dynamic Witnesses for Static Type Errors
+---------------------------------------------------------------------------
+
+                 Reviewer expertise: X. Expert
+                      Overall merit: C. Weak paper, though I will not fight
+                                        strongly against it
+
+                         ===== Paper summary =====
+
+The authors describe a technique for identifying type errors in
+functions that do not contain type declarations but would be ill-typed
+if an attempt were made to declare or infer appropriate static types.
+The idea is to generate a concrete witness for the type error by
+applying the function to a "hole" (in effect, a value to which no
+committment has yet been mad as to its identity or structure) and then
+allowing that hole to be increasingly constrained, in a lazy fashion, as
+contexts are encountered that impose type requirements.  If the hole
+becomes overconstrained, then a type error has been uncovered and the
+value represented by the hole just prior to the overconstraint is a
+witness to that type error.  The paper also describes a user interface
+that allows the programmer to incrementally explore the trace of the
+computation that discovered the witness.
+
+                      ===== Comments for author =====
+
+I really like the idea in this paper and the approach taken.  The paper
+addresses an important problem and appears to provide a practical
+solution with an attractive user interface.  The high-level explanation
+in the first two sections is clear and easy to follow.  Unfortunately,
+thinsg get bogged down when we hit the formalism in Section 3.  The
+writing gets sloppy (lots of badly punctuated sentences), the formalism
+is not quite consistent and contains some unfortunate and confusing
+"puns" (which might also be characterized as "insignificant but
+misleading coincidences"), and I believe there are two major errors in
+the mathematics.  As a result, I have no confidence that the proofs are
+sound.
+
+The most annoying of the puns is the use of the same symbol (a hollow
+square, which I will write as "[]" in this review) as both an expression
+and a type.  This begins to get really confusing by about page 5.  I
+recommend that you use a slightly different symbol for "hole types",
+such as a square with a dot in the middle.
+
+Yet another pun is using an unadorned (unsubscripted) hollow square in
+situations where the grammar of Figure 3 requires a hollow square with a
+subscript.  An example of this occurs in the second paragraph of Section
+3.2: "if we have \langle f [], \emptyset \rightangle".  The grammar does
+not allow for "[]" in that situation, only for "[]_n" for some n.
+
+Even more confusing is that the first full paragraph at the top of the
+same column (column 2 of page 4) appears to offer a helpful distinction,
+that [] denotes an unconstrained type and []_i denotes an unconstrained
+value.  But this is not so; the grammar of types "t" clearly requires
+that hole types have subscripts, and [] is used later, as I have already
+mentioned, as a value rather than a type.
+
+Another annoying pun is the use of the syntactic category "n" to provide
+subscripts for holes.  The subscripts for holes do not function as
+integers (no arithmetic operations are ever applied to them), but only
+as arbitrary distinct tokens or names that distinguish different holes.
+Their only interesting property is that fresh ones can be drawn from an
+infinite supply.  They DO NOT INTERACT AT ALL with integers as used as
+expressions or values (for example as operands to the "+" operation.
+Using the same syntactic category "n" for both values and hole
+subscripts invites the reader to expect, and look for, a connection
+between them, but this is a distraction; there is no such connection.
+Better to introduce a separate category of "distinct hole names".
+
+Related to this is an inconsistency of notation: the grammar in Figure 3
+says that a replacement in a substitution has the form "n |-> v", but in
+the definition of "narrow" at the bottom of the column, such a
+replacement has the form "[]_n |-> v" (I think the latter is
+preferable).
+
+Which reminds me: there is an error in the second clause of the
+definition of "narrow", because it apparently is supposed to return a
+pair of a value and a substitution, but "[]_i |-> v" is not a proper
+substitution according to the grammar in Figure 3; it should be "[]_i
+|-> v; \emptyset".  (Also, I think "i \in \sigma" should be "i \in
+\dom(\sigma}".)
+
+A related, and more serious, problem of notation occurs in Figure 4.  I
+eventually inferred that the intent is that ";" function as a
+concatenation operator for substitutions, but the paper needs to say
+this; it does not follow on purely formal (syntactic) grounds, because
+there is a problem with the way substitutions are defined (like lists),
+starting with the empty substitution \emptyset and then adding
+replacements on the left.  If \sigma_1 = "a |-> 3; \emptyset" and
+\sigma_2 = "b |-> 4; c |-> 5; \emptyset" then on purely formal
+(syntactic) grounds we have "\sigma_1; \sigma_2" = "a |-> 3; \emptyset;
+b |-> 4; c |-> 5; \emptyset", which is a syntactic construction not
+generated by the grammar in Figure 3.  Better to define a separate
+concatenation operator on substitutions, defined exactly as one would
+the LISP function APPEND:
+
+  \emptyset || \sigma = \sigma
+  (i |-> v; \sigma_1) || \sigma_2 = \sigma_1 || (i |-> v; \sigma_2)
+
+A more subtle reason to prefer this approach is that it is very
+confusing in Figure 4 to use ";" as an operator that has higher
+precedence than ","; conventionally ";" is considered to be a stronger
+separator (and therefore or lower precedence) than ",".
+
+All of which leads to the first major error I detected.  Apparently
+substitutions \sigma are, as usual, expected to be functions.  The paper
+does not say what to do if two distinct replacements "[]_i |-> v" in a
+substitution happen to have the same hole []_i but different values.  In
+some formalisms the leftmost, or the rightmost, takes precedence, but
+nothing it said here.  Studying Figure 4 and also the definition of
+"narrow" on page 4 (especially its second clause), I conclude that the
+intent is that this situation should not occur.
+
+But it appears that it can occur.  Consider the function "\x.(x + x)"
+and apply it to a hole "[]_1".  We apply rule E-APP-GOOD from Figure 4
+and reduce "\langle (\x.(x + x)) []_1, \emptyset \rangle" to "\langle
+[]_1 + []_1, \emptyset \rangle".  Now we apply rule E-PLUS-GOOD.
+
+To satisfy the first premise, we evaluate "narrow(v_2, int, \emptyset)"
+where v_2 = []_1.  This uses the second clause of the definition of
+"narrow", and because \sigma = \emptyset, we use the second arm of that
+clause, use "gen" to generate an int (let's suppose it is 23), and
+return "\langle 23, []_1 |-> 23; \emptyset \rangle".  So back in rule
+E-PLUS-GOOD, we have n_1 = 23 and \sigma_2 = "[]_1 |-> 23; \emptyset".
+So far, so good.
+
+Next, to satisfy the second premise, we evaluate "narrow(v_2, int,
+\emptyset)" where v_2 = []_1.  This again uses the second clause of the
+definition of "narrow", and because \sigma = \emptyset, we use the
+second arm of that clause, use "gen" to generate an int (let's suppose
+it is 44), and return "\langle 44, []_1 |-> 44; \emptyset \rangle".  So
+back in rule E-PLUS-GOOD, we have n_2 = 44 and \sigma_3 = "[]_1 |-> 44;
+\emptyset".
+
+Next, to satisfy the third premise, we compute n = n_1 + n_2 = 23 + 44 = 67.
+
+Finally, having satisfied all the premises, we apply the rule and reduce
+to "\langle 67, []_1 |-> 23; []_1 |-> 44; \emptyset \rangle".  But this
+is nonsense; \x.(x + x) cannot compute an odd integer such as 67!  The
+clue lies in the fact that the finally computed substitution fails to be
+a function: it maps []_1 to two distinct generated integers.
+
+I suspect that the second premise is in error, and should read:
+
+   \langle n_2, \sigma_3 \rangle = narrow(v_2, int, \sigma_1; \sigma_2)
+
+rather than
+
+   \langle n_2, \sigma_3 \rangle = narrow(v_2, int, \sigma_1)
+
+This suggests that the use of substitution concatenation in Figure 4 is
+a pitfall.  What is really going on is that the current substitution
+constitutes hidden state of the evaluation computation, and should be
+threaded throughout the computation as if maintained by a state monad.
+To make this work, it needs to be threaded through the "narrow" function
+as well.  In other words, "narrow" should not return either an empty
+substitution or a single replacement; instead it should return either
+its argument \sigma or else \sigma with a new replacement added (and
+this will eliminate the need for a special substitution concatenation
+operation):
+
+narrow(v, []_i, \sigma) = \langle v, \sigma \rangle
+narrow([]_i, t, \sigma) | i \in \dom(\sigma) = \langle \sigma(i), \sigma \rangle
+narrow([]_i, t, \sigma) = \langle v, []_i |-> v; \sigma \rangle where v = gen(t)
+narrow(n, int, \sigma) = \langle n, \sigma \rangle
+narrow(v, int, \sigma) = \langle stuck, \sigma \rangle
+
+and so on.  Then there is no need to concatenate in rule E-PLUS-GOOD:
+
+E-PLUS-GOOD:
+
+   \langle n_1, \sigma_2 \rangle = narrow(v_1, int, \sigma_1)
+
+   \langle n_2, \sigma_3 \rangle = narrow(v_2, int, \sigma_2)
+
+   n = n_1 + n_2
+
+   -----------------------------------------------------------
+
+   \langle v_1 + v_2, \sigma_1 \rangle \hookrightarrow \langle n, \sigma_3 \rangle
+
+and I believe this solves the problem.
+
+The other major problem that I believe is lurking has to do with the
+definition of type compatibility on page 5.  I was expecting the usual
+definition based on unification, that is, types s and t are compatible
+if \exists \theta . \theta(s) = \theta(t).  Instead, this definition is
+weaker, and I was surprised that this weaker would suffice.  I have not
+cranked through all the details, but I strongly suspect that it may
+suffice, but ONLY because the mini-language of FIgures 3 and 4 has
+sufficiently weak data structures.  If the mini-language were also to
+include pairs (a possibility alluded to on page 2) along with a pair
+constructor and operations "fst" and "snd", I think this definition of
+type compatibility might not suffice.  For consider these two types:
+
+(([]_1, []_2), []_3) and ([]_4, ([]_5, []_6))
+
+That is, both are are pair types, and the first type furthermore knows
+that the first component is also a pair, whereas the second type knows
+that the second component is also a pair.  These two types are NOT
+COMPATIBLE by the definition given in the paper, but they can certainly
+be unified by the substitution
+
+  []_3 |-> ([]_5, []_6); []_4 |-> ([]_1, []_2); \emptyset
+
+and it is perfectly plausible that these types might arise and then be
+merged during the course of an evaluation.
+
+Or perhaps I am wrong; if the substitution state is (explicitly or
+implicitly) singly threaded throughout the evaluation computation in the
+manner thta I have already described, then perhaps types only grow
+monotonically.  But in this case the definition of type compatibility
+given in the paper is too general: there is no need for it to be
+symmetric.  As I say, I hae not cranked through the details.  But
+whatever is going on, it ought to be explained thoroughly to the reader.
+
+Those are my principal criticisms.  Again, I think the overall idea is a
+good one, but we need to have a formalism that is clear, consistent,
+correct, and not gratuitously misleading.
+
+Here are some other small comments:
+
+In Figure 6, I think the two occurrences of "defs" should be "bs".
+
+In many places, incorrect fonts are used (typically using code font \tt
+where italics should be used).  Examples occur in the second paragraph
+of Section 3.2, where "e" and "t" are italic in their first mention
+"narrow(e,t,\sigma)" but immediately afterward referred to in code font.
+Please check over the entire paper for this sort of problem.
+
+Page 2, bottom of column 2: "we choose a random int ..."  There is no
+such thing as one random int.  Rather, you choose a specific int using a
+random process, which should be described.  In particular, what is the
+distribution?  Are all 2^32 int values equally likely, or is it weighted
+toward "simpler" values such as 0 and 1 and 2?  (If not weighted, I
+would wonder how you ever happened to stumble across "2" as a witness
+for "fac"; most int values would result in an stack overflow long before
+the error was uncovered!)
+
+page 3: "There is another wrinkle though, how did we ...?" should be
+"There is another wrinkle, though; how did we ...?"  It would be a good
+idea to have a competent proofreader of English check the punctuation in
+this paper; there are lots of missing or misused commas.
+
+page 3: "We solve this problem be equipping"  change "be" to "by"
+
+I suggest that it is not useful to the reader to include both a DOI and
+a closely related URL in the same bibliographic entry.  I suggest
+retaining only the URL.
+
+It is perhaps an interesting irony that if only this system could have
+been applied to the definitions of "narrow" and Figures 4, 5, and 6, it
+might have uncovered some type errors. :-)
+
+
+===========================================================================
+                           PLDI '16 Review #148C
+---------------------------------------------------------------------------
+           Paper #148: Dynamic Witnesses for Static Type Errors
+---------------------------------------------------------------------------
+
+                 Reviewer expertise: X. Expert
+                      Overall merit: C. Weak paper, though I will not fight
+                                        strongly against it
+
+                         ===== Paper summary =====
+
+This paper presents an approach that, given an ill-typed program in an
+ocaml subset, tries to generate inputs that cause that program to go
+wrong. The approach includes a formalism, theorems, and experimental
+results on a large collection of novice ocaml programs.
+
+It is not clear what subset of ocaml is supported by the
+implementation. In particular, the formalism excludes polymorphic
+functions, which is where much of the interesting challenges might
+lie.
+
+The introduction is a little bit confusing in that it should clarify
+that the paper deals with programs without type annotations. In
+particular, the notion of general witnesses only makes sense in this
+context.
+
+Overall, this is good work in a nice direction. However, the formal
+development is a little premature for publication, in that it seems
+overly complex, there are some notions that are not defined, and the
+proofs are just a little bit too hand-wavey and buggy for me to trust
+them.
+
+It would be great to address polymorphism.
+
+                      ===== Comments for author =====
+
+Page 2: is it true that you have an interactive visualization for all
+ocaml programs? I expect not; please clarify.
+
+It is really confusing that you use \box_i in your syntax and grammar,
+but then still use \box (without any subscript) throughout the
+development. Also, I suspect a new class of placeholder variables
+would work better. In particular, these placeholder variables could
+then be the domain of substitutions, rather than hacky integers.
+
+Do you really want stuck to be a value? in particular, this allows it
+to be passed as an argument into a function, which seems broken.
+
+
+For clarity, I suggest using different notations to distinguish holes
+in terms versus types.
+
+Please clarify that your contexts are actually evaluation contexts.
+
+Please clarify the type of the function narrow, and also the function gen.
+
+Please clarify that the rules for narrow are applied in priority order.
+
+The first case in the definition of narrow is never used, is that right?
+
+Is narrow a total or partial function?
+
+From looking at the use cases in figure 4, the second argument to
+narrow might be better characterized as a type tag,
+i.e. int/bool/arrow.
+
+Section 3.3: by "function", do you really mean a lambda expression? It
+would help to be a bit crisper in your terminology.
+
+Is the relation v:t defined somewhere?
+
+Theorem 1: replace \tau by *.
+
+footnote 1: this is the only (and somewhat mysterious) use of
+universally quantified types in the paper.
+
+Do you formally define inhabitable types? If not, how can the proof of
+theorem 1 use this assumption?
+
+Is the last case of gen ever used?
+
+Your evaluation relation appears to be nondeterministic, via e-context
+and e-stuck. Is this true? Is this a problem?
+
+The rule e-plus-good seems broken on the term (\box_1 + \box_1), as
+both substitutions will pick an int for \box_1, and how does “;”
+worked on such substitutions? Moreover is the “;” operator defined
+somewhere?
+
+Type compatibility is a symmetric relation. I would've expected to use
+a simpler type “instantiability” relation that need not be
+symmetric. Moreover, are the types (int->\box_1) and (\box_2->int)
+compatible? I think not, is this a problem?
+
+The proof of lemma 2 is claimed to be by induction, but I don't think
+you need an inductive argument for this proof.
+
+If narrow returns <stuck,\sigma> then \sigma is \emptyset, is that
+right? It might be simpler to make narrow a partial function that, if
+successful, returns a non-stuck value.
+
+The verbiage above lemma 4 is actually more precise regarding k than
+the statement of lemma 4.
+
+In your proofs by induction, please be more explicit in terms of a
+base case and an inductive case, for example in the proof of lemma 4.
+
+The introduction of top-level definitions seems a totally unnecessary
+complication in section 3.4.
+
+The repeated calls to eval in genRes seems inefficient. Is this
+intentional? Is this what your implementation does?
+
+Please use subscripts, eg f_1 rather than f1.
+
+“n” is overloaded as a bound on traces as well as the number of
+definitions.
+
+Fig 6: defs in unbound
+
+The witness generation corollary is an ill-formed statement, as the
+variable f_n in the conclusion is an unbound variable.
+
+Your implementation checks for infinite types inside narrow; could
+your formalism do this as well?
+
+Please include a section on the limitations of your approach.

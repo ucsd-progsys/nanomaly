@@ -1,0 +1,73 @@
+\begin{figure*}
+\judgementHead{Evaluation}{\step{e}{\su}{e}{\su}}
+\begin{gather*}
+\inference[\recontext]
+  {\step{e}{\su}{e'}{\su'}}
+  {\step{C[e]}{\su}{C[e']}{\su'}}
+\qquad
+\inference[\restuck]
+  {}
+  {\step{C[\stuck]}{\su}{\stuck}{\su}}
+\\ \\
+\inference[\replusgood]
+  {\pair{n_1}{\su'} = \force{v_1}{\tint}{\su} \\
+   \pair{n_2}{\su''} = \force{v_2}{\tint}{\su'} \\
+   n = \eplus{n_1}{n_2}}
+  {\step{\eplus{v_1}{v_2}}{\su}{n}{\su''}}
+\qquad
+\inference[\replusbadone]
+  {\pair{\stuck}{\su'} = \force{v_1}{\tint}{\su}}
+  {\step{\eplus{v_1}{v_2}}{\su}{\stuck}{\su'}}
+\\ \\
+\inference[\replusbadtwo]
+  {\pair{\stuck}{\su'} = \force{v_2}{\tint}{\su}}
+  {\step{\eplus{v_1}{v_2}}{\su}{\stuck}{\su'}}
+\qquad
+\inference[\reifgoodone]
+  {\pair{\etrue}{\su'} = \force{v}{\tbool}{\su}}
+  {\step{\eif{v}{e_1}{e_2}}{\su}{e_1}{\su'}}
+\\ \\
+\inference[\reifgoodtwo]
+  {\pair{\efalse}{\su'} = \force{v}{\tbool}{\su}}
+  {\step{\eif{v}{e_1}{e_2}}{\su}{e_2}{\su'}}
+\qquad
+\inference[\reifbad]
+  {\pair{\stuck}{\su'} = \force{v}{\tbool}{\su}}
+  {\step{\eif{v}{e_1}{e_2}}{\su}{\stuck}{\su'}}
+\\ \\
+\inference[\reappgood]
+  {\pair{\efun{x}{e}}{\su'} = \force{v_1}{\tfun{\thole{}}{\thole{}}}{\su}}
+  {\step{\eapp{v_1}{v_2}}{\su}{e\sub{x}{v_2}}{\su'}}
+\qquad
+\inference[\reappbad]
+  {\pair{\stuck}{\su'} = \force{v_1}{\tfun{\thole{}}{\thole{}}}{\su}}
+  {\step{\eapp{v_1}{v_2}}{\su}{\stuck}{\su'}}
+\\ \\
+\inference[\relet]
+  {}
+  {\step{\elet{x}{v}{e}}{\su}{e\sub{x}{v}}{\su}}
+\end{gather*}
+\\ % [0.05in]
+%% \relDescription{\forcesym and \gensym}
+%% \begin{gather*}
+%% \begin{array}{lcl}
+%% \force{\ehole{i}}{t} & \defeq & \elet{v}{\gen{t}}{\pair{v}{\ehole{i} \mapsto v}} \\
+%% \force{v}{\ehole{}}  & \defeq & \pair{v}{\emptysu} \\
+%% \force{n}{\tint}    & \defeq & \pair{n}{\emptysu} \\
+%% \force{v}{\tint}    & \defeq & \pair{\stuck}{\emptysu} \\
+%% \force{b}{\tbool}   & \defeq & \pair{b}{\emptysu} \\
+%% \force{v}{\tbool}   & \defeq & \pair{\stuck}{\emptysu} \\
+%% \force{\efun{x}{e}}{\tfun{\thole{}}{\thole{}}} & \defeq & \pair{\efun{x}{e}}{\emptysu} \\
+%% \force{v}{\tfun{\thole{}}{\thole{}}} & \defeq & \pair{\stuck}{\emptysu} \\
+%% \end{array}
+%% \qquad
+%% \begin{array}{lcll}
+%% \gen{\tint}   & \defeq & n & \\
+%% \gen{\tbool}  & \defeq & b & \\
+%% \gen{\tfun{t_1}{t_2}} & \defeq & \efun{x}{\ehole{i}}, & \quad \text{$i$ is fresh} \\
+%% \gen{\thole{}} & \defeq & \ehole{i}, & \quad \text{$i$ is fresh} \\
+%% \end{array}
+%% \end{gather*}
+\caption{Evaluation relation}
+\label{fig:operational}
+\end{figure*}
