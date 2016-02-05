@@ -1,5 +1,6 @@
 ===========================================================================
                            PLDI '16 Review #148A
+                     Updated 14 Jan 2016 7:18:57pm EST
 ---------------------------------------------------------------------------
            Paper #148: Dynamic Witnesses for Static Type Errors
 ---------------------------------------------------------------------------
@@ -10,13 +11,13 @@
 
                          ===== Paper summary =====
 
-This paper presents a method for finding concrete inputs that lead to dynamic
-errors corresponding to type errors in OCaml programs.  It then discusses some
-of the properties of the generated witnesses, like found errors indicating a
-guarantee of untypability for the original program.  Finally, it outlines a
-tool for exploring program traces induced by the witness inputs, and evaluates
-the coverage of witness detection across a corpus of beginning student
-programs.
+This paper presents a method for finding concrete inputs that lead to
+dynamic errors corresponding to type errors in OCaml programs.  It then
+discusses some of the properties of the generated witnesses, like found
+errors indicating a guarantee of untypability for the original program.
+Finally, it outlines a tool for exploring program traces induced by the
+witness inputs, and evaluates the coverage of witness detection across a
+corpus of beginning student programs.
 
 Pros:
   - The central idea is well-developed and clear, and the paper is very well
@@ -34,110 +35,129 @@ Cons:
 
                       ===== Comments for author =====
 
-Overall, I like this paper quite a bit, but overall I don't think it's quite
-ready for publication.  I wish it went further than the tiny core semantics,
-and I'm not sure that the trace semantics is actually a novel contribution.
-That said, I am convinced of the relevant properties about traces, and the
-empirical evaluation is very nice.
+Overall, I like this paper quite a bit, but overall I don't think it's
+quite ready for publication.  I wish it went further than the tiny core
+semantics, and I'm not sure that the trace semantics is actually a novel
+contribution.  That said, I am convinced of the relevant properties
+about traces, and the empirical evaluation is very nice.
 
-I feel like the paper starts with a somewhat pedagogic motivation, and this
-isn't quite met for me.  I don't know if the resulting traces and witnesses
-are actually helpful for students based on this paper.  The strongest
-statement I think I can make is that there is at least _more_ information
-available to choose from when presenting errors, which is certainly an
-improvement.
+I feel like the paper starts with a somewhat pedagogic motivation, and
+this isn't quite met for me.  I don't know if the resulting traces and
+witnesses are actually helpful for students based on this paper.  The
+strongest statement I think I can make is that there is at least _more_
+information available to choose from when presenting errors, which is
+certainly an improvement.
 
-For example, the trace visualization is nice for demo purposes but not new; I
-don't see why it's specifically useful beyond the state of the art in
-algebraic step debuggers (or in a tool like Redex), and it (and its use) isn't
-really evaluated.  Certainly it probably helps to have a step debugger that
-accommodates ill-typed OCaml programs, but I feel it isn't a new contribution;
-I feel like Figures 7 and 8 added little to the paper as a result.
+For example, the trace visualization is nice for demo purposes but not
+new; I don't see why it's specifically useful beyond the state of the
+art in algebraic step debuggers (or in a tool like Redex), and it (and
+its use) isn't really evaluated.  Certainly it probably helps to have a
+step debugger that accommodates ill-typed OCaml programs, but I feel it
+isn't a new contribution; I feel like Figures 7 and 8 added little to
+the paper as a result.
 
 
 Detailed comments:
 
-It would be nice if the semantics had a few terms with errors that _weren't_
-type errors.  This would make the point that the semantics, and error
-reporting, ought to distinguish between stuck-because-type-error and
-stuck-because-divide-by-zero.  The latter is another kind of failure for the
-type-error reporting framework, which has found a runtime error that isn't
-associated with narrow().  This would show up in Lemma 4, and you could even
-show that there would be stuck_T for types, and stuck_E for errors, and
-incompatible types only lead to stuck_T, not stuck_E.  I'm pretty sure that's
-the intent, and would be true, but putting it in the semantics and proofs
-would make it clearer, and I'm sure student programs use at least things like
-List.nth or division, which have runtime errors, and it seems like finding
+It would be nice if the semantics had a few terms with errors that
+_weren't_ type errors.  This would make the point that the semantics,
+and error reporting, ought to distinguish between
+stuck-because-type-error and stuck-because-divide-by-zero.  The latter
+is another kind of failure for the type-error reporting framework, which
+has found a runtime error that isn't associated with narrow().  This
+would show up in Lemma 4, and you could even show that there would be
+stuck_T for types, and stuck_E for errors, and incompatible types only
+lead to stuck_T, not stuck_E.  I'm pretty sure that's the intent, and
+would be true, but putting it in the semantics and proofs would make it
+clearer, and I'm sure student programs use at least things like List.nth
+or division, which have runtime errors, and it seems like finding
 witnesses for those stuck states is explicitly a non-goal.
 
 
-There are a number of reasons a particular witness could cause the program to
-reach a given dynamic error.  For example, a _correct_ factorial function
-passed a boolean value will cause E-If-Bad to trigger, so if a student had
-such a call in their program, that could be detected as a witness.  But the
-erroneous call to factorial wouldn't be highlighted red as I understand this
-system, the if expression would be.  That's not necessarily bad; students need
-to learn to reason "backwards" to the place where things went wrong often.
-But the corresponding failure is one of type _preservation_ that happened when
-the call occurred, substituting the wrong type in for an identifier.  This
-system highlights the moment where the _progress_ lemma would break down,
+There are a number of reasons a particular witness could cause the
+program to reach a given dynamic error.  For example, a _correct_
+factorial function passed a boolean value will cause E-If-Bad to
+trigger, so if a student had such a call in their program, that could be
+detected as a witness.  But the erroneous call to factorial wouldn't be
+highlighted red as I understand this system, the if expression would be.
+That's not necessarily bad; students need to learn to reason "backwards"
+to the place where things went wrong often.  But the corresponding
+failure is one of type _preservation_ that happened when the call
+occurred, substituting the wrong type in for an identifier.  This system
+highlights the moment where the _progress_ lemma would break down,
 causing a runtime error.
 
-A few questions related to this: How can this system help students answer that
-backwards "where did it go wrong" question?  If a program has _some_ explicit
-annotations, can this framework make use of them in any way, or are they all
-ignored?  For example, if a student annotated the factorial function with
-types, could there be another E-App-Bad for the argument type not matching?
+A few questions related to this: How can this system help students
+answer that backwards "where did it go wrong" question?  If a program
+has _some_ explicit annotations, can this framework make use of them in
+any way, or are they all ignored?  For example, if a student annotated
+the factorial function with types, could there be another E-App-Bad for
+the argument type not matching?
 
 
-Did the 3-4% of student programs that triggered an unbound variable error
-signal some other type error when run through the compiler?  I would think
-OCaml's compiler would report the unbound identifier first, but maybe not.  Is
-unbound identifier something that should appear in the semantics of λ^H?
+Did the 3-4% of student programs that triggered an unbound variable
+error signal some other type error when run through the compiler?  I
+would think OCaml's compiler would report the unbound identifier first,
+but maybe not.  Is unbound identifier something that should appear in
+the semantics of λ^H?
 
 
-The error behavior of narrow() has some echoes of the tagcheck form of Guha et
-al. [1].  They use a narrow-like form to augment an "untyped" semantics with a
-form that would get stuck on dynamic type-tag checks.  This allowed them to
-discharge the possibility of reaching these stuck states with a separate flow
-analysis.
+The error behavior of narrow() has some echoes of the tagcheck form of
+Guha et al. [1].  They use a narrow-like form to augment an "untyped"
+semantics with a form that would get stuck on dynamic type-tag checks.
+This allowed them to discharge the possibility of reaching these stuck
+states with a separate flow analysis.
 
-This suggests an interesting _refactoring_ of the semantics presented here.
-Instead of augmenting each reduction rule, leave the traditional rules alone,
-and introduce a new narrow _expression_, [narrow e T], that updates the
-subsitutions and generates stuck as appropriate.  Then each position that
-cares about a type can be rewritten, in a pre-processing pass, to have an
-appropriate narrow wrapper.
+This suggests an interesting _refactoring_ of the semantics presented
+here.  Instead of augmenting each reduction rule, leave the traditional
+rules alone, and introduce a new narrow _expression_, [narrow e T], that
+updates the subsitutions and generates stuck as appropriate.  Then each
+position that cares about a type can be rewritten, in a pre-processing
+pass, to have an appropriate narrow wrapper.
 
-This would have slightly different semantics in that currently, if a program
-adds true and false, the semantics could non-deterministically choose either
-to report based on Plus-Bad(1|2).  However, it would make the semantics
-simpler, and perhaps make it more straightforward to add new reduction rules
-in a compositional way.  This is just a suggestion and there are plenty of
-details in the proofs that might change as a result, but I offer it as how I
-understood the narrow() process.
+This would have slightly different semantics in that currently, if a
+program adds true and false, the semantics could non-deterministically
+choose either to report based on Plus-Bad(1|2).  However, it would make
+the semantics simpler, and perhaps make it more straightforward to add
+new reduction rules in a compositional way.  This is just a suggestion
+and there are plenty of details in the proofs that might change as a
+result, but I offer it as how I understood the narrow() process.
 
 [1] http://cs.brown.edu/~sk/Publications/Papers/Published/gsk-flow-typing-theory/
 
+
+
+
 Minor notes:
 
-I think there's a typo in the call to genArgs in figure 6 -- the empty list
-accumulator isn't required.  This confused me for a bit, especially with the
-careful discussion of currying elsewhere, I was on the lookout for genArgs
-returning a closure.
+I think there's a typo in the call to genArgs in figure 6 -- the empty
+list accumulator isn't required.  This confused me for a bit, especially
+with the careful discussion of currying elsewhere, I was on the lookout
+for genArgs returning a closure.
 
-It might be good to be clear about the type of narrow's first argument
-– using "e" as the variable made me think it could be any expression at
+It might be good to be clear about the type of narrow's first argument –
+using "e" as the variable made me think it could be any expression at
 first, when it seems it should be any _value_.
 
-I think the index on □ should be ignored for the _type_; it never seems to be
-relevant.  It's only needed for values, right?  For example, I don't see where
-it matters that the side condition "i fresh" holds in the typeof definition.
-In the semantics in figures 4, 7, and 8 it certainly isn't used.
+I think the index on □ should be ignored for the _type_; it never seems
+to be relevant.  It's only needed for values, right?  For example, I
+don't see where it matters that the side condition "i fresh" holds in
+the typeof definition.  In the semantics in figures 4, 7, and 8 it
+certainly isn't used.
 
+ADDED AFTER AUTHOR RESPONSE
+
+I'd like to thank the authors for their thoughtful response.  I still
+think the paper isn't strong enough yet.  In particular the response
+didn't address the novelty of the trace semantics (which I claim is not
+particularly new), which takes up a good portion of the paper.  I think
+much of the time spent on trace semantics can be spent on enriching and
+evaluating the core idea to make a much better future version of this
+paper.
 
 ===========================================================================
                            PLDI '16 Review #148B
+                    Updated 14 Jan 2016 12:33:45pm EST
 ---------------------------------------------------------------------------
            Paper #148: Dynamic Witnesses for Static Type Errors
 ---------------------------------------------------------------------------
@@ -392,9 +412,18 @@ It is perhaps an interesting irony that if only this system could have
 been applied to the definitions of "narrow" and Figures 4, 5, and 6, it
 might have uncovered some type errors. :-)
 
+ADDED AFTER AUTHOR RESPONSE:
+
+I have read the author response in full and updated my review as
+appropriate.  Additional comments:
+
+The idea is interesting.  I encourage the authors to rewrite the paper
+with careful attention to the reviews and then resubmit to another
+conference.
 
 ===========================================================================
                            PLDI '16 Review #148C
+                     Updated 13 Jan 2016 7:25:10pm EST
 ---------------------------------------------------------------------------
            Paper #148: Dynamic Witnesses for Static Type Errors
 ---------------------------------------------------------------------------
@@ -520,4 +549,8 @@ variable f_n in the conclusion is an unbound variable.
 Your implementation checks for infinite types inside narrow; could
 your formalism do this as well?
 
-Please include a section on the limitations of your approach.
+
+
+ADDED AFTER AUTHOR RESPONSE
+
+I have read the author response in full and updated my review as appropriate.
