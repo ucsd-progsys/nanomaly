@@ -33,37 +33,42 @@
 \newcommand{\uwsize}{284\xspace}
 \newcommand{\ucsdsize}{4,407\xspace}
 
-\newcommand\efun[2]{\ensuremath{\lambda #1. #2}}
-\newcommand\eapp[2]{\ensuremath{#1 \ #2}}
-\newcommand\eplus[2]{\ensuremath{#1 + #2}}
+\newcommand\efun[2]{\ensuremath{\lambda #1. #2}\xspace}
+\newcommand\eapp[2]{\ensuremath{#1\ #2}\xspace}
+\newcommand\eplus[2]{\ensuremath{#1 + #2}\xspace}
 % \newcommand\edapp[2]{\ensuremath{#1 \ \overline{#2}}}
-\newcommand\eif[3]{\ensuremath{\mathtt{if}\ #1\ \mathtt{then}\ #2\ \mathtt{else}\ #3}}
-\newcommand\elet[3]{\ensuremath{\mathtt{let}\ #1 = #2\ \mathtt{in}\ #3}}
-\newcommand\edcapp[2]{\ensuremath{#1 \ #2}}
-\newcommand\ematch[2]{\ensuremath{\mathtt{match}\ #1 \ \mathtt{with}\ #2}}
-\newcommand\ealt[2]{\ensuremath{#1 \rightarrow #2}}
+\newcommand\eif[3]{\ensuremath{\mathtt{if}\ #1\ \mathtt{then}\ #2\ \mathtt{else}\ #3}\xspace}
+\newcommand\elet[3]{\ensuremath{\mathtt{let}\ #1 = #2\ \mathtt{in}\ #3}\xspace}
+\newcommand\enode[3]{\ensuremath{\mathtt{node}\ #1\ #2\ #3}\xspace}
+\newcommand\eleaf{\ensuremath{\mathtt{leaf}}\xspace}
+\newcommand\ecase[6]{\ensuremath{\mathtt{case}\ #1\ \mathtt{of}\ \{\eleaf \to #2\}\ \{\enode{#3}{#4}{#5} \to #6\}}\xspace}
+
+\newcommand\ehole{\ensuremath{\square}\xspace}
+\newcommand\thole{\ensuremath{\boxdot}\xspace}
 
 % \newcommand\erec[3]{\ensuremath{\mu #1.\lambda #2. #3}}
 % \newcommand\etabs[2]{\ensuremath{\left[\Lambda #1\right] #2}}
 % \newcommand\etapp[2]{\ensuremath{#1 \left[ #2 \right]}}
 \newcommand\etrue{\ensuremath{\mathtt{true}}\xspace}
 \newcommand\efalse{\ensuremath{\mathtt{false}}\xspace}
-% \newcommand\ptrue{\ensuremath{\mathit{true}}\xspace}
-% \newcommand\pfalse{\ensuremath{\mathit{false}}\xspace}
-% \newcommand\eletsub[2]{\ensuremath{#1 #2}}
-\newcommand\ehole[1]{\ensuremath{\square_{#1}}\xspace}
+\newcommand\vhole[1]{\ensuremath{\ehole\ @#1}\xspace}
+\newcommand\vnode[4]{\ensuremath{\mathtt{node}\ @#1\ #2\ #3\ #4}\xspace}
+\newcommand\vleaf[1]{\ensuremath{\mathtt{leaf}\ @#1}\xspace}
+
 \newcommand\stuck{\ensuremath{\mathtt{stuck}}\xspace}
+
 
 % Types
 \newcommand\tbool{\ensuremath{\mathtt{bool}}\xspace}
 \newcommand\tint{\ensuremath{\mathtt{int}}\xspace}
 % \newcommand\tref[4]{\ensuremath{\{ \tbind{#1}{#2^{#3}} \mid #4 \}}}
 % \newcommand\tttref[4]{\ensuremath{{\{ \ttbind{#1}{#2^{#3}} \mid \mathtt{#4} \}}}}
-\newcommand\tfun[2]{\ensuremath{{#1} \rightarrow #2}}
+\newcommand\tfun{\ensuremath{\mathtt{fun}}\xspace}
+\newcommand\ttree[1]{\ensuremath{\mathtt{tree}\ #1}\xspace}
 % \newcommand\tfun[3]{\ensuremath{\tbind{#1}{#2} \rightarrow #3}}
 % \newcommand\tabs[2]{\ensuremath{\forall #1 . #2}}
-\newcommand\thole[1]{\ensuremath{\square_{#1}}\xspace}
 \newcommand\hastype[2]{\ensuremath{{#1} \colon {#2}}}
+\newcommand\unify[3]{\ensuremath{\mathsf{unify}(#1,#2,#3)}\xspace}
 \newcommand\tsub[2]{\ensuremath{{#1} \preceq {#2}}}
 \newcommand\tnsub[2]{\ensuremath{{#1} \npreceq {#2}}}
 \newcommand\tcompat[2]{\ensuremath{#1 \sim #2}}
@@ -76,10 +81,10 @@
 \newcommand\trace{\tau}
 \newcommand\pair[2]{\langle #1, #2 \rangle}
 \newcommand\triple[3]{\langle #1, #2, #3 \rangle}
-\newcommand\step[4]{\stepsto{\pair{#1}{#2}}{\pair{#3}{#4}}}
+\newcommand\step[6]{\stepsto{\triple{#1}{#2}{#3}}{\triple{#4}{#5}{#6}}}
 %\newcommand\stepi[5]{\stepstoi{#1}{\pair{#2}{#3}}{\pair{#4}{#5}}}
-\newcommand\steptr[5]{\stepstoi{#1}{\pair{#2}{#3}}{\pair{#4}{#5}}}
-\newcommand\steps[4]{\stepstot{\pair{#1}{#2}}{\pair{#3}{#4}}}
+\newcommand\steptr[7]{\stepstoi{#1}{\triple{#2}{#3}{#4}}{\triple{#5}{#6}{#7}}}
+\newcommand\steps[6]{\stepstot{\triple{#1}{#2}{#3}}{\triple{#4}{#5}{#6}}}
 \newcommand\stepg[6]{\stepsto{\triple{#1}{#2}{#3}}{\triple{#4}{#5}{#6}}}
 \newcommand\stepsg[6]{\stepstot{\triple{#1}{#2}{#3}}{\triple{#4}{#5}{#6}}}
 \newcommand\stepsto[2]{\ensuremath{#1 \hookrightarrow #2}}
@@ -87,13 +92,16 @@
 \newcommand\stepstoi[3]{\ensuremath{#2 \hookrightarrow^{#1} #3}}
 \newcommand\forcesym{\ensuremath{\mathsf{narrow}}\xspace}
 \newcommand\gensym{\ensuremath{\mathsf{gen}}\xspace}
-\newcommand\force[3]{\ensuremath{\forcesym(#1, #2, #3)}}
+\newcommand\force[4]{\ensuremath{\forcesym(#1, #2, #3, #4)}}
 \newcommand\gen[1]{\ensuremath{\gensym(#1)}}
+\newcommand\inctx[1]{\ensuremath{C\left[#1\right]}\xspace}
 
 \newcommand\dcolon{\ensuremath{\colon\!\!\colon}}
 \newcommand\vsu{\ensuremath{\sigma}}
 \newcommand\su{\ensuremath{\vsu}}
 \newcommand\tsu{\ensuremath{\theta}}
+\newcommand\extendsu[3]{\ensuremath{#1\left[#2 \mapsto #3\right]}}
+\newcommand\lookupsu[2]{\subst{#1}{#2}}
 
 \newcommand\tr{\ensuremath{G}}
 \newcommand\subtermssym{\ensuremath{\mathsf{subterms}}\xspace}
@@ -102,7 +110,7 @@
 \newcommand\singlestep[2]{\ensuremath{#1 \leadsto #2}}
 \newcommand\multistep[2]{\ensuremath{#1 \leadsto^{*} #2}}
 \newcommand\emptysu{\ensuremath{\varnothing}}
-\newcommand\mksub[2]{\ensuremath{#1 \mapsto #2}}
+\newcommand\mksub[2]{\ensuremath{\left[#1 \mapsto #2\right]}}
 \newcommand\subst[2]{\ensuremath{#1(#2)}}
 \newcommand\sub[2]{\ensuremath{\left[#2/#1\right]}}
 \newcommand\rulename[1]{\textsc{#1}\xspace}
@@ -117,6 +125,14 @@
 \newcommand{\reappgood}{\rulename{E-App-Good}}
 \newcommand{\reappbad}{\rulename{E-App-Bad}}
 \newcommand{\relet}{\rulename{E-Let}}
+\newcommand{\renodegood}{\rulename{E-Node-Good}}
+\newcommand{\renodebadone}{\rulename{E-Node-Bad1}}
+\newcommand{\renodebadtwo}{\rulename{E-Node-Bad2}}
+\newcommand{\releafgood}{\rulename{E-Leaf-Good}}
+\newcommand{\recasegoodone}{\rulename{E-Case-Good1}}
+\newcommand{\recasegoodtwo}{\rulename{E-Case-Good2}}
+\newcommand{\recasebad}{\rulename{E-Case-Bad}}
+
 
 \newcommand{\relDescription}[1]{\ensuremath{\textrm{\textbf{#1}}}}
 \newcommand{\judgementHead}[2]{\ensuremath{\relDescription{#1}\hfill\fbox{#2}}}

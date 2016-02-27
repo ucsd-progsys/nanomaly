@@ -2,14 +2,19 @@
 % \hrule width 0.48\textwidth \vspace{0.05in}
 $$
 \begin{array}{rrcl}
+\emphbf{Configurations} \quad
+  & c & ::=    & \triple{e}{\vsu}{\tsu} \spmid \triple{\stuck}{\vsu}{\tsu} \\[0.05in]
+
 \emphbf{Expressions} \quad
-  & e & ::=    & v \spmid x \spmid \eapp{e}{e} \spmid \eplus{e}{e}\\
+  & e & ::=    & v \spmid x \spmid \ehole \spmid \eapp{e}{e} \spmid \eplus{e}{e}\\
   &   & \spmid & \eif{e}{e}{e} \\
-  &   & \spmid & \elet{x}{e}{e} \\
-  &   & \spmid & \edcapp{c}{e} \spmid \ematch{e}{\ealt{\edcapp{c}{x}}{e}} \\[0.05in]
+  % &   & \spmid & \elet{x}{e}{e} \\
+  &   & \spmid & \enode{e}{e}{e} \spmid \eleaf \\
+  &   & \spmid & \ecase{e}{e}{x}{x}{x}{e} \\[0.05in]
 
 \emphbf{Values} \quad
-  & v & ::= &  n \spmid b \spmid \efun{x}{e} \spmid \ehole{n} \spmid \stuck \\[0.05in]
+  & v  & ::= & n \spmid b \spmid \efun{x}{e} \spmid \vhole{t} \spmid tr \\
+  & tr & ::= & \vnode{t}{v}{v}{v} \spmid \vleaf{t} \\[0.05in]
 
 \emphbf{Integers} \quad
   & n & ::= &  0,1,-1,\ldots \\[0.05in]
@@ -18,10 +23,11 @@ $$
   & b & ::= &  \etrue \spmid \efalse \\[0.05in]
 
 \emphbf{Types} \quad
-  & t & ::= & \tbool \spmid \tint \spmid \tfun{t}{t} \spmid \thole{n} \\[0.05in]
+  & t & ::= & \tbool \spmid \tint \spmid \tfun \spmid \ttree{t} \spmid \thole \\[0.05in]
 
 \emphbf{Substitutions} \quad
-  & \vsu & ::= & \emptysu \spmid \mksub{n}{v}; \vsu \\[0.1in]
+  & \vsu & ::= & \emptysu \spmid \extendsu{\vsu}{\ehole}{v} \\
+  & \tsu & ::= & \emptysu \spmid \extendsu{\tsu}{\thole}{t} \\[0.1in]
 \end{array}
 $$
 % \hrule width 0.48\textwidth
@@ -36,7 +42,11 @@ $$
   \spmid \eapp{v}{C} \\
   & & \spmid & \eplus{C}{e} \spmid \eplus{v}{C} \\
   & & \spmid & \eif{C}{e}{e} \\
-  & & \spmid & \elet{x}{C}{e}
+  % & & \spmid & \elet{x}{C}{e} \\
+  & & \spmid & \enode{C}{e}{e} \\
+  & & \spmid & \enode{v}{C}{e} \\
+  & & \spmid & \enode{v}{v}{C} \\
+  & & \spmid & \ecase{C}{e}{x}{x}{x}{e}
   \\[0.05in]
 \end{array}
 $$
