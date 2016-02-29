@@ -40,6 +40,16 @@
 
 \usepackage[inference]{semantic}
 
+
+\usepackage{ifthen}
+\newcommand{\isTechReport}{true} % true or false
+\newcommand\includeProof[1]{%
+  \ifthenelse{\equal{\isTechReport}{true}}
+    {{#1}}
+    {\ignorespaces}
+\xspace}
+
+
 \begin{document}
 
 
@@ -77,5 +87,13 @@
 \bibliographystyle{abbrvnat}
 \bibliography{main}
 }
+
+\ifthenelse{\equal{\isTechReport}{true}}
+{
+\appendix
+\input{proofs}
+}
+{}
+
 
 \end{document}

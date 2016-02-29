@@ -306,6 +306,8 @@ expression $e$ is defined as a function $\typeof{e}$ defined as:
     \typeof{\vleaf{t}} & \defeq & \ttree{t} \\
     \typeof{\vnode{t}{v_1}{v_2}{v_3}} & \defeq & \ttree{t} \\
     \typeof{\vhole{t}} & \defeq & t \\
+    \typeof{\eleaf} & \defeq & \ttree{\thole}, & \quad \text{\thole is fresh} \\
+    \typeof{\enode{v_1}{v_2}{v_3}} & \defeq & \ttree{\thole}, & \quad \text{\thole is fresh} \\
     \typeof{e} & \defeq & \thole, & \quad \text{\thole is fresh} \\
   \end{array}
   \]

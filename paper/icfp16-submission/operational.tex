@@ -1,5 +1,5 @@
 \begin{figure*}
-\judgementHead{Evaluation}{\step{e}{\vsu}{\tsu}{e \cup \stuck}{\vsu}{\tsu}}
+\judgementHead{Evaluation}{\step{e \cup \stuck}{\vsu}{\tsu}{e \cup \stuck}{\vsu}{\tsu}}
 \begin{gather*}
 % \inference[\recontext]
 %   {\step{e}{\su}{e'}{\su'}}
@@ -9,6 +9,10 @@
 %   {}
 %   {\step{C[\stuck]}{\su}{\stuck}{\su}}
 % \\ \\
+\inference[\reholegood]
+  {\thole \mbox{ is fresh}}
+  {\step{\ehole}{\vsu}{\tsu}{\vhole{\thole}}{\vsu}{\tsu}}
+\\ \\
 \inference[\replusgood]
   {\triple{n_1}{\vsu'}{\tsu'} = \force{v_1}{\tint}{\vsu}{\tsu} \\
    \triple{n_2}{\vsu''}{\tsu''} = \force{v_2}{\tint}{\vsu'}{\tsu'} \\

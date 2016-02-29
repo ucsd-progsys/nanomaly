@@ -1,0 +1,39 @@
+\section{Proofs for Section~\ref{sec:semantics}}
+\label{sec:proofs}
+
+
+\begin{proof}[Proof of Lemma~\ref{lem:refine-partial}]
+  By case analysis on the evaluation rules. We can immediately discharge
+  the $\rulename{E-*-Bad}$ rules as they result in the \stuck state.
+  \begin{description}
+  \item[Case \replusgood] \hastype{\eplus{v_1}{v_2}}{\thole} and
+    \hastype{n}{\tint}, so partial type compatibility is preserved.
+  \item[Case \rulename{E-If-Good\{1,2\}}]
+    \hastype{\eif{v}{e_1}{e_2}}{\thole}, which is compatible with any
+    type $e_1$ or $e_2$ might have.
+  \item[Case \reappgood] \hastype{\eapp{v_1}{v_2}}{\thole}, which is
+    compatible with any type $e$ might have.
+  \item[Case \eleaf] \eleaf steps to \vleaf{\thole} with a fresh \thole,
+    but \hastype{\eleaf}{\ttree{\thole}}, so partial type compatibility
+    is preserved.
+  \item[Case \renodegood]
+    \hastype{\enode{v_1}{v_2}{v_3}}{\ttree{\thole}}, with a fresh \thole
+    and \hastype{\vnode{t}{v_1}{v_2}{v_3}}{\ttree{t}}. But
+    \tcompat{\thole}{\ttree{t}} because we can just map \thole to
+    \ttree{t} (as \thole is fresh), so partial type compatibility is
+    preserved.
+  \item[Case \rulename{E-Case-Good\{1,2\}}]
+    \hastype{\ecase{v}{e_1}{x_1}{x_2}{x_3}{e_2}}{\thole}, which is compatible
+    with any type $e_1$ and $e_2$ might have.
+  \item[Case \reholegood] \hastype{\ehole}{\thole}, with a fresh
+    \thole, and \hastype{\vhole{\thole}}{\thole}, but a fresh hole is
+    compatible with anything, so compatibility is preserved.
+  \end{description}
+
+\end{proof}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
