@@ -324,7 +324,7 @@ value $v$ is defined as a function $\typeof{v}$ defined as:
   \]
 %
 Note that we approximate the type of values rather than
-performing full type inference, for example
+performing traditional type inference, for example
 $\typeof{\efun{x}{\eplus{x}{1}}} = \tfun$,
 instead of the usual $\tint \rightarrow \tint$.
 
@@ -333,18 +333,67 @@ We can think of the evaluation of \eapp{f}{\vhole{\thole}} as (dynamically)
 inferring a \emph{partial type} --- a type that may contain holes ---
 for $f$'s input, \ie a partial instantiation of \thole.
 %
-We can extract this type from an evaluation trace.
+We can extract this type from an evaluation trace, by repeatedly
+applying the final type substitution to \thole until it contains no
+holes in the domain of the substitution. We will call this process of
+repeated substition \emph{resolving} a hole, and will use
+\resolve{\thole}{\tsu} to denote the the resolution of \thole with
+respect to \tsu.
 %
 Formally, we say that if
 $\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{\estuck}{\vsu}{\tsu}$,
 then the \emph{partial input type} of $f$ upto $\trace$, written
 \ptype{\trace}{f}, is
-$\typeof{\subst{\vsu}{\ehole}}$.
-\ES{should we say $\subst{\tsu}{\thole}$ instead? would need a helper function that does the repeated application of \tsu\ until the result has no $\thole \in dom(\tsu)$}
+$\resolve{\thole}{\tsu}$.
+%$\typeof{\subst{\vsu}{\ehole}}$.
+% \ES{should we say $\subst{\tsu}{\thole}$ instead? would need a helper function that does the repeated application of \tsu\ until the result has no $\thole \in dom(\tsu)$}
 %
 %We will omit the subscript when we wish to refer to the final partial
 %type, \ie\ at the step where the expression has been reduced to a value
 %(or stuck.)
+
+% \begin{lem}
+% \label{lem:narrow-tsu}
+% If $\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots$
+% and $\trace' \defeq \trace, \triple{\estuck'}{\vsu'}{\tsu'}$
+%     (\ie $\trace'$ is a single-step extension of $\trace$)
+% and $\tsu \neq \tsu'$
+% then the final step must have \emph{successfully} invoked \forcesym.
+% \end{lem}
+
+\paragraph{Narrowing}
+%
+Only a successful call to \forcesym can change the partial
+input type of $f$.
+%
+\begin{lem}
+\label{lem:force-inst}
+If
+$\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e}{\vsu}{\tsu}$
+and
+$\trace' \defeq \trace, \step{e}{\vsu}{\tsu}{\estuck'}{\vsu'}{\tsu'}$
+(\ie $\trace'$ is a single-step extension of $\trace$)
+and
+$\ptype{\trace}{f} \neq \ptype{\trace'}{f}$,
+then the final step $\step{e}{\vsu}{\tsu}{\estuck'}{\vsu'}{\tsu'}$ invokes \forcesym.
+\end{lem}
+
+\begin{proof}
+  By case analysis on the evaluation rules.
+  %
+  If $\ptype{\trace}{f} \neq \ptype{\trace'}{f}$ then,
+  % one of the holes in $f$'s
+  % argument must have been instantiated with a concrete value at the last step.
+  by the definition of $\ptype{\trace}{f}$, $\tsu \neq \tsu'$, as \thole
+  does not change.
+  %
+  % An examination of the rules shows that only place this happens is
+  % in the second case of \forcesym.
+  An examination of the rules shows that only \forcesym can update \tsu,
+  and furthermore that only the successful cases of \forcesym do update
+  \tsu.
+\end{proof}
+
 
 \paragraph{Type Compatibility}
 Two types are compatible if there exists a type subsitution that maps both
@@ -364,8 +413,7 @@ refines the partial input type of $f$, \ie preserves type compatibility.
 \begin{lem}
 \label{lem:refine-partial}
 If $\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots$ and
-$\trace' \defeq \trace, \triple{\estuck'}{\vsu'}{\tsu'}$ (\ie $\trace'$ is a single-step
-extension of $\trace$)
+$\trace'$ is a single-step extension of $\trace$, % \defeq \trace, \triple{\estuck'}{\vsu'}{\tsu'}$
 %
 %The partial type of $f$ upto $\trace$ is compatible
 %with the partial type upto $\trace'$, \ie\
@@ -375,42 +423,23 @@ then \tcompat{\ptype{\trace}{f}}{\ptype{\trace'}{f}}.
 \begin{proof}
   By case analysis on the evaluation rules.
   %
-  Note that all rules preserve partial types with the exception of when
-  \forcesym\ is called on a hole, in which case we may instantiate the hole with
-  a concrete value.
-  %
-  But $\typeof{\vhole{\thole}} = \thole$, which is compatible with any type.
-\end{proof}
-
-\paragraph{Narrowing}
-%
-Furthermore, only a successful call to \forcesym can change the partial type of $f$.
-%
-\begin{lem}
-\label{lem:force-inst}
-If
-$\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e}{\vsu}{\tsu}$
-and
-$\trace' \defeq \trace, \step{e}{\vsu}{\tsu}{\estuck'}{\vsu'}{\tsu'}$
-and
-$\ptype{\trace}{f} \neq \ptype{\trace'}{f}$,
-then the final step $\step{e}{\vsu}{\tsu}{\estuck'}{\vsu'}{\tsu'}$ invokes \forcesym.
-\end{lem}
-
-\begin{proof}
-  By case analysis on the evaluation rules.
-  %
-  If $\ptype{\trace}{f} \neq \ptype{\trace}{f}$ then one of the holes in $f$'s
-  argument must have been instantiated with a concrete value at the last step.
-  %
-  An examination of the rules shows that only place this happens is
-  in the second case of \forcesym.
+  First note that by Lemma~\ref{lem:force-inst} we can immediately
+  discharge the \rulename{E-*-Bad} rules as they cannot change
+  \ptype{\trace}{f} at all, and are thus trivially
+  compatibility-preserving. For the \rulename{E-*-Good} rules we can
+  show that, by virtue of \forcesym succeeding, all must preseve
+  compatibility.
+  % Note that all rules preserve partial types with the exception of when
+  % \forcesym\ is called on a hole, in which case we may instantiate the hole with
+  % a concrete value.
+  % %
+  % But $\typeof{\vhole{\thole}} = \thole$, which is compatible with any type.
 \end{proof}
 
 \paragraph{Incompatible Values Are Wrong}
 %
 \emph{Any} value that is \emph{incompatible} with
-the partial type upto trace $\trace$ will cause $f$ to get stuck
+the partial input type upto trace $\trace$ will cause $f$ to get stuck
 in \emph{at most} $k$ steps, where $k$ is the length of $\trace$.
 %
 \begin{lem}
@@ -419,30 +448,32 @@ in \emph{at most} $k$ steps, where $k$ is the length of $\trace$.
      \hastype{v}{t} and
      \tincompat{t}{\ptype{\trace}{f}},
   then
-     \steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}.
+     \steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}
+     in at most $k$ steps, where $k$ is the length of $\trace$.
 \end{lem}
 \begin{proof}
-  By induction on $k$, the length of $\trace$.
-  Let $s_{\trace} = \ptype{\trace}{f}$ and
-  $\trace' = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},...,\triple{e'}{\vsu'}{\tsu'}$
+  By induction on $k$, the length of $\trace$. Let $s_{\trace} = \ptype{\trace}{f}$ and
+  $\trace' = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e'}{\vsu'}{\tsu'}$
   such that $\step{e'}{\vsu'}{\tsu'}{e}{\vsu}{\tsu}$.
   Suppose \hastype{v}{\tincompat{t}{s_{\trace}}}, we
-  will show that \steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu'}{\tsu'}
-  in at most $k$ steps:
+  will show that \steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}
+  in at most $k$ steps.
 %
   \begin{description}
   \item [Case \tincompat{t}{s_{\trace'}}:]
     The inductive hypothesis applies.
   \item [Case $\tcompat{t}{s_{\trace'}}$ but $\tincompat{t}{s_{\trace}}$:]
-    By Lemma~\ref{lem:force-inst} we must have called \forcesym at step
-    $k$.
+    Since $\tcompat{t}{s_{\trace'}}$ but $\tincompat{t}{s_{\trace}}$ we know
+    that $s_{\trace'} \neq s_{\trace}$, and
+    by Lemma~\ref{lem:force-inst} we know that we must have
+    successfully called \forcesym at step $k$.
     %
     Lemma~\ref{lem:refine-partial} tells us
     $\tcompat{s_{\trace'}}{s_{\trace}}$, which means we must have
     specifically narrowed $s_{\trace'}$ to a type incompatible with $t$.
     %
-    A case analysis of the rules shows that \forcesym cannot have
-    succeeded.
+    A case analysis of the evaluation rules shows that narrowing to
+    $t$ instead cannot succeed.
   \end{description}
 \end{proof}
 
@@ -456,12 +487,13 @@ compatible with $t$. %the partial type upto $\trace$.
 %
 \begin{description}
 \item [Case \tcompat{s}{t}:]
-  Let $\trace = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},...,\triple{\stuck}{\vsu}{\tsu}$.
+  Let $\trace = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{\stuck}{\vsu}{\tsu}$.
   %
-  The value $v = \subst{\vsu}{\ehole}$ demonstrates that
-  $\eapp{f}{v}$ gets stuck. \ES{here we also need a repeated application of the substitution, as \ehole may map directly to $\vnode{\thole}{\vhole{\thole}_1}{\vleaf{\thole}}{\vleaf{\thole}}$ and $\ehole_1$ may later map to \etrue.}
+  The value $v = \resolve{\ehole}{\vsu}$ demonstrates that
+  $\eapp{f}{v}$ gets stuck.
 \item [Case \tincompat{s}{t}:] By Lemma~\ref{lem:k-stuck}, every $v$
   such that \hastype{v}{t} demonstrates that $\eapp{f}{v}$ gets stuck.
+  % \ES{do we need to say anythign else?}
 \end{description}
 \end{proof}
 

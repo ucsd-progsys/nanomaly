@@ -1,11 +1,79 @@
 \section{Proofs for Section~\ref{sec:semantics}}
 \label{sec:proofs}
 
+\begin{proof}[Proof of Lemma~\ref{lem:force-inst}]
+  By case analysis on the evaluation rules.
+  %
+  If $\ptype{\trace}{f} \neq \ptype{\trace'}{f}$ then,
+  % one of the holes in $f$'s
+  % argument must have been instantiated with a concrete value at the last step.
+  by the definition of $\ptype{\trace}{f}$, $\tsu \neq \tsu'$, as \thole
+  does not change.
+  %
+  % An examination of the rules shows that only place this happens is
+  % in the second case of \forcesym.
+  An examination of the rules shows that only \forcesym can update \tsu.
+
+
+  Furthermore, an examination of \forcesym immediately shows that in the
+  cases where \forcesym returns \stuck, \tsu is unmodified. Thus only
+  \emph{successful} calls to \forcesym can change \tsu and, by
+  extension, \ptype{\trace}{f}.
+
+  % By case analysis on the evaluation rules. As above we are only
+  % concerned with the sucessful steps, and can thus ignore the
+  % \rulename{E-*-Bad} rules.
+
+  % In each case we will show that only
+  % the calls to \forcesym can change the partial input type of $f$.
+
+  % \begin{description}
+  % % \item[Case \reholegood] \hastype{\ehole}{\thole}, which is
+  % %   alpha-equivalent to \typeof{\vhole{\thole}}, thus this step does not
+  % %   change the partial type.
+  % \item[Case \replusgood] Since narrowing succeeded on $v_1$ and $v_2$,
+  %   they must have both either been ints or unconstrained holes.
+  %   The only way the partial input type could have changed is if one or the
+  %   other was a hole, and was instantiated by \forcesym.
+  % \item[Case \rulename{E-If-Good-\{1,2\}}] Since narrowing succeeded on
+  %   $v$, it must have either been a bool or an unconstrained hole.
+  %   The only way the partial input type could have changed is if $v$ was a
+  %   hole and was instantiated by \forcesym.
+  % \item[Case \reappgood] Since narrowing succeeded on $v$, it must have
+  %   either been a lambda or an unconstrained hole. The only way the
+  %   partial input type could have changed is if $v$ was a hole and was
+  %   instantiated by \forcesym.
+  % \item[Case \releafgood] This rule does not call \forcesym, thus it
+  %   cannot change the partial input type, and cannot have been applied.
+  % \item[Case \renodegood] In this case the partial input type could have
+  %   changed if any of $v_1$, $v_2$, or $v_3$ were unconstrained holes.
+  %   Since both \forcesym calls succeeded \emph{and} the partial input
+  %   type changed
+
+  %   Since narrowing succeeded on $v_2$ and $v_3$,
+  %   they must have both been trees or unconstrained holes
+
+  %   \ES{come back to this, not entirely clear it
+  %     holds as we might learn the element type from one of the subtrees}
+  % \item[Case \rulename{E-Case-Good\{1,2\}}] Since narrowing succeeded on
+  %   $v$, it must have either been a tree or an unconstrained hole.
+  %   The only way the partial input type could have changed is if $v$ was a
+  %   hole and was instantiated by \forcesym.
+  % \end{description}
+\end{proof}
+
+
 \begin{proof}[Proof of Lemma~\ref{lem:refine-partial}]
-  By case analysis on the evaluation rules. We can immediately discharge
-  the $\rulename{E-*-Bad}$ rules as they result in the \stuck state, and
-  an inspection of \forcesym shows that when \forcesym returns \stuck,
-  it does not modify \vsu.
+  By case analysis on the evaluation rules.
+
+  We can immediately discharge the $\rulename{E-*-Bad}$ rules as they
+  result in the \stuck state, and by Lemma~\ref{lem:force-inst} we know
+  that these rules cannot change \ptype{\trace}{f} at all.
+
+  % and
+  % an inspection of \forcesym shows that when \forcesym returns \stuck,
+  % it does not modify \vsu or \tsu. Furthermore, \forcesym is the only
+  % procedure that can modify the substitutions.
 
   % For the remainder of the rules we must
   % consider how they might affect both the input (by instantiating holes)
@@ -36,8 +104,8 @@
     % \hastype{\eapp{v_1}{v_2}}{\thole}, which is compatible with any type
     % $e$ might have, so partial type compatiblity of the output is
     % preserved.
-  \item[Case \releafgood] \eleaf cannot contain a hole, so this step cannot
-    affect partial input type compatibility.
+  \item[Case \releafgood] This rule does not call \forcesym, so this
+    step cannot affect partial input type compatibility.
 
     % \eleaf steps to \vleaf{\thole} with a fresh \thole,
     % but \hastype{\eleaf}{\ttree{\thole}}, so partial type compatibility
@@ -49,8 +117,15 @@
     already been \ttree{t}'s or unconstrained holes. Thus partial input type
     compatibility is preserved.
     %
-    $v_1$ is not narrowed, so if it was a hole it would not be
-    instantiated here, thus it cannot affect partial input type compatibility.
+    $v_1$ is not narrowed, but if it \vhole{\thole} we may constrain
+    \thole by narrowing $v_2$ or $v_3$. However, partial input type
+    compatibility must still be preserved as the calls to \forcesym will
+    only succeed if \thole is either completely unconstrained (in which
+    case compatibility is trivial), or if it were constrained to a type
+    that is compatible with the types of $v_2$ and $v_3$.
+
+    % so if it was a hole it would not be
+    % instantiated here, thus it cannot affect partial input type compatibility.
 
     % \hastype{\enode{v_1}{v_2}{v_3}}{\ttree{\thole}}, with a fresh \thole
     % and\\ \hastype{\vnode{t}{v_1}{v_2}{v_3}}{\ttree{t}}. But
@@ -100,46 +175,12 @@
 %   \end{description}
 % \end{proof}
 
-\begin{proof}[Proof of Lemma~\ref{lem:force-inst}]
-  By case analysis on the evaluation rules. As above we are only
-  concerned with the sucessful steps, and can thus ignore the
-  \rulename{E-*-Bad} rules. In each case we will show that only
-  the calls to \forcesym can change the partial input type of $f$.
-
-  \begin{description}
-  % \item[Case \reholegood] \hastype{\ehole}{\thole}, which is
-  %   alpha-equivalent to \typeof{\vhole{\thole}}, thus this step does not
-  %   change the partial type.
-  \item[Case \replusgood] Since narrowing succeeded on $v_1$ and $v_2$,
-    they must have both either been ints or unconstrained holes. Thus
-    the only way the partial input type could have changed is if one or the
-    other was a hole, and was instantiated by \forcesym.
-  \item[Case \rulename{E-If-Good-\{1,2\}}] Since narrowing succeeded on
-    $v$, it must have either been a bool or an unconstrained hole. Thus
-    the only way the partial input type could have changed is if $v$ was a
-    hole and was instantiated by \forcesym.
-  \item[Case \reappgood] Since narrowing succeeded on $v$, it must have
-    either been a lambda or an unconstrained hole. Thus the only way the
-    partial input type could have changed is if $v$ was a hole and was
-    instantiated by \forcesym.
-  \item[Case \releafgood] \hastype{\eleaf}{\ttree{\thole}} and
-    \hastype{\vleaf{\thole}}{\ttree{\thole}}, which are
-    alpha-equivalent. Thus this step cannot have applied.
-  \item[Case \renodegood] \ES{come back to this, not entirely clear it
-      holds as we might learn the element type from one of the subtrees}
-  \item[Case \rulename{E-Case-Good\{1,2\}}] Since narrowing succeeded on
-    $v$, it must have either been a tree or an unconstrained hole. Thus
-    the only way the partial input type could have changed is if $v$ was a
-    hole and was instantiated by \forcesym.
-  \end{description}
-\end{proof}
-
 \begin{proof}[Proof of Lemma~\ref{lem:k-stuck}]
-  By induction on $k$, the length of $\trace$. Let $s_{\trace} \rightarrow \_ = \ptype{\trace}{f}$ and
-  $\trace' = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},...,\triple{e'}{\vsu'}{\tsu'}$
+  By induction on $k$, the length of $\trace$. Let $s_{\trace} = \ptype{\trace}{f}$ and
+  $\trace' = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e'}{\vsu'}{\tsu'}$
   such that $\step{e'}{\vsu'}{\tsu'}{e}{\vsu}{\tsu}$.
   Suppose \hastype{v}{\tincompat{t}{s_{\trace}}}, we
-  will show that \steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu'}{\tsu'}
+  will show that \steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}
   in at most $k$ steps.
 
   \ES{be explicit about base case and inductive case}
@@ -154,39 +195,49 @@
   \item [Case \tincompat{t}{s_{\trace'}}:]
     The inductive hypothesis applies.
   \item [Case $\tcompat{t}{s_{\trace'}}$ but $\tincompat{t}{s_{\trace}}$:]
-    By Lemma~\ref{lem:force-inst} we must have called \forcesym at step
-    $k$.
+    Since $\tcompat{t}{s_{\trace'}}$ but $\tincompat{t}{s_{\trace}}$ we know
+    that $s_{\trace'} \neq s_{\trace}$, and
+    by Lemma~\ref{lem:force-inst} we know that we must have
+    successfully called \forcesym at step $k$.
     %
     Lemma~\ref{lem:refine-partial} tells us
     $\tcompat{s_{\trace'}}{s_{\trace}}$, which means we must have
     specifically narrowed $s_{\trace'}$ to a type incompatible with $t$.
     %
-    We show by case analysis of the evaluation rules that \forcesym
-    cannot have succeeded. Again we can ignore the \rulename{E-*-Bad}
-    rules as they get stuck; in effect we will show that one of them
-    must be taken at step $k$.
+    We show by case analysis of the evaluation rules that narrowing to
+    $t$ instead cannot succeed.
+
+    Again we can immediately discharge the \rulename{E-*-Bad}
+    rules as they get stuck, proving the consequent.
     \begin{description}
-    \item[Case \reholegood:] \thole is compatible with any type, which
-      contradicts the premise that \tincompat{t}{s_{\trace}}.
+    % \item[Case \reholegood:] \thole is compatible with any type, which
+    %   contradicts the premise that \tincompat{t}{s_{\trace}}.
     \item[Case \replusgood:] Here we \forcesym $v_1$ and $v_2$ to have type
       \tint, but we assumed that $v$ has a type that is incompatible with
-      \tint, thus \forcesym must have failed on either $v_1$ or $v_2$.
+      \tint, thus \forcesym must fail on either $v_1$ or $v_2$.
     \item[Case \rulename{E-If-Good\{1,2\}}:] Here we \forcesym $v$ to have type
       \tbool, but we assumed that $v$ has a type that is incompatible with
-      \tbool, thus \forcesym must have failed.
+      \tbool, thus \forcesym must fail.
     \item[Case \reappgood:] Here we \forcesym $v$ to have type
       \tfun, but we assumed that $v$ has a type that is incompatible with
-      \tfun, thus \forcesym must have failed.
+      \tfun, thus \forcesym must fail.
     \item[Case \releafgood:] This rule does not call \forcesym, so by
       Lemma~\ref{lem:force-inst} it cannot have applied.
-    \item[Case \renodegood:] Here we \forcesym $v_2$ and $v_3$ to have
-      type \ttree{\thole}, but we assumed $v$ has some type incompatible
-      with \ttree{\thole}, so one of the \forcesym calls must have
-      failed.
+    \item[Case \renodegood:] There are two cases we must consider here,
+      the sub-trees and the value at the node.
+
+      Consider first the sub-trees. We \forcesym $v_2$ and $v_3$ to have
+      type \ttree{t}, but we assumed $v$ has some type incompatible with
+      \ttree{t}, so one of the \forcesym calls must fail.
+
+      Next consider the value $v_1$. Even though we do not \forcesym
+      $v_1$ directly, we seed the \forcesym calls with $\typeof{v_1}$,
+      which will then fail if $\typeof{v_1}$ is incompatible with the
+      types of the sub-trees, which our assumption tells us must be the
+      case.
     \item[Case \rulename{E-Case-Good\{1,2\}}:] Here we \forcesym $v$ to
       have type \ttree{\thole}, but we assumed that $v$ has a type that
-      is incompatible with \ttree{\thole}, thus \forcesym must have
-      failed.
+      is incompatible with \ttree{\thole}, thus \forcesym must fail.
     \end{description}
   \end{description}
 \end{proof}
@@ -200,13 +251,13 @@ compatible with $t$. %the partial type upto $\trace$.
 %
 \begin{description}
 \item [Case \tcompat{s}{t}:]
-  Let $\trace = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},...,\triple{\stuck}{\vsu}{\tsu}$.
+  Let $\trace = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{\stuck}{\vsu}{\tsu}$.
   %
-  The value $v = \subst{\vsu}{\ehole}$ demonstrates that
+  The value $v = \resolve{\ehole}{\vsu}$ demonstrates that
   $\eapp{f}{v}$ gets stuck.
 \item [Case \tincompat{s}{t}:] By Lemma~\ref{lem:k-stuck}, every $v$
   such that \hastype{v}{t} demonstrates that $\eapp{f}{v}$ gets stuck.
-  \ES{do we need to say anythign else?}
+  % \ES{do we need to say anythign else?}
 \end{description}
 \end{proof}
 %%% Local Variables:
