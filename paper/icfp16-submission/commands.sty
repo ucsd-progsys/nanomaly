@@ -41,7 +41,7 @@
 \newcommand\elet[3]{\ensuremath{\mathtt{let}\ #1 = #2\ \mathtt{in}\ #3}\xspace}
 \newcommand\enode[3]{\ensuremath{\mathtt{node}\ #1\ #2\ #3}\xspace}
 \newcommand\eleaf{\ensuremath{\mathtt{leaf}}\xspace}
-\newcommand\ecase[6]{\ensuremath{\mathtt{case}\ #1\ \mathtt{of}\ \{\eleaf \to #2\}\ \{\enode{#3}{#4}{#5} \to #6\}}\xspace}
+\newcommand\ecase[6]{\ensuremath{\mathtt{case}\ #1\ \mathtt{of} \begin{cases} \eleaf \to #2\\ \enode{#3}{#4}{#5} \to #6 \end{cases}}\xspace}
 
 \newcommand\ehole{\ensuremath{\square}\xspace}
 \newcommand\thole{\ensuremath{\alpha}\xspace}
