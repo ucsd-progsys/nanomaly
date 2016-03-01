@@ -95,7 +95,7 @@ Figure~\ref{fig:syntax} describes the syntax of \lang, a simple lambda
 calculus with integers, booleans, and binary trees.
 %
 As we are specifically interested in programs that \emph{do} go wrong,
-we include an explicit \stuck\ configuration in our syntax.
+we include an explicit \stuck\ state in our syntax.
 
 \paragraph{Holes}
 \label{sec:holes}
@@ -105,8 +105,8 @@ that are meaningful and do not arise from choosing values from
 irrelevant types.
 %
 We solve this problem be equipping our term language with a notion
-of a \emph{hole}, written \ehole, which represents \emph{unconstrained}
-values that may be replaced with values from \emph{any} type.
+of a \emph{hole}, written \vhole{\thole}, which represents an \emph{unconstrained}
+value that may be replaced with any value of an unspecified type \thole.
 %
 Dually, holes may also appear in types, written \thole, where they may
 be thought of as type variables that we will not generalize over.
@@ -158,17 +158,18 @@ $$
 \forcesym                  & ::     & (v, t, \vsu, \tsu) \rightarrow \triple{v \cup \stuck}{\vsu}{\tsu} \\
 \force{v}{\thole}{\vsu}{\tsu}  & \defeq & \hspace{-1ex}
 \begin{cases}
-  \force{v}{\subst{\tsu}{\thole}}{\vsu}{\tsu} & \mbox{if}\ \thole \in dom(\tsu) \\
-  \triple{v}{\vsu}{\extendsu{\tsu}{\thole}{\typeof{v}}} & \mbox{otherwise} \\
+  \triple{v}{\vsu}{\tsu'} & \mbox{if } \tsu' = \unify{\{\typeof{v}, \thole\}}{\tsu} \\
+  \triple{\stuck}{\vsu}{\tsu} & \mbox{otherwise} \\
+
+  % \force{v}{\subst{\tsu}{\thole}}{\vsu}{\tsu} & \mbox{if}\ \thole \in dom(\tsu) \\
+  % \triple{v}{\vsu}{\extendsu{\tsu}{\thole}{\typeof{v}}} & \mbox{otherwise} \\
 \end{cases} \\
 \force{\vhole{t_1}}{t_2}{\vsu}{\tsu} & \defeq & \hspace{-1ex}
 \begin{cases}
-  \triple{v}{\vsu}{\tsu''}    & \mbox{if } v = \lookupsu{\vsu}{\ehole},
-                                         \tsu' = \unify{t_1}{t_2}{\tsu},
-                                         \tsu'' = \unify{\subst{\tsu'}{t_1}}
-                                                        {\typeof{v}}{\tsu'} \\
+  \triple{v}{\vsu}{\tsu'}    & \mbox{if } v = \lookupsu{\vsu}{\ehole},
+                                         \tsu' = \unify{\{t_1, t_2, \typeof{v}\}}{\tsu}\\
   \triple{\stuck}{\vsu}{\tsu} & \mbox{if } v = \lookupsu{\vsu}{\ehole} \\
-  \triple{v}{\extendsu{\vsu}{\ehole}{v}}{\tsu'} & \mbox{if}\ \tsu' = \unify{t_1}{t_2}{\tsu}, v = \gen{\subst{\tsu'}{t_1}}\\
+  \triple{v}{\extendsu{\vsu}{\ehole}{v}}{\tsu'} & \mbox{if}\ \tsu' = \unify{\{t_1, t_2\}}{\tsu}, v = \gen{t_1}{\tsu'}\\
 \end{cases} \\
 % \begin{cases}
 %   \triple{\lookupsu{\vsu}{\ehole}}{\vsu}{\tsu} & \mbox{if}\ \ehole \in dom(\vsu), \hastype{\lookupsu{\vsu}{\ehole}}{t} \\
@@ -182,8 +183,8 @@ $$
 \force{n}{\tint}{\vsu}{\tsu}     & \defeq & \triple{n}{\vsu}{\tsu} \\
 \force{b}{\tbool}{\vsu}{\tsu}    & \defeq & \triple{b}{\vsu}{\tsu} \\
 \force{\efun{x}{e}}{\tfun}{\vsu}{\tsu} & \defeq & \triple{\efun{x}{e}}{\vsu}{\tsu} \\
-\force{\vleaf{t_1}}{\ttree{t_2}}{\vsu}{\tsu} & \defeq & \triple{\vleaf{t_1}}{\vsu}{\tsu'}, \mbox{if}\ \tsu' = \unify{t_1}{t_2}{\tsu} \\
-\force{\vnode{t_1}{v_1}{v_2}{v_3}}{\ttree{t_2}}{\vsu}{\tsu} & \defeq & \triple{\vnode{t_1}{v_1}{v_2}{v_3}}{\vsu}{\tsu'}, \mbox{if}\ \tsu' = \unify{t_1}{t_2}{\tsu} \\
+\force{\vleaf{t_1}}{\ttree{t_2}}{\vsu}{\tsu} & \defeq & \triple{\vleaf{t_1}}{\vsu}{\tsu'}, \mbox{if}\ \tsu' = \unify{\{t_1, t_2\}}{\tsu} \\
+\force{\vnode{t_1}{v_1}{v_2}{v_3}}{\ttree{t_2}}{\vsu}{\tsu} & \defeq & \triple{\vnode{t_1}{v_1}{v_2}{v_3}}{\vsu}{\tsu'}, \mbox{if}\ \tsu' = \unify{\{t_1, t_2\}}{\tsu} \\
 \force{v}{t}{\vsu}{\tsu} & \defeq & \triple{\stuck}{\vsu}{\tsu}
 \end{array}
 $$
@@ -200,17 +201,20 @@ substitution, the sub-hole will be narrowed when the context demands it.
 takes as input a type $t$ and returns a value of that type. For base
 types, the procedure returns an arbitrary value. For functions, it returns
 a lambda with a \emph{new} hole denoting the return value, and unconstrained
-types (denoted by $\thole$) yield fresh, unconstrained values
-(denoted by $\ehole$).
+types (denoted by $\thole$) yield fresh holes constrained to have type \thole
+(denoted by $\vhole{\thole}$). \ES{note that $\gen{\ttree{t}}{\tsu}$ will
+always place holes in the generated nodes, they will be filled in later,
+on demand.}
 
 $$
 \begin{array}{lcll}
-\gensym       & ::      & t \rightarrow v \\
-\gen{\tint}   & \defeq  & n, & \quad \text{non-deterministic} \\
-\gen{\tbool}  & \defeq  & b, & \quad \text{non-deterministic} \\
-\gen{\ttree{t}}  & \defeq  & tr, & \quad \text{non-deterministic, well-typed} \\
-\gen{\tfun}   & \defeq & \efun{x}{\ehole}, & \quad \text{\ehole is fresh} \\
-\gen{\thole}  & \defeq & \vhole{\thole}, & \quad \text{\ehole is fresh} \\
+\gensym       & ::  & (t, \tsu) \rightarrow v \\
+\gen{\thole}{\tsu}  & \defeq  & \gen{\subst{\tsu}{\thole}}{\tsu}, & \quad \text{if } \thole \in dom(\tsu) \\
+\gen{\tint}{\tsu}   & \defeq  & n, & \quad \text{non-deterministic} \\
+\gen{\tbool}{\tsu}  & \defeq  & b, & \quad \text{non-deterministic} \\
+\gen{\ttree{t}}{\tsu}  & \defeq  & tr, & \quad \text{non-deterministic} \\
+\gen{\tfun}{\tsu}   & \defeq & \efun{x}{\vhole{\thole}}, & \quad \text{\ehole and \thole are fresh} \\
+\gen{\thole}{\tsu}  & \defeq & \vhole{\thole}, & \quad \text{\ehole is fresh} \\
 \end{array}
 $$
 
@@ -227,24 +231,25 @@ $$
 Figure~\ref{fig:operational} describes the small-step contextual
 reduction semantics for \lang.
 %
-A \emph{configuration} is a triple $\triple{e \cup \stuck}{\vsu}{\tsu}$
-of an expression $e$ or the stuck term $\stuck$, a value substitution
-$\vsu$, and a type substitution $\tsu$.
+A program state is a triple $\triple{e \cup \stuck}{\vsu}{\tsu}$ of an
+expression $e$ or the stuck term $\stuck$, a value substitution $\vsu$,
+and a type substitution $\tsu$. In the sequel we will write \estuck to
+denote either an expression $e$ or \stuck.
 %
-We write $\step{e}{\vsu}{\tsu}{e'}{\vsu'}{\tsu'}$ if the configuration
-$\triple{e}{\vsu}{\tsu}$ transitions in a \emph{small step} to
-$\triple{e'}{\vsu'}{\tsu'}$.
+We write $\step{\estuck}{\vsu}{\tsu}{\estuck'}{\vsu'}{\tsu'}$ if the state
+$\triple{\estuck}{\vsu}{\tsu}$ transitions in a \emph{single step} to
+$\triple{\estuck'}{\vsu'}{\tsu'}$.
 %
 A (finite) \emph{trace} $\trace$ is a sequence of configurations
-$\triple{e_0}{\vsu_0}{\tsu_0}, \ldots, \triple{e_n}{\vsu_n}{\tsu_n}$ such that
+$\triple{\estuck_0}{\vsu_0}{\tsu_0}, \ldots, \triple{\estuck_n}{\vsu_n}{\tsu_n}$ such that
 $\forall 0 \leq i < n$, we have
-$\step{e_i}{\vsu_i}{\tsu_i}{e_{i+1}}{\vsu_{i+1}}{\tsu_{i+1}}$.
+$\step{\estuck_i}{\vsu_i}{\tsu_i}{\estuck_{i+1}}{\vsu_{i+1}}{\tsu_{i+1}}$.
 %
-We write \steptr{\trace}{e}{\vsu}{\tsu}{e'}{\vsu'}{\tsu'} if $\trace$ is
-a trace of the form $\triple{e}{\vsu}{\tsu},\ldots,\triple{e'}{\vsu'}{\tsu'}$.
+We write \steptr{\trace}{\estuck}{\vsu}{\tsu}{\estuck'}{\vsu'}{\tsu'} if $\trace$ is
+a trace of the form $\triple{\estuck}{\vsu}{\tsu},\ldots,\triple{\estuck'}{\vsu'}{\tsu'}$.
 %
-We write \steps{e}{\vsu}{\tsu}{e'}{\vsu'}{\tsu'} if
-\steptr{\trace}{e}{\vsu}{\tsu}{e'}{\vsu'}{\tsu'} for some trace $\trace$.
+We write \steps{\estuck}{\vsu}{\tsu}{\estuck'}{\vsu'}{\tsu'} if
+\steptr{\trace}{\estuck}{\vsu}{\tsu}{\estuck'}{\vsu'}{\tsu'} for some trace $\trace$.
 
 \paragraph{Primitive Reductions}
 Primitive reduction steps --- addition, if-elimination, function
@@ -282,14 +287,14 @@ the program would not go wrong.
 \paragraph{Witness Generality}
 We now show that our evaluation relation instantiates holes in a
 \emph{general} manner. That is, given a function $f$, if we have
-$\steps{\eapp{f}{\ehole{}}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$,
+$\steps{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$,
 then for every possible input type $t$, we can find a value
 $v$ of type $t$ such that $\eapp{f}{v}$ goes wrong.
 
 \begin{thm}{\textbf{[Witness Generality]}}
 \label{thm:soundness}
   For any function $f$, if\\
-  \hbox{$\steptr{\trace}{\eapp{f}{\ehole}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$,}
+  \hbox{$\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$,}
   then for every % inhabitable
   type
   % \footnote{We exclude builtin functions that subvert the type system, \eg \texttt{Obj.magic}, and thus consider the type $\forall a b. \tfun{a}{b}$ to be uninhabitable.}
@@ -311,7 +316,7 @@ expression $e$ is defined as a function $\typeof{e}$ defined as:
     \typeof{\efun{x}{e}} & \defeq & \tfun \\
     \typeof{\vleaf{t}} & \defeq & \ttree{t} \\
     \typeof{\vnode{t}{v_1}{v_2}{v_3}} & \defeq & \ttree{t} \\
-    \typeof{\vhole{t}} & \defeq & t \\
+    \typeof{\vhole{\thole}} & \defeq & \thole \\
     \typeof{\eleaf} & \defeq & \ttree{\thole}, & \quad \text{\thole is fresh} \\
     \typeof{\enode{v_1}{v_2}{v_3}} & \defeq & \ttree{\thole}, & \quad \text{\thole is fresh} \\
     \typeof{e} & \defeq & \thole, & \quad \text{\thole is fresh} \\
@@ -324,17 +329,18 @@ $\typeof{\efun{x}{\eplus{x}{1}}} = \tfun$,
 instead of the usual $\tint \rightarrow \tint$.
 
 \paragraph{Dynamic Type Inference}
-We can think of the evaluation of \eapp{f}{\ehole} as (dynamically)
+We can think of the evaluation of \eapp{f}{\vhole{\thole}} as (dynamically)
 inferring a \emph{partial type} --- a type that may contain holes ---
-for $f$'s input.
+for $f$'s input, \ie a partial instantiation of \thole.
 %
-We can extract this type from evaluation traces.
+We can extract this type from an evaluation trace.
 %
 Formally, we say that if
-$\steptr{\trace}{\eapp{f}{\ehole{}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu}$,
+$\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{\estuck}{\vsu}{\tsu}$,
 then the \emph{partial input type} of $f$ upto $\trace$, written
 \ptype{\trace}{f}, is
-$\typeof{\subst{\su}{\ehole{}}}$.
+$\typeof{\subst{\vsu}{\ehole}}$.
+\ES{should we say $\subst{\tsu}{\thole}$ instead? would need a helper function that does the repeated application of \tsu\ until the result has no $\thole \in dom(\tsu)$}
 %
 %We will omit the subscript when we wish to refer to the final partial
 %type, \ie\ at the step where the expression has been reduced to a value
@@ -357,8 +363,8 @@ refines the partial input type of $f$, \ie preserves type compatibility.
 %
 \begin{lem}
 \label{lem:refine-partial}
-If $\trace \defeq \triple{\eapp{f}{\ehole{}}}{\emptysu}{\emptysu},\ldots$ and
-$\trace' \defeq \trace, \triple{e'}{\vsu'}{\tsu'}$ (\ie $\trace'$ is a single-step
+If $\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots$ and
+$\trace' \defeq \trace, \triple{\estuck'}{\vsu'}{\tsu'}$ (\ie $\trace'$ is a single-step
 extension of $\trace$)
 %
 %The partial type of $f$ upto $\trace$ is compatible
@@ -370,10 +376,10 @@ then \tcompat{\ptype{\trace}{f}}{\ptype{\trace'}{f}}.
   By case analysis on the evaluation rules.
   %
   Note that all rules preserve partial types with the exception of when
-  \forcesym\ is called on a hole, in which case we instantiate the hole with
+  \forcesym\ is called on a hole, in which case we may instantiate the hole with
   a concrete value.
   %
-  But $\typeof{\ehole{}} = \thole{}$, which is compatible with any type.
+  But $\typeof{\vhole{\thole}} = \thole$, which is compatible with any type.
 \end{proof}
 
 \paragraph{Narrowing}
@@ -383,12 +389,12 @@ Furthermore, only a successful call to \forcesym can change the partial type of 
 \begin{lem}
 \label{lem:force-inst}
 If
-$\trace \defeq \triple{\eapp{f}{\ehole{}}}{\emptysu}{\emptysu},\ldots,\triple{e}{\vsu}{\tsu}$
+$\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e}{\vsu}{\tsu}$
 and
-$\trace' \defeq \trace, \step{e}{\vsu}{\tsu}{e'}{\vsu'}{\tsu'}$
+$\trace' \defeq \trace, \step{e}{\vsu}{\tsu}{\estuck'}{\vsu'}{\tsu'}$
 and
 $\ptype{\trace}{f} \neq \ptype{\trace'}{f}$,
-then the final step $\step{e}{\vsu}{\tsu}{e'}{\vsu'}{\tsu'}$ invokes \forcesym.
+then the final step $\step{e}{\vsu}{\tsu}{\estuck'}{\vsu'}{\tsu'}$ invokes \forcesym.
 \end{lem}
 
 \begin{proof}
@@ -409,7 +415,7 @@ in \emph{at most} $k$ steps, where $k$ is the length of $\trace$.
 %
 \begin{lem}
 \label{lem:k-stuck}
-  If \steptr{\trace}{\eapp{f}{\ehole}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu} and
+  If \steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu} and
      \hastype{v}{t} and
      \tincompat{t}{\ptype{\trace}{f}},
   then
@@ -418,7 +424,7 @@ in \emph{at most} $k$ steps, where $k$ is the length of $\trace$.
 \begin{proof}
   By induction on $k$, the length of $\trace$.
   Let $s_{\trace} = \ptype{\trace}{f}$ and
-  $\trace' = \triple{\eapp{f}{\ehole{}}}{\emptysu}{\emptysu},...,\triple{e'}{\vsu'}{\tsu'}$
+  $\trace' = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},...,\triple{e'}{\vsu'}{\tsu'}$
   such that $\step{e'}{\vsu'}{\tsu'}{e}{\vsu}{\tsu}$.
   Suppose \hastype{v}{\tincompat{t}{s_{\trace}}}, we
   will show that \steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu'}{\tsu'}
@@ -450,10 +456,10 @@ compatible with $t$. %the partial type upto $\trace$.
 %
 \begin{description}
 \item [Case \tcompat{s}{t}:]
-  Let $\trace = \triple{\eapp{f}{\ehole{}}}{\emptysu}{\emptysu},...,\triple{\stuck}{\vsu}{\tsu}$.
+  Let $\trace = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},...,\triple{\stuck}{\vsu}{\tsu}$.
   %
   The value $v = \subst{\vsu}{\ehole}$ demonstrates that
-  $\eapp{f}{v}$ gets stuck.
+  $\eapp{f}{v}$ gets stuck. \ES{here we also need a repeated application of the substitution, as \ehole may map directly to $\vnode{\thole}{\vhole{\thole}}{\vleaf{\thole}}{\vleaf{\thole}}$}
 \item [Case \tincompat{s}{t}:] By Lemma~\ref{lem:k-stuck}, every $v$
   such that \hastype{v}{t} demonstrates that $\eapp{f}{v}$ gets stuck.
 \end{description}
@@ -561,7 +567,7 @@ genArgs :: [($x$, $e$)] -> [$v$]
 genArgs bs = loop []
   where
   loop vs  = case eval (close bs vs) of
-               $\pair{\efun{x}{e}}{\_}$:_ -> loop ($\ehole{}$:vs)
+               $\pair{\efun{x}{e}}{\_}$:_ -> loop ($\vhole{\thole}$ : vs)
                _        -> vs
 
 close :: [($x$, $e$)] -> [$v$] -> ($e$, $\vsu$, $\tsu$)
@@ -606,7 +612,7 @@ We obtain the following corollary of Theorem~\ref{thm:soundness}:
 \begin{cor}{\textbf{[Witness Generation]}}
 \label{thm:generation}
   If @genWitness k [(f1,e1),...,(fn,en)]@ is non-empty,
-  then for every type $t$ there exists $\hastype{v}{t}$ such that
+  then for every type $t$ there exists $v$ of type $t$ such that
   $\steps{\eapp{f_n}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$.
 \end{cor}
 

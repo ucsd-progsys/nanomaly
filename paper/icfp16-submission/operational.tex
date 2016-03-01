@@ -9,10 +9,10 @@
 %   {}
 %   {\step{C[\stuck]}{\su}{\stuck}{\su}}
 % \\ \\
-\inference[\reholegood]
-  {\thole \mbox{ is fresh}}
-  {\step{\ehole}{\vsu}{\tsu}{\vhole{\thole}}{\vsu}{\tsu}}
-\\ \\
+% \inference[\reholegood]
+%   {\thole \mbox{ is fresh}}
+%   {\step{\ehole}{\vsu}{\tsu}{\vhole{\thole}}{\vsu}{\tsu}}
+% \\ \\
 \inference[\replusgood]
   {\triple{n_1}{\vsu'}{\tsu'} = \force{v_1}{\tint}{\vsu}{\tsu} \\
    \triple{n_2}{\vsu''}{\tsu''} = \force{v_2}{\tint}{\vsu'}{\tsu'} \\
@@ -20,31 +20,31 @@
   {\step{\inctx{\eplus{v_1}{v_2}}}{\vsu}{\tsu}{\inctx{n}}{\vsu''}{\tsu''}}
 \qquad
 \inference[\replusbadone]
-  {\pair{\stuck}{\su'} = \force{v_1}{\tint}{\su}}
+  {\triple{\stuck}{\vsu'}{\tsu'} = \force{v_1}{\tint}{\vsu}{\tsu}}
   {\step{\inctx{\eplus{v_1}{v_2}}}{\vsu}{\tsu}{\stuck}{\vsu'}{\tsu'}}
 \\ \\
 \inference[\replusbadtwo]
-  {\pair{\stuck}{\su'} = \force{v_2}{\tint}{\su}}
+  {\triple{\stuck}{\vsu'}{\tsu'} = \force{v_2}{\tint}{\vsu}{\tsu}}
   {\step{\inctx{\eplus{v_1}{v_2}}}{\vsu}{\tsu}{\stuck}{\vsu'}{\tsu'}}
 \qquad
 \inference[\reifgoodone]
-  {\pair{\etrue}{\su'} = \force{v}{\tbool}{\su}}
+  {\triple{\etrue}{\vsu'}{\tsu'} = \force{v}{\tbool}{\vsu}{\tsu}}
   {\step{\inctx{\eif{v}{e_1}{e_2}}}{\vsu}{\tsu}{\inctx{e_1}}{\vsu'}{\tsu'}}
 \\ \\
 \inference[\reifgoodtwo]
-  {\pair{\efalse}{\su'} = \force{v}{\tbool}{\su}}
+  {\triple{\efalse}{\vsu'}{\tsu'} = \force{v}{\tbool}{\vsu}{\tsu}}
   {\step{\inctx{\eif{v}{e_1}{e_2}}}{\vsu}{\tsu}{\inctx{e_2}}{\vsu'}{\tsu'}}
 \qquad
 \inference[\reifbad]
-  {\pair{\stuck}{\su'} = \force{v}{\tbool}{\su}}
+  {\triple{\stuck}{\vsu'}{\tsu'} = \force{v}{\tbool}{\vsu}{\tsu}}
   {\step{\inctx{\eif{v}{e_1}{e_2}}}{\vsu}{\tsu}{\stuck}{\vsu'}{\tsu'}}
 \\ \\
 \inference[\reappgood]
-  {\pair{\efun{x}{e}}{\su'} = \force{v_1}{\tfun}{\su}}
+  {\triple{\efun{x}{e}}{\vsu'}{\tsu'} = \force{v_1}{\tfun}{\vsu}{\tsu}}
   {\step{\inctx{\eapp{v_1}{v_2}}}{\vsu}{\tsu}{\inctx{e\sub{x}{v_2}}}{\vsu'}{\tsu'}}
 \qquad
 \inference[\reappbad]
-  {\pair{\stuck}{\su'} = \force{v_1}{\tfun}{\su}}
+  {\triple{\stuck}{\vsu'}{\tsu'} = \force{v_1}{\tfun}{\vsu}{\tsu}}
   {\step{\inctx{\eapp{v_1}{v_2}}}{\vsu}{\tsu}{\stuck}{\vsu'}{\tsu'}}
 \\ \\
 \inference[\releafgood]
@@ -57,10 +57,9 @@
    \triple{v_1'}{\vsu_1}{\tsu_1} = \force{v_1}{\thole}{\vsu}{\tsu} \\
    \triple{v_2'}{\vsu_2}{\tsu_2} = \force{v_2}{\ttree{\thole}}{\vsu_1}{\tsu_1} \\
    \triple{v_3'}{\vsu_3}{\tsu_3} = \force{v_3}{\ttree{\thole}}{\vsu_2}{\tsu_2} \\
-   t = \subst{\tsu_3}{\thole}
   }
   {\step{\inctx{\enode{v_1}{v_2}{v_3}}}{\vsu}{\tsu}
-        {\inctx{\vnode{t}{v_1'}{v_2'}{v_3'}}}{\vsu_3}{\tsu_3}}
+        {\inctx{\vnode{\alpha}{v_1'}{v_2'}{v_3'}}}{\vsu_3}{\tsu_3}}
 \\ \\
 \inference[\renodebadone]
   {\thole \mbox{ is fresh} \\

@@ -44,18 +44,19 @@
 \newcommand\ecase[6]{\ensuremath{\mathtt{case}\ #1\ \mathtt{of}\ \{\eleaf \to #2\}\ \{\enode{#3}{#4}{#5} \to #6\}}\xspace}
 
 \newcommand\ehole{\ensuremath{\square}\xspace}
-\newcommand\thole{\ensuremath{\boxdot}\xspace}
+\newcommand\thole{\ensuremath{\alpha}\xspace}
 
 % \newcommand\erec[3]{\ensuremath{\mu #1.\lambda #2. #3}}
 % \newcommand\etabs[2]{\ensuremath{\left[\Lambda #1\right] #2}}
 % \newcommand\etapp[2]{\ensuremath{#1 \left[ #2 \right]}}
 \newcommand\etrue{\ensuremath{\mathtt{true}}\xspace}
 \newcommand\efalse{\ensuremath{\mathtt{false}}\xspace}
-\newcommand\vhole[1]{\ensuremath{\ehole\ @#1}\xspace}
-\newcommand\vnode[4]{\ensuremath{\mathtt{node}\ @#1\ #2\ #3\ #4}\xspace}
-\newcommand\vleaf[1]{\ensuremath{\mathtt{leaf}\ @#1}\xspace}
+\newcommand\vhole[1]{\ensuremath{\ehole[#1]}\xspace}
+\newcommand\vnode[4]{\ensuremath{\mathtt{node}[#1]\ #2\ #3\ #4}\xspace}
+\newcommand\vleaf[1]{\ensuremath{\mathtt{leaf}[#1]}\xspace}
 
 \newcommand\stuck{\ensuremath{\mathtt{stuck}}\xspace}
+\newcommand\estuck{\ensuremath{e?}\xspace}
 
 
 % Types
@@ -68,7 +69,7 @@
 % \newcommand\tfun[3]{\ensuremath{\tbind{#1}{#2} \rightarrow #3}}
 % \newcommand\tabs[2]{\ensuremath{\forall #1 . #2}}
 \newcommand\hastype[2]{\ensuremath{\typeof{#1} = {#2}}}
-\newcommand\unify[3]{\ensuremath{\mathsf{unify}(#1,#2,#3)}\xspace}
+\newcommand\unify[2]{\ensuremath{\mathsf{unify}(#1,#2)}\xspace}
 \newcommand\tsub[2]{\ensuremath{{#1} \preceq {#2}}}
 \newcommand\tnsub[2]{\ensuremath{{#1} \npreceq {#2}}}
 \newcommand\tcompat[2]{\ensuremath{#1 \sim #2}}
@@ -93,7 +94,7 @@
 \newcommand\forcesym{\ensuremath{\mathsf{narrow}}\xspace}
 \newcommand\gensym{\ensuremath{\mathsf{gen}}\xspace}
 \newcommand\force[4]{\ensuremath{\forcesym(#1, #2, #3, #4)}}
-\newcommand\gen[1]{\ensuremath{\gensym(#1)}}
+\newcommand\gen[2]{\ensuremath{\gensym(#1,#2)}}
 \newcommand\inctx[1]{\ensuremath{C\left[#1\right]}\xspace}
 
 \newcommand\dcolon{\ensuremath{\colon\!\!\colon}}
