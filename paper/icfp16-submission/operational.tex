@@ -53,27 +53,35 @@
 \qquad
 % \ES{what about $\tsu = unify(\thole, \typeof{v_1}, \typeof{v_2}, \typeof{v_3})$, then narrow to $\subst{\tsu}{\thole}$}
 \inference[\renodegood]
-  {\thole \mbox{ is fresh} \\
-   \triple{v_1'}{\vsu_1}{\tsu_1} = \force{v_1}{\thole}{\vsu}{\tsu} \\
-   \triple{v_2'}{\vsu_2}{\tsu_2} = \force{v_2}{\ttree{\thole}}{\vsu_1}{\tsu_1} \\
-   \triple{v_3'}{\vsu_3}{\tsu_3} = \force{v_3}{\ttree{\thole}}{\vsu_2}{\tsu_2} \\
+  {
+   % \thole \mbox{ is fresh} \\
+   % \triple{v_1'}{\vsu_1}{\tsu_1} = \force{v_1}{\thole}{\vsu}{\tsu} \\
+   % \triple{v_2'}{\vsu_2}{\tsu_2} = \force{v_2}{\ttree{\thole}}{\vsu_1}{\tsu_1} \\
+   % \triple{v_3'}{\vsu_3}{\tsu_3} = \force{v_3}{\ttree{\thole}}{\vsu_2}{\tsu_2} \\
+   t = \typeof{v_1} \\
+   \triple{v_2'}{\vsu_2}{\tsu_2} = \force{v_2}{\ttree{t}}{\vsu_1}{\tsu_1} \\
+   \triple{v_3'}{\vsu_3}{\tsu_3} = \force{v_3}{\ttree{t}}{\vsu_2}{\tsu_2} \\
   }
   {\step{\inctx{\enode{v_1}{v_2}{v_3}}}{\vsu}{\tsu}
-        {\inctx{\vnode{\alpha}{v_1'}{v_2'}{v_3'}}}{\vsu_3}{\tsu_3}}
+        {\inctx{\vnode{t}{v_1}{v_2'}{v_3'}}}{\vsu_3}{\tsu_3}}
 \\ \\
 \inference[\renodebadone]
-  {\thole \mbox{ is fresh} \\
-   \triple{v_1'}{\vsu_1}{\tsu_1}   = \force{v_1}{\thole}{\vsu}{\tsu} \\
-   \triple{\stuck}{\vsu_2}{\tsu_2} = \force{v_2}{\ttree{\thole}}{\vsu_1}{\tsu_1} \\
+  {
+   % \thole \mbox{ is fresh} \\
+   % \triple{v_1'}{\vsu_1}{\tsu_1}   = \force{v_1}{\thole}{\vsu}{\tsu} \\
+   t = \typeof{v_1} \\
+   \triple{\stuck}{\vsu_2}{\tsu_2} = \force{v_2}{\ttree{t}}{\vsu_1}{\tsu_1} \\
   }
   {\step{\inctx{\enode{v_1}{v_2}{v_3}}}{\vsu}{\tsu}
         {\stuck}{\vsu_3}{\tsu_3}}
 \qquad
 \inference[\renodebadtwo]
-  {\thole \mbox{ is fresh} \\
-   \triple{v_1'}{\vsu_1}{\tsu_1} = \force{v_1}{\thole}{\vsu}{\tsu} \\
-   \triple{v_2'}{\vsu_2}{\tsu_2} = \force{v_2}{\ttree{\thole}}{\vsu_1}{\tsu_1} \\
-   \triple{\stuck}{\vsu_3}{\tsu_3} = \force{v_3}{\ttree{\thole}}{\vsu_2}{\tsu_2} \\
+  {
+   % \thole \mbox{ is fresh} \\
+   % \triple{v_1'}{\vsu_1}{\tsu_1} = \force{v_1}{\thole}{\vsu}{\tsu} \\
+   t = \typeof{v_1} \\
+   \triple{v_2'}{\vsu_2}{\tsu_2} = \force{v_2}{\ttree{t}}{\vsu_1}{\tsu_1} \\
+   \triple{\stuck}{\vsu_3}{\tsu_3} = \force{v_3}{\ttree{t}}{\vsu_2}{\tsu_2} \\
   }
   {\step{\inctx{\enode{v_1}{v_2}{v_3}}}{\vsu}{\tsu}
         {\stuck}{\vsu_3}{\tsu_3}}
