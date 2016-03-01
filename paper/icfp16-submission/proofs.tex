@@ -183,13 +183,11 @@
   will show that \steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}
   in at most $k$ steps.
 
-  \ES{be explicit about base case and inductive case}
-
-  % The base case where $k = 0$ (\ie empty traces) is trivial as no
-  % evaluation has happened and thus there can be no values that are
-  % incompatible with \ptype{\emptysu}{f}. So we proceed directly to the
-  % inductive case and split cases on whether $t$ is compatible with
-  % $s_{\trace'}$.
+  The base case where $k = 0$ (\ie empty traces) is trivial as no
+  evaluation has happened and thus there can be no values that are
+  incompatible with \ptype{0}{f}. So we proceed directly to the
+  inductive case and split cases on whether $t$ is compatible with
+  $s_{\trace'}$.
   %
   \begin{description}
   \item [Case \tincompat{t}{s_{\trace'}}:]

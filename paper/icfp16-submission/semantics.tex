@@ -458,7 +458,13 @@ in \emph{at most} $k$ steps, where $k$ is the length of $\trace$.
   Suppose \hastype{v}{\tincompat{t}{s_{\trace}}}, we
   will show that \steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}
   in at most $k$ steps.
-%
+
+  The base case where $k = 0$ (\ie empty traces) is trivial as no
+  evaluation has happened and thus there can be no values that are
+  incompatible with \ptype{0}{f}. So we proceed directly to the
+  inductive case and split cases on whether $t$ is compatible with
+  $s_{\trace'}$.
+  %
   \begin{description}
   \item [Case \tincompat{t}{s_{\trace'}}:]
     The inductive hypothesis applies.
