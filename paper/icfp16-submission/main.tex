@@ -43,7 +43,7 @@
 
 \usepackage{ifthen}
 \newcommand{\isTechReport}{true} % true or false
-\newcommand\includeProof[1]{%
+\newcommand\includeTechReport[1]{%
   \ifthenelse{\equal{\isTechReport}{true}}
     {{#1}}
     {\ignorespaces}
@@ -88,12 +88,11 @@
 \bibliography{main}
 }
 
-\ifthenelse{\equal{\isTechReport}{true}}
+\includeTechReport
 {
 \appendix
 \input{proofs}
 }
-{}
 
 
 \end{document}

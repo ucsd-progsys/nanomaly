@@ -51,6 +51,7 @@
   {\thole \mbox{ is fresh}}
   {\step{\inctx{\eleaf}}{\vsu}{\tsu}{\inctx{\vleaf{\thole}}}{\vsu}{\tsu}}
 \qquad
+% \ES{what about $\tsu = unify(\thole, \typeof{v_1}, \typeof{v_2}, \typeof{v_3})$, then narrow to $\subst{\tsu}{\thole}$}
 \inference[\renodegood]
   {\thole \mbox{ is fresh} \\
    \triple{v_1'}{\vsu_1}{\tsu_1} = \force{v_1}{\thole}{\vsu}{\tsu} \\

@@ -326,14 +326,15 @@ instead of the usual $\tint \rightarrow \tint$.
 \paragraph{Dynamic Type Inference}
 We can think of the evaluation of \eapp{f}{\ehole} as (dynamically)
 inferring a \emph{partial type} --- a type that may contain holes ---
-for $f$.
+for $f$'s input.
 %
 We can extract this type from evaluation traces.
 %
 Formally, we say that if
 $\steptr{\trace}{\eapp{f}{\ehole{}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu}$,
-then the \emph{partial type} of $f$ upto $\trace$, written \ptype{\trace}{f},
-is $\typeof{\subst{\su}{\ehole{}}} \rightarrow \typeof{e}$.
+then the \emph{partial input type} of $f$ upto $\trace$, written
+\ptype{\trace}{f}, is
+$\typeof{\subst{\su}{\ehole{}}}$.
 %
 %We will omit the subscript when we wish to refer to the final partial
 %type, \ie\ at the step where the expression has been reduced to a value
@@ -351,8 +352,8 @@ Formally, a type $s$ is
 $\exists \tsu.\ \subst{\tsu}{s} = \subst{\tsu}{t}$.
 
 \paragraph{Preservation}
-Given these two definitions, we show that each successful evaluation step
-refines the partial type of $f$, \ie preserves type compatibility.
+Given these two definitions, we show that each evaluation step
+refines the partial input type of $f$, \ie preserves type compatibility.
 %
 \begin{lem}
 \label{lem:refine-partial}
@@ -366,7 +367,7 @@ extension of $\trace$)
 then \tcompat{\ptype{\trace}{f}}{\ptype{\trace'}{f}}.
 \end{lem}
 \begin{proof}
-  By induction on the length of $\trace$ and case analysis on the evaluation rules.
+  By case analysis on the evaluation rules.
   %
   Note that all rules preserve partial types with the exception of when
   \forcesym\ is called on a hole, in which case we instantiate the hole with
@@ -377,7 +378,7 @@ then \tcompat{\ptype{\trace}{f}}{\ptype{\trace'}{f}}.
 
 \paragraph{Narrowing}
 %
-Furthermore, only a call to \forcesym can change the partial type of $f$.
+Furthermore, only a successful call to \forcesym can change the partial type of $f$.
 %
 \begin{lem}
 \label{lem:force-inst}
@@ -397,14 +398,14 @@ then the final step $\step{e}{\vsu}{\tsu}{e'}{\vsu'}{\tsu'}$ invokes \forcesym.
   argument must have been instantiated with a concrete value at the last step.
   %
   An examination of the rules shows that only place this happens is
-  in the first case of \forcesym.
+  in the second case of \forcesym.
 \end{proof}
 
 \paragraph{Incompatible Values Are Wrong}
 %
 \emph{Any} value that is \emph{incompatible} with
 the partial type upto trace $\trace$ will cause $f$ to get stuck
-in \emph{at most} $k$ steps where $k$ is the length of $\trace$.
+in \emph{at most} $k$ steps, where $k$ is the length of $\trace$.
 %
 \begin{lem}
 \label{lem:k-stuck}
@@ -416,19 +417,17 @@ in \emph{at most} $k$ steps where $k$ is the length of $\trace$.
 \end{lem}
 \begin{proof}
   By induction on $k$, the length of $\trace$.
-  Let $s_{\trace} \rightarrow \_ = \ptype{\trace}{f}$ and
+  Let $s_{\trace} = \ptype{\trace}{f}$ and
   $\trace' = \triple{\eapp{f}{\ehole{}}}{\emptysu}{\emptysu},...,\triple{e'}{\vsu'}{\tsu'}$
   such that $\step{e'}{\vsu'}{\tsu'}{e}{\vsu}{\tsu}$.
   Suppose \hastype{v}{\tincompat{t}{s_{\trace}}}, we
   will show that \steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu'}{\tsu'}
   in at most $k$ steps:
 %
-  %\begin{description}
-  % \item
-  [Case \tincompat{t}{s_{\trace'}}:]
+  \begin{description}
+  \item [Case \tincompat{t}{s_{\trace'}}:]
     The inductive hypothesis applies.
-  %\item
-  [Case $\tcompat{t}{s_{\trace'}}$ but $\tincompat{t}{s_{\trace}}$:]
+  \item [Case $\tcompat{t}{s_{\trace'}}$ but $\tincompat{t}{s_{\trace}}$:]
     By Lemma~\ref{lem:force-inst} we must have called \forcesym at step
     $k$.
     %
@@ -438,7 +437,7 @@ in \emph{at most} $k$ steps where $k$ is the length of $\trace$.
     %
     A case analysis of the rules shows that \forcesym cannot have
     succeeded.
-  %\end{description}
+  \end{description}
 \end{proof}
 
 \begin{proof}[\textbf{Proof of Theorem~\ref{thm:soundness}}]
@@ -449,16 +448,15 @@ We show that \emph{all} types $s$ have stuck-inducing
 values by splitting cases on whether the type is
 compatible with $t$. %the partial type upto $\trace$.
 %
-% \begin{description}
-  %\item
-  [Case \tcompat{s}{t}:]
-   The value $\hastype{v}{t}$ suffices to demonstrate that $\eapp{f}{v}$
-   gets stuck.
-  %\item
-  [Case \tincompat{s}{t}:]
-   By Lemma~\ref{lem:k-stuck}, every \hastype{v}{t} demonstrates that
-   $\eapp{f}{v}$ gets stuck.
-%\end{description}
+\begin{description}
+\item [Case \tcompat{s}{t}:]
+  Let $\trace = \triple{\eapp{f}{\ehole{}}}{\emptysu}{\emptysu},...,\triple{\stuck}{\vsu}{\tsu}$.
+  %
+  The value $v = \subst{\vsu}{\ehole}$ demonstrates that
+  $\eapp{f}{v}$ gets stuck.
+\item [Case \tincompat{s}{t}:] By Lemma~\ref{lem:k-stuck}, every $v$
+  such that \hastype{v}{t} demonstrates that $\eapp{f}{v}$ gets stuck.
+\end{description}
 \end{proof}
 
 \subsection{Search Algorithm}
