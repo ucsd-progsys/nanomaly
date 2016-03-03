@@ -149,7 +149,6 @@ substitutions, or yields the stuck state if no such refinement is
 possible. In the case where $v$ is a hole, it first checks in the given
 $\vsu$ to see if the hole has already been instantiated and, if so,
 returns the existing instantiation.
-\ES{explain the subtlety of narrowing a value hole to an uninstantiated type}
 %
 \begin{figure*}[ht]
 $$
@@ -197,7 +196,7 @@ lambda or a tree, it may not map \emph{directly} to another hole, so in
 the first case of \forcesym\ we do not need to \forcesym\ the result of the
 substitution, the sub-hole will be narrowed when the context demands it.
 
-\paragraph{Generating Values} The (non-deterministic) procedure $\gen{t}$
+\paragraph{Generating Values} The (non-deterministic) procedure $\gen{t}{\tsu}$
 takes as input a type $t$ and returns a value of that type. For base
 types, the procedure returns an arbitrary value. For functions, it returns
 a lambda with a \emph{new} hole denoting the return value, and unconstrained
@@ -535,27 +534,31 @@ The problem of generating inputs is undecidable in general.
 %
 Our witness generation procedure takes two inputs.
 %
-First, a search bound @n@ which is used to define the \emph{number} of
+First, a search bound $k$ which is used to define the \emph{number} of
 traces to explore. (We assume, without loss of generality, that all
 traces are finite.)
 %
-Second, binder-expression tuples @[(f1,e1),...,(fn,en)]@
-denoting the list of \emph{top-level definitions}:
-%
-\begin{code}
-  let f1 = e1 in
-  let f2 = e2 in
-  ...
-  let fn = en in
-\end{code}
+% Second, binder-expression tuples @[(f1,e1),...,(fn,en)]@
+% denoting the list of \emph{top-level definitions}:
+% %
+% \begin{code}
+%   let f1 = e1 in
+%   let f2 = e2 in
+%   ...
+%   let fn = en in
+% \end{code}
+% %
+% The witness generation procedure returns as output a list of (general)
+% witness expressions $e$ each of which is of the form @fn v1 ... vn@.
+Second, the target expression $e$ that contains the type error, and may be a curried function of multiple arguments.
 %
 The witness generation procedure returns as output a list of (general)
-witness expressions $e$ each of which is of the form @fn v1 ... vn@.
+witness expressions, each of which is of the form $e\ v_1 \ldots v_n$.
 %
 The \emph{empty} list is returned when no witness can be found after
-exploring $n$ traces.
+exploring $k$ traces.
 %
-In what follows, we refer to @fn@ as the \emph{target} of witness generation.
+% In what follows, we refer to @fn@ as the \emph{target} of witness generation.
 
 \paragraph{Modeling Semantics}
 %: \texttt{eval} and \texttt{isStuck}}
@@ -563,60 +566,59 @@ In what follows, we refer to @fn@ as the \emph{target} of witness generation.
 We resolve the non-determinism in the operational semantics
 (\S~\ref{sec:semantics}) via the procedure:
 %
-\ES{HERE}
 \begin{mcode}
-  eval :: ($e$, $\vsu$, $\tsu$) -> [($v$, $\vsu$, $\tsu$)]
+  eval :: $\triple{e}{\vsu}{\tsu}$ -> [$\triple{v \cup \stuck}{\vsu}{\tsu}$]
 \end{mcode}
 %
 Due to the non-determinism introduced by \gensym, a call
-\hbox{|eval($e$, $\vsu$, $\tsu$)|} returns the \emph{list} of possible results
-of the form $\triple{e'}{\vsu'}{\tsu'}$ such that
-$\steps{e}{\vsu}{\tsu}{e'}{\vsu'}{\tsu'}$.
+\hbox{|eval$\triple{e}{\vsu}{\tsu}$|} returns the \emph{list} of possible results
+of the form $\triple{v \cup \stuck}{\vsu'}{\tsu'}$ such that
+$\steps{e}{\vsu}{\tsu}{v \cup \stuck}{\vsu'}{\tsu'}$.
 %
-We determine whether a given value is stuck by using the predicate:
-%
-\begin{mcode}
-  isStuck :: $v$ -> Bool
-\end{mcode}
+% We determine whether a given value is stuck by using the predicate:
+% %
+% \begin{mcode}
+%   isStuck :: $v$ -> Bool
+% \end{mcode}
 
 \paragraph{Generating Target Arguments}
 %
-We address the issue of currying by defining a procedure @genArgs@ such that \\
-\hbox{@genArgs [(f1,e1),...,(fn,en)]@} yields a list of holes @[v1,...,vk]@
-such that \hbox{@fn v1 ... vk@} \emph{does not} evaluate to a lambda.
+We address the issue of currying by defining a procedure @genArgs@ such that
+\hbox{|genArgs $e$|} yields a list of holes |[$v_1$,...,$v_n$]|
+such that $\eapp{e}{v_1 \ldots v_n}$ \emph{does not} evaluate to a lambda.
 %
 This is achieved via a simple @loop@ that keeps adding holes to the
-target application until @eval@uating the closed term yields a
+target application until @eval@uating the term yields a
 non-lambda value.
 %
-The helper functions @witness@ and @close@ are used to respectively
-apply the parameters to the target and close the result under the top-level
-let-binders, prior to invoking \hbox{@eval@.}
+% The helper functions @witness@ and @close@ are used to respectively
+% apply the parameters to the target and close the result under the top-level
+% let-binders, prior to invoking \hbox{@eval@.}
 %
-That is, @mkApps@ creates a nested sequence of applications in
-the usual left-associative style, and @mkLets@ takes a list of
-binders and a body expression, and creates a sequence of nested
-let-binders that close the body expression.
+% That is, @mkApps@ creates a nested sequence of applications in
+% the usual left-associative style, and @mkLets@ takes a list of
+% binders and a body expression, and creates a sequence of nested
+% let-binders that close the body expression.
 
 \begin{figure}[t]
-\centering
+% $$
+% \begin{array}{lcl}
+% \genArgs{e} &\defeq& \begin{cases} \genArgs{\addArg{e}},& \mbox{if } \triple{\efun{x}{e'}}{\vsu}{\tsu},\ldots = \doeval{e} \\
+%  e,& \mbox{otherwise} \\
+% \end{cases}
+% \\
+% \addArg{e} &\defeq& \eapp{e}{\vhole{\thole}}, \qquad \mbox{where } \ehole, \thole \mbox{ are fresh }
+% \end{array}
+% $$
+
 \begin{mcode}
-genArgs :: [($x$, $e$)] -> [$v$]
-genArgs bs = loop []
+genArgs :: $e$ -> [$v$]
+genArgs $e$ = loop []
   where
-  loop vs  = case eval (close bs vs) of
-               $\pair{\efun{x}{e}}{\_}$:_ -> loop ($\vhole{\thole}$ : vs)
-               _        -> vs
-
-close :: [($x$, $e$)] -> [$v$] -> ($e$, $\vsu$, $\tsu$)
-close bs vs = (e, $\emptysu$, $\emptysu$)
-  where
-    e       = mkLets bs (witness bs vs)
-
-witness :: [($x$, $e$)] -> [$v$] -> $e$
-witness bs vs = mkApps target vs
-  where
-    target    = snd (last bs)
+  loop vs = case eval $\triple{\eapp{e}{vs}}{\emptysu}{\emptysu}$ of
+             $\triple{\efun{x}{e}}{\vsu}{\tsu}$:_ -> loop ($\vhole{\thole}$ : vs)
+                           -- $\ehole$, $\thole$ are fresh
+             _          -> vs
 \end{mcode}
 \caption{Find number of arguments for target function}
 \label{fig:algo-gen-args}
@@ -628,43 +630,47 @@ witness bs vs = mkApps target vs
 %
 Finally, Figure~\ref{fig:algo-gen-witness} summarizes the overall
 implementation of our search for witnesses, in the procedure @genWitness@,
-which takes as input a bound @n@ and a list of top level binders, and
-returns a list of witness expressions $e$ that demonstrate how the input
+which takes as input a bound @k@ and the target expression $e$, and
+returns a list of witness expressions $\eapp{e}{v_1 \ldots v_n}$ that demonstrate how the input
 program gets stuck.
 %
 The search proceeds as follows.
 %
 @(1)@ we invoke @genArgs@ to determine the number of parameters required
-by the (curried) target function.
+by the (curried) target expression.
 %
-@(2)@ we obtain a closed expression $e$ by closing the target with the
-computed holes.
+% @(2)@ we obtain a closed expression $e$ by closing the target with the
+% computed holes.
 %
-@(3)@ we take the first @n@ traces returned by @eval@ on the closed $e$
+@(2)@ we take the first @k@ traces returned by @eval@ on the target $\eapp{e}{vs}$
 and
-@(4)@ we extract the substitutions corresponding to the $\stuck$ traces,
+@(3)@ we extract the substitutions corresponding to the $\stuck$ traces,
 and use them to return the list of witnesses.
 %
 We obtain the following corollary of Theorem~\ref{thm:soundness}:
 
 \begin{cor}{\textbf{[Witness Generation]}}
 \label{thm:generation}
-  If @genWitness k [(f1,e1),...,(fn,en)]@ is non-empty,
-  then for every type $t$ there exists $v$ of type $t$ such that
-  $\steps{\eapp{f_n}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$.
+  If |genWitness k $e$ = $\ $ $\triple{\eapp{e}{v_1 \ldots v_n}}{\vsu}{\tsu}\ldots$|,
+  then for all types $t_1 \ldots t_n$ there exist values $w_1 \ldots w_n$ such that
+  $\steps{\eapp{e}{w_1 \ldots w_n}}{\emptysu}{\emptysu}{\stuck}{\vsu'}{\tsu'}$.
 \end{cor}
 
 \begin{figure}[t]
 \centering
+% $$
+% \begin{array}{lcll}
+% \genWitness{n}{e} &\defeq& \{ \resolve{e'}{\vsu} \spmid \triple{e'}{\vsu}{\tsu} \in \doeval{\genArgs{e}} \} & \\
+% \end{array}
+% $$
+
 \begin{mcode}
-genWitness :: Nat -> [($x$, $e$)] -> [$v$]
-genWitness n bs
-       = [witness bs ($\vsu$ vs) | $\vsu$ <- $\vsu$s]
+genWitness :: Nat -> $e$ -> [$e$]
+genWitness n $e$ = [$\resolve{\eapp{e}{vs}}{\vsu}$ | $\vsu$ <- $\vsu$s]
   where
-   vs  = genArgs defs []        -- (1)
-   cfg = close defs vs          -- (2)
-   res = take n (eval cfg)      -- (3)
-   $\vsu$s   = [$\vsu$ | $\triple{\stuck}{\vsu}{\tsu}$ <- res]  -- (4)
+   vs  = genArgs $e$                  -- (1)
+   res = take n (eval $\triple{\eapp{e}{vs}}{\emptysu}{\emptysu}$) $\ $  -- (2)
+   $\vsu$s   = [$\vsu$ | $\triple{\stuck}{\vsu}{\tsu}$ <- res] $\ \ $   -- (3)
 \end{mcode}
 \caption{Generating Witnesses}
 \label{fig:algo-gen-witness}
