@@ -67,7 +67,7 @@ def plot_coverage(seminal, ucsd):
     autolabel(plt, p2)
 
     # plt.show()
-    fig.savefig('coverage.pdf')
+    fig.savefig('coverage.png')
     plt.close()
 
 def plot_trace_size(seminal, ucsd):
@@ -117,7 +117,7 @@ def plot_trace_size(seminal, ucsd):
 
     # autolabel(ax, p1)
 
-    plt.savefig('trace_size_step.pdf')
+    plt.savefig('trace_size_step.png')
     plt.close()
 
 
@@ -161,7 +161,7 @@ def plot_trace_size(seminal, ucsd):
     # autolabel(ax, p2)
 
     # plt.show()
-    plt.savefig('trace_size_jump.pdf')
+    plt.savefig('trace_size_jump.png')
     plt.close()
 
 def plot_distrib(seminal, ucsd):
@@ -215,7 +215,7 @@ def plot_distrib(seminal, ucsd):
 
 
     # plt.show()
-    plt.savefig('distrib.pdf')
+    plt.savefig('distrib.png')
     plt.close()
 
 

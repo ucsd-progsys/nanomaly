@@ -7,13 +7,13 @@ traces that \toolname produces.
 \centering
 \begin{minipage}{0.49\linewidth}
 \centering
-\begin{code}
+\begin{ecode}
 let rec sqsum xs = match xs with
   | [] -> 0
-  | h::t -> (sqsum t) @ (h * h)
-\end{code}
+  | h::t -> __(sqsum t)__ @ (h * h)
+\end{ecode}
+% File "sqsum.ml", line 3, characters 12-21:
 \begin{verbatim}
-File "prog3151.ml", line 7, characters 12-21:
 Error: This expression has type
          int
        but an expression was expected of type
@@ -22,7 +22,7 @@ Error: This expression has type
 \end{minipage}
 \begin{minipage}{0.49\linewidth}
 \centering
-\includegraphics[height=200px]{sqsum.png}
+\includegraphics[height=125px]{sqsum.png}
 \end{minipage}
 \caption{caption}
 \label{fig:traces}
@@ -32,13 +32,13 @@ Error: This expression has type
 \centering
 \begin{minipage}{0.49\linewidth}
 \centering
-\begin{code}
+\begin{ecode}
 let rec sumList xs = match xs with
   | []    -> []
-  | y::ys -> y + sumList ys
-\end{code}
+  | y::ys -> y + __sumList ys__
+\end{ecode}
+% File "sumList.ml", line 3, characters 17-27:
 \begin{verbatim}
-File "sumlist.ml", line 5, characters 17-27:
 Error: This expression has type
          'a list
        but an expression was expected of type
@@ -47,7 +47,7 @@ Error: This expression has type
 \end{minipage}
 \begin{minipage}{0.49\linewidth}
 \centering
-\includegraphics[height=200px]{sumlist.png}
+\includegraphics[height=125px]{sumlist.png}
 \end{minipage}
 \caption{caption}
 \label{fig:traces}
@@ -57,13 +57,13 @@ Error: This expression has type
 \centering
 \begin{minipage}{0.49\linewidth}
 \centering
-\begin{code}
+\begin{ecode}
 let append xs ys = match xs with
   | []   -> ys
-  | h::t -> h :: t :: ys
-\end{code}
+  | h::t -> h :: __t__ :: ys
+\end{ecode}
+% File "append.ml", line 3, characters 17-18:
 \begin{verbatim}
-File "prog0164.ml", line 7, characters 17-18:
 Error: This expression has type
          'a list
        but an expression was expected of type
@@ -73,7 +73,7 @@ Error: This expression has type
 \end{minipage}
 \begin{minipage}{0.49\linewidth}
 \centering
-\includegraphics[height=100px]{append.png}
+\includegraphics[height=75px]{append.png}
 \end{minipage}
 \caption{caption}
 \label{fig:traces}
@@ -83,7 +83,7 @@ Error: This expression has type
 \centering
 \begin{minipage}{0.49\linewidth}
 \centering
-\begin{code}
+\begin{ecode}
 let rec wwhile (f,b) =
   match f with
   | (z, false) -> z
@@ -93,10 +93,10 @@ let f x =
   let xx = x * x in
   (xx, (xx < 100))
 
-let _ = wwhile (f, 2)
-\end{code}
+let _ = wwhile (__f__, 2)
+\end{ecode}
+% File "wwhile.ml", line 10, characters 16-17:
 \begin{verbatim}
-File "prog0358.ml", line 19, characters 16-17:
 Error: This expression has type
          int -> int * bool
        but an expression was expected of type
