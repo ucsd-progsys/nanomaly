@@ -83,12 +83,15 @@
 \newcommand\trace{\tau}
 \newcommand\pair[2]{\langle #1, #2 \rangle}
 \newcommand\triple[3]{\langle #1, #2, #3 \rangle}
+\newcommand\quadruple[4]{\langle #1, #2, #3, #4 \rangle}
 \newcommand\step[6]{\stepsto{\triple{#1}{#2}{#3}}{\triple{#4}{#5}{#6}}}
 %\newcommand\stepi[5]{\stepstoi{#1}{\pair{#2}{#3}}{\pair{#4}{#5}}}
 \newcommand\steptr[7]{\stepstoi{#1}{\triple{#2}{#3}{#4}}{\triple{#5}{#6}{#7}}}
-\newcommand\steps[6]{\stepstot{\triple{#1}{#2}{#3}}{\triple{#4}{#5}{#6}}}
-\newcommand\stepg[6]{\stepsto{\triple{#1}{#2}{#3}}{\triple{#4}{#5}{#6}}}
-\newcommand\stepsg[6]{\stepstot{\triple{#1}{#2}{#3}}{\triple{#4}{#5}{#6}}}
+\newcommand\steps[6]{\stepstot{\triple{#1}{#2}{#3}}{\triple{#4}{#5}{#6}{}}}
+\newcommand\stepg[8]{\stepsto{\quadruple{#1}{#2}{#3}{#4}}
+                             {\quadruple{#5}{#6}{#7}{#8}}}
+\newcommand\stepsg[8]{\stepstot{\quadruple{#1}{#2}{#3}{#4}}
+                               {\quadruple{#5}{#6}{#7}{#8}}}
 \newcommand\stepsto[2]{\ensuremath{#1 \hookrightarrow #2}}
 \newcommand\stepstot[2]{\ensuremath{#1 \hookrightarrow^{*} #2}}
 \newcommand\stepstoi[3]{\ensuremath{#2 \hookrightarrow^{#1} #3}}

@@ -33,42 +33,42 @@ to effectively visualize \emph{how} the program goes (wrong).
 \subsection{Tracing Semantics}
 \label{sec:inter-semant}
 %
-\begin{figure*}[t]
-%% \relDescription{Computing Sub-Terms}
-%% \begin{gather*}
-%% \begin{array}{lcl}
-%% \subtermssym                 & \dcolon & e \to \tr \\
-%% \subterms{\eapp{e_1}{e_2}}   & \defeq & \subterm{\eapp{e_1}{e_2}}{e_1}; \subterm{\eapp{e_1}{e_2}}{e_2} \\
-%% \subterms{\eplus{e_1}{e_2}}   & \defeq & \subterm{\eplus{e_1}{e_2}}{e_1}; \subterm{\eplus{e_1}{e_2}}{e_2} \\
-%% \subterms{\eif{e_1}{e_2}{e_3}}   & \defeq & \subterm{\eif{e_1}{e_2}{e_3}}{e_1}; \\
-                                %% &        & \subterm{\eif{e_1}{e_2}{e_3}}{e_2}; \\
-                                %% &        & \subterm{\eif{e_1}{e_2}{e_3}}{e_3} \\
-%% \subterms{\elet{x}{e_1}{e_2}}   & \defeq & \subterm{\elet{x}{e_1}{e_2}}{e_1}; \\
-                                %% &        & \subterm{\elet{x}{e_1}{e_2}}{e_2} \\
-%% \subterms{\efun{x}{e}}       & \defeq & \subterm{\efun{x}{e}}{e} \\
-%% \subterms{e}                 & \defeq & \bullet
-%% \end{array}
-%% \end{gather*}
-\judgementHead{Traced Evaluation}{\stepg{e}{\su}{\tr}{e}{\su}{\tr}}
-\begin{gather*}
-\inference[\recontext]
-  {\stepg{e}{\su}{\tr}{e'}{\su'}{\tr'}}
-  {\stepg{C[e]}{\su}{\tr}{C[e']}{\su'}{\singlestep{C[e]}{C[e']}; \tr'}}
-\\ \\
-\inference[\reappgood]
-  {\pair{\efun{x}{e}}{\su'} = \force{v_1}{\tfun{\thole{}}{\thole{}}}{\su}}
-  {\stepg{\eapp{v_1}{v_2}}{\su}{\tr}
-         {e\sub{x}{v_2}}{\su'}{\singlestep{\eapp{v_1}{v_2}}{e\sub{x}{v_2}}; \tr}}
-\\ \\
-\inference[\reappbad]
-  {\pair{\stuck}{\su'} = \force{v_1}{\tfun{\thole{}}{\thole{}}}{\su}}
-  {\stepg{\eapp{v_1}{v_2}}{\su}{\tr}{\stuck}{\su'}{\singlestep{\eapp{v_1}{v_2}}{\stuck}; \tr}}
-\end{gather*}
-\caption{A selection of the operational semantics from
-  Figure~\ref{fig:operational}, extended to collect a full reduction
-  graph.}
-\label{fig:interactive}
-\end{figure*}
+% \begin{figure*}[t]
+% %% \relDescription{Computing Sub-Terms}
+% %% \begin{gather*}
+% %% \begin{array}{lcl}
+% %% \subtermssym                 & \dcolon & e \to \tr \\
+% %% \subterms{\eapp{e_1}{e_2}}   & \defeq & \subterm{\eapp{e_1}{e_2}}{e_1}; \subterm{\eapp{e_1}{e_2}}{e_2} \\
+% %% \subterms{\eplus{e_1}{e_2}}   & \defeq & \subterm{\eplus{e_1}{e_2}}{e_1}; \subterm{\eplus{e_1}{e_2}}{e_2} \\
+% %% \subterms{\eif{e_1}{e_2}{e_3}}   & \defeq & \subterm{\eif{e_1}{e_2}{e_3}}{e_1}; \\
+%                                 %% &        & \subterm{\eif{e_1}{e_2}{e_3}}{e_2}; \\
+%                                 %% &        & \subterm{\eif{e_1}{e_2}{e_3}}{e_3} \\
+% %% \subterms{\elet{x}{e_1}{e_2}}   & \defeq & \subterm{\elet{x}{e_1}{e_2}}{e_1}; \\
+%                                 %% &        & \subterm{\elet{x}{e_1}{e_2}}{e_2} \\
+% %% \subterms{\efun{x}{e}}       & \defeq & \subterm{\efun{x}{e}}{e} \\
+% %% \subterms{e}                 & \defeq & \bullet
+% %% \end{array}
+% %% \end{gather*}
+% \judgementHead{Traced Evaluation}{\stepg{e}{\su}{\tr}{e}{\su}{\tr}}
+% \begin{gather*}
+% \inference[\recontext]
+%   {\stepg{e}{\su}{\tr}{e'}{\su'}{\tr'}}
+%   {\stepg{C[e]}{\su}{\tr}{C[e']}{\su'}{\singlestep{C[e]}{C[e']}; \tr'}}
+% \\ \\
+% \inference[\reappgood]
+%   {\pair{\efun{x}{e}}{\su'} = \force{v_1}{\tfun{\thole{}}{\thole{}}}{\su}}
+%   {\stepg{\eapp{v_1}{v_2}}{\su}{\tr}
+%          {e\sub{x}{v_2}}{\su'}{\singlestep{\eapp{v_1}{v_2}}{e\sub{x}{v_2}}; \tr}}
+% \\ \\
+% \inference[\reappbad]
+%   {\pair{\stuck}{\su'} = \force{v_1}{\tfun{\thole{}}{\thole{}}}{\su}}
+%   {\stepg{\eapp{v_1}{v_2}}{\su}{\tr}{\stuck}{\su'}{\singlestep{\eapp{v_1}{v_2}}{\stuck}; \tr}}
+% \end{gather*}
+% \caption{A selection of the operational semantics from
+%   Figure~\ref{fig:operational}, extended to collect a full reduction
+%   graph.}
+% \label{fig:interactive}
+% \end{figure*}
 
 \paragraph{Reduction Graphs}
 %
@@ -87,7 +87,7 @@ We extend the transition relation (\S~\ref{sec:semantics}) to
 collect the set of edges corresponding to the reduction graph.
 %
 Concretely, we extend the operational semantics to
-a relation of the form $\stepg{e}{\vsu}{\tr}{e'}{\vsu'}{\tr'}$
+a relation of the form $\stepg{e}{\vsu}{\tsu}{\tr}{e'}{\vsu'}{\tsu'}{\tr'}$
 where $\tr'$ collects the edges of the transition.
 
 \paragraph{Collecting Edges}
@@ -97,11 +97,12 @@ rule to collect edges.
 %
 The general recipe for collecting steps-to edges is to
 to recording the consequent of each original rule in the
-trace. That is, each original judgment \step{e}{\vsu}{e'}{\vsu'}
-becomes \stepg{e}{\vsu}{\tr}{e'}{\vsu'}{\singlestep{e}{e'}; \tr}.
+trace. That is, each original judgment \step{e}{\vsu}{\tsu}{e'}{\vsu'}{\tsu'}
+becomes \stepg{e}{\vsu}{\tsu}{\tr}{e'}{\vsu'}{\tsu'}{\singlestep{e}{e'}; \tr}.
 %
-As the translation is mechanical, we provide a selection of examples
-in Figure~\ref{fig:interactive}.
+% As the translation is mechanical, we provide a selection of examples
+% in Figure~\ref{fig:interactive}.
+As the translation is mechanical, we will not discuss it further.
 
 %%% The sub-term edges are delegated to a helper function \subtermssym\
 %%% which adds edges from an expression to each of its
@@ -124,7 +125,7 @@ the set of \emph{commands} available to user and what
 they do, and finally how we use a command to \emph{update}
 the visualization state. In what follows, for clarity of
 exposition, we assume we have a (global) trace:
-$\stepg{e_0}{\emptysu}{\bullet}{e_n}{\vsu}{\tr}$, where
+$\stepg{e_0}{\emptysu}{\emptysu}{\bullet}{e_n}{\vsu}{\tsu}{\tr}$, where
 $e_0$ and $e_n$ are the \emph{initial} and \emph{final}
 expressions respectively.
 
@@ -172,7 +173,7 @@ is parameterized by a single expression (vertex) selected from the
       show the result of skipping over a function call in a sub-term.
 \end{itemize}
 
-\input{traversals_new.tex}
+% \input{traversals_new.tex}
 
 \paragraph{Update}
 %
