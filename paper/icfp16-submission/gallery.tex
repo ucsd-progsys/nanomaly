@@ -37,7 +37,7 @@ Error: This expression has type
   above) for being an \texttt{int} instead of a \texttt{list}.
   \toolname's jump-compressed trace draws the eye to the
   entire term \texttt{0 }|@|\texttt{ 1}.}
-\label{fig:traces}
+\label{fig:trace-sqsum}
 \end{figure*}
 
 \begin{figure*}[ht]
@@ -71,7 +71,7 @@ Error: This expression has type
   the third step that \texttt{sumList []} reduces to \texttt{[]}, which
   clarifies that the conflict is between the base case and recursive
   case.}
-\label{fig:traces}
+\label{fig:trace-sumlist}
 \end{figure*}
 
 \begin{figure*}[ht]
@@ -104,7 +104,7 @@ Error: This expression has type
   error. \toolname shows, more concretely, that \texttt{[] :: [2]} gets
   stuck because lists are homogeneous and \texttt{[]} is not an
   \texttt{int}.}
-\label{fig:traces}
+\label{fig:trace-append}
 \end{figure*}
 
 \begin{figure*}[ht]
@@ -145,7 +145,7 @@ Error: This expression has type
   assumptions about the input code and quickly draws the eye to the true
   error, the \texttt{match} expression, and highlights the conflict in
   matching a function against a pair pattern.}
-\label{fig:traces}
+\label{fig:trace-wwhile}
 \end{figure*}
 
 
