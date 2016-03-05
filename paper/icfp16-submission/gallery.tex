@@ -34,8 +34,8 @@ Error: This expression has type
   then compute the sum of the result, but the student has used the
   list-append operator |@| instead of \texttt{+} to compute the
   sum. \ocaml blames the recursive call \texttt{sqsum t} (underlined
-  above) for being an \texttt{int} instead of a
-  \texttt{list}. \toolname's jump-compressed trace draws the eye to the
+  above) for being an \texttt{int} instead of a \texttt{list}.
+  \toolname's jump-compressed trace draws the eye to the
   entire term \texttt{0 }|@|\texttt{ 1}.}
 \label{fig:traces}
 \end{figure*}
@@ -64,12 +64,13 @@ Error: This expression has type
 \caption{\texttt{sumList xs} should sum the elements of \texttt{xs}, but
   the student has returned \texttt{[]} in the base case instead of
   \texttt{0}. \ocaml deduces from the base case that \texttt{sumList}
-  must return a \texttt{list} and thus blames the recursive call for
-  producing a \texttt{list} instead of an \texttt{int}. \toolname's
-  jump-compressed trace highlights the clash between the \texttt{[]} and
-  the \texttt{+}, but also demonstrates in the third step that
-  \texttt{sumList []} reduces to \texttt{[]}, which clarifies that the
-  conflict is between the base case and recursive case.}
+  must return a \texttt{list} and thus blames the recursive call on line
+  3 for producing a \texttt{list} instead of an  \texttt{int}.
+  \toolname's jump-compressed trace highlights the clash
+  between the \texttt{[]} and the \texttt{+}, but also demonstrates in
+  the third step that \texttt{sumList []} reduces to \texttt{[]}, which
+  clarifies that the conflict is between the base case and recursive
+  case.}
 \label{fig:traces}
 \end{figure*}
 
@@ -98,10 +99,11 @@ Error: This expression has type
 \caption{\texttt{append xs ys} should concatenate the two input lists,
   but the student has tried to cons the tail of \texttt{xs} onto
   \texttt{ys} instead of making a recursive call to \texttt{append}.
-  \ocaml blames \texttt{t} for being a \texttt{'a list} instead of a
-  \texttt{'a}, prompting an \emph{occurs-check} error. \toolname shows,
-  more concretely, that \texttt{[] :: [2]} gets stuck because lists are
-  homogeneous and \texttt{[]} is not an \texttt{int}.}
+  \ocaml blames \texttt{t} on line 3 for being a \texttt{'a list}
+  instead of a \texttt{'a}, prompting an \emph{occurs-check}
+  error. \toolname shows, more concretely, that \texttt{[] :: [2]} gets
+  stuck because lists are homogeneous and \texttt{[]} is not an
+  \texttt{int}.}
 \label{fig:traces}
 \end{figure*}
 
@@ -136,13 +138,13 @@ Error: This expression has type
 \caption{\texttt{wwhile (f, b)} should repeatedly apply the function
   \texttt{f} to the first element of its result pair, starting with the
   initial input \texttt{b}, until the second element is \texttt{false}.
-  Unfortunately, the student has forgotten to apply \texttt{f} at all
-  and just matches it directly against a pair. This faulty definition of
-  \texttt{wwhile} still typechecks however, and \ocaml thus blames the
-  \emph{call-site} on line 10. \toolname makes no assumptions about the
-  input code and quickly draws the eye to the true error, the
-  \texttt{match} expression, and highlights the conflict in matching a
-  function against a pair pattern.}
+  Unfortunately, the student has forgotten to apply \texttt{f} at all on
+  line 2, and just matches it directly against a pair. This faulty
+  definition of \texttt{wwhile} still typechecks however, and \ocaml
+  thus blames the \emph{call-site} on line 10. \toolname makes no
+  assumptions about the input code and quickly draws the eye to the true
+  error, the \texttt{match} expression, and highlights the conflict in
+  matching a function against a pair pattern.}
 \label{fig:traces}
 \end{figure*}
 
