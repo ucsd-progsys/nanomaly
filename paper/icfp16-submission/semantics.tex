@@ -104,13 +104,18 @@ Recall that a key challenge in our setting is to find witnesses
 that are meaningful and do not arise from choosing values from
 irrelevant types.
 %
-We solve this problem be equipping our term language with a notion
-of a \emph{hole}, written \vhole{\thole}, which represents an \emph{unconstrained}
-value that may be replaced with any value of an unspecified type \thole.
+We solve this problem be equipping our term language with a
+notion of a \emph{hole}, written \vhole{\thole}, which represents
+an \emph{unconstrained} value $\ehole$ that may be replaced with
+\emph{any} value of type \thole.
 %
-Dually, holes may also appear in types, written \thole, where they may
-be thought of as type variables that we will not generalize over.
+Intuitively, the type holes \thole\ can be viewed as type variables
+that we will \emph{not} generalize over.
 %
+A \emph{normalized} value (resp.\ type) is one that is not a hole,
+but which may internally contain holes.
+%
+For example \RJ{add example here}
 
 \paragraph{Substitutions}
 %
@@ -120,18 +125,37 @@ needed locally to make progress (inspired by the manner in
 which SmallCheck uses lazy evaluation~\cite{runciman_smallcheck_2008}).
 %
 We track how the holes are incrementally filled in, by using
-(value) \emph{substitutions} that map holes % (denoted by their index)
-to values which may, in turn, contain holes.
+value (resp.\ type) \emph{substitutions} $\vsu$ (resp. $\tsu$)
+that map value (resp.\ type) holes to values (resp.\ types).
 %
-The substitutions let us ensure that we instantiate each hole
-with the same (partially defined) value, regardless of the multiple
-contexts in which the hole appears, and hence, ensures we can
-report a concrete (and general) witness for any (dynamically)
-discovered type errors.
+A \emph{normalized} substitution is one whose co-domain comprises
+of normalized values (resp.\ types).
+%
+In the sequel, we will assume and ensure that all substitutions
+are normalized.
+
+\paragraph{Resolving Holes}
+We \emph{resolve} a hole with respect to a substitution by
+transitively applying the substitution as long as it contains
+any holes that are defined in the substitution.
+%
+We write \resolve{\thole}{\tsu} to denote the the resolution
+of \thole\ with respect to \tsu.
+%
+Note that by definition, \resolve{\thole}{\tsu} does not contain
+any holes in the domain of \tsu.
+
 
 \subsection{Semantics}
 \label{sec:semantics}
 %
+\RJ{Add intuition text -- "dynamic Hindley Milner"}
+%
+The substitutions let us ensure that we consistently instantiate
+each hole with the same (partially defined) value or type, regardless
+of the multiple contexts in which the hole appears. This ensures we
+can report a concrete (and general) witness for any (dynamically)
+discovered type errors.
 
 The evaluation relation is parameterized by a pair of functions:
 called \emph{narrow} (\forcesym) and \emph{generate} (\gensym),
@@ -191,20 +215,30 @@ $$
 \label{fig:narrow}
 \end{figure*}
 %
-While a hole may map to a value that \emph{contains} another hole, \eg a
-lambda or a tree, it may not map \emph{directly} to another hole, so in
-the first case of \forcesym\ we do not need to \forcesym\ the result of the
-substitution, the sub-hole will be narrowed when the context demands it.
+%While a hole may map to a value that \emph{contains} another hole, \eg a
+%lambda or a tree, it may not map \emph{directly} to another hole,
+As the substitutions are normalized, in the first case of \forcesym\ we
+do not need to \forcesym\ the result of the substitution, the sub-hole
+will be narrowed when the context demands it.
 
-\paragraph{Generating Values} The (non-deterministic) procedure $\gen{t}{\tsu}$
-takes as input a type $t$ and returns a value of that type. For base
-types, the procedure returns an arbitrary value. For functions, it returns
-a lambda with a \emph{new} hole denoting the return value, and unconstrained
-types (denoted by $\thole$) yield fresh holes constrained to have type \thole
-(denoted by $\vhole{\thole}$). \ES{note that $\gen{\ttree{t}}{\tsu}$ will
-always place holes in the generated nodes, they will be filled in later,
-on demand.}
+\paragraph{Generating Values} The (non-deterministic)
+$\gen{t}{\tsu}$ in Figure~\ref{fig:gen}, takes
+as input a type $t$ and returns a value of that type.
+%
+For base types, the procedure returns an arbitrary value of
+that type.
+%
+For functions, it returns a lambda with a \emph{new} hole
+denoting the return value, and unconstrained types (denoted
+by $\thole$) yield fresh holes constrained to have type
+\thole (denoted by $\vhole{\thole}$).
+%
+Note that for an algebraic datatype, $\gen{\ttree{t}}{\tsu}$
+will always place holes in the generated nodes; they will be
+lazily filled in later, on demand.
 
+
+\begin{figure}[ht]
 $$
 \begin{array}{lcll}
 \gensym       & ::  & (t, \tsu) \rightarrow v \\
@@ -216,6 +250,10 @@ $$
 \gen{\thole}{\tsu}  & \defeq & \vhole{\thole}, & \quad \text{\ehole is fresh} \\
 \end{array}
 $$
+\caption{Generating values}
+\label{fig:gen}
+\end{figure}
+
 
 \paragraph{Steps and Traces}
 \input{operational.tex}
@@ -251,18 +289,29 @@ We write \steps{\estuck}{\vsu}{\tsu}{\estuck'}{\vsu'}{\tsu'} if
 \steptr{\trace}{\estuck}{\vsu}{\tsu}{\estuck'}{\vsu'}{\tsu'} for some trace $\trace$.
 
 \paragraph{Primitive Reductions}
-Primitive reduction steps --- addition, if-elimination, function
-application, and data construction and case analysis --- use \forcesym
-to ensure that values have the appropriate type (and that holes are
-instantiated) before continuing the computation. Importantly,
-beta-reduction \emph{does not} type-check its argument, it only ensures
-that $v_1$ is a function.
+%
+\RJ{Put high-level intuition about how "dynamic HM" is
+formalized in op-sem, to set up next few paragraphs}
+%
+Primitive reduction steps --- addition, if-elimination,
+function application, and data construction and case
+analysis --- use \forcesym to ensure that values have
+the appropriate type (and that holes are instantiated)
+before continuing the computation.
+%
+Importantly, beta-reduction \emph{does not} type-check its
+argument, it only ensures that ``the caller'' $v_1$ is indeed
+a function.
 
 \paragraph{Recursion}
-Fixed-point operators often cannot be typed in static type systems, but
-we are not concerned with \emph{assigning} types to terms, rather with
-showing that \emph{no type} can be assigned. We are simply executing the
-untyped $\lambda$-calculus, which has no issue handling recursion.
+\RJ{this para appears out of nowhere --- non-sequitur}
+Fixed-point operators often cannot be typed in static type
+systems, but we are not concerned with \emph{assigning}
+types to terms, rather with showing that \emph{no type}
+can be assigned.
+%
+We are simply executing the untyped $\lambda$-calculus,
+which has no issue handling recursion.
 
 %% \begin{thm}
 %% \label{thm:all-reduce}
@@ -273,21 +322,21 @@ untyped $\lambda$-calculus, which has no issue handling recursion.
 % \begin{proof}%[Proof of \autoref{thm:all-reduce}]
 %   Simple induction on the evaluation relation.
 % \end{proof}
-%
+
 \subsection{Generality}\label{sec:soundness}
 
 A key technical challenge in generating witnesses is
-that we have no (static) type information to rely upon. Thus, we
-must avoid the trap of generating \emph{spurious} witnesses that
-arise from picking irrelevant values, when instead there exist
-perfectly good values of a \emph{different} type, under which
-the program would not go wrong.
-
-\paragraph{Witness Generality}
-We now show that our evaluation relation instantiates holes in a
-\emph{general} manner. That is, given a function $f$, if we have
-$\steps{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$,
-then for every possible input type $t$, we can find a value
+that we have no (static) type information to rely upon.
+%
+Thus, we must avoid the trap of generating \emph{spurious}
+witnesses that arise from picking irrelevant values, when
+instead there exist perfectly good values of a \emph{different}
+type, under which the program would not have gone wrong.
+%
+We now show that our evaluation relation instantiates holes
+in a \emph{general} manner. That is, given a function $f$,
+if we have $\steps{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$,
+then \emph{for every} input type $t$, we can find a value
 $v$ of type $t$ such that $\eapp{f}{v}$ goes wrong.
 
 \begin{thm}{\textbf{[Witness Generality]}}
@@ -306,10 +355,22 @@ First, we show how our evaluation rules encode a dynamic form of
 type inference, and next, we show that the types inferred via
 evaluation are indeed maximally general.
 
-\paragraph{The Type of a a Value} The (dynamic) type of a
-value $v$ is defined as a function $\typeof{v}$ defined as:
-  \[
-  \begin{array}{lcll}
+\paragraph{The Type of a a Value} The \emph{dynamic type}
+of a value $v$ is defined as a function $\typeof{v}$ shown
+in Figure~\ref{fig:typeof}.
+%
+The types of primitive values are defined in the natural manner.
+%
+The types of functions are \emph{approximated}, which is all
+that is needed to ensure an application does not get stuck, \eg
+$$\typeof{\efun{x}{\eplus{x}{1}}} = \tfun$$
+instead of $\tint \rightarrow \tint$.
+%
+The types of (polymorphic) data types are obtained from the
+labels on their values.
+
+\begin{figure}[ht]
+\[ \begin{array}{lcll}
     \typeof{n}   & \defeq & \tint & \\
     \typeof{b}   & \defeq & \tbool & \\
     \typeof{\efun{x}{e}} & \defeq & \tfun \\
@@ -319,31 +380,34 @@ value $v$ is defined as a function $\typeof{v}$ defined as:
     % \typeof{\eleaf} & \defeq & \ttree{\thole}, & \quad \text{\thole is fresh} \\
     % \typeof{\enode{v_1}{v_2}{v_3}} & \defeq & \ttree{\thole}, & \quad \text{\thole is fresh} \\
     % \typeof{e} & \defeq & \thole, & \quad \text{\thole is fresh} \\
-  \end{array}
-  \]
-%
-Note that we approximate the type of values rather than
-performing traditional type inference, for example
-$\typeof{\efun{x}{\eplus{x}{1}}} = \tfun$,
-instead of the usual $\tint \rightarrow \tint$.
+  \end{array} \]
+\caption{The \emph{dynamic type} of a value.}
+\label{fig:typeof}
+\end{figure}
 
 \paragraph{Dynamic Type Inference}
-We can think of the evaluation of \eapp{f}{\vhole{\thole}} as (dynamically)
-inferring a \emph{partial type} --- a type that may contain holes ---
-for $f$'s input, \ie a partial instantiation of \thole.
+We can think of the evaluation of \eapp{f}{\vhole{\thole}}
+as synthesizing a partial instantiation of \thole, and hence,
+\emph{dynamically inferring} a (partial) type for $f$'s input.
 %
-We can extract this type from an evaluation trace, by repeatedly
-applying the final type substitution to \thole until it contains no
-holes in the domain of the substitution. We will call this process of
-repeated substition \emph{resolving} a hole, and will use
-\resolve{\thole}{\tsu} to denote the the resolution of \thole with
-respect to \tsu.
+We can extract this type from an evaluation trace, by
+\emph{resolving} the \thole\ with the final type
+substitution at the end of the trace.
 %
 Formally, we say that if
 $\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{\estuck}{\vsu}{\tsu}$,
 then the \emph{partial input type} of $f$ upto $\trace$, written
-\ptype{\trace}{f}, is
-$\resolve{\thole}{\tsu}$.
+\ptype{\trace}{f}, is $\resolve{\thole}{\tsu}$.
+
+%repeatedly
+%applying the final type substitution to \thole until it contains no
+%holes in the domain of the substitution. We will call this process of
+%repeated substition \emph{resolving} a hole, and will use
+%\resolve{\thole}{\tsu} to denote the the resolution of \thole with
+%respect to \tsu.
+
+
+
 %$\typeof{\subst{\vsu}{\ehole}}$.
 % \ES{should we say $\subst{\tsu}{\thole}$ instead? would need a helper function that does the repeated application of \tsu\ until the result has no $\thole \in dom(\tsu)$}
 %
@@ -394,20 +458,21 @@ then the final step $\step{e}{\vsu}{\tsu}{\estuck'}{\vsu'}{\tsu'}$ invokes \forc
 \end{proof}
 
 
-\paragraph{Type Compatibility}
-Two types are compatible if there exists a type subsitution that maps both
-types to the same type.
-% one of them can be obtained by
-% suitably filling the holes of the other (\ie by suitably ``instantiating''
-% the type variables appearing in the other).
+\paragraph{Compatibility}
 %
-Formally, a type $s$ is
-\emph{compatible} with a type $t$, written \tcompat{s}{t}, if
-$\exists \tsu.\ \subst{\tsu}{s} = \subst{\tsu}{t}$.
+A \emph{type} $s$ is \emph{compatible} with a type $t$, written \tcompat{s}{t},
+if $\exists \tsu.\ \subst{\tsu}{s} = \subst{\tsu}{t}$.
+%
+That is, two types are compatible if there exists a type substitution
+that maps both types to the same type.
+%
+A \emph{value} $v$ is \emph{compatible} with a type $t$, written \vcompat{v}{t},
+if $\tcompat{\typeof{v}}{t}$, that is, if the dynamic type of $v$ is
+compatible with $t$.
 
 \paragraph{Preservation}
-Given these two definitions, we show that each evaluation step
-refines the partial input type of $f$, \ie preserves type compatibility.
+We prove that each evaluation step \emph{refines} the partial input type
+of $f$, \ie\ preserves type compatibility.
 %
 \begin{lem}
 \label{lem:refine-partial}
@@ -438,48 +503,58 @@ then \tcompat{\ptype{\trace}{f}}{\ptype{\trace'}{f}}.
 \paragraph{Incompatible Values Are Wrong}
 %
 \emph{Any} value that is \emph{incompatible} with
-the partial input type upto trace $\trace$ will cause $f$ to get stuck
-in \emph{at most} $k$ steps, where $k$ is the length of $\trace$.
+the partial input type upto trace $\trace$ will
+cause $f$ to get stuck in \emph{at most} $k$
+steps, where $k$ is the length of $\trace$.
 %
 \begin{lem}
 \label{lem:k-stuck}
-  If \steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu} and
-     \hastype{v}{t} and
-     \tincompat{t}{\ptype{\trace}{f}},
+  For all $v$,
+  if \steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu} and
+     \vincompat{v}{\ptype{\trace}{f}},
   then
      \steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}
      in at most $k$ steps, where $k$ is the length of $\trace$.
 \end{lem}
 \begin{proof}
-  By induction on $k$, the length of $\trace$. Let $s_{\trace} = \ptype{\trace}{f}$ and
-  $\trace' = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e'}{\vsu'}{\tsu'}$
-  such that $\step{e'}{\vsu'}{\tsu'}{e}{\vsu}{\tsu}$.
-  Suppose \hastype{v}{\tincompat{t}{s_{\trace}}}, we
-  will show that \steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}
-  in at most $k$ steps.
+By induction on $k$, the length of $\trace$.
+%
+Suppose {\vincompat{v}{\ptype{\trace}{f}}}.
+%
+We show that \steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}
+in at most $k$ steps.
+%
+The base case, $k = 0$ is trivial, $\trace$ is empty
+and so $\ptype{\trace}{f}$ is a hole that is compatible
+with \emph{every} value $v$.
+%
+In the inductive case, let
+$\trace' = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e'}{\vsu'}{\tsu'}$
+be the prefix of $\trace$ of length $k-1$.
+%
+Furthermore, let $s_{\trace} = \ptype{\trace}{f}$ and $s_{\trace'} = \ptype{\trace'}{f}$.
+%
+Let us split cases on whether $v$ is compatible with $s_{\trace'}$.
+%
+\begin{description}
+\item [Case \vincompat{v}{s_{\trace'}}:]
+  The inductive hypothesis applies.
 
-  The base case where $k = 0$ (\ie empty traces) is trivial as no
-  evaluation has happened and thus there can be no values that are
-  incompatible with \ptype{0}{f}. So we proceed directly to the
-  inductive case and split cases on whether $t$ is compatible with
-  $s_{\trace'}$.
+\item [Case $\vcompat{v}{s_{\trace'}}$ but $\vincompat{v}{s_{\trace}}$:]
+  Since $\vcompat{v}{s_{\trace'}}$ but $\vincompat{v}{s_{\trace}}$ we know
+  that $s_{\trace'} \neq s_{\trace}$.
+  By Lemma~\ref{lem:force-inst} we know that we must have
+  invoked \forcesym\ at step $k$.
   %
-  \begin{description}
-  \item [Case \tincompat{t}{s_{\trace'}}:]
-    The inductive hypothesis applies.
-  \item [Case $\tcompat{t}{s_{\trace'}}$ but $\tincompat{t}{s_{\trace}}$:]
-    Since $\tcompat{t}{s_{\trace'}}$ but $\tincompat{t}{s_{\trace}}$ we know
-    that $s_{\trace'} \neq s_{\trace}$, and
-    by Lemma~\ref{lem:force-inst} we know that we must have
-    successfully called \forcesym at step $k$.
-    %
-    Lemma~\ref{lem:refine-partial} tells us
-    $\tcompat{s_{\trace'}}{s_{\trace}}$, which means we must have
-    specifically narrowed $s_{\trace'}$ to a type incompatible with $t$.
-    %
-    A case analysis of the evaluation rules shows that narrowing to
-    $t$ instead cannot succeed.
-  \end{description}
+  The Preservation Lemma~\ref{lem:refine-partial} implies that
+  $\tcompat{s_{\trace'}}{s_{\trace}}$, which means we must have
+  specifically narrowed $s_{\trace'}$ to a type incompatible with $v$.
+  %
+  A case analysis of the evaluation rules shows that such an
+  invocation of \forcesym\ at step $k$
+  cannot succeed, \ie\ yields \stuck.
+   \RJ{some intuition needed --- seems like key step.}
+\end{description}
 \end{proof}
 
 \begin{proof}[\textbf{Proof of Theorem~\ref{thm:soundness}}]

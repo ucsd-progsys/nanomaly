@@ -43,7 +43,8 @@
 \newcommand\eleaf{\ensuremath{\mathtt{leaf}}\xspace}
 \newcommand\ecase[6]{\ensuremath{\mathtt{case}\ #1\ \mathtt{of} \begin{cases} \eleaf \to #2\\ \enode{#3}{#4}{#5} \to #6 \end{cases}}\xspace}
 
-\newcommand\ehole{\ensuremath{\square}\xspace}
+%\newcommand\ehole{\ensuremath{\square}\xspace}
+\newcommand\ehole{\ensuremath{\nu}\xspace}
 \newcommand\thole{\ensuremath{\alpha}\xspace}
 
 % \newcommand\erec[3]{\ensuremath{\mu #1.\lambda #2. #3}}
@@ -56,7 +57,7 @@
 \newcommand\vleaf[1]{\ensuremath{\mathtt{leaf}[#1]}\xspace}
 
 \newcommand\stuck{\ensuremath{\mathtt{stuck}}\xspace}
-\newcommand\estuck{\ensuremath{e?}\xspace}
+\newcommand\estuck{\ensuremath{\mathbf{e}}\xspace}
 
 \newcommand\resolve[2]{\ensuremath{\mathsf{resolve}(#1, #2)}\xspace}
 
@@ -74,7 +75,10 @@
 \newcommand\tsub[2]{\ensuremath{{#1} \preceq {#2}}}
 \newcommand\tnsub[2]{\ensuremath{{#1} \npreceq {#2}}}
 \newcommand\tcompat[2]{\ensuremath{#1 \sim #2}}
+\newcommand\vcompat[2]{\tcompat{#1}{#2}}
 \newcommand\tincompat[2]{\ensuremath{#1 \nsim #2}}
+\newcommand\vincompat[2]{\tincompat{#1}{#2}}
+
 \newcommand\typeof[1]{\ensuremath{\mathsf{typeof}(#1)}\xspace}
 \newcommand\ptype[2]{\ensuremath{\rho_{#1}(#2)}\xspace}
 
