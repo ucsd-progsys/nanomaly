@@ -677,7 +677,7 @@ genArgs $e$ = loop []
                            -- $\ehole$, $\thole$ are fresh
              _          -> vs
 \end{mcode}
-\caption{Find number of arguments for target function}
+\caption{Find number of arguments for target function\RJ{FIX FORMAT}}
 \label{fig:algo-gen-args}
 \end{figure}
 
@@ -708,7 +708,7 @@ We obtain the following corollary of Theorem~\ref{thm:soundness}:
 
 \begin{cor}{\textbf{[Witness Generation]}}
 \label{thm:generation}
-  If |genWitness k $e$ = $\ $ $\triple{\eapp{e}{v_1 \ldots v_n}}{\vsu}{\tsu}\ldots$|,
+  If $$\genWitness{k}{e} = \triple{\eapp{e}{v_1 \ldots v_n}}{\vsu}{\tsu}\ldots$$
   then for all types $t_1 \ldots t_n$ there exist values $w_1 \ldots w_n$ such that
   $\steps{\eapp{e}{w_1 \ldots w_n}}{\emptysu}{\emptysu}{\stuck}{\vsu'}{\tsu'}$.
 \end{cor}
