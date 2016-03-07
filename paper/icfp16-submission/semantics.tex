@@ -596,7 +596,7 @@ we must determine how many concrete values to generate to make
 execution go wrong (as we cannot rely upon static typing to
 provide this information.)
 
-The witness generation procedure @genWitness@ is formalized in
+The witness generation procedure $\genWitnessN$ is formalized in
 Figure~\ref{fig:algo-gen-witness}.
 %
 Next, we describe its input and output, and how it
@@ -609,61 +609,43 @@ The problem of generating inputs is undecidable in general.
 %
 Our witness generation procedure takes two inputs.
 %
-First, a search bound $k$ which is used to define the \emph{number} of
+First, a search bound $n$ which is used to define the \emph{number} of
 traces to explore. (We assume, without loss of generality, that all
 traces are finite.)
 %
-% Second, binder-expression tuples @[(f1,e1),...,(fn,en)]@
-% denoting the list of \emph{top-level definitions}:
-% %
-% \begin{code}
-%   let f1 = e1 in
-%   let f2 = e2 in
-%   ...
-%   let fn = en in
-% \end{code}
-% %
-% The witness generation procedure returns as output a list of (general)
-% witness expressions $e$ each of which is of the form @fn v1 ... vn@.
-Second, the target expression $e$ that contains the type error, and may be a curried function of multiple arguments.
+Second, the target expression $e$ that contains the type error,
+and may be a curried function of multiple arguments.
 %
 The witness generation procedure returns as output a list of (general)
 witness expressions, each of which is of the form $e\ v_1 \ldots v_n$.
 %
 The \emph{empty} list is returned when no witness can be found after
-exploring $k$ traces.
-%
-% In what follows, we refer to @fn@ as the \emph{target} of witness generation.
+exploring $n$ traces.
+
 
 \paragraph{Modeling Semantics}
-%: \texttt{eval} and \texttt{isStuck}}
 %
 We resolve the non-determinism in the operational semantics
 (\S~\ref{sec:semantics}) via the procedure:
 %
-\begin{mcode}
-  eval :: $\triple{e}{\vsu}{\tsu}$ -> [$\triple{v \cup \stuck}{\vsu}{\tsu}$]
-\end{mcode}
+$$
+\evalN :: \triple{e}{\vsu}{\tsu} \rightarrow [\triple{v \cup \stuck}{\vsu}{\tsu}]
+$$
 %
 Due to the non-determinism introduced by \gensym, a call
-\hbox{|eval$\triple{e}{\vsu}{\tsu}$|} returns the \emph{list} of possible results
-of the form $\triple{v \cup \stuck}{\vsu'}{\tsu'}$ such that
-$\steps{e}{\vsu}{\tsu}{v \cup \stuck}{\vsu'}{\tsu'}$.
-%
-% We determine whether a given value is stuck by using the predicate:
-% %
-% \begin{mcode}
-%   isStuck :: $v$ -> Bool
-% \end{mcode}
+$\evalfn{\triple{e}{\vsu}{\tsu}}$ returns the \emph{list}
+of possible results of the form $\triple{v \cup \stuck}{\vsu'}{\tsu'}$
+such that $\steps{e}{\vsu}{\tsu}{v \cup \stuck}{\vsu'}{\tsu'}$.
 
 \paragraph{Generating Target Arguments}
 %
-We address the issue of currying by defining a procedure @genArgs@ such that
-\hbox{|genArgs $e$|} yields a list of holes |[$v_1$,...,$v_n$]|
-such that $\eapp{e}{v_1 \ldots v_n}$ \emph{does not} evaluate to a lambda.
+We address the issue of currying by defining a procedure
+$\genArgs{e}$ that yields a list of holes $[v_1, \ldots, v_k]$
+such that $\eapp{e}{v_1 \ldots v_k}$ \emph{does not} evaluate to
+a lambda.
 %
-This is achieved via a simple @loop@ that keeps adding holes to the
-target application until @eval@uating the term yields a
+This is achieved via a loop that keeps adding holes to the
+target application until evaluating the term yields a
 non-lambda value.
 %
 % The helper functions @witness@ and @close@ are used to respectively
@@ -699,28 +681,28 @@ genArgs $e$ = loop []
 \label{fig:algo-gen-args}
 \end{figure}
 
-
 \paragraph{Generating Witnesses}
-% Procedure \texttt{genWitness}}
 %
 Finally, Figure~\ref{fig:algo-gen-witness} summarizes the overall
-implementation of our search for witnesses, in the procedure @genWitness@,
-which takes as input a bound @k@ and the target expression $e$, and
-returns a list of witness expressions $\eapp{e}{v_1 \ldots v_n}$ that demonstrate how the input
-program gets stuck.
+implementation of our search for witnesses, in the procedure
+$\genWitness{k}{e}$, which takes as input a bound $k$ and the
+target expression $e$, and returns a list of witness expressions
+$\eapp{e}{v_1 \ldots v_n}$ that demonstrate how the input program
+gets stuck.
 %
 The search proceeds as follows.
 %
-@(1)@ we invoke @genArgs@ to determine the number of parameters required
-by the (curried) target expression.
-%
-% @(2)@ we obtain a closed expression $e$ by closing the target with the
-% computed holes.
-%
-@(2)@ we take the first @k@ traces returned by @eval@ on the target $\eapp{e}{vs}$
-and
-@(3)@ we extract the substitutions corresponding to the $\stuck$ traces,
-and use them to return the list of witnesses.
+\begin{enumerate}
+  \item We invoke $\genArgsN$ to determine the number of
+        parameters required by the (curried) target expression.
+
+  \item We take the first $k$ traces returned by $\evalN$
+        on the target $\eapp{e}{vs}$, and
+
+  \item We extract the substitutions corresponding to the
+        $\stuck$ traces, and use them to return the list
+        of witnesses.
+\end{enumerate}
 %
 We obtain the following corollary of Theorem~\ref{thm:soundness}:
 
@@ -733,11 +715,6 @@ We obtain the following corollary of Theorem~\ref{thm:soundness}:
 
 \begin{figure}[t]
 \centering
-% $$
-% \begin{array}{lcll}
-% \genWitness{n}{e} &\defeq& \{ \resolve{e'}{\vsu} \spmid \triple{e'}{\vsu}{\tsu} \in \doeval{\genArgs{e}} \} & \\
-% \end{array}
-% $$
 $$
 \begin{array}{lclr}
 \genWitnessN       & :: & (\mathsf{Nat} \times e) \rightarrow 2^{e} & \\

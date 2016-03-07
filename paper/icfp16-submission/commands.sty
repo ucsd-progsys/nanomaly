@@ -199,9 +199,11 @@
 
 \newcommand\mc[1]{\ensuremath{\mathsf{#1}}}
 \newcommand\genWitnessN{\mc{GenWitness}}
-\newcommand\genArgsN{\mc{\mathsf{genArgs}}}
+\newcommand\genArgsN{\mc{GenArgs}}
+\newcommand\evalN{\mc{eval}}
+\newcommand\takeN{\mc{take}}
 
 \newcommand{\genWitness}[2]{\ensuremath{\genWitnessN(#1,\ #2)}\xspace}
 \newcommand{\genArgs}[1]{\genArgsN(#1)\xspace}
-\newcommand{\takefn}[2]{\mc{take}(#1,\ #2)\xspace}
-\newcommand{\evalfn}[1]{\mc{eval}\ #1\xspace}
+\newcommand{\takefn}[2]{\takeN(#1,\ #2)\xspace}
+\newcommand{\evalfn}[1]{\evalN\ #1\xspace}
