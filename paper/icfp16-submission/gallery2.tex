@@ -29,9 +29,9 @@ result. In the following code snippets we will underline the source span
 that \ocaml blames for the type error.
 %
 \begin{ecode}
-let rec sqsum xs = match xs with
-  | [] -> 0
-  | h::t -> __(sqsum t)__ @ (h * h)
+  let rec sqsum xs = match xs with
+    | [] -> 0
+    | h::t -> __(sqsum t)__ @ (h * h)
 \end{ecode}
 %
 Unfortunately the student has used the list-append operator |@| instead
@@ -40,10 +40,10 @@ of \texttt{+} to compute the sum. \ocaml blames the recursive call
 \texttt{list}.
 %
 \begin{verbatim}
-Error: This expression has type
-         int
-       but an expression was expected of type
-         'a list
+  This expression has type
+    int
+  but an expression was expected of type
+    'a list
 \end{verbatim}
 %
 In contrast, \toolname produces a trace showing how the evaluation of
@@ -61,9 +61,9 @@ the left sub-term. This emphasizes the \emph{conflict} between @int@ and
 Next we consider a function @sumList@ that just sums the elements of the
 input list, but has a more unfortunate error.
 \begin{ecode}
-let rec sumList xs = match xs with
-  | []    -> []
-  | y::ys -> y + __sumList ys__
+  let rec sumList xs = match xs with
+    | []    -> []
+    | y::ys -> y + __sumList ys__
 \end{ecode}
 %
 In this case the student has returned @[]@ in the base case instead of
@@ -73,10 +73,10 @@ In this case the student has returned @[]@ in the base case instead of
 @int@.
 %
 \begin{verbatim}
-Error: This expression has type
-         'a list
-       but an expression was expected of type
-         int
+  This expression has type
+    'a list
+  but an expression was expected of type
+    int
 \end{verbatim}
 %
 \toolname's jump compressed trace shows how the evaluation of
@@ -128,16 +128,16 @@ repeatedly calls @f@ on the first element of its output pair, starting
 with the initial value @b@, until the second element is @false@.
 %
 \begin{ecode}
-let rec wwhile (f,b) =
-  match f with
-  | (z, false) -> z
-  | (z, true)  -> wwhile (f, z)
+  let rec wwhile (f,b) =
+    match f with
+    | (z, false) -> z
+    | (z, true)  -> wwhile (f, z)
 
-let f x =
-  let xx = x * x in
-  (xx, (xx < 100))
+  let f x =
+    let xx = x * x in
+    (xx, (xx < 100))
 
-let _ = wwhile (__f__, 2)
+  let _ = wwhile (__f__, 2)
 \end{ecode}
 %
 Unfortunately, the student has forgotten to apply @f@ at all on line 2,
@@ -146,10 +146,10 @@ and just matches it directly against a pair. This faulty definition of
 \emph{call-site} on line 10.
 %
 \begin{verbatim}
-Error: This expression has type
-         int -> int * bool
-       but an expression was expected of type
-         'a * bool
+  This expression has type
+    int -> int * bool
+  but an expression was expected of type
+    'a * bool
 \end{verbatim}
 %
 \toolname makes no assumptions about the program and quickly draws the

@@ -5,36 +5,36 @@ $$
 % \emphbf{Configurations} \quad
 %   & c & ::=    & \triple{e}{\vsu}{\tsu} \spmid \triple{\stuck}{\vsu}{\tsu} \\[0.05in]
 
-\emphbf{Expressions} \quad
+\emphbf{Expressions}
   & e & ::=    & v \spmid x \spmid \eapp{e}{e} \spmid \eplus{e}{e}\\
   &   & \spmid & \eif{e}{e}{e} \\
   % &   & \spmid & \elet{x}{e}{e} \\
   &   & \spmid & \enode{e}{e}{e} \spmid \eleaf \\
   &   & \spmid & \ecase{e}{e}{x}{x}{x}{e} \\[0.1in]
 
-\emphbf{Values} \quad
+\emphbf{Values}
   & v  & ::= & n \spmid b \spmid \efun{x}{e} \spmid \vhole{\thole} \spmid tr \\
   & tr & ::= & \vnode{t}{v}{v}{v} \spmid \vleaf{t} \\[0.05in]
 
-\emphbf{Integers} \quad
+\emphbf{Integers}
   & n & ::= &  0,1,-1,\ldots \\[0.05in]
 
-\emphbf{Booleans} \quad
+\emphbf{Booleans}
   & b & ::= &  \etrue \spmid \efalse \\[0.05in]
 
-\emphbf{Types} \quad
-  & t & ::= & \tbool \spmid \tint \spmid \tfun \spmid \ttree{t} \spmid \thole \\[0.05in]
+\emphbf{Types}
+  & t & ::=     & \tbool \spmid \tint \spmid \tfun \\
+  &   &  \spmid & \ttree{t} \spmid \thole \\[0.05in]
 
-\emphbf{Substitutions} \quad
+\emphbf{Substitutions}
   & \vsu & ::= & \emptysu \spmid \extendsu{\vsu}{\ehole}{v} \\
   & \tsu & ::= & \emptysu \spmid \extendsu{\tsu}{\thole}{t} \\[0.1in]
-\end{array}
-$$
-% \hrule width 0.48\textwidth
-
-$$
-\begin{array}{rrcl}
-\emphbf{Contexts} \quad
+% \end{array}
+% $$
+% % \hrule width 0.48\textwidth
+% $$
+% \begin{array}{rrcl}
+\emphbf{Contexts}
   & C
   & ::=
   &   	 \bullet
