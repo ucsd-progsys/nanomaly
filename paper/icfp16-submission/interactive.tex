@@ -18,7 +18,7 @@ to the essence of the error, \eg\ by skipping
 over irrelevant sub-computations, and focusing
 on the important ones.
 
-Next, we present a novel way to debug executions.
+In this section we present a novel way to debug executions.
 %
 First, we develop a notion of a \emph{reduction graphs}
 and extend our semantics with a form of \emph{tracing}
@@ -95,8 +95,8 @@ where $\tr'$ collects the edges of the transition.
 Next, we describe the general recipe for extending a transition
 rule to collect edges.
 %
-The general recipe for collecting steps-to edges is to
-to recording the consequent of each original rule in the
+The general recipe for collecting steps-to edges is
+to record the consequent of each original rule in the
 trace. That is, each original judgment \step{e}{\vsu}{\tsu}{e'}{\vsu'}{\tsu'}
 becomes \stepg{e}{\vsu}{\tsu}{\tr}{e'}{\vsu'}{\tsu'}{\singlestep{e}{e'}; \tr}.
 %
