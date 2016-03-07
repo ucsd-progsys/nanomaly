@@ -150,7 +150,7 @@ those that returned successfully.
 %
 For example, the display on the right in Figure~\ref{fig:factorial} shows
 a jump-compressed trace, of size 4. The full trace for
-the same example has size 19.
+the same example has size 20.
 
 \paragraph{Metrics} Thus, our two metrics are:
 % size of the full trace,
@@ -158,28 +158,27 @@ the same example has size 19.
 % version of the trace.
 %
 \begin{enumerate}
-\item \emphbf{Single-Step Metric}
-      The number of single-step reductions along the path from the
-      witness to the stuck term in the given witness execution, and
+\item \emphbf{Single-Step Metric} The size of the trace after expanding
+  all of the single-step edges from the witness to the stuck term, and
   % This can be thought of as a worst-case
   % complexity, \ie ``How big is the fully-expanded trace?''
-\item \emphbf{Jump Metric}
-      The size of the jump-compressed trace for the given witness execution,
-      \ie\ the number of forward (or backward) jumps that can be taken along the
-      path from the witness to the stuck term.
+\item \emphbf{Jump Metric} The size of the trace for after expanding
+  only the forward (or backward) jumps from the witness to the stuck
+  term.
 \end{enumerate}
 
 
 % \item \ES{others?}
 %
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
-\includegraphics[width=\linewidth]{trace_size_step.png}
-\includegraphics[width=\linewidth]{trace_size_jump.png}
-\caption{Complexity of the generated traces. At least 90\% of the traces
-  have a jump complexity of less than 10, with an average of 3.}
+\includegraphics[width=0.49\linewidth]{trace_size_step.png}
+\includegraphics[width=0.49\linewidth]{trace_size_jump.png}
+\caption{Complexity of the generated traces. 81\% of the combined traces
+  have a jump complexity of at most 10, with an average complexity of 7
+  and a median of 5.}
 \label{fig:results-complexity}
-\end{figure}
+\end{figure*}
 %
 
 \paragraph{Results}
@@ -187,11 +186,15 @@ the same example has size 19.
 The results of the experiment are summarized in
 Figure~\ref{fig:results-complexity}.
 %
-The average number of single-step reductions per trace is 26 for the \ucsdbench\
-dataset (27 for the \uwbench\ dataset) with a maximum of 2,744 (659 for
-\uwbench). The average number of jumps per trace is 3 (also 3 for
-\uwbench) with a maximium of 177 (52 for \uwbench). In both datasets at
-least 90\% of the traces contain fewer than 10 jumps.
+The average number of single-step reductions per trace is 31 for the
+\ucsdbench\ dataset (35 for the \uwbench\ dataset) with a maximum of
+2,745 (660 for \uwbench) and a median of 16 (also 16 for \uwbench).
+%
+The average number of jumps per trace is 7 (also 7 for \uwbench) with a
+maximium of 353 (105 for \uwbench) and a median of 4 (also 4 for
+\uwbench).
+%
+In both datasets at least 80\% of the traces contain at most 10 jumps.
 %
 
 \subsection{Discussion}
@@ -200,7 +203,7 @@ least 90\% of the traces contain fewer than 10 jumps.
 To summarize, our experiments demonstrate that \nanomaly finds witnesses
 to type errors: (1) with high coverage in a timespan amenable to
 compile-time analysis, and (2) with traces that have a low average
-complexity of 3 function calls.
+complexity of 7 jumps.
 
 There are, of course, drawbacks to our approach. Three that stand out
 are: (1) coverage limits due to random generation, (2) the inability to

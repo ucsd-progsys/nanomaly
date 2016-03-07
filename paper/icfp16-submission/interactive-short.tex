@@ -18,17 +18,18 @@ to the essence of the error, \eg\ by skipping
 over irrelevant sub-computations, and focusing
 on the important ones.
 
-In this section we present a novel way to debug executions.
+In this section we present an interactive visualization of program
+executions.
 %
-First, we develop a notion of a \emph{reduction graphs}
-and extend our semantics with a form of \emph{tracing}
-so that they incrementally collect the edges
-in the graph (\S~\ref{sec:inter-semant}).
+First, we extend our semantics (\S~\ref{sec:inter-semant}) to record
+each reduction step in a \emph{trace}, producing a \emph{reduction
+  graph} alongside the witness.
 %
-Next, we express a set of common \emph{interactive debugging}
-steps as graph traversals (\S~\ref{sec:traversing-graph}), yielding
-an novel interactive debugger that allows the user
-to effectively visualize \emph{how} the program goes (wrong).
+Then we describe a set of common \emph{interactive debugging} steps that
+can be expressed as simple traversals over the reduction graph
+(\S~\ref{sec:traversing-graph}), yielding an interactive debugger that
+allows the user to effectively visualize \emph{how} the program goes
+(wrong).
 
 \subsection{Tracing Semantics}
 \label{sec:inter-semant}
@@ -92,8 +93,8 @@ where $\tr'$ collects the edges of the transition.
 
 \paragraph{Collecting Edges}
 %
-Next, we describe the general recipe for extending a transition
-rule to collect edges.
+% Next, we describe the general recipe for extending a transition
+% rule to collect edges.
 %
 The general recipe for collecting steps-to edges is
 to record the consequent of each original rule in the
@@ -102,7 +103,7 @@ becomes \stepg{e}{\vsu}{\tsu}{\tr}{e'}{\vsu'}{\tsu'}{\singlestep{e}{e'}; \tr}.
 %
 % As the translation is mechanical, we provide a selection of examples
 % in Figure~\ref{fig:interactive}.
-As the translation is mechanical, we will not discuss it further.
+% As the translation is mechanical, we will not discuss it further.
 
 %%% The sub-term edges are delegated to a helper function \subtermssym\
 %%% which adds edges from an expression to each of its
@@ -120,18 +121,20 @@ As the translation is mechanical, we will not discuss it further.
 
 Next, we show how to build a visual interactive debugger
 from the traced semantics, by describing the visualization
-\emph{state} \ie\ what the user sees at any given moment,
-the set of \emph{commands} available to user and what
-they do, and finally how we use a command to \emph{update}
-the visualization state. In what follows, for clarity of
-exposition, we assume we have a (global) trace:
-$\stepg{e_0}{\emptysu}{\emptysu}{\bullet}{e_n}{\vsu}{\tsu}{\tr}$, where
-$e_0$ and $e_n$ are the \emph{initial} and \emph{final}
-expressions respectively.
+\emph{state} --- \ie\ what the user sees at any given moment ---
+and the set of \emph{commands} available to user and what
+they do.
+% , and finally how we use a command to \emph{update}
+% the visualization state. In what follows, for clarity of
+% exposition, we assume we have a (global) trace:
+% $\stepg{e_0}{\emptysu}{\emptysu}{\bullet}{e_n}{\vsu}{\tsu}{\tr}$, where
+% $e_0$ and $e_n$ are the \emph{initial} and \emph{final}
+% expressions respectively.
 
 \paragraph{Visualization State}
 %
-A \emph{visualization state} $\vstate$ is a \emph{directed graph}
+A \emph{visualization state} % $\vstate$
+is a \emph{directed graph}
 whose vertices are expressions and whose edges are such
 that each vertex has at most one predecessor and at most one
 successor. In other words, the visualization state looks
@@ -141,15 +144,29 @@ Figure~\ref{fig:nanomaly-factorial}.
 The \emph{initial state} is the graph containing a single
 edge linking the initial and final expressions.
 
-\paragraph{Visualization Context}
-%
-The \emph{visualization context} of each expression $e$
-in the visualization state $\vstate$ is the (unique) linear chain
-in which the expression $e$ belongs.
-%
-We write $\vroot{\vstate}{e}$ for the \emph{first} (or root)
-expression appearing in the visualization context of $e$ in
-$\vstate$.
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fac-steps-new.png}
+\caption{A sequence of interactions with the trace of
+  \texttt{fac 1}. The stuck term is red, in each node the redex is
+  highlighted. Thick arrows denote a multi-step transition, thin arrows
+  denote a single-step transition. We start in step 1. In step 2 we jump
+  forward from the witness to the next function call. In step 3 we step
+  into the recursive \texttt{fac 0} call, which spawns a new ``thread''
+  of execution. In step 4 we take a single step forward from
+  \texttt{fac 0}.}
+\label{fig:nanomaly-factorial}
+\end{figure}
+
+% \paragraph{Visualization Context}
+% %
+% The \emph{visualization context} of each expression $e$
+% in the visualization state $\vstate$ is the (unique) linear chain
+% in which the expression $e$ belongs.
+% %
+% We write $\vroot{\vstate}{e}$ for the \emph{first} (or root)
+% expression appearing in the visualization context of $e$ in
+% $\vstate$.
 
 \paragraph{Commands}
 Our debugger supports the following \emph{commands}, each of which
@@ -163,34 +180,35 @@ is parameterized by a single expression (vertex) selected from the
 %
 \item \jumpforwardsym, \jumpbackwardsym:
       show the result of taking multiple steps (a \emph{``big''} step)
-      upto the first beta-reduction forward or backward respectively,
+      up to the first function call, or return, forward or backward
+      respectively,
 %
 \item \stepintosym:
       show the result of stepping into a function call in a sub-term,
-      isolating it from the context,
-
+      isolating it in a new thread, and
+%
 \item \stepoversym:
       show the result of skipping over a function call in a sub-term.
 \end{itemize}
 
 % \input{traversals_new.tex}
 
-\paragraph{Update}
-%
-Figure~\ref{fig:traversing-graph} shows
-how we compute the \emph{next} expression
-(to be added to the visualization state)
-given the current visualization state
-$\vstate$, command $\cmd$ and selected
-expression $e$.
-%
-It is straightforward to then \emph{update}
-the visualization graph by adding the new
-term before (resp.\ after) the selected
-expression $e$ if the command was a step
-or jump forward (resp.\ backward), or
-to create a new visualization context
-if the command was $\stepintosym$.
+% \paragraph{Update}
+% %
+% Figure~\ref{fig:traversing-graph} shows
+% how we compute the \emph{next} expression
+% (to be added to the visualization state)
+% given the current visualization state
+% $\vstate$, command $\cmd$ and selected
+% expression $e$.
+% %
+% It is straightforward to then \emph{update}
+% the visualization graph by adding the new
+% term before (resp.\ after) the selected
+% expression $e$ if the command was a step
+% or jump forward (resp.\ backward), or
+% to create a new visualization context
+% if the command was $\stepintosym$.
 
 %%% and \updState{\vstate}{\cmd}{e} then updates the graph
 %%% by inserting the new expression appropriately, using
@@ -221,17 +239,3 @@ if the command was $\stepintosym$.
 %%% %
 %%% @findVal vs e@ traverses the single-step edges to find the final value
 %%% that @e@ reduces to.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\linewidth]{fac-steps-new.png}
-\caption{A sequence of interactions with the trace of
-  \texttt{fac 1}. The stuck term is red, in each node the redex is
-  highlighted. Thick arrows denote a multi-step transition, thin arrows
-  denote a single-step transition. We start in step 1. In step 2 we jump
-  forward from the witness to the next function call. In step 3 we step
-  into the recursive \texttt{fac 0} call, which spawns a new ``thread''
-  of execution. In step 4 we take a single step forward from
-  \texttt{fac 0}.}
-\label{fig:nanomaly-factorial}
-\end{figure}

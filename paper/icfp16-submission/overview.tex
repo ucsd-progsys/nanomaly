@@ -63,8 +63,8 @@ This is actually quite similar in spirit to type inference.
 To defer input generation, we borrow the notion of a ``hole'' from
 SmallCheck~\cite{runciman_smallcheck_2008}.
 %
-A hole --- written \ehole{} --- is a \emph{placeholder} for a value; in
-our case we do not even know its type.
+A hole --- written \vhole{\thole} --- is a \emph{placeholder} for a
+value of some unknown type \thole.
 %
 We leave all inputs as uninstantiated holes until they are demanded by
 the program, \eg due to a primitive operation like the @<=@ test.
@@ -124,7 +124,7 @@ produces \emph{general witnesses}.
 That is, we show that if ``executing''
 a function with a hole as input causes the
 function to ``go wrong'', then there is
-\emph{no possible} inhabitable type for the function.
+\emph{no possible} type for the function.
 %
 In other words, for \emph{any} type you might
 assign to the function, there exist inhabitants
@@ -151,7 +151,7 @@ Is @incAllByOne@ a function?
 If so, how many arguments does it take?
 %
 The \ocaml\ compiler deduces that @incAllByOne@ takes a single argument
-because the \emph{type} of \hbox{@List.map@'s} says it takes two arguments, and it is
+because the \emph{type} of \hbox{@List.map@} says it takes two arguments, and it is
 partially applied to @(+ 1)@.
 %
 As we are dealing with ill-typed programs we do not have the luxury of
@@ -221,7 +221,7 @@ witness followed by the stuck term.
 %
 The user can then progressively fill in the hidden steps of the
 computation by selecting a visible term and choosing one of the
-applicable traversal strategies --- formalized in
+applicable traversal strategies --- described in
 \S~\ref{sec:interactive} --- to insert another term into the
 visualization.
 
