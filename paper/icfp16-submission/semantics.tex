@@ -676,17 +676,6 @@ $$
              &   & \quad \_ \rightarrow vs
 \end{array}
 $$
-
-% \begin{mcode}
-% genArgs :: $e$ -> [$v$]
-% genArgs $e$ = loop []
-%   where
-%   loop vs = case eval $\triple{\eapp{e}{vs}}{\emptysu}{\emptysu}$ of
-%              $\triple{\efun{x}{e}}{\vsu}{\tsu}$:_ -> loop ($\vhole{\thole}$ : vs)
-%                            -- $\ehole$, $\thole$ are fresh
-%              _          -> vs
-% \end{mcode}
-\caption{Finding the number of arguments for the target expression.}
 \label{fig:algo-gen-args}
 \end{figure}
 
@@ -717,7 +706,11 @@ We obtain the following corollary of Theorem~\ref{thm:soundness}:
 
 \begin{cor}{\textbf{[Witness Generation]}}
 \label{thm:generation}
+<<<<<<< HEAD
   If $\genWitness{k}{e} = \triple{\eapp{e}{v_1 \ldots v_n}}{\vsu}{\tsu},\ldots$,
+=======
+  If $$\genWitness{k}{e} = \triple{\eapp{e}{v_1 \ldots v_n}}{\vsu}{\tsu}\ldots$$
+>>>>>>> b6a872116bb67656a3779e30b41674c373556d68
   then for all types $t_1 \ldots t_n$ there exist values $w_1 \ldots w_n$ such that
   $\steps{\eapp{e}{w_1 \ldots w_n}}{\emptysu}{\emptysu}{\stuck}{\vsu'}{\tsu'}$.
 \end{cor}
