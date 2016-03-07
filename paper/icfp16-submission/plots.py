@@ -56,7 +56,7 @@ def plot_coverage(seminal, ucsd):
     p2 = plt.bar(ind + width, [r[1] for r in xy_u], width,
                  color=COLORS[1])
 
-    plt.xlabel('Witness found in <x seconds', fontsize=20)
+    plt.xlabel('Witness found in <= x seconds', fontsize=20)
     plt.ylabel('Witnesses Found (% of total programs)', fontsize=20)
     plt.title('Cumulative Coverage', fontsize=24)
     plt.xticks(ind + width, [r[0] for r in xy_s], fontsize='large')
@@ -69,6 +69,14 @@ def plot_coverage(seminal, ucsd):
     # plt.show()
     fig.savefig('coverage.png')
     plt.close()
+
+BINS = [5, 10, 20, 50, 100, 1000]
+
+def cumulative_trace_size(data):
+    return [len([r for r in data
+                 if r <= l])
+            / float(len(data))
+            for l in BINS]
 
 def plot_trace_size(seminal, ucsd):
     # xy = cumulative_coverage(data)
@@ -86,8 +94,7 @@ def plot_trace_size(seminal, ucsd):
     step_u = [int(r[5]) for r in ucsd[1:] if r[4] in UNSAFE and int(r[5]) > 0]
     jump_u = [int(r[6]) for r in ucsd[1:] if r[4] in UNSAFE and int(r[6]) > 0]
     
-    bins = [0, 5, 10, 20, 50, 100, 1000]
-    binlabels = ['[0,5)', '[5,10)', '[10,20)', '[20,50)', '[50,100)', '>=100']
+    binlabels = ['<= 5', '<= 10', '<= 20', '<= 50', '<= 100', '> 100']
     ind = np.arange(0, len(binlabels))
     width = 0.35
     # plt.figure(figsize=(100,50))
@@ -100,11 +107,18 @@ def plot_trace_size(seminal, ucsd):
     # ax.set(adjustable='box-forced', aspect=4)
 
     fig = plt.figure()
-    y,binEdges=np.histogram(step_s,bins=bins)
-    p1 = plt.bar(ind, y / float(len(step_s)), label='UW', width=width, color=COLORS[0])
+    # y,binEdges=np.histogram(step_s,bins=bins)
+    c_step_s = cumulative_trace_size(step_s)
+    print('step complexity')
+    print('seminal:\t{}\t{}\t{}'.format(c_step_s[0], c_step_s[1], len(step_s)))
+    print('avg/med/max:\t{}\t{}\t{}'.format(np.mean(step_s), np.median(step_s), np.max(step_s)))
+    p1 = plt.bar(ind, c_step_s, label='UW', width=width, color=COLORS[0])
 
-    y,binEdges=np.histogram(step_u,bins=bins)
-    p2 = plt.bar(ind + width, y / float(len(step_u)), label=UCSD, width=width, color=COLORS[1])
+    # y,binEdges=np.histogram(step_u,bins=bins)
+    c_step_u = cumulative_trace_size(step_u)
+    print('ucsd:\t\t{}\t{}\t{}'.format(c_step_u[0], c_step_u[1], len(step_u)))
+    print('avg/med/max:\t{}\t{}\t{}'.format(np.mean(step_u), np.median(step_s), np.max(step_u)))
+    p2 = plt.bar(ind + width, c_step_u, label=UCSD, width=width, color=COLORS[1])
     plt.legend((p1[0],p2[0]), ('UW',UCSD), fontsize=16)
     plt.title('Trace Complexity', fontsize=24)
     plt.xlabel('Total Steps', fontsize=20)
@@ -127,15 +141,20 @@ def plot_trace_size(seminal, ucsd):
     # ax = axes[1]
     # ax.set(adjustable='box-forced', aspect=4)
 
-    y,binEdges=np.histogram(jump_s,bins=bins)
-    foo = y / float(len(jump_s)) 
-    print(foo[0] + foo[1])
-    p1 = plt.bar(ind, y / float(len(jump_s)), label='UW', width=width, color=COLORS[0])
+    c_jump_s = cumulative_trace_size(jump_s)
+    # y,binEdges=np.histogram(jump_s,bins=bins)
+    # foo = y / float(len(jump_s))
+    print('jump complexity')
+    print('seminal:\t{}\t{}\t{}'.format(c_jump_s[0], c_jump_s[1], len(jump_s)))
+    print('avg/med/max:\t{}\t{}\t{}'.format(np.mean(jump_s), np.median(jump_s), np.max(jump_s)))
+    p1 = plt.bar(ind, c_jump_s, label='UW', width=width, color=COLORS[0])
 
-    y,binEdges=np.histogram(jump_u,bins=bins)
-    foo = y / float(len(jump_u)) 
-    print(foo[0] + foo[1])
-    p2 = plt.bar(ind + width, y / float(len(jump_u)), label=UCSD, width=width, color=COLORS[1])
+    # y,binEdges=np.histogram(jump_u,bins=bins)
+    # foo = y / float(len(jump_u))
+    c_jump_u = cumulative_trace_size(jump_u)
+    print('ucsd:\t\t{}\t{}\t{}'.format(c_jump_u[0], c_jump_u[1], len(jump_u)))
+    print('avg/med/max:\t{}\t{}\t{}'.format(np.mean(jump_u), np.median(jump_s), np.max(jump_u)))
+    p2 = plt.bar(ind + width, c_jump_u, label=UCSD, width=width, color=COLORS[1])
     plt.legend((p1[0],p2[0]), ('UW',UCSD), fontsize=16)
     # plt.title('Complexity of Traces (in jumps)', fontsize=24)
     plt.xlabel('Total Jumps', fontsize=20)
@@ -148,6 +167,12 @@ def plot_trace_size(seminal, ucsd):
     plt.xticks(ind + width, binlabels, fontsize='large')
     plt.yticks(fontsize='large')
     # autolabel(ax, p2)
+
+    t_jump = cumulative_trace_size(jump_s + jump_u)
+    print('total:\t\t{}\t{}'.format(t_jump[0], t_jump[1]))
+    print('mean:\t\t{}'.format(np.mean(jump_s + jump_u)))
+    print('median:\t\t{}'.format(np.median(jump_s + jump_u)))
+    print('std:\t\t{}'.format(np.std(jump_s + jump_u)))
 
     # plt.suptitle('Size of generated traces', fontsize=16)
 
