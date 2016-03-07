@@ -738,15 +738,24 @@ We obtain the following corollary of Theorem~\ref{thm:soundness}:
 % \genWitness{n}{e} &\defeq& \{ \resolve{e'}{\vsu} \spmid \triple{e'}{\vsu}{\tsu} \in \doeval{\genArgs{e}} \} & \\
 % \end{array}
 % $$
-
-\begin{mcode}
-genWitness :: Nat -> $e$ -> [$e$]
-genWitness n $e$ = [$\resolve{\eapp{e}{vs}}{\vsu}$ | $\vsu$ <- $\vsu$s]
-  where
-   vs  = genArgs $e$                  -- (1)
-   res = take n (eval $\triple{\eapp{e}{vs}}{\emptysu}{\emptysu}$) $\ $  -- (2)
-   $\vsu$s   = [$\vsu$ | $\triple{\stuck}{\vsu}{\tsu}$ <- res] $\ \ $   -- (3)
-\end{mcode}
+$$
+\begin{array}{lclr}
+\genWitnessN       & :: & (\mathsf{Nat} \times e) \rightarrow 2^{e} & \\
+\genWitness{n}{e}  & =  & \{ \resolve{\eapp{e}{vs}}{\vsu} \mid \vsu \in \Sigma \} & \\
+\quad \mbox{where} &    & & \\
+\quad \quad vs     & =  & \genArgs{e} & (1) \\
+\quad \quad res    & =  & \takefn{n}{\evalfn{\triple{\eapp{e}{vs}}{\emptysu}{\emptysu}}} & (2) \\
+\quad \quad \Sigma & =  & \{ \vsu\ \mid \triple{\stuck}{\vsu}{\tsu} \in res\} & (3)
+\end{array}
+$$
+%% \begin{mcode}
+%% $\genWitnessN :: (\mathsf{Nat} \times e) \rightarrow 2^{e}$
+%% $\genWitness{n}{e} = \{ \resolve{\eapp{e}{vs}}{\vsu} \mid \vsu \in \Sigma \}$
+  %% where
+   %% $vs     = \genArgs{e}$               -- (1)
+   %% $res    = \takefn{n}{\evalfn{\triple{\eapp{e}{vs}}{\emptysu}{\emptysu}}}$  -- (2)
+   %% $\Sigma = \{ \vsu\ \mid \triple{\stuck}{\vsu}{\tsu} \in res\}$   -- (3)
+%% \end{mcode}
 \caption{Generating Witnesses}
 \label{fig:algo-gen-witness}
 \end{figure}

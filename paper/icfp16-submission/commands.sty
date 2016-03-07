@@ -147,10 +147,8 @@
 \newcommand{\judgementHead}[2]{\ensuremath{\relDescription{#1}\hfill\fbox{#2}}}
 \newcommand{\defeq}{\doteq}
 
-\newcommand{\genArgs}[1]{\ensuremath{\mathsf{genArgs}(#1)}\xspace}
 \newcommand{\addArg}[1]{\ensuremath{\mathsf{addArg}(#1)}\xspace}
 \newcommand{\doeval}[1]{\ensuremath{\mathsf{eval}(#1)}\xspace}
-\newcommand{\genWitness}[2]{\ensuremath{\mathsf{genWitness}(#1, #2)}\xspace}
 
 
 \newcommand\stepoversym{\ensuremath{\mathsf{StepOver}}\xspace}
@@ -198,3 +196,12 @@
 
 
 \newcommand\toolname{\nanomaly}
+
+\newcommand\mc[1]{\ensuremath{\mathsf{#1}}}
+\newcommand\genWitnessN{\mc{GenWitness}}
+\newcommand\genArgsN{\mc{\mathsf{genArgs}}}
+
+\newcommand{\genWitness}[2]{\ensuremath{\genWitnessN(#1,\ #2)}\xspace}
+\newcommand{\genArgs}[1]{\genArgsN(#1)\xspace}
+\newcommand{\takefn}[2]{\mc{take}(#1,\ #2)\xspace}
+\newcommand{\evalfn}[1]{\mc{eval}\ #1\xspace}
