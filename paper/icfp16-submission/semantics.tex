@@ -164,7 +164,7 @@ respectively.
 
 \paragraph{Narrowing Types} The procedure % $\force{v}{t}{\vsu}{\tsu}$,
 $$
-\forcesym :: (v, t, \vsu, \tsu) \rightarrow \triple{v \cup \stuck}{\vsu}{\tsu}
+\forcesym : v \times t \times \vsu \times \tsu \rightarrow \triple{v \cup \stuck}{\vsu}{\tsu}
 $$
 defined in Figure~\ref{fig:narrow}, takes as input a value $v$, a type
 $t$, and the current value and type substitutions, and refines $v$ to
@@ -178,7 +178,7 @@ returns the existing instantiation.
 $$
 \begin{array}{lcl}
 %% \multicolumn{3}{l}{\forcesym \ :: \  (e, t) \rightarrow \pair{e}{\vsu}} \\
-\forcesym                  & ::     & (v, t, \vsu, \tsu) \rightarrow \triple{v \cup \stuck}{\vsu}{\tsu} \\
+\forcesym                  & : & v \times t \times \vsu \times \tsu \rightarrow \triple{v \cup \stuck}{\vsu}{\tsu} \\
 % \force{v}{\thole}{\vsu}{\tsu}  & \defeq & \hspace{-1ex}
 % \begin{cases}
 %   \triple{v}{\vsu}{\tsu'} & \mbox{if } \tsu' = \unify{\{\typeof{v}, \thole\}}{\tsu} \\
@@ -241,7 +241,7 @@ lazily filled in later, on demand.
 \begin{figure}[ht]
 $$
 \begin{array}{lcll}
-\gensym       & ::  & (t, \tsu) \rightarrow v \\
+\gensym       & :   & t \times \tsu \rightarrow v \\
 \gen{\thole}{\tsu}  & \defeq  & \gen{\subst{\tsu}{\thole}}{\tsu}, & \quad \text{if } \thole \in dom(\tsu) \\
 \gen{\tint}{\tsu}   & \defeq  & n, & \quad \text{non-deterministic} \\
 \gen{\tbool}{\tsu}  & \defeq  & b, & \quad \text{non-deterministic} \\
@@ -626,23 +626,21 @@ exploring $n$ traces.
 \paragraph{Modeling Semantics}
 %
 We resolve the non-determinism in the operational semantics
-(\S~\ref{sec:semantics}) via the procedure:
+(\S~\ref{sec:semantics}) via the procedure
 %
 $$
-\evalN :: \triple{e}{\vsu}{\tsu} \rightarrow [\triple{v \cup \stuck}{\vsu}{\tsu}]
+\evalN : e \rightarrow \triple{v \cup \stuck}{\vsu}{\tsu}^{*}
 $$
 %
 Due to the non-determinism introduced by \gensym, a call
-$\evalfn{\triple{e}{\vsu}{\tsu}}$ returns the \emph{list}
-of possible results of the form $\triple{v \cup \stuck}{\vsu'}{\tsu'}$
-such that $\steps{e}{\vsu}{\tsu}{v \cup \stuck}{\vsu'}{\tsu'}$.
+$\evalfn{e}$ returns the \emph{list}
+of possible results of the form $\triple{v \cup \stuck}{\vsu}{\tsu}$
+such that $\steps{e}{\emptysu}{\emptysu}{v \cup \stuck}{\vsu}{\tsu}$.
 
-\paragraph{Generating Target Arguments}
-%
-We address the issue of currying by defining a procedure
-$\genArgs{e}$ that yields a list of holes $[v_1, \ldots, v_k]$
-such that $\eapp{e}{v_1 \ldots v_k}$ \emph{does not} evaluate to
-a lambda.
+We address the issue of currying by defining a procedure \genArgs{e},
+defined in Figure~\ref{fig:algo-gen-args},
+that yields a list of holes $v_1, \ldots, v_n$ such that
+$\eapp{e}{v_1 \ldots v_n}$ \emph{does not} evaluate to a lambda.
 %
 This is achieved via a loop that keeps adding holes to the
 target application until evaluating the term yields a
@@ -667,17 +665,28 @@ non-lambda value.
 % \addArg{e} &\defeq& \eapp{e}{\vhole{\thole}}, \qquad \mbox{where } \ehole, \thole \mbox{ are fresh }
 % \end{array}
 % $$
+$$
+\begin{array}{lcl}
+\genArgsN   & : & e \rightarrow e^{*} \\
+\genArgs{e} & = & \loopfn{[]} \\
+\quad \mbox{\textbf{where}} &    & \\
+  \quad \quad \loopfn{vs} & = & \mbox{\textbf{case }} \evalfn{\eapp{e}{vs}} \mbox{\textbf{ of}} \\
+             &   & \quad \triple{\efun{x}{e}}{\vsu}{\tsu},\ldots \rightarrow \loopfn{\vhole{\thole} :: vs} \\
+             &   & \qquad (\ehole, \thole \mbox{ are fresh}) \\
+             &   & \quad \_ \rightarrow vs
+\end{array}
+$$
 
-\begin{mcode}
-genArgs :: $e$ -> [$v$]
-genArgs $e$ = loop []
-  where
-  loop vs = case eval $\triple{\eapp{e}{vs}}{\emptysu}{\emptysu}$ of
-             $\triple{\efun{x}{e}}{\vsu}{\tsu}$:_ -> loop ($\vhole{\thole}$ : vs)
-                           -- $\ehole$, $\thole$ are fresh
-             _          -> vs
-\end{mcode}
-\caption{Find number of arguments for target function}
+% \begin{mcode}
+% genArgs :: $e$ -> [$v$]
+% genArgs $e$ = loop []
+%   where
+%   loop vs = case eval $\triple{\eapp{e}{vs}}{\emptysu}{\emptysu}$ of
+%              $\triple{\efun{x}{e}}{\vsu}{\tsu}$:_ -> loop ($\vhole{\thole}$ : vs)
+%                            -- $\ehole$, $\thole$ are fresh
+%              _          -> vs
+% \end{mcode}
+\caption{Finding the number of arguments for the target expression.}
 \label{fig:algo-gen-args}
 \end{figure}
 
@@ -708,7 +717,7 @@ We obtain the following corollary of Theorem~\ref{thm:soundness}:
 
 \begin{cor}{\textbf{[Witness Generation]}}
 \label{thm:generation}
-  If |genWitness k $e$ = $\ $ $\triple{\eapp{e}{v_1 \ldots v_n}}{\vsu}{\tsu}\ldots$|,
+  If $\genWitness{k}{e} = \triple{\eapp{e}{v_1 \ldots v_n}}{\vsu}{\tsu},\ldots$,
   then for all types $t_1 \ldots t_n$ there exist values $w_1 \ldots w_n$ such that
   $\steps{\eapp{e}{w_1 \ldots w_n}}{\emptysu}{\emptysu}{\stuck}{\vsu'}{\tsu'}$.
 \end{cor}
@@ -717,12 +726,12 @@ We obtain the following corollary of Theorem~\ref{thm:soundness}:
 \centering
 $$
 \begin{array}{lclr}
-\genWitnessN       & :: & (\mathsf{Nat} \times e) \rightarrow 2^{e} & \\
-\genWitness{n}{e}  & =  & \{ \resolve{\eapp{e}{vs}}{\vsu} \mid \vsu \in \Sigma \} & \\
+\genWitnessN       & : & \mathsf{Nat} \times e \rightarrow e^{*} & \\
+\genWitness{n}{e}  & = & \{ \resolve{\eapp{e}{vs}}{\vsu} \mid \vsu \in \Sigma \} & \\
 \quad \mbox{\textbf{where}} &    & & \\
-\quad \quad vs     & =  & \genArgs{e} & (1) \\
-\quad \quad res    & =  & \takefn{n}{\evalfn{\triple{\eapp{e}{vs}}{\emptysu}{\emptysu}}} & (2) \\
-\quad \quad \Sigma & =  & \{ \vsu\ \mid \triple{\stuck}{\vsu}{\tsu} \in res\} & (3)
+\quad \quad vs     & = & \genArgs{e} & (1) \\
+\quad \quad res    & = & \takefn{n}{\evalfn{\eapp{e}{vs}}} & (2) \\
+\quad \quad \Sigma & = & \{ \vsu\ \mid \triple{\stuck}{\vsu}{\tsu} \in res\} & (3)
 \end{array}
 $$
 %% \begin{mcode}
@@ -733,7 +742,7 @@ $$
    %% $res    = \takefn{n}{\evalfn{\triple{\eapp{e}{vs}}{\emptysu}{\emptysu}}}$  -- (2)
    %% $\Sigma = \{ \vsu\ \mid \triple{\stuck}{\vsu}{\tsu} \in res\}$   -- (3)
 %% \end{mcode}
-\caption{Generating Witnesses}
+\caption{Generating witnesses.}
 \label{fig:algo-gen-witness}
 \end{figure}
 
