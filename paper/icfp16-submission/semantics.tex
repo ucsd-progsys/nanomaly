@@ -742,7 +742,7 @@ $$
 \begin{array}{lclr}
 \genWitnessN       & :: & (\mathsf{Nat} \times e) \rightarrow 2^{e} & \\
 \genWitness{n}{e}  & =  & \{ \resolve{\eapp{e}{vs}}{\vsu} \mid \vsu \in \Sigma \} & \\
-\quad \mbox{where} &    & & \\
+\quad \mbox{\textbf{where}} &    & & \\
 \quad \quad vs     & =  & \genArgs{e} & (1) \\
 \quad \quad res    & =  & \takefn{n}{\evalfn{\triple{\eapp{e}{vs}}{\emptysu}{\emptysu}}} & (2) \\
 \quad \quad \Sigma & =  & \{ \vsu\ \mid \triple{\stuck}{\vsu}{\tsu} \in res\} & (3)
