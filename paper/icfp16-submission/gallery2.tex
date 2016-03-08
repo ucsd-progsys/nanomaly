@@ -3,7 +3,7 @@
 Next, we present a \emph{qualitative} evaluation that compares
 the explanations provided by \toolname's dynamic witnesses with
 the static reports produced by the \ocaml\ compiler and \sherrloc,
-a state-of-the-art fault localization approach~\cite{ZhangMyers}.
+a state-of-the-art fault localization approach~\cite{zhang_toward_2014}.
 %
 In particular, we illustrate, using a series of examples drawn
 from student programs in the \ucsdbench\ dataset how \toolname's
@@ -134,6 +134,47 @@ the subsequent \texttt{+} operation.
 % \begin{center}
 %   \includegraphics[height=75px]{append.png}
 % \end{center}
+
+\paragraph{Example: Bad Helper Function that Type-Checks}
+%
+The function @digitsOfInt@ is supposed to return a list of
+the digits of the input integer.
+%
+\begin{ecode}
+  let append x xs =
+    match xs with
+    | [] -> [x]
+    | _  -> x :: xs
+
+  let rec digitsOfInt n =
+    if n <= 0 then
+      []
+    else
+      append (==digitsOfInt (n / 10)==)
+             [__n mod 10__]
+\end{ecode}
+%
+Unfortunately, the student's @append@ function \emph{conses} an element
+onto a list instead of appending two lists.
+%
+Though incorrect, @append@ still type-checks and thus \ocaml and
+\sherrloc blame the \emph{use-site} on line 10.
+%
+\begin{verbatim}
+  This expression has type
+    int
+  but an expression was expected of type
+    'a list
+\end{verbatim}
+%
+\toolname, in contrast, makes no asummptions about @append@ and produces
+a trace that illustrates the true error on line 4, by
+highlighting the conflict in consing a list onto a list of integers.
+%
+\begin{center}
+  \includegraphics[height=175px]{digitsOfInt.png}
+\end{center}
+%
 
 \paragraph{Example: Higher-Order Functions}
 %
