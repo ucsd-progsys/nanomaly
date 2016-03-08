@@ -1,43 +1,49 @@
-\section{The Advantage Of Traces}
-\label{sec:advantage-traces}
-Having shown that \toolname produces small traces in an efficient
-manner, let us discuss the explanatory power of traces compared with
-typical type error messages. In this section we will present a
-qualitative evaluation of \toolname's jump-compressed traces on a series
-of examples drawn from real student programs in the \ucsdbench
-dataset. We will show how \toolname's traces get to the heart of the
-error by
+\section{The Advantage Of Traces}\label{sec:advantage-traces}
+
+Next, we present a \emph{qualitative} evaluation that compares
+the explanations provided by \toolname's dynamic witnesses with
+the static reports produced by the \ocaml\ compiler and \sherrloc,
+a state-of-the-art fault localization approach~\cite{ZhangMyers}.
 %
-\begin{enumerate}
-\item highlighting the conflicting values that cause the program to get
-  stuck, rather that blaming a single one,
-\item showing the steps necessary to reach the stuck state, and
-\item not assuming that a function is correct just because it type-checks.
-\end{enumerate}
+In particular, we illustrate, using a series of examples drawn
+from student programs in the \ucsdbench\ dataset how \toolname's
+jump-compressed traces can get to the heart of the error by
 %
-For each example we will present the code, the type error produced by
-the \ocaml compiler, and a jump-compressed trace produced by \toolname.
+highlighting the conflicting values that cause the program to get
+stuck, rather that blaming a single one,
+%
+showing the steps necessary to reach the stuck state, and
+%
+not assuming that a function is correct just because it type-checks.
+%
+For each example we will present
+(1)~the code,
+(2)~the error message returned \ocaml,
+(3)~the error locations returned by \ocaml\ (underlined) and \sherrloc\ (in bold),
+(4)~the jump-compressed trace produced by \toolname.
 
 % \begin{figure*}[ht]
 % \centering
 % \begin{minipage}{0.49\linewidth}
 % \centering
 
-First, we will examine a simple recursive function @sqsum@ that should
-square each element of the input list and then compute the sum of the
-result. In the following code snippets we will underline the source span
-that \ocaml blames for the type error.
+
+\paragraph{Example: Recursion with Bad Operator}
+The recursive function @sqsum@ should square each
+element of the input list and then compute the sum
+of the result.
 %
 \begin{ecode}
   let rec sqsum xs = match xs with
     | [] -> 0
-    | h::t -> __(sqsum t)__ @ (h * h)
+    | h::t -> ==(sqsum t)== @ (h * h)
 \end{ecode}
 %
-Unfortunately the student has used the list-append operator |@| instead
-of \texttt{+} to compute the sum. \ocaml blames the recursive call
-\texttt{sqsum t} on line 3 for being an \texttt{int} instead of a
-\texttt{list}.
+Unfortunately the student has used the list-append
+operator |@| instead of \texttt{+} to compute the sum.
+%
+Both \ocaml\ and \sherrloc\ blame the \emph{wrong location},
+namely the recursive call @sqsum t@ with the message
 %
 \begin{verbatim}
   This expression has type
@@ -46,31 +52,37 @@ of \texttt{+} to compute the sum. \ocaml blames the recursive call
     'a list
 \end{verbatim}
 %
-In contrast, \toolname produces a trace showing how the evaluation of
-@sqsum [1]@ eventually gets stuck when it tries to evaluate
-\texttt{ 0 }|@|\texttt{ 1}.
+\toolname\ produces the following trace showing how the evaluation of
+@sqsum [1]@ gets stuck:
 %
 \begin{center}
   \includegraphics[height=125px]{sqsum.png}
 \end{center}
 %
-Note how the eye is drawn to the entire stuck term as opposed to just
-the left sub-term. This emphasizes the \emph{conflict} between @int@ and
-@list@ rather than assuming one or the other is correct.
+The figure highlights the entire stuck term
+(not just the recursive call), emphasizing
+the \emph{conflict} between @int@ and @list@
+rather than assuming one or the other is correct.
 
-Next we consider a function @sumList@ that just sums the elements of the
-input list, but has a more unfortunate error.
+\paragraph{Example: Recursion with Bad Base Case}
+%
+The function @sumList@ is supposed to add up
+the elements of its input list.
+%
 \begin{ecode}
   let rec sumList xs = match xs with
-    | []    -> []
+    | []    -> ==[]==
     | y::ys -> y + __sumList ys__
 \end{ecode}
 %
-In this case the student has returned @[]@ in the base case instead of
-@0@. Unfortunately, \ocaml deduces (incorrectly) from the base case that
-@sumList@ must return a @list@, and then proceeds to blame the
-\emph{recursive call} on line 3 for producing a @list@ instead of an
-@int@.
+Here, the student has incorrectly returned @[]@
+in the base case instead of @0@.
+%
+Unfortunately, \ocaml\ deduces (incorrectly)
+from the base case that @sumList@ must return
+a @list@, and then proceeds to blame the
+\emph{recursive call} on line 3 for
+producing a @list@ instead of an @int@.
 %
 \begin{verbatim}
   This expression has type

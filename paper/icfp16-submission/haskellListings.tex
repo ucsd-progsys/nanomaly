@@ -126,7 +126,12 @@
 {}
 
 \lstnewenvironment{ecode}
-{\lstset{language=HaskellUlisses, numbers=left, frame=leftline, moredelim=[is][\underbar]{__}{__}}}
+{\lstset{language=HaskellUlisses
+				,numbers=left
+				,frame=leftline
+				,moredelim=[is][\textbf]{==}{==}
+				,moredelim=[is][\underbar]{__}{__}
+				}}
 {}
 
 \lstnewenvironment{mcode}
