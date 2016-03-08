@@ -75,15 +75,15 @@ First, we define a core calculus within which we will work~\S~\ref{sec:syntax}.
 %
 Second, we develop a (non-deterministic) operational semantics
 for ill-typed programs that precisely defines the notion
-of a \emph{witness}~\S~\ref{sec:semantics},
+of a \emph{witness}~\S~\ref{sec:semantics}.
 %
 Third, we formalize and prove a notion of \emph{generality} for
-witnesses, which states, intuitively that if we find a
+witnesses, which states, intuitively, that if we find a
 single witness then for \emph{every possible} type
-assignment, there exist inputs that are guaranteed to make
-the program ``go wrong''~\S~\ref{sec:soundness}, and finally,
+assignment there exist inputs that are guaranteed to make
+the program ``go wrong''~\S~\ref{sec:soundness}.
 %
-Fourth, we refine the operational semantics into a
+Finally, we refine the operational semantics into a
 \emph{search procedure} that returns concrete (general)
 witnesses for ill-typed programs~\S~\ref{sec:search-algorithm}.
 
@@ -115,7 +115,9 @@ that we will \emph{not} generalize over.
 A \emph{normalized} value (resp.\ type) is one that is not a hole,
 but which may internally contain holes.
 %
-For example \RJ{add example here}
+For example
+$\vnode{\thole}{\vhole{\thole}}{\vleaf{\thole}}{\vleaf{\thole}}$ is a
+normalized value, and its type $\ttree{\thole}$ is a normalized type.
 
 \paragraph{Substitutions}
 %
@@ -128,7 +130,7 @@ We track how the holes are incrementally filled in, by using
 value (resp.\ type) \emph{substitutions} $\vsu$ (resp. $\tsu$)
 that map value (resp.\ type) holes to values (resp.\ types).
 %
-A \emph{normalized} substitution is one whose co-domain comprises
+A \emph{normalized} substitution is one whose co-domain is comprised
 of normalized values (resp.\ types).
 %
 In the sequel, we will assume and ensure that all substitutions
@@ -233,9 +235,11 @@ denoting the return value, and unconstrained types (denoted
 by $\thole$) yield fresh holes constrained to have type
 \thole (denoted by $\vhole{\thole}$).
 %
-Note that for an algebraic datatype, $\gen{\ttree{t}}{\tsu}$
-will always place holes in the generated nodes; they will be
-lazily filled in later, on demand.
+When generating a $\ttree{t}$ we must take care to ensure
+the resulting tree is well-typed. For a polymorphic type
+$\ttree{\thole}$, eg in \recasegoodone, we will
+place holes in the generated nodes; they will be lazily
+filled in later, on demand.
 
 
 \begin{figure}[ht]
