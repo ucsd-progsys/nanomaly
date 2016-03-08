@@ -20,6 +20,8 @@ For each example we will present
 (1)~the code,
 (2)~the error message returned \ocaml,
 (3)~the error locations returned by \ocaml\ (underlined) and \sherrloc\ (in bold),
+\footnote{When the locations from \ocaml\ and \sherrloc\ overlap,
+we just underline the relevant code.}
 (4)~the jump-compressed trace produced by \toolname.
 
 % \begin{figure*}[ht]
@@ -36,7 +38,7 @@ of the result.
 \begin{ecode}
   let rec sqsum xs = match xs with
     | [] -> 0
-    | h::t -> ==(sqsum t)== @ (h * h)
+    | h::t -> __(sqsum t)__ @ (h * h)
 \end{ecode}
 %
 Unfortunately the student has used the list-append
@@ -66,7 +68,7 @@ rather than assuming one or the other is correct.
 
 \paragraph{Example: Recursion with Bad Base Case}
 %
-The function @sumList@ is supposed to add up
+The function @sumList@ should add up
 the elements of its input list.
 %
 \begin{ecode}
@@ -75,14 +77,12 @@ the elements of its input list.
     | y::ys -> y + __sumList ys__
 \end{ecode}
 %
-Here, the student has incorrectly returned @[]@
+Unfortunately, it incorrectly returns @[]@
 in the base case instead of @0@.
 %
-Unfortunately, \ocaml\ deduces (incorrectly)
-from the base case that @sumList@ must return
-a @list@, and then proceeds to blame the
-\emph{recursive call} on line 3 for
-producing a @list@ instead of an @int@.
+\sherrloc\ blames the base case, and \ocaml\
+assumes the base case is correct and blames
+the \emph{recursive call} on line 3:
 %
 \begin{verbatim}
   This expression has type
@@ -91,17 +91,18 @@ producing a @list@ instead of an @int@.
     int
 \end{verbatim}
 %
-\toolname's jump compressed trace shows how the evaluation of
-@sumList [1; 2]@ gets stuck when it tries to evaluate @2 + []@.
+Both of the above are parts of the full story, which
+is succinctly summarized by \toolname's trace showing
+how @sumList [1; 2]@ gets stuck at @2 + []@.
 %
 \begin{center}
   \includegraphics[height=125px]{sumlist.png}
 \end{center}
 %
-This is essentially the same error that \ocaml produces, but the trace
-clarifies immediately (via the third step) that the @[]@ is the result
-of the recursive call @sumList []@, drawing attention to the incorrect
-base case.
+The trace clarifies immediately (via the third step)
+that the @[]@ is the result of the recursive call
+@sumList []@, and shows how it is incompatible with
+the subsequent \texttt{+} operation.
 
 %% ES: append is actually a bit problematic as we don't find the nice
 %% append [1] [2] witness. instead we could find something like
@@ -134,10 +135,14 @@ base case.
 %   \includegraphics[height=75px]{append.png}
 % \end{center}
 
-Finally, consider the higher-order function @wwhile@ that emulates a
-traditional while-loop. Concretely, @wwhile@ takes a function @f@ and
-repeatedly calls @f@ on the first element of its output pair, starting
-with the initial value @b@, until the second element is @false@.
+\paragraph{Example: Higher-Order Functions}
+%
+The higher-order function @wwhile@ is supposed
+to emulate a traditional while-loop. It takes
+a function @f@ and repeatedly calls @f@ on the
+first element of its output pair, starting with
+the initial value @b@, until the second element
+is @false@.
 %
 \begin{ecode}
   let rec wwhile (f,b) =
@@ -152,10 +157,12 @@ with the initial value @b@, until the second element is @false@.
   let _ = wwhile (__f__, 2)
 \end{ecode}
 %
-Unfortunately, the student has forgotten to apply @f@ at all on line 2,
-and just matches it directly against a pair. This faulty definition of
-@wwhile@ still typechecks however, and \ocaml thus blames the
-\emph{call-site} on line 10.
+Unfortunately, the student has forgotten to \emph{apply}
+@f@ at all on line 2, and just matches it directly against
+a pair.
+This faulty definition of @wwhile@ still typechecks however,
+and hence, are ``assumed'' to be correct by and both \ocaml\
+and \sherrloc\ which blame the \emph{use-site} on line 10.
 %
 \begin{verbatim}
   This expression has type
@@ -164,28 +171,18 @@ and just matches it directly against a pair. This faulty definition of
     'a * bool
 \end{verbatim}
 %
-\toolname makes no assumptions about the program and quickly draws the
-eye to the true error, the @match@ expression on line 2, and highlights
+\toolname\ synthesizes a trace that draws the eye to the
+true error: the @match@ expression on line 2, and highlights
 the conflict in matching a function against a pair pattern.
 %
 \begin{center}
   \includegraphics[height=150px]{wwhile.png}
 \end{center}
 %
-
-By highlighting conflicting values rather than blaming a single value
-and not making any assumptions about the given program, \toolname avoids
-misleading the user into focusing their attention on a piece of code
-that is actually irrelevant to the error.
-
-
-
-
-
-
-
-
-
+By highlighting conflicting values (\ie\ the source and sink
+of the problem) and not making any assumptions, \toolname\
+focusses the user's attention on the piece of code that is
+actually relevant to the error.
 
 
 %%% Local Variables:
