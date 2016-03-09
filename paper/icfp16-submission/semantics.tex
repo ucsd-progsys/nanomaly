@@ -112,12 +112,12 @@ an \emph{unconstrained} value $\ehole$ that may be replaced with
 Intuitively, the type holes \thole\ can be viewed as type variables
 that we will \emph{not} generalize over.
 %
-A \emph{normalized} value (resp.\ type) is one that is not a hole,
+A \emph{normalized} value is one that is not a hole,
 but which may internally contain holes.
 %
 For example
 $\vnode{\thole}{\vhole{\thole}}{\vleaf{\thole}}{\vleaf{\thole}}$ is a
-normalized value, and its type $\ttree{\thole}$ is a normalized type.
+normalized value.
 
 \paragraph{Substitutions}
 %
@@ -130,10 +130,10 @@ We track how the holes are incrementally filled in, by using
 value (resp.\ type) \emph{substitutions} $\vsu$ (resp. $\tsu$)
 that map value (resp.\ type) holes to values (resp.\ types).
 %
-A \emph{normalized} substitution is one whose co-domain is comprised
-of normalized values (resp.\ types).
+A \emph{normalized} value substitution is one whose co-domain is
+comprised of normalized values.
 %
-In the sequel, we will assume and ensure that all substitutions
+In the sequel, we will assume and ensure that all value substitutions
 are normalized.
 
 \paragraph{Resolving Holes}
@@ -194,7 +194,7 @@ $$
   \triple{v}{\vsu}{\tsu'}    & \mbox{if } v = \lookupsu{\vsu}{\ehole},
                                          \tsu' = \unify{\{\thole, t, \typeof{v}\}}{\tsu}\\
   \triple{\stuck}{\vsu}{\tsu} & \mbox{if } v = \lookupsu{\vsu}{\ehole} \\
-  \triple{v}{\extendsu{\vsu}{\ehole}{v}}{\tsu'} & \mbox{if}\ \tsu' = \unify{\{\thole, t\}}{\tsu}, v = \gen{t_1}{\tsu'}\\
+  \triple{v}{\extendsu{\vsu}{\ehole}{v}}{\tsu'} & \mbox{if}\ \tsu' = \unify{\{\thole, t\}}{\tsu}, v = \gen{t}{\tsu'}\\
 \end{cases} \\
 % \begin{cases}
 %   \triple{\lookupsu{\vsu}{\ehole}}{\vsu}{\tsu} & \mbox{if}\ \ehole \in dom(\vsu), \hastype{\lookupsu{\vsu}{\ehole}}{t} \\
@@ -219,7 +219,7 @@ $$
 %
 %While a hole may map to a value that \emph{contains} another hole, \eg a
 %lambda or a tree, it may not map \emph{directly} to another hole,
-As the substitutions are normalized, in the first case of \forcesym\ we
+As the value substitution is normalized, in the first case of \forcesym\ we
 do not need to \forcesym\ the result of the substitution, the sub-hole
 will be narrowed when the context demands it.
 
