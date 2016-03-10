@@ -71,21 +71,21 @@
 
 Next, we formalize the notion of type error witnesses as follows.
 %
-First, we define a core calculus within which we will work~\S~\ref{sec:syntax}.
+First, we define a core calculus within which we will work~(\S~\ref{sec:syntax}).
 %
 Second, we develop a (non-deterministic) operational semantics
 for ill-typed programs that precisely defines the notion
-of a \emph{witness}~\S~\ref{sec:semantics}.
+of a \emph{witness}~(\S~\ref{sec:semantics}).
 %
 Third, we formalize and prove a notion of \emph{generality} for
 witnesses, which states, intuitively, that if we find a
 single witness then for \emph{every possible} type
 assignment there exist inputs that are guaranteed to make
-the program ``go wrong''~\S~\ref{sec:soundness}.
+the program ``go wrong''~(\S~\ref{sec:soundness}).
 %
 Finally, we refine the operational semantics into a
 \emph{search procedure} that returns concrete (general)
-witnesses for ill-typed programs~\S~\ref{sec:search-algorithm}.
+witnesses for ill-typed programs~\S~(\ref{sec:search-algorithm}).
 
 \subsection{Syntax}
 \label{sec:syntax}
@@ -95,7 +95,9 @@ Figure~\ref{fig:syntax} describes the syntax of \lang, a simple lambda
 calculus with integers, booleans, and binary trees.
 %
 As we are specifically interested in programs that \emph{do} go wrong,
-we include an explicit \stuck\ state in our syntax.
+we include an explicit \stuck\ term in our syntax. We write $\estuck$ to
+denote terms that may be \stuck, and $e$ to denote terms that may not be
+stuck.
 
 \paragraph{Holes}
 \label{sec:holes}
@@ -107,7 +109,7 @@ irrelevant types.
 We solve this problem be equipping our term language with a
 notion of a \emph{hole}, written \vhole{\thole}, which represents
 an \emph{unconstrained} value $\ehole$ that may be replaced with
-\emph{any} value of type \thole.
+\emph{any} value of an unknown type \thole.
 %
 Intuitively, the type holes \thole\ can be viewed as type variables
 that we will \emph{not} generalize over.
@@ -130,6 +132,13 @@ We track how the holes are incrementally filled in, by using
 value (resp.\ type) \emph{substitutions} $\vsu$ (resp. $\tsu$)
 that map value (resp.\ type) holes to values (resp.\ types).
 %
+The substitutions let us ensure that we consistently instantiate each
+hole with the same (partially defined) value or type, regardless of the
+multiple contexts in which the hole appears.
+%
+This ensures we can report a concrete (and general) witness for any
+(dynamically) discovered type errors.
+
 A \emph{normalized} value substitution is one whose co-domain is
 comprised of normalized values.
 %
@@ -151,13 +160,20 @@ any holes in the domain of \tsu.
 \subsection{Semantics}
 \label{sec:semantics}
 %
-\RJ{Add intuition text -- "dynamic Hindley Milner"}
+Recall that our goal is to synthesize a value that demonstrates
+why (and how) a function goes wrong.
 %
-The substitutions let us ensure that we consistently instantiate
-each hole with the same (partially defined) value or type, regardless
-of the multiple contexts in which the hole appears. This ensures we
-can report a concrete (and general) witness for any (dynamically)
-discovered type errors.
+We accomplish this by combining evaluation with type inference,
+giving us a form of dynamic type inference.
+% starting with an unconstrained hole and gradually refining it
+% as evaluation constrains its type.
+%
+Each primitive evaluation step tells us more about the types of the
+program values. For example, addition tells us that the addends must be
+integers, and case-analysis tells us that the scrutinee must be a tree.
+%
+When a hole appears in such a context, we know what type it must have
+in order to make progress and can fill it in with a concrete value.
 
 The evaluation relation is parameterized by a pair of functions:
 called \emph{narrow} (\forcesym) and \emph{generate} (\gensym),
@@ -236,10 +252,11 @@ by $\thole$) yield fresh holes constrained to have type
 \thole (denoted by $\vhole{\thole}$).
 %
 When generating a $\ttree{t}$ we must take care to ensure
-the resulting tree is well-typed. For a polymorphic type
-$\ttree{\thole}$, eg in \recasegoodone, we will
-place holes in the generated nodes; they will be lazily
-filled in later, on demand.
+the resulting tree is well-typed.
+%
+For a polymorphic type $\ttree{\thole}$ %, eg in \recasegoodone,
+we will place holes in the generated nodes; they will be lazily filled
+in later, on demand.
 
 
 \begin{figure}[ht]
@@ -272,10 +289,12 @@ $$
 Figure~\ref{fig:operational} describes the small-step contextual
 reduction semantics for \lang.
 %
-A program state is a triple $\triple{e \cup \stuck}{\vsu}{\tsu}$ of an
+A configuration is a triple $\triple{\estuck}{\vsu}{\tsu}$ of an
 expression $e$ or the stuck term $\stuck$, a value substitution $\vsu$,
-and a type substitution $\tsu$. In the sequel we will write \estuck to
-denote either an expression $e$ or \stuck.
+and a type substitution $\tsu$.
+%
+% We write \estuck to
+% denote either an expression $e$ or \stuck.
 %
 We write $\step{\estuck}{\vsu}{\tsu}{\estuck'}{\vsu'}{\tsu'}$ if the state
 $\triple{\estuck}{\vsu}{\tsu}$ transitions in a \emph{single step} to
@@ -294,8 +313,8 @@ We write \steps{\estuck}{\vsu}{\tsu}{\estuck'}{\vsu'}{\tsu'} if
 
 \paragraph{Primitive Reductions}
 %
-\RJ{Put high-level intuition about how "dynamic HM" is
-formalized in op-sem, to set up next few paragraphs}
+% \RJ{Put high-level intuition about how "dynamic HM" is
+% formalized in op-sem, to set up next few paragraphs}
 %
 Primitive reduction steps --- addition, if-elimination,
 function application, and data construction and case
@@ -308,14 +327,25 @@ argument, it only ensures that ``the caller'' $v_1$ is indeed
 a function.
 
 \paragraph{Recursion}
-\RJ{this para appears out of nowhere --- non-sequitur}
-Fixed-point operators often cannot be typed in static type
-systems, but we are not concerned with \emph{assigning}
-types to terms, rather with showing that \emph{no type}
-can be assigned.
 %
-We are simply executing the untyped $\lambda$-calculus,
-which has no issue handling recursion.
+% \RJ{this para appears out of nowhere --- non-sequitur}
+Our semantics lacks a built-in $\mathtt{fix}$ construct
+for defining recursive function, which may surprise
+the reader.
+%
+Fixed-point operators often cannot be typed in static type
+systems, but our system would simply approximate its type
+as $\tfun$, apply it, and move along with evaluation.
+%
+Thus we do not need a built-in recursion construct, we
+can use any of the standard fixed-point operators.
+
+%  but we are not concerned with \emph{assigning}
+% types to terms, rather with showing that \emph{no type}
+% can be assigned.
+% %
+% We are simply executing the untyped $\lambda$-calculus,
+% which has no issue handling recursion.
 
 %% \begin{thm}
 %% \label{thm:all-reduce}
