@@ -180,61 +180,58 @@
 % \end{proof}
 
 \begin{proof}[Proof of Lemma~\ref{lem:k-stuck}]
-  By induction on $k$, the length of $\trace$. Let $s_{\trace} = \ptype{\trace}{f}$ and
-  $\trace' = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e'}{\vsu'}{\tsu'}$
-  such that $\step{e'}{\vsu'}{\tsu'}{e}{\vsu}{\tsu}$.
-  Suppose $\hastype{w}{\tincompat{t}{s_{\trace}}}$, we
-  will show that $\steps{\eapp{f}{w}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$
-  in at most $k$ steps.
-
-  The base case where $k = 0$ (\ie empty traces) is trivial as no
-  evaluation has happened and thus there can be no values that are
-  incompatible with \ptype{0}{f}. So we proceed directly to the
-  inductive case and split cases on whether $t$ is compatible with
-  $s_{\trace'}$.
-  %
   We can construct $v$ from $\trace$ as follows.
   %
-  \begin{description}
-  \item[Case $\vincompat{\resolve{\vhole{\thole}}{\vsu}}{t}$:]
-    %
-    The inductive hypothesis applies.
-    %
-  \item[Case $\vcompat{\resolve{\vhole{\thole}}{\vsu}}{t}$
-        but  $\vincompat{\resolve{\vhole{\thole}}{\vsu'}}{t}$:]
-    %
-    In this case we will show that $\resolve{\vhole{\thole}}{\vsu}$
-    must contain some other hole $\ehole'$ which is instantiated with a
-    concrete value in this step.
-    %
-    Furthermore, $\ehole'$ is instantiated in such a way that
-    $\vincompat{\resolve{\vhole{\thole}}{\vsu'}}{t}$.
-    %
-    Finally, we will show that if we had instantiated $\ehole'$ with a
-    value such that
-    $\vcompat{\resolve{\vhole{\thole}}{\vsu'}}{t}$, the current
-    step would have gotten $\stuck$.
+  Let
+  $$
+  \trace_i = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},
+             \ldots,
+             \triple{e_{i-1}}{\vsu_{i-1}}{\tsu_{i-1}},
+             \triple{e_{i}}{\vsu_{i}}{\tsu_{i}}
+  $$
+  be the shortest prefix of $\trace$ such that
+  $\tincompat{\ptype{\trace_i}{f}}{t}$.
+  %
+  We will show that $\resolve{\vhole{\thole}}{\vsu_{i-1}}$
+  must contain some other hole $\ehole'$ which is instantiated with a
+  concrete value at step $i$.
+  %
+  Furthermore, $\ehole'$ is instantiated in such a way that
+  $\vincompat{\resolve{\vhole{\thole}}{\vsu_{i}}}{t}$.
+  \ES{need to connect \ptype{\trace{i}}{f} and \resolve{\vhole{\thole}}{\vsu_i}}
+  %
+  Finally, we will show that if we had instantiated $\ehole'$ with a
+  value such that
+  $\vcompat{\resolve{\vhole{\thole}}{\vsu_{i}}}{t}$, the current
+  step would have gotten $\stuck$.
 
-    % By Lemma~\ref{lem:fixme} we know that
-    % $\vcompat{\resolve{\vhole{\thole}}{\vsu}}{\resolve{\thole}{\tsu}}$.
-    %
-    By Lemma~\ref{lem:vsu-ext} we know that
-    $\vsu' = \vsu[\ehole_1 \mapsto v_1] \ldots [\ehole_n \mapsto v_n]$.
-    %
-    We will assume, without loss of generality, that
-    $\vsu' = \vsu[\ehole' \mapsto w]$.
-    %
-    Since $\vsu$ and $\vsu'$ differ only in $\ehole'$ but the resolved
-    values differ,
-    $\resolve{\vhole{\thole}}{\vsu} = \vcompat{\invctx{\ehole'[\thole']}}{t}$
-    and
-    $\resolve{\vhole{\thole}}{\vsu'} = \vincompat{\invctx{v'}}{t}$.
-    %
-    Now, consider any value $u$ such that $\vcompat{\invctx{u}}{t}$,
-    we show by case analysis on the evaluation relation that
-    $\invctx{u}$ could not make progress at this step, and thus
-    $\steps{\eapp{f}{\invctx{u}}}{\emptysu}{\emptysu}{\stuck}{\vsu''}{\tsu''}$.
-    %
+  % By Lemma~\ref{lem:fixme} we know that
+  % $\vcompat{\resolve{\vhole{\thole}}{\vsu}}{\resolve{\thole}{\tsu}}$.
+  %
+  By Lemma~\ref{lem:vsu-ext} we know that
+  $\vsu_{i} = \vsu_{i-1}[\ehole_1 \mapsto v_1] \ldots [\ehole_n \mapsto v_n]$.
+  %
+  We will assume, without loss of generality, that
+  $\vsu_{i} = \vsu_{i-1}[\ehole' \mapsto v']$.
+
+  Next, we introduce a notion of \emph{value contexts}, defined
+  analogously to evaluation contexts.
+  %
+  $$
+    V ::= \bullet \spmid \vnode{t}{V}{v}{v} \spmid \vnode{t}{v}{V}{v} \spmid \vnode{t}{v}{v}{V}
+  $$
+  %
+  Since $\vsu_{i-1}$ and $\vsu_{i}$ differ only in $\ehole'$ but the resolved
+  values differ,
+  $\resolve{\vhole{\thole}}{\vsu_{i-1}} = \vcompat{\invctx{\ehole'[\thole']}}{t}$
+  and
+  $\resolve{\vhole{\thole}}{\vsu_{i}} = \vincompat{\invctx{v'}}{t}$.
+  %
+  Now, consider any value $u$ such that $\vcompat{\invctx{u}}{t}$,
+  we show by case analysis on the evaluation relation that
+  $\invctx{u}$ could not make progress at this step, and thus
+  $\steps{\eapp{f}{\invctx{u}}}{\emptysu}{\emptysu}{\stuck}{\vsu'}{\tsu'}$.
+  %
     \begin{description}
     \item[Case \replusgood:]
       %
@@ -288,7 +285,7 @@
       %
       Here we \forcesym $v_2$ and $v_3$ to $\ttree{t}$, so the first
       case of \forcesym must apply
-      (neither $\force{\vleaf{\ttree{t_1}}}{\ttree{t_2}}{\vsu}{\tsu}$
+      (neither\\ $\force{\vleaf{\ttree{t_1}}}{\ttree{t_2}}{\vsu}{\tsu}$
        nor\\ $\force{\vnode{\ttree{t_1}}{v_1}{v_2}{v_3}}{\ttree{t_2}}{\vsu}{\tsu}$
        can apply as they do not change $\vsu$).
       %
@@ -325,7 +322,6 @@
       Let $u$ be any concrete value that is incompatible with $\ttree{\thole}$,
       $\force{u}{\ttree{\thole}}{\vsu}{\tsu} = \triple{\stuck}{\vsu}{\tsu}$.
     \end{description}
-  \end{description}
   % \begin{description}
   % \item [Case \tincompat{t}{s_{\trace'}}:]
   %   The inductive hypothesis applies.

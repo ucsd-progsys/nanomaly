@@ -539,68 +539,57 @@ if $\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu}
    $k$ steps, where $k$ is the length of $\trace$.
 \end{lem}
 \begin{proof}
-  We can construct $v$ from $\trace$ by induction on $k$, the length of $\trace$.
+  We can construct $v$ from $\trace$ as follows.
   %
-  The goal is to find the step at which the refinement of $\vhole{\thole}$,
-  $\resolve{\vhole{\thole}}{\vsu}$ becomes incompatible with $t$.
+  Let
+  $$
+  \trace_i = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},
+             \ldots,
+             \triple{e_{i-1}}{\vsu_{i-1}}{\tsu_{i-1}},
+             \triple{e_{i}}{\vsu_{i}}{\tsu_{i}}
+  $$
+  be the shortest prefix of $\trace$ such that
+  $\tincompat{\ptype{\trace_i}{f}}{t}$.
   %
-  The base case, $k = 0$ is trivial, $\vsu_0 = \emptysu$ and
-  $\resolve{\vhole{\thole}}{\emptysu} = \vhole{\thole}$ which is compatible with
-  \emph{any} type $t$.
+  We will show that $\resolve{\vhole{\thole}}{\vsu_{i-1}}$
+  must contain some other hole $\ehole'$ which is instantiated with a
+  concrete value at step $i$.
   %
-  In the inductive case, let
-  $$\trace_{k-1} = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e_{k-1}}{\vsu_{k-1}}{\tsu_{k-1}}$$
-  be the prefix of $\trace$ of length $k-1$.
+  Furthermore, $\ehole'$ is instantiated in such a way that
+  $\vincompat{\resolve{\vhole{\thole}}{\vsu_{i}}}{t}$.
+  \ES{need to connect \ptype{\trace{i}}{f} and \resolve{\vhole{\thole}}{\vsu_i}}
   %
-  Let us split cases on whether $\resolve{\vhole{\thole}}{\vsu_{k-1}}$ is compatible with $t$.
-  %
-  \begin{description}
-  \item[Case $\vincompat{\resolve{\vhole{\thole}}{\vsu_{k-1}}}{t}$:]
-    %
-    The inductive hypothesis applies.
-    %
-  \item[Case $\vcompat{\resolve{\vhole{\thole}}{\vsu_{k-1}}}{t}$
-        but  $\vincompat{\resolve{\vhole{\thole}}{\vsu_{k}}}{t}$:]
-    %
-    In this case we will show that $\resolve{\vhole{\thole}}{\vsu_{k-1}}$
-    must contain some other hole $\ehole'$ which is instantiated with a
-    concrete value at step $k$.
-    %
-    Furthermore, $\ehole'$ is instantiated in such a way that
-    $\vincompat{\resolve{\vhole{\thole}}{\vsu_{k}}}{t}$.
-    %
-    Finally, we will show that if we had instantiated $\ehole'$ with a
-    value such that
-    $\vcompat{\resolve{\vhole{\thole}}{\vsu_{k}}}{t}$, the current
-    step would have gotten $\stuck$.
+  Finally, we will show that if we had instantiated $\ehole'$ with a
+  value such that
+  $\vcompat{\resolve{\vhole{\thole}}{\vsu_{i}}}{t}$, the current
+  step would have gotten $\stuck$.
 
-    % By Lemma~\ref{lem:fixme} we know that
-    % $\vcompat{\resolve{\vhole{\thole}}{\vsu}}{\resolve{\thole}{\tsu}}$.
-    %
-    By Lemma~\ref{lem:vsu-ext} we know that
-    $\vsu_{k} = \vsu_{k-1}[\ehole_1 \mapsto v_1] \ldots [\ehole_n \mapsto v_n]$.
-    %
-    We will assume, without loss of generality, that
-    $\vsu_{k} = \vsu_{k-1}[\ehole' \mapsto v']$.
+  % By Lemma~\ref{lem:fixme} we know that
+  % $\vcompat{\resolve{\vhole{\thole}}{\vsu}}{\resolve{\thole}{\tsu}}$.
+  %
+  By Lemma~\ref{lem:vsu-ext} we know that
+  $\vsu_{i} = \vsu_{i-1}[\ehole_1 \mapsto v_1] \ldots [\ehole_n \mapsto v_n]$.
+  %
+  We will assume, without loss of generality, that
+  $\vsu_{i} = \vsu_{i-1}[\ehole' \mapsto v']$.
 
-    Next, we introduce a notion of \emph{value contexts}, defined
-    analogously to evaluation contexts.
-    %
-    $$
-      V ::= \bullet \spmid \vnode{t}{V}{v}{v} \spmid \vnode{t}{v}{V}{v} \spmid \vnode{t}{v}{v}{V}
-    $$
-    %
-    Since $\vsu_{k-1}$ and $\vsu_{k}$ differ only in $\ehole'$ but the resolved
-    values differ,
-    $\resolve{\vhole{\thole}}{\vsu_{k-1}} = \vcompat{\invctx{\ehole'[\thole']}}{t}$
-    and
-    $\resolve{\vhole{\thole}}{\vsu_{k}} = \vincompat{\invctx{v'}}{t}$.
-    %
-    Now, consider any value $u$ such that $\vcompat{\invctx{u}}{t}$,
-    we show by case analysis on the evaluation relation that
-    $\invctx{u}$ could not make progress at this step, and thus
-    $\steps{\eapp{f}{\invctx{u}}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$.
-  \end{description}
+  Next, we introduce a notion of \emph{value contexts}, defined
+  analogously to evaluation contexts.
+  %
+  $$
+    V ::= \bullet \spmid \vnode{t}{V}{v}{v} \spmid \vnode{t}{v}{V}{v} \spmid \vnode{t}{v}{v}{V}
+  $$
+  %
+  Since $\vsu_{i-1}$ and $\vsu_{i}$ differ only in $\ehole'$ but the resolved
+  values differ,
+  $\resolve{\vhole{\thole}}{\vsu_{i-1}} = \vcompat{\invctx{\ehole'[\thole']}}{t}$
+  and
+  $\resolve{\vhole{\thole}}{\vsu_{i}} = \vincompat{\invctx{v'}}{t}$.
+  %
+  Now, consider any value $u$ such that $\vcompat{\invctx{u}}{t}$,
+  we show by case analysis on the evaluation relation that
+  $\invctx{u}$ could not make progress at this step, and thus
+  $\steps{\eapp{f}{\invctx{u}}}{\emptysu}{\emptysu}{\stuck}{\vsu'}{\tsu'}$.
 \end{proof}
 
 % \paragraph{Incompatible Values Are Wrong}
