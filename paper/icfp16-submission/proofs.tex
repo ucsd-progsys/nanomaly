@@ -16,9 +16,13 @@
 
 
   Furthermore, an examination of \forcesym immediately shows that in the
-  cases where \forcesym returns \stuck, \tsu is unmodified. Thus only
-  \emph{successful} calls to \forcesym can change \tsu and, by
+  cases where \forcesym returns \stuck, \tsu\ is unmodified. Thus only
+  \emph{successful} calls to \forcesym can change \tsu\ and, by
   extension, \ptype{\trace}{f}.
+
+  % - narrow(leaf[t_1], t_2, \sigma, \theta)
+  %   - t_1 != \alpha because E-Leaf always creates fresh \alpha
+  %   - what aboue t_2? could mention \alpha in E-Node-*..
 
   % By case analysis on the evaluation rules. As above we are only
   % concerned with the sucessful steps, and can thus ignore the
@@ -90,7 +94,7 @@
     % \hastype{\eplus{v_1}{v_2}}{\thole} and
     % \hastype{n}{\tint}, so partial type compatibility of the output is
     % preserved.
-  \item[Case \rulename{E-If-Good\{1,2\}}] $v$ successfully narrowed to
+  \item[Case \rulename{E-If-Good-\{1,2\}}] $v$ successfully narrowed to
     \tbool, so it must have either been a bool or an unconstrained hole.
     Thus partial input type compatibility is preserved.
 
@@ -132,7 +136,7 @@
     % \tcompat{\thole}{\ttree{t}} because we can just map \thole to
     % \ttree{t} (as \thole is fresh), so partial type compatibility of the
     % output is preserved.
-  \item[Case \rulename{E-Case-Good\{1,2\}}] $v$ successfully narrowed to
+  \item[Case \rulename{E-Case-Good-\{1,2\}}] $v$ successfully narrowed to
     \ttree{\thole} so it must have either been a tree or an
     unconstrained hole, so partial input type compatibility is
     preserved.
@@ -179,8 +183,8 @@
   By induction on $k$, the length of $\trace$. Let $s_{\trace} = \ptype{\trace}{f}$ and
   $\trace' = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e'}{\vsu'}{\tsu'}$
   such that $\step{e'}{\vsu'}{\tsu'}{e}{\vsu}{\tsu}$.
-  Suppose \hastype{v}{\tincompat{t}{s_{\trace}}}, we
-  will show that \steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}
+  Suppose $\hastype{w}{\tincompat{t}{s_{\trace}}}$, we
+  will show that $\steps{\eapp{f}{w}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$
   in at most $k$ steps.
 
   The base case where $k = 0$ (\ie empty traces) is trivial as no
@@ -189,75 +193,229 @@
   inductive case and split cases on whether $t$ is compatible with
   $s_{\trace'}$.
   %
+  We can construct $v$ from $\trace$ as follows.
+  %
   \begin{description}
-  \item [Case \tincompat{t}{s_{\trace'}}:]
+  \item[Case $\vincompat{\resolve{\vhole{\thole}}{\vsu}}{t}$:]
+    %
     The inductive hypothesis applies.
-  \item [Case $\tcompat{t}{s_{\trace'}}$ but $\tincompat{t}{s_{\trace}}$:]
-    Since $\tcompat{t}{s_{\trace'}}$ but $\tincompat{t}{s_{\trace}}$ we know
-    that $s_{\trace'} \neq s_{\trace}$, and
-    by Lemma~\ref{lem:force-inst} we know that we must have
-    successfully called \forcesym at step $k$.
     %
-    Lemma~\ref{lem:refine-partial} tells us
-    $\tcompat{s_{\trace'}}{s_{\trace}}$, which means we must have
-    specifically narrowed $s_{\trace'}$ to a type incompatible with $t$.
+  \item[Case $\vcompat{\resolve{\vhole{\thole}}{\vsu}}{t}$
+        but  $\vincompat{\resolve{\vhole{\thole}}{\vsu'}}{t}$:]
     %
-    We show by case analysis of the evaluation rules that narrowing to
-    $t$ instead cannot succeed.
+    In this case we will show that $\resolve{\vhole{\thole}}{\vsu}$
+    must contain some other hole $\ehole'$ which is instantiated with a
+    concrete value in this step.
+    %
+    Furthermore, $\ehole'$ is instantiated in such a way that
+    $\vincompat{\resolve{\vhole{\thole}}{\vsu'}}{t}$.
+    %
+    Finally, we will show that if we had instantiated $\ehole'$ with a
+    value such that
+    $\vcompat{\resolve{\vhole{\thole}}{\vsu'}}{t}$, the current
+    step would have gotten $\stuck$.
 
-    Again we can immediately discharge the \rulename{E-*-Bad}
-    rules as they get stuck, proving the consequent.
+    % By Lemma~\ref{lem:fixme} we know that
+    % $\vcompat{\resolve{\vhole{\thole}}{\vsu}}{\resolve{\thole}{\tsu}}$.
+    %
+    By Lemma~\ref{lem:vsu-ext} we know that
+    $\vsu' = \vsu[\ehole_1 \mapsto v_1] \ldots [\ehole_n \mapsto v_n]$.
+    %
+    We will assume, without loss of generality, that
+    $\vsu' = \vsu[\ehole' \mapsto w]$.
+    %
+    Since $\vsu$ and $\vsu'$ differ only in $\ehole'$ but the resolved
+    values differ,
+    $\resolve{\vhole{\thole}}{\vsu} = \vcompat{\invctx{\ehole'[\thole']}}{t}$
+    and
+    $\resolve{\vhole{\thole}}{\vsu'} = \vincompat{\invctx{v'}}{t}$.
+    %
+    Now, consider any value $u$ such that $\vcompat{\invctx{u}}{t}$,
+    we show by case analysis on the evaluation relation that
+    $\invctx{u}$ could not make progress at this step, and thus
+    $\steps{\eapp{f}{\invctx{u}}}{\emptysu}{\emptysu}{\stuck}{\vsu''}{\tsu''}$.
+    %
     \begin{description}
-    % \item[Case \reholegood:] \thole is compatible with any type, which
-    %   contradicts the premise that \tincompat{t}{s_{\trace}}.
-    \item[Case \replusgood:] Here we \forcesym $v_1$ and $v_2$ to have type
-      \tint, but we assumed that $v$ has a type that is incompatible with
-      \tint, thus \forcesym must fail on either $v_1$ or $v_2$.
-    \item[Case \rulename{E-If-Good\{1,2\}}:] Here we \forcesym $v$ to have type
-      \tbool, but we assumed that $v$ has a type that is incompatible with
-      \tbool, thus \forcesym must fail.
-    \item[Case \reappgood:] Here we \forcesym $v$ to have type
-      \tfun, but we assumed that $v$ has a type that is incompatible with
-      \tfun, thus \forcesym must fail.
-    \item[Case \releafgood:] This rule does not call \forcesym, so by
-      Lemma~\ref{lem:force-inst} it cannot have applied.
-    \item[Case \renodegood:] There are two cases we must consider here,
-      the sub-trees and the value at the node.
-
-      Consider first the sub-trees. We \forcesym $v_2$ and $v_3$ to have
-      type \ttree{t}, but we assumed $v$ has some type incompatible with
-      \ttree{t}, so one of the \forcesym calls must fail.
-
-      Next consider the value $v_1$. Even though we do not \forcesym
-      $v_1$ directly, we seed the \forcesym calls with $\typeof{v_1}$,
-      which will then fail if $\typeof{v_1}$ is incompatible with the
-      types of the sub-trees, which our assumption tells us must be the
-      case.
-    \item[Case \rulename{E-Case-Good\{1,2\}}:] Here we \forcesym $v$ to
-      have type \ttree{\thole}, but we assumed that $v$ has a type that
-      is incompatible with \ttree{\thole}, thus \forcesym must fail.
+    \item[Case \replusgood:]
+      %
+      Here we \forcesym $v_1$ and $v_2$ to $\tint$, so the first case of
+      \forcesym must apply\\ ($\force{n}{\tint}{\vsu}{\tsu}$ cannot apply
+      as it does not change $\vsu$).
+      %
+      In particular, we must have extended $\vsu$ with
+      $[\ehole' \mapsto v']$ where $v'$ is a $\tint$.
+      %
+      Let $u$ be any concrete value that is incompatible with $\tint$,
+      $\force{u}{\tint}{\vsu}{\tsu} = \triple{\stuck}{\vsu}{\tsu}$.
+    \item[Case \rulename{E-Plus-Bad\{1,2\}}:]
+      %
+      These cases cannot apply as \forcesym does not update \vsu\ when
+      it returns \stuck.
+    \item[Case \rulename{E-If-Good\{1,2\}}:]
+      %
+      Here we \forcesym $v$ to $\tbool$, so the first case of \forcesym
+      must apply ($\force{b}{\tbool}{\vsu}{\tsu}$ cannot apply as it
+      does not change $\vsu$).
+      %
+      In particular, we must have extended $\vsu$ with
+      $[\ehole' \mapsto v']$ where $v'$ is a $\tbool$.
+      %
+      Let $u$ be any concrete value that is incompatible with $\tbool$,
+      $\force{u}{\tbool}{\vsu}{\tsu} = \triple{\stuck}{\vsu}{\tsu}$.
+    \item[Case \reifbad:]
+      %
+      This case cannot apply as \forcesym does not update \vsu\ when
+      it returns \stuck.
+    \item[Case \reappgood:]
+      %
+      Here we \forcesym $v$ to $\tfun$, so the first case of \forcesym
+      must apply ($\force{\efun{x}{e}}{\tfun}{\vsu}{\tsu}$ cannot apply as it
+      does not change $\vsu$).
+      %
+      In particular, we must have extended $\vsu$ with
+      $[\ehole' \mapsto v']$ where $v'$ is a $\tfun$.
+      %
+      Let $u$ be any concrete value that is incompatible with $\tfun$,
+      $\force{u}{\tfun}{\vsu}{\tsu} = \triple{\stuck}{\vsu}{\tsu}$.
+    \item[Case \reappbad:]
+      %
+      This case cannot apply as \forcesym does not update \vsu\ when
+      it returns \stuck.
+    \item[Case \releafgood:]
+      %
+      This case cannot apply as it does not update \vsu.
+    \item[Case \renodegood:]
+      %
+      Here we \forcesym $v_2$ and $v_3$ to $\ttree{t}$, so the first
+      case of \forcesym must apply
+      (neither $\force{\vleaf{\ttree{t_1}}}{\ttree{t_2}}{\vsu}{\tsu}$
+       nor\\ $\force{\vnode{\ttree{t_1}}{v_1}{v_2}{v_3}}{\ttree{t_2}}{\vsu}{\tsu}$
+       can apply as they do not change $\vsu$).
+      %
+      In particular, we must have extended $\vsu$ with
+      $[\ehole' \mapsto v']$ where $v'$ is a $\ttree{t}$.
+      %
+      Let $u$ be any concrete value that is incompatible with $\ttree{t}$,
+      $\force{u}{\ttree{t}}{\vsu}{\tsu} = \triple{\stuck}{\vsu}{\tsu}$.
+      %
+      \ES{this seems too easy...}
+    \item[Case \renodebadone:]
+      %
+      This case cannot apply as \forcesym does not update \vsu\ whe
+      it returns \stuck.
+    \item[Case \renodebadtwo:]
+      %
+      In this case $\force{v_2}{\ttree{t}}{\vsu_1}{\tsu_1}$ can update
+      \vsu, but $\force{v_3}{\ttree{t}}{\vsu_2}{\tsu_2}$ can not, as the
+      latter returns \stuck.
+      %
+      For the former case we can apply the same reasoning as for
+      \renodegood to derive a value $u$ that will cause stuckness.
+    \item[Case \rulename{E-Case-Good\{1,2\}}:]
+      %
+      Here we \forcesym $v$ to $\ttree{\thole}$, so the first case of \forcesym
+      must apply
+      (neither\\ $\force{\vleaf{\ttree{t_1}}}{\ttree{t_2}}{\vsu}{\tsu}$
+       nor\\ $\force{\vnode{\ttree{t_1}}{v_1}{v_2}{v_3}}{\ttree{t_2}}{\vsu}{\tsu}$
+       can apply as they do not change $\vsu$).
+      %
+      In particular, we must have extended $\vsu$ with
+      $[\ehole' \mapsto v']$ where $v'$ is a $\ttree{\thole}$.
+      %
+      Let $u$ be any concrete value that is incompatible with $\ttree{\thole}$,
+      $\force{u}{\ttree{\thole}}{\vsu}{\tsu} = \triple{\stuck}{\vsu}{\tsu}$.
     \end{description}
   \end{description}
+  % \begin{description}
+  % \item [Case \tincompat{t}{s_{\trace'}}:]
+  %   The inductive hypothesis applies.
+  % \item [Case $\tcompat{t}{s_{\trace'}}$ but $\tincompat{t}{s_{\trace}}$:]
+  %   Since $\tcompat{t}{s_{\trace'}}$ but $\tincompat{t}{s_{\trace}}$ we know
+  %   that $s_{\trace'} \neq s_{\trace}$, and
+  %   by Lemma~\ref{lem:force-inst} we know that we must have
+  %   successfully called \forcesym at step $k$.
+  %   %
+  %   Lemma~\ref{lem:refine-partial} tells us
+  %   $\tcompat{s_{\trace'}}{s_{\trace}}$, which means we must have
+  %   specifically narrowed $s_{\trace'}$ to a type incompatible with $t$.
+  %   %
+  %   We show by case analysis of the evaluation rules that narrowing to
+  %   $t$ instead cannot succeed.
+
+  %   Again we can immediately discharge the \rulename{E-*-Bad}
+  %   rules as they get stuck, proving the consequent.
+
+  %   In the \rulename{E-*-Good} rules we must consider where a hole might
+  %   appear in the expression, and what would happen if we replaced the
+  %   hole with the value $w$.
+  %   %
+  %   \begin{description}
+  %   % \item[Case \reholegood:] \thole is compatible with any type, which
+  %   %   contradicts the premise that \tincompat{t}{s_{\trace}}.
+  %   \item[Case \replusgood:] The hole may appear in either $v_1$ or
+  %     $v_2$. We \forcesym $v_1$ and $v_2$ to have type \tint, but we
+  %     assumed that $w$ has a type that is incompatible with \tint, thus
+  %     if we replace the hole with $w$, \forcesym must fail on either
+  %     $v_1$ or $v_2$.
+  %   \item[Case \rulename{E-If-Good-\{1,2\}}:]
+
+  %     By Lemma~\ref{lem:new-lem} we know that $\vhole{\thole} \in v$ and
+  %     $[\thole \mapsto t] \in \theta'$. Thus we must have taken the first
+  %     case of \forcesym, so $v = \vhole{\thole}$.
+
+  %     % By Lemma~\ref{lem:force-inst} we know that this step must have
+  %     % called \forcesym on $\vhole{\thole}$, narrowing it to have type
+  %     % \tbool, thus $\ptype{\trace}{f} = \tbool$. But we assumed
+  %     % $\vincompat{w}{\tbool}$, thus \forcesym cannot succeed if we
+  %     % replace $\vhole{\thole}$ with $w$.
+  %     % Here we \forcesym $v$ to have type
+  %     % \tbool, but we assumed that $v$ has a type that is incompatible with
+  %     % \tbool, thus \forcesym must fail.
+  %   \item[Case \reappgood:] Here we \forcesym $v$ to have type
+  %     \tfun, but we assumed that $v$ has a type that is incompatible with
+  %     \tfun, thus \forcesym must fail.
+  %   \item[Case \releafgood:] This rule does not call \forcesym, so by
+  %     Lemma~\ref{lem:force-inst} it cannot have applied.
+  %   \item[Case \renodegood:] There are two cases we must consider here,
+  %     the sub-trees and the value at the node.
+
+  %     Consider first the sub-trees. We \forcesym $v_2$ and $v_3$ to have
+  %     type \ttree{t}, but we assumed $v$ has some type incompatible with
+  %     \ttree{t}, so one of the \forcesym calls must fail.
+
+  %     Next consider the value $v_1$. Even though we do not \forcesym
+  %     $v_1$ directly, we seed the \forcesym calls with $\typeof{v_1}$,
+  %     which will then fail if $\typeof{v_1}$ is incompatible with the
+  %     types of the sub-trees, which our assumption tells us must be the
+  %     case.
+  %   \item[Case \rulename{E-Case-Good-\{1,2\}}:] Here we \forcesym $v$ to
+  %     have type \ttree{\thole}, but we assumed that $v$ has a type that
+  %     is incompatible with \ttree{\thole}, thus \forcesym must fail.
+  %   \end{description}
+  % \end{description}
 \end{proof}
 
-\begin{proof}[Proof of Theorem~\ref{thm:soundness}]
-Suppose $\trace$ witnesses that $f$ gets stuck,
-and let $t = \ptype{\trace}{f}$.
-We show that \emph{all} types $s$ have stuck-inducing
-values by splitting cases on whether the type is
-compatible with $t$. %the partial type upto $\trace$.
-%
-\begin{description}
-\item [Case \tcompat{s}{t}:]
-  Let $\trace = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{\stuck}{\vsu}{\tsu}$.
-  %
-  The value $v = \resolve{\ehole}{\vsu}$ demonstrates that
-  $\eapp{f}{v}$ gets stuck.
-\item [Case \tincompat{s}{t}:] By Lemma~\ref{lem:k-stuck}, every $v$
-  such that \hastype{v}{t} demonstrates that $\eapp{f}{v}$ gets stuck.
-  % \ES{do we need to say anythign else?}
-\end{description}
-\end{proof}
+% \begin{proof}[Proof of Theorem~\ref{thm:soundness}]
+% Suppose $\trace$ witnesses that $f$ gets stuck,
+% and let $t = \ptype{\trace}{f}$.
+% We show that \emph{all} types $s$ have stuck-inducing
+% values by splitting cases on whether the type is
+% compatible with $t$. %the partial type upto $\trace$.
+% %
+% \begin{description}
+% \item [Case \tcompat{s}{t}:]
+%   Let $\trace = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{\stuck}{\vsu}{\tsu}$.
+%   %
+%   The value $v = \resolve{\ehole}{\vsu}$ demonstrates that
+%   $\eapp{f}{v}$ gets stuck.
+% \item [Case \tincompat{s}{t}:] By Lemma~\ref{lem:k-stuck}, we can derive
+%   a $v$ from $\trace$ such that \hastype{v}{t} and $\eapp{f}{v}$ gets
+%   stuck.
+%   % \ES{do we need to say anythign else?}
+% \end{description}
+% \end{proof}
+
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "main"

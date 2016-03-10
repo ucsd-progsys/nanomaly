@@ -504,62 +504,161 @@ then \tcompat{\ptype{\trace}{f}}{\ptype{\trace'}{f}}.
   % But $\typeof{\vhole{\thole}} = \thole$, which is compatible with any type.
 \end{proof}
 
-\paragraph{Incompatible Values Are Wrong}
-%
-\emph{Any} value that is \emph{incompatible} with
-the partial input type upto trace $\trace$ will
-cause $f$ to get stuck in \emph{at most} $k$
-steps, where $k$ is the length of $\trace$.
-%
 \begin{lem}
-\label{lem:k-stuck}
-  For all $v$,
-  if \steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu} and
-     \vincompat{v}{\ptype{\trace}{f}},
-  then
-     \steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}
-     in at most $k$ steps, where $k$ is the length of $\trace$.
+\label{lem:vsu-ext}
+If  $\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots$
+and $\trace'$ is a single-step extension of $\trace$
+and $\resolve{\vhole{\thole}}{\vsu} \neq \resolve{\vhole{\thole}}{\vsu'}$
+then $\vsu' = \vsu[\ehole_1 \mapsto v_1] \ldots [\ehole_n \mapsto v_n]$.
 \end{lem}
 \begin{proof}
-By induction on $k$, the length of $\trace$.
-%
-Suppose {\vincompat{v}{\ptype{\trace}{f}}}.
-%
-We show that \steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}
-in at most $k$ steps.
-%
-The base case, $k = 0$ is trivial, $\trace$ is empty
-and so $\ptype{\trace}{f}$ is a hole that is compatible
-with \emph{every} value $v$.
-%
-In the inductive case, let
-$\trace' = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e'}{\vsu'}{\tsu'}$
-be the prefix of $\trace$ of length $k-1$.
-%
-Furthermore, let $s_{\trace} = \ptype{\trace}{f}$ and $s_{\trace'} = \ptype{\trace'}{f}$.
-%
-Let us split cases on whether $v$ is compatible with $s_{\trace'}$.
-%
-\begin{description}
-\item [Case \vincompat{v}{s_{\trace'}}:]
-  The inductive hypothesis applies.
-
-\item [Case $\vcompat{v}{s_{\trace'}}$ but $\vincompat{v}{s_{\trace}}$:]
-  Since $\vcompat{v}{s_{\trace'}}$ but $\vincompat{v}{s_{\trace}}$ we know
-  that $s_{\trace'} \neq s_{\trace}$.
-  By Lemma~\ref{lem:force-inst} we know that we must have
-  invoked \forcesym\ at step $k$.
+  By case analysis on the evaluation rules.
   %
-  The Preservation Lemma~\ref{lem:refine-partial} implies that
-  $\tcompat{s_{\trace'}}{s_{\trace}}$, which means we must have
-  specifically narrowed $s_{\trace'}$ to a type incompatible with $v$.
+  $\vhole{\thole}$ does not change, so if the resolved values differ then
+  $\vsu \neq \vsu'$.
   %
-  A case analysis of the evaluation rules shows that such an
-  invocation of \forcesym\ at step $k$
-  cannot succeed, \ie\ yields \stuck.
-   \RJ{some intuition needed --- seems like key step.}
-\end{description}
+  Note that only \forcesym can update \vsu\
+  and only the first case,
+  when we extend \vsu\ with $[\ehole \mapsto v]$,
+  does.
 \end{proof}
+
+\paragraph{Incompatible Types Are Wrong}
+\emph{For all} types that are \emph{incompatible} with the
+partial input type up to trace $\trace$, there exists a value
+that will cause $f$ to get stuck in \emph{at most} $k$ steps,
+where $k$ is the length of $\trace$.
+
+\begin{lem}
+\label{lem:k-stuck}
+For all $t$,
+if $\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu}$ and
+   $\tincompat{t}{\ptype{\trace}{f}}$,
+   then there exists a $v$ such that $\hastype{v}{t}$ and
+   $\steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu'}{\tsu'}$ in at most
+   $k$ steps, where $k$ is the length of $\trace$.
+\end{lem}
+\begin{proof}
+  We can construct $v$ from $\trace$ by induction on $k$, the length of $\trace$.
+  %
+  The goal is to find the step at which the refinement of $\vhole{\thole}$,
+  $\resolve{\vhole{\thole}}{\vsu}$ becomes incompatible with $t$.
+  %
+  The base case, $k = 0$ is trivial, $\vsu_0 = \emptysu$ and
+  $\resolve{\vhole{\thole}}{\emptysu} = \vhole{\thole}$ which is compatible with
+  \emph{any} type $t$.
+  %
+  In the inductive case, let
+  $$\trace_{k-1} = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e_{k-1}}{\vsu_{k-1}}{\tsu_{k-1}}$$
+  be the prefix of $\trace$ of length $k-1$.
+  %
+  Let us split cases on whether $\resolve{\vhole{\thole}}{\vsu_{k-1}}$ is compatible with $t$.
+  %
+  \begin{description}
+  \item[Case $\vincompat{\resolve{\vhole{\thole}}{\vsu_{k-1}}}{t}$:]
+    %
+    The inductive hypothesis applies.
+    %
+  \item[Case $\vcompat{\resolve{\vhole{\thole}}{\vsu_{k-1}}}{t}$
+        but  $\vincompat{\resolve{\vhole{\thole}}{\vsu_{k}}}{t}$:]
+    %
+    In this case we will show that $\resolve{\vhole{\thole}}{\vsu_{k-1}}$
+    must contain some other hole $\ehole'$ which is instantiated with a
+    concrete value at step $k$.
+    %
+    Furthermore, $\ehole'$ is instantiated in such a way that
+    $\vincompat{\resolve{\vhole{\thole}}{\vsu_{k}}}{t}$.
+    %
+    Finally, we will show that if we had instantiated $\ehole'$ with a
+    value such that
+    $\vcompat{\resolve{\vhole{\thole}}{\vsu_{k}}}{t}$, the current
+    step would have gotten $\stuck$.
+
+    % By Lemma~\ref{lem:fixme} we know that
+    % $\vcompat{\resolve{\vhole{\thole}}{\vsu}}{\resolve{\thole}{\tsu}}$.
+    %
+    By Lemma~\ref{lem:vsu-ext} we know that
+    $\vsu_{k} = \vsu_{k-1}[\ehole_1 \mapsto v_1] \ldots [\ehole_n \mapsto v_n]$.
+    %
+    We will assume, without loss of generality, that
+    $\vsu_{k} = \vsu_{k-1}[\ehole' \mapsto v']$.
+
+    Next, we introduce a notion of \emph{value contexts}, defined
+    analogously to evaluation contexts.
+    %
+    $$
+      V ::= \bullet \spmid \vnode{t}{V}{v}{v} \spmid \vnode{t}{v}{V}{v} \spmid \vnode{t}{v}{v}{V}
+    $$
+    %
+    Since $\vsu_{k-1}$ and $\vsu_{k}$ differ only in $\ehole'$ but the resolved
+    values differ,
+    $\resolve{\vhole{\thole}}{\vsu_{k-1}} = \vcompat{\invctx{\ehole'[\thole']}}{t}$
+    and
+    $\resolve{\vhole{\thole}}{\vsu_{k}} = \vincompat{\invctx{v'}}{t}$.
+    %
+    Now, consider any value $u$ such that $\vcompat{\invctx{u}}{t}$,
+    we show by case analysis on the evaluation relation that
+    $\invctx{u}$ could not make progress at this step, and thus
+    $\steps{\eapp{f}{\invctx{u}}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$.
+  \end{description}
+\end{proof}
+
+% \paragraph{Incompatible Values Are Wrong}
+%
+% \emph{Any} value that is \emph{incompatible} with
+% the partial input type upto trace $\trace$ will
+% cause $f$ to get stuck in \emph{at most} $k$
+% steps, where $k$ is the length of $\trace$.
+% %
+% \begin{lem}
+% \label{lem:k-stuck}
+%   For all $v$,
+%   if \steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu} and
+%      \vincompat{v}{\ptype{\trace}{f}},
+%   then
+%      \steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}
+%      in at most $k$ steps, where $k$ is the length of $\trace$.
+% \end{lem}
+% \begin{proof}
+% By induction on $k$, the length of $\trace$.
+% %
+% Suppose {\vincompat{v}{\ptype{\trace}{f}}}.
+% %
+% We show that \steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}
+% in at most $k$ steps.
+% %
+% The base case, $k = 0$ is trivial, $\trace$ is empty
+% and so $\ptype{\trace}{f}$ is a hole that is compatible
+% with \emph{every} value $v$.
+% %
+% In the inductive case, let
+% $\trace' = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e'}{\vsu'}{\tsu'}$
+% be the prefix of $\trace$ of length $k-1$.
+% %
+% Furthermore, let $s_{\trace} = \ptype{\trace}{f}$ and $s_{\trace'} = \ptype{\trace'}{f}$.
+% %
+% Let us split cases on whether $v$ is compatible with $s_{\trace'}$.
+% %
+% \begin{description}
+% \item [Case \vincompat{v}{s_{\trace'}}:]
+%   The inductive hypothesis applies.
+
+% \item [Case $\vcompat{v}{s_{\trace'}}$ but $\vincompat{v}{s_{\trace}}$:]
+%   Since $\vcompat{v}{s_{\trace'}}$ but $\vincompat{v}{s_{\trace}}$ we know
+%   that $s_{\trace'} \neq s_{\trace}$.
+%   By Lemma~\ref{lem:force-inst} we know that we must have
+%   invoked \forcesym\ at step $k$.
+%   %
+%   The Preservation Lemma~\ref{lem:refine-partial} implies that
+%   $\tcompat{s_{\trace'}}{s_{\trace}}$, which means we must have
+%   specifically narrowed $s_{\trace'}$ to a type incompatible with $v$.
+%   %
+%   A case analysis of the evaluation rules shows that such an
+%   invocation of \forcesym\ at step $k$
+%   cannot succeed, \ie\ yields \stuck.
+%    \RJ{some intuition needed --- seems like key step.}
+% \end{description}
+% \end{proof}
 
 \begin{proof}[\textbf{Proof of Theorem~\ref{thm:soundness}}]
 %
@@ -575,9 +674,12 @@ compatible with $t$. %the partial type upto $\trace$.
   %
   The value $v = \resolve{\ehole}{\vsu}$ demonstrates that
   $\eapp{f}{v}$ gets stuck.
-\item [Case \tincompat{s}{t}:] By Lemma~\ref{lem:k-stuck}, every $v$
-  such that \hastype{v}{t} demonstrates that $\eapp{f}{v}$ gets stuck.
-  % \ES{do we need to say anythign else?}
+\item [Case \tincompat{s}{t}:] By Lemma~\ref{lem:k-stuck}, we can derive
+  a $v$ from $\trace$ such that \hastype{v}{t} and $\eapp{f}{v}$ gets
+  stuck.
+% \item [Case \tincompat{s}{t}:] By Lemma~\ref{lem:k-stuck}, every $v$
+%   such that \hastype{v}{t} demonstrates that $\eapp{f}{v}$ gets stuck.
+%   % \ES{do we need to say anythign else?}
 \end{description}
 \end{proof}
 
