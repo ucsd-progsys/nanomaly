@@ -468,11 +468,14 @@ input type of $f$.
 If
 $\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e}{\vsu}{\tsu}$
 and
-$\trace' \defeq \trace, \step{e}{\vsu}{\tsu}{\estuck'}{\vsu'}{\tsu'}$
+$\trace' \defeq \trace, \step{e}{\vsu}{\tsu}{e'}{\vsu'}{\tsu'}$
 (\ie $\trace'$ is a single-step extension of $\trace$)
 and
 $\ptype{\trace}{f} \neq \ptype{\trace'}{f}$,
-then the final step $\step{e}{\vsu}{\tsu}{\estuck'}{\vsu'}{\tsu'}$ invokes \forcesym.
+then the final step $\step{e}{\vsu}{\tsu}{e'}{\vsu'}{\tsu'}$
+ successfully invokes \forcesym.
+%
+\ES{not clear we still need this}
 \end{lem}
 
 \begin{proof}
@@ -517,6 +520,8 @@ $\trace'$ is a single-step extension of $\trace$, % \defeq \trace, \triple{\estu
 %with the partial type upto $\trace'$, \ie\
 %
 then \tcompat{\ptype{\trace}{f}}{\ptype{\trace'}{f}}.
+%
+\ES{not clear we still need this}
 \end{lem}
 \begin{proof}
   By case analysis on the evaluation rules.
@@ -535,6 +540,29 @@ then \tcompat{\ptype{\trace}{f}}{\ptype{\trace'}{f}}.
 \end{proof}
 
 \begin{lem}
+\label{lem:resolve-compat}
+For all traces
+$\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e}{\vsu}{\tsu}$,
+$\vcompat{\resolve{\ehole}{\vsu}}{\resolve{\thole}{\tsu}}$.
+\end{lem}
+\begin{proof}
+  By induction on $\trace$.
+  %
+  In the base case $\trace = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}$
+  and $\vhole{\thole}$ is trivially compatible with $\thole$.
+  %
+  In the inductive case, consider the single-step extension of $\trace$,
+  $\trace' = \trace,\triple{e'}{\vsu'}{\tsu'}$.
+  %
+  We show by case analysis on the evaluation rules that if
+  $\vcompat{\resolve{\ehole}{\vsu}}{\resolve{\thole}{\tsu}}$, then
+  $\vcompat{\resolve{\ehole}{\vsu'}}{\resolve{\thole}{\tsu'}}$.
+  %
+  \ES{fill in cases in the appendix}
+\end{proof}
+
+
+\begin{lem}
 \label{lem:vsu-ext}
 If  $\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots$
 and $\trace'$ is a single-step extension of $\trace$
@@ -551,6 +579,8 @@ then $\vsu' = \vsu[\ehole_1 \mapsto v_1] \ldots [\ehole_n \mapsto v_n]$.
   and only the first case,
   when we extend \vsu\ with $[\ehole \mapsto v]$,
   does.
+  %
+  \ES{fill in cases in the appendix}
 \end{proof}
 
 \paragraph{Incompatible Types Are Wrong}
@@ -587,7 +617,6 @@ if $\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu}
   %
   Furthermore, $\ehole'$ is instantiated in such a way that
   $\vincompat{\resolve{\vhole{\thole}}{\vsu_{i}}}{t}$.
-  \ES{need to connect \ptype{\trace{i}}{f} and \resolve{\vhole{\thole}}{\vsu_i}}
   %
   Finally, we will show that if we had instantiated $\ehole'$ with a
   value such that
@@ -612,9 +641,22 @@ if $\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu}
   %
   Since $\vsu_{i-1}$ and $\vsu_{i}$ differ only in $\ehole'$ but the resolved
   values differ,
-  $\resolve{\vhole{\thole}}{\vsu_{i-1}} = \vcompat{\invctx{\ehole'[\thole']}}{t}$
+  $\resolve{\vhole{\thole}}{\vsu_{i-1}} = \invctx{\ehole'[\thole']}$
   and
-  $\resolve{\vhole{\thole}}{\vsu_{i}} = \vincompat{\invctx{v'}}{t}$.
+  $\resolve{\vhole{\thole}}{\vsu_{i}} = \invctx{v'}$.
+  %
+  Furthermore, by Lemma~\ref{lem:resolve-compat} we know that
+  $$
+  \vcompat{\resolve{\vhole{\thole}}{\vsu_{i-1}}}{\resolve{\thole}{\tsu_{i-1}}}
+  =
+  \tcompat{\ptype{i-1}{f}}{t}
+  $$
+  $$
+  \vcompat{\resolve{\vhole{\thole}}{\vsu_{i}}}{\resolve{\thole}{\tsu_{i}}}
+  =
+  \tincompat{\ptype{i}{f}}{t}
+  $$
+  %\ES{need to connect \ptype{\trace{i}}{f} and \resolve{\vhole{\thole}}{\vsu_i}}
   %
   Now, consider any value $u$ such that $\vcompat{\invctx{u}}{t}$,
   we show by case analysis on the evaluation relation that
