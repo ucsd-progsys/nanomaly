@@ -543,20 +543,20 @@ then \tcompat{\ptype{\trace}{f}}{\ptype{\trace'}{f}}.
 \label{lem:resolve-compat}
 For all traces
 $\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e}{\vsu}{\tsu}$,
-$\vcompat{\resolve{\ehole}{\vsu}}{\resolve{\thole}{\tsu}}$.
+$\vsub{\resolve{\thole}{\tsu}}{\resolve{\ehole}{\vsu}}$.
 \end{lem}
 \begin{proof}
   By induction on $\trace$.
   %
   In the base case $\trace = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}$
-  and $\vhole{\thole}$ is trivially compatible with $\thole$.
+  and $\thole$ is trivially a refinement of $\vhole{\thole}$.
   %
   In the inductive case, consider the single-step extension of $\trace$,
   $\trace' = \trace,\triple{e'}{\vsu'}{\tsu'}$.
   %
   We show by case analysis on the evaluation rules that if
-  $\vcompat{\resolve{\ehole}{\vsu}}{\resolve{\thole}{\tsu}}$, then
-  $\vcompat{\resolve{\ehole}{\vsu'}}{\resolve{\thole}{\tsu'}}$.
+  $\vsub{\resolve{\thole}{\tsu}}{\resolve{\ehole}{\vsu}}$, then
+  $\vsub{\resolve{\thole}{\tsu'}}{\resolve{\ehole}{\vsu'}}$.
   %
   \ES{fill in cases in the appendix}
 \end{proof}
@@ -566,19 +566,20 @@ $\vcompat{\resolve{\ehole}{\vsu}}{\resolve{\thole}{\tsu}}$.
 \label{lem:vsu-ext}
 If  $\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots$
 and $\trace'$ is a single-step extension of $\trace$
-and $\resolve{\vhole{\thole}}{\vsu} \neq \resolve{\vhole{\thole}}{\vsu'}$
-then $\vsu' = \vsu[\ehole_1 \mapsto v_1] \ldots [\ehole_n \mapsto v_n]$.
+and $\resolve{\thole}{\tsu} \neq \resolve{\thole}{\tsu'}$
+then $\tsu' = \tsu[\thole_1 \mapsto t_1] \ldots [\thole_n \mapsto t_n]$.
 \end{lem}
 \begin{proof}
   By case analysis on the evaluation rules.
   %
-  $\vhole{\thole}$ does not change, so if the resolved values differ then
-  $\vsu \neq \vsu'$.
+  $\thole$ does not change, so if the resolved types differ then
+  $\tsu \neq \tsu'$.
   %
-  Note that only \forcesym can update \vsu\
-  and only the first case,
-  when we extend \vsu\ with $[\ehole \mapsto v]$,
-  does.
+  Note that only \forcesym can change \tsu, and it can only do so
+  via \unifysym, which can only extend \tsu.
+  % and only the first case,
+  % when we extend \vsu\ with $[\ehole \mapsto v]$,
+  % does.
   %
   \ES{fill in cases in the appendix}
 \end{proof}
@@ -611,57 +612,77 @@ if $\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu}
   be the shortest prefix of $\trace$ such that
   $\tincompat{\ptype{\trace_i}{f}}{t}$.
   %
-  We will show that $\resolve{\vhole{\thole}}{\vsu_{i-1}}$
-  must contain some other hole $\ehole'$ which is instantiated with a
-  concrete value at step $i$.
+  We will show that $\resolve{\thole}{\tsu_{i-1}}$
+  must contain some other hole $\thole'$ that is
+  instantiated at step $i$.
   %
-  Furthermore, $\ehole'$ is instantiated in such a way that
-  $\vincompat{\resolve{\vhole{\thole}}{\vsu_{i}}}{t}$.
+  Furthermore, $\thole'$ is instantiated in such a way that
+  $\tincompat{\resolve{\thole}{\tsu_{i}}}{t}$.
   %
-  Finally, we will show that if we had instantiated $\ehole'$ with a
-  value such that
-  $\vcompat{\resolve{\vhole{\thole}}{\vsu_{i}}}{t}$, the current
+  Finally, we will show that if we had instantiated $\thole'$ such that
+  $\tcompat{\resolve{\thole}{\tsu_{i}}}{t}$, the current
   step would have gotten $\stuck$.
 
   % By Lemma~\ref{lem:fixme} we know that
   % $\vcompat{\resolve{\vhole{\thole}}{\vsu}}{\resolve{\thole}{\tsu}}$.
   %
   By Lemma~\ref{lem:vsu-ext} we know that
-  $\vsu_{i} = \vsu_{i-1}[\ehole_1 \mapsto v_1] \ldots [\ehole_n \mapsto v_n]$.
+  $\tsu_{i} = \tsu_{i-1}[\thole_1 \mapsto t_1] \ldots [\thole_n \mapsto t_n]$.
   %
   We will assume, without loss of generality, that
-  $\vsu_{i} = \vsu_{i-1}[\ehole' \mapsto v']$.
+  $\tsu_{i} = \tsu_{i-1}[\thole' \mapsto t']$.
 
-  Next, we introduce a notion of \emph{value contexts}, defined
+  Next, we introduce a notion of type % and value
+  contexts, defined
   analogously to evaluation contexts.
   %
   $$
-    V ::= \bullet \spmid \vnode{t}{V}{v}{v} \spmid \vnode{t}{v}{V}{v} \spmid \vnode{t}{v}{v}{V}
+  \begin{array}{lcl}
+    T &::=& \bullet \spmid \ttree{T} \\
+    % V &::=& \bullet \spmid \vnode{t}{V}{v}{v} \spmid \vnode{t}{v}{V}{v} \spmid \vnode{t}{v}{v}{V} \\
+  \end{array}
   $$
   %
-  Since $\vsu_{i-1}$ and $\vsu_{i}$ differ only in $\ehole'$ but the resolved
-  values differ,
-  $\resolve{\vhole{\thole}}{\vsu_{i-1}} = \invctx{\ehole'[\thole']}$
+  Since $\tsu_{i-1}$ and $\tsu_{i}$ differ only in $\thole'$ but the resolved
+  types differ,
+  $\resolve{\thole}{\tsu_{i-1}} = \intctx{\thole'}$
   and
-  $\resolve{\vhole{\thole}}{\vsu_{i}} = \invctx{v'}$.
+  $\resolve{\thole}{\tsu_{i}} = \intctx{t'}$.
   %
-  Furthermore, by Lemma~\ref{lem:resolve-compat} we know that
-  $$
-  \vcompat{\resolve{\vhole{\thole}}{\vsu_{i-1}}}{\resolve{\thole}{\tsu_{i-1}}}
-  =
-  \tcompat{\ptype{i-1}{f}}{t}
-  $$
-  $$
-  \vcompat{\resolve{\vhole{\thole}}{\vsu_{i}}}{\resolve{\thole}{\tsu_{i}}}
-  =
-  \tincompat{\ptype{i}{f}}{t}
-  $$
+  Let $s$ be a concrete type such that $\intctx{s} = t$.
+  %
+  We show by case analysis on the evaluation rules that
+  %
+  $$\step{e_{i-1}}{\vsu_{i-1}}{\tsu_{i-1}[\thole' \mapsto s]}{\stuck}{\vsu}{\tsu}$$
+  %
+  Finally, by Lemma~\ref{lem:resolve-compat} we know that
+  $\vsub{\resolve{\thole}{\tsu_{i-1}}}{\resolve{\ehole}{\vsu_{i-1}}}$,
+  thus $\vsub{\intctx{\thole'}}{\resolve{\vhole{\thole}}{\vsu_{i-1}}}$.
+  %
+  Let $u = \gen{s}{\tsu}$
+  and $v = \resolve{\vhole{\thole}}{\vsu_{i-1}}\sub{\ehole'[\thole']}{u}\sub{\thole'}{s}$,
+  $\steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$ in $i$ steps.
+  %and
+  % $\vsub{\resolve{\thole}{\tsu_{i}}}{\resolve{\ehole}{\vsu_{i}}}$.
+  % \vcompat{\resolve{\vhole{\thole}}{\vsu_{i-1}}}{\resolve{\thole}{\tsu_{i-1}}}
+  % =
+  % \tcompat{\ptype{i-1}{f}}{t}
+  % \\
+  % \vcompat{\resolve{\vhole{\thole}}{\vsu_{i}}}{\resolve{\thole}{\tsu_{i}}}
+  % =
+  % \tincompat{\ptype{i}{f}}{t}
+  %
+  % Finally, by the definition of $\typeofsym$,
+  % we know that $\resolve{\vhole{\thole}}{\vsu_{i-1}} = \invctx{v}$
+  % such that $\vsub{T'[\thole']}{v}$.
+  %such that $\resolve{\typeof{v}}{\tsu_{i-1}} = T'[\thole']$
+  %
   %\ES{need to connect \ptype{\trace{i}}{f} and \resolve{\vhole{\thole}}{\vsu_i}}
   %
-  Now, consider any value $u$ such that $\vcompat{\invctx{u}}{t}$,
-  we show by case analysis on the evaluation relation that
-  $\invctx{u}$ could not make progress at this step, and thus
-  $\steps{\eapp{f}{\invctx{u}}}{\emptysu}{\emptysu}{\stuck}{\vsu'}{\tsu'}$.
+  % Now, consider any value $u$ such that $\vcompat{\invctx{u}}{t}$,
+  % we show by case analysis on the evaluation relation that
+  % $\invctx{u}$ could not make progress at this step, and thus
+  % $\steps{\eapp{f}{\invctx{u}}}{\emptysu}{\emptysu}{\stuck}{\vsu'}{\tsu'}$.
 \end{proof}
 
 % \paragraph{Incompatible Values Are Wrong}

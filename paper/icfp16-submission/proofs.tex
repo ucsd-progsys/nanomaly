@@ -193,12 +193,13 @@
   $\tincompat{\ptype{\trace_i}{f}}{t}$.
   %
   We will show that $\resolve{\vhole{\thole}}{\vsu_{i-1}}$
-  must contain some other hole $\ehole'$ which is instantiated with a
-  concrete value at step $i$.
+  must contain some other hole $\ehole'[\thole']$
+  whose type $\thole'$ is constrained
+  at step $i$.
   %
-  Furthermore, $\ehole'$ is instantiated in such a way that
+  Furthermore, $\thole'$ is constrained in such a way that
   $\vincompat{\resolve{\vhole{\thole}}{\vsu_{i}}}{t}$.
-  \ES{need to connect \ptype{\trace{i}}{f} and \resolve{\vhole{\thole}}{\vsu_i}}
+  %\ES{need to connect \ptype{\trace{i}}{f} and \resolve{\vhole{\thole}}{\vsu_i}}
   %
   Finally, we will show that if we had instantiated $\ehole'$ with a
   value such that

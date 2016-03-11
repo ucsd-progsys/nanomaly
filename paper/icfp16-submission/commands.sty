@@ -71,15 +71,19 @@
 % \newcommand\tfun[3]{\ensuremath{\tbind{#1}{#2} \rightarrow #3}}
 % \newcommand\tabs[2]{\ensuremath{\forall #1 . #2}}
 \newcommand\hastype[2]{\ensuremath{\typeof{#1} = {#2}}}
-\newcommand\unify[2]{\ensuremath{\mathsf{unify}(#1,#2)}\xspace}
+\newcommand\unifysym{\ensuremath{\mathsf{unify}}\xspace}
+\newcommand\unify[2]{\ensuremath{\unifysym(#1,#2)}\xspace}
 \newcommand\tsub[2]{\ensuremath{{#1} \preceq {#2}}}
 \newcommand\tnsub[2]{\ensuremath{{#1} \npreceq {#2}}}
 \newcommand\tcompat[2]{\ensuremath{#1 \sim #2}}
 \newcommand\vcompat[2]{\tcompat{#1}{#2}}
+\newcommand\vsub[2]{\tsub{#1}{#2}}
+\newcommand\vnsub[2]{\tnsub{#1}{#2}}
 \newcommand\tincompat[2]{\ensuremath{#1 \nsim #2}}
 \newcommand\vincompat[2]{\tincompat{#1}{#2}}
 
-\newcommand\typeof[1]{\ensuremath{\mathsf{typeof}(#1)}\xspace}
+\newcommand\typeofsym{\ensuremath{\mathsf{typeof}}\xspace}
+\newcommand\typeof[1]{\ensuremath{\typeofsym(#1)}\xspace}
 \newcommand\ptype[2]{\ensuremath{\rho_{#1}(#2)}\xspace}
 
 
@@ -105,6 +109,7 @@
 \newcommand\gen[2]{\ensuremath{\gensym(#1,#2)}}
 \newcommand\inctx[1]{\ensuremath{C\left[#1\right]}\xspace}
 \newcommand\invctx[1]{\ensuremath{V\left[#1\right]}\xspace}
+\newcommand\intctx[1]{\ensuremath{T\left[#1\right]}\xspace}
 
 
 \newcommand\dcolon{\ensuremath{\colon\!\!\colon}}
