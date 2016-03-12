@@ -179,6 +179,100 @@
 %   \end{description}
 % \end{proof}
 
+% \begin{lem}
+% \label{lem:resolve-compat}
+% For all traces
+% $\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e}{\vsu}{\tsu}$,
+% $\vsub{\resolve{\thole}{\tsu}}{\resolve{\ehole}{\vsu}}$.
+% \end{lem}
+\begin{proof}[Proof of Lemma~\ref{lem:resolve-compat}]
+  By induction on $\trace$.
+  %
+  In the base case $\trace = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}$
+  and $\thole$ is trivially a refinement of $\vhole{\thole}$.
+  %
+  In the inductive case, consider the single-step extension of $\trace$,
+  $\trace' = \trace,\triple{e'}{\vsu'}{\tsu'}$.
+  %
+  We show by case analysis on the evaluation rules that if
+  $\vsub{\resolve{\thole}{\tsu}}{\resolve{\ehole}{\vsu}}$, then
+  $\vsub{\resolve{\thole}{\tsu'}}{\resolve{\ehole}{\vsu'}}$.
+
+  We can immediately discharge all of the \rulename{E-*-Bad} rules
+  (except for \renodebadone) as the calls to \forcesym\ return \stuck.
+  An examination of \forcesym shows that if \forcesym\ returns \stuck\
+  then \vsu\ and \tsu\ are unchanged.
+  \begin{description}
+  \item[Case \replusgood:]
+    %
+    We \forcesym\ $v_1$ and $v_2$ to $\tint$, so we must consider
+    the $\force{\vhole{\thole}}{t}{\vsu}{\tsu}$ and
+    $\force{n}{\tint}{\vsu}{\tsu}$ cases.
+    %
+    The $\force{n}{\tint}{\vsu}{\tsu}$ case is trivial as it does
+    not change \vsu\ or \tsu.
+    %
+    In the $\force{\vhole{\thole}}{t}{\vsu}{\tsu}$ we will either
+    find that $\ehole \in \vsu$ or we will generate a fresh \tint
+    and extend \vsu.
+    %
+    Note that when we extend \vsu\ we also extend \tsu\ due to the
+    call to \unifysym, thus in the $\vhole \in \vsu$ we cannot
+    actually refine either $\ehole$ or $\thole$ and thus the
+    refinement is preserved.
+    %
+    When we extend \vsu\ with a binding for \ehole, the call to
+    \unifysym ensures that we add a compatible binding for
+    \thole if one was not already in \tsu, thus the refinement
+    relation must continue to hold.
+  \item[Case \rulename{E-If-Good\{1,2\}}:]
+    %
+    Similar to \replusgood.
+  \item[Case \reappgood:]
+    %
+    Similar to \replusgood.
+  \item[Case \releafgood:]
+    %
+    This step cannot change \vsu\ or \tsu\ thus the refinement
+    relation continues to hold trivially.
+  \item[Case \renodegood:]
+    %
+    We \forcesym\ $v_2$ and $v_3$ to $\ttree{t}$, so we must consider
+    three cases of \forcesym.
+    \begin{description}
+    \item[\force{\vhole{\thole}}{t}{\vsu}{\tsu}:]
+      %
+      Similar to \replusgood.
+    \item[\force{\vleaf{t_1}}{\ttree{t_2}}{\vsu}{\tsu}:]
+      %
+      This case may extend \tsu\ but not \vsu, so the refinement
+      continues to hold trivially.
+    \item[\force{\vnode{t_1}{v_1}{v_2}{v_3}}{\ttree{t_2}}{\vsu}{\tsu}:]
+      %
+      Same as \vleaf{t_1}.
+    \end{description}
+  \item[Case \rulename{E-Case-Good\{1,2\}}:]
+    %
+    Similar to \replusgood.
+  \end{description}
+\end{proof}
+
+
+% \begin{proof}[Proof of Lemma~\ref{lem:vsu-ext}]
+%   By case analysis on the evaluation rules.
+%   %
+%   $\thole$ does not change, so if the resolved types differ then
+%   $\tsu \neq \tsu'$.
+%   %
+%   Note that only \forcesym can change \tsu, and it can only do so
+%   via \unifysym, which can only extend \tsu.
+%   \begin{description}
+%   \item[Case \replusgood:]
+%     %
+
+%   \end{description}
+% \end{proof}
+
 \begin{proof}[Proof of Lemma~\ref{lem:k-stuck}]
   We can construct $v$ from $\trace$ as follows.
   %
