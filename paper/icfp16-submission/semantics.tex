@@ -368,14 +368,14 @@ instead there exist perfectly good values of a \emph{different}
 type, under which the program would not have gone wrong.
 %
 We now show that our evaluation relation instantiates holes
-in a \emph{general} manner. That is, given a function $f$,
+in a \emph{general} manner. That is, given a lambda-term $f$,
 if we have $\steps{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$,
 then \emph{for every} input type $t$, we can find a value
 $v$ of type $t$ such that $\eapp{f}{v}$ goes wrong.
 
 \begin{thm}{\textbf{[Witness Generality]}}
 \label{thm:soundness}
-  For any function $f$, if\\
+  For any lambda-term $f$, if
   \hbox{$\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$,}
   then for every % inhabitable
   type
@@ -389,7 +389,7 @@ First, we show how our evaluation rules encode a dynamic form of
 type inference, and next, we show that the types inferred via
 evaluation are indeed maximally general.
 
-\paragraph{The Type of a a Value} The \emph{dynamic type}
+\paragraph{The Type of a Value} The \emph{dynamic type}
 of a value $v$ is defined as a function $\typeof{v}$ shown
 in Figure~\ref{fig:typeof}.
 %
@@ -497,13 +497,13 @@ then the final step $\step{e}{\vsu}{\tsu}{e'}{\vsu'}{\tsu'}$
 
 \paragraph{Compatibility}
 %
-A \emph{type} $s$ is \emph{compatible} with a type $t$, written \tcompat{s}{t},
+A type $s$ is \emph{compatible} with a type $t$, written \tcompat{s}{t},
 if $\exists \tsu.\ \subst{\tsu}{s} = \subst{\tsu}{t}$.
 %
 That is, two types are compatible if there exists a type substitution
 that maps both types to the same type.
 %
-A \emph{value} $v$ is \emph{compatible} with a type $t$, written \vcompat{v}{t},
+A value $v$ is \emph{compatible} with a type $t$, written \vcompat{v}{t},
 if $\tcompat{\typeof{v}}{t}$, that is, if the dynamic type of $v$ is
 compatible with $t$.
 
@@ -539,6 +539,23 @@ then \tcompat{\ptype{\trace}{f}}{\ptype{\trace'}{f}}.
   % But $\typeof{\vhole{\thole}} = \thole$, which is compatible with any type.
 \end{proof}
 
+\paragraph{Type Refinement}
+A type $s$ is a \emph{refinement} of a type $t$, written $\tsub{s}{t}$,
+if $\exists \theta. s = \subst{\theta}{t}$.
+%
+In other words, $s$ is a refinement of $t$ if there exists a type
+substitution that maps $t$ directly to $s$.
+%
+A type $t$ is a \emph{refinement} of a value $v$, written $\tsub{t}{v}$,
+if $\tsub{t}{\typeof{v}}$, \ie if $t$ is a refinement of the
+dynamic type of $v$.
+%
+\ES{calling a type a refinement of a value sounds really weird..}
+
+We prove that the partial instantiation of a type hole $\thole$
+is always a refinement of the partial instantiation of the
+associated value hole $\ehole$.
+
 \begin{lem}
 \label{lem:resolve-compat}
 For all traces
@@ -565,13 +582,14 @@ $\vsub{\resolve{\thole}{\tsu}}{\resolve{\ehole}{\vsu}}$.
 \label{lem:vsu-ext}
 If  $\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots$
 and $\trace'$ is a single-step extension of $\trace$
-and $\resolve{\thole}{\tsu} \neq \resolve{\thole}{\tsu'}$
+and $\ptype{\trace}{f} \neq \ptype{\trace'}{f}$
+% and $\resolve{\thole}{\tsu} \neq \resolve{\thole}{\tsu'}$
 then $\tsu' = \tsu[\thole_1 \mapsto t_1] \ldots [\thole_n \mapsto t_n]$.
 \end{lem}
 \begin{proof}
   By case analysis on the evaluation rules.
   %
-  $\thole$ does not change, so if the resolved types differ then
+  $\thole$ does not change, so if the partial input types differ then
   $\tsu \neq \tsu'$.
   %
   Note that only \forcesym can change \tsu, and it can only do so
@@ -591,7 +609,7 @@ where $k$ is the length of $\trace$.
 
 \begin{lem}
 \label{lem:k-stuck}
-For all $t$,
+For all types $t$,
 if $\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu}$ and
    $\tincompat{t}{\ptype{\trace}{f}}$,
    then there exists a $v$ such that $\hastype{v}{t}$ and
@@ -611,16 +629,18 @@ if $\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu}
   be the shortest prefix of $\trace$ such that
   $\tincompat{\ptype{\trace_i}{f}}{t}$.
   %
-  We will show that $\resolve{\thole}{\tsu_{i-1}}$
+  We will show that $\ptype{\trace_{i-1}}{f}$ % $\resolve{\thole}{\tsu_{i-1}}$
   must contain some other hole $\thole'$ that is
   instantiated at step $i$.
   %
   Furthermore, $\thole'$ is instantiated in such a way that
-  $\tincompat{\resolve{\thole}{\tsu_{i}}}{t}$.
+  $\tincompat{\ptype{\trace_i}{f}}{t}$.
+  % $\tincompat{\resolve{\thole}{\tsu_{i}}}{t}$.
   %
   Finally, we will show that if we had instantiated $\thole'$ such that
-  $\tcompat{\resolve{\thole}{\tsu_{i}}}{t}$, the current
-  step would have gotten $\stuck$.
+  $\tcompat{\ptype{\trace_i}{f}}{t}$,
+  % $\tcompat{\resolve{\thole}{\tsu_{i}}}{t}$,
+  the current step would have gotten $\stuck$.
 
   % By Lemma~\ref{lem:fixme} we know that
   % $\vcompat{\resolve{\vhole{\thole}}{\vsu}}{\resolve{\thole}{\tsu}}$.
@@ -630,7 +650,7 @@ if $\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu}
   %
   We will assume, without loss of generality, that
   $\tsu_{i} = \tsu_{i-1}[\thole' \mapsto t']$.
-
+  %
   Next, we introduce a notion of type % and value
   contexts, defined
   analogously to evaluation contexts.
@@ -644,9 +664,12 @@ if $\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu}
   %
   Since $\tsu_{i-1}$ and $\tsu_{i}$ differ only in $\thole'$ but the resolved
   types differ,
-  $\resolve{\thole}{\tsu_{i-1}} = \intctx{\thole'}$
+  $\ptype{\trace_{i-1}}{f} = \intctx{\thole'}$
   and
-  $\resolve{\thole}{\tsu_{i}} = \intctx{t'}$.
+  $\ptype{\trace_i}{f} = \intctx{t'}$.
+  % $\resolve{\thole}{\tsu_{i-1}} = \intctx{\thole'}$
+  % and
+  % $\resolve{\thole}{\tsu_{i}} = \intctx{t'}$.
   %
   Let $s$ be a concrete type such that $\intctx{s} = t$.
   %
@@ -655,11 +678,12 @@ if $\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu}
   $$\step{e_{i-1}}{\vsu_{i-1}}{\tsu_{i-1}[\thole' \mapsto s]}{\stuck}{\vsu}{\tsu}$$
   %
   Finally, by Lemma~\ref{lem:resolve-compat} we know that
-  $\vsub{\resolve{\thole}{\tsu_{i-1}}}{\resolve{\ehole}{\vsu_{i-1}}}$,
-  thus $\vsub{\intctx{\thole'}}{\resolve{\vhole{\thole}}{\vsu_{i-1}}}$.
+  % $\vsub{\resolve{\thole}{\tsu_{i-1}}}{\resolve{\ehole}{\vsu_{i-1}}}$,
+  $\vsub{\ptype{\trace_{i-1}}{f}}{\resolve{\ehole}{\vsu_{i-1}}}$,
+  thus $\vsub{\intctx{\thole'}}{\resolve{\ehole}{\vsu_{i-1}}}$.
   %
   Let $u = \gen{s}{\tsu}$
-  and $v = \resolve{\vhole{\thole}}{\vsu_{i-1}}\sub{\ehole'[\thole']}{u}\sub{\thole'}{s}$,
+  and $v = \resolve{\ehole}{\vsu_{i-1}}\sub{\ehole'[\thole']}{u}\sub{\thole'}{s}$,
   $\steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$ in $i$ steps.
   %and
   % $\vsub{\resolve{\thole}{\tsu_{i}}}{\resolve{\ehole}{\vsu_{i}}}$.
