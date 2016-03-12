@@ -77,8 +77,8 @@ the elements of its input list.
     | y::ys -> y + __sumList ys__
 \end{ecode}
 %
-Unfortunately, it incorrectly returns @[]@
-in the base case instead of @0@.
+Unfortunately, in the base case, it returns @[]@
+instead of @0@.
 %
 \sherrloc\ blames the base case, and \ocaml\
 assumes the base case is correct and blames
