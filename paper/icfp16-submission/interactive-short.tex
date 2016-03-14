@@ -191,9 +191,51 @@ is parameterized by a single expression (vertex) selected from the
       show the result of skipping over a function call in a sub-term.
 \end{itemize}
 
+\paragraph{Jump Compression}
+%
+A \emph{jump compressed} trace is one whose edges are limited to forward
+or backward jumps.
+% (The sizes of these traces is equal to the jump
+% metric below.)
+%
+In our experience, jump compression abstracts many details of the
+computation that are often uninteresting or irrelevant to the
+explanation.
+%
+In particular, jump compressed traces hide low-level operations and
+summarize function calls as call-return pairs, see
+Figure~\ref{fig:fac-jump} for a variant of @fac@ that implements the
+subtraction as a function call instead of a primitive.
+%
+\begin{figure}[t]
+\centering
+\includegraphics[height=2in]{fac-minus.png}
+\caption{Jump-compressed trace of \texttt{fac 1} with subtraction
+  implemented as a function call.}
+\label{fig:fac-jump}
+\end{figure}
+%
+Once the user has identified an interesting call-return pair, they can
+step into the call and proceed with more fine-grained steps.
+%
+% Expanding the initial visualization to a jump-compressed trace is often
+% an ideal first step;
+% % expanding a jump-compressed traces ideal for the initial state of the
+% they provide a concise overview of the execution and allow the user to
+% step directly into an interesting function call, at which point the can
+% proceed with more fine-grained steps.
+%
+Note that jump compressed traces are not quite the same as
+stack-traces as they show \emph{all} function calls, including
+those that returned successfully.
+%
+For example, the display on the bottom-left in Figure~\ref{fig:factorial} shows
+a jump-compressed trace, of size 4. The full trace for
+the same example (on the right of the Figure~\ref{fig:factorial}) has size 19.
 
-\RJ{add para about jump-compressed traces + example. include full trace and compressed trace.
-could merge with example in overview.}
+
+% \RJ{add para about jump-compressed traces + example. include full trace and compressed trace.
+% could merge with example in overview.}
 
 % \input{traversals_new.tex}
 

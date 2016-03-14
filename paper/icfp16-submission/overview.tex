@@ -64,7 +64,7 @@ To defer input generation, we borrow the notion of a ``hole'' from
 SmallCheck~\cite{runciman_smallcheck_2008}.
 %
 A hole --- written \vhole{\thole} --- is a \emph{placeholder} for a
-value of some unknown type \thole.
+value \ehole of some unknown type \thole.
 %
 We leave all inputs as uninstantiated holes until they are demanded by
 the program, \eg due to a primitive operation like the @<=@ test.
@@ -170,7 +170,7 @@ We have shown how to reliably find witnesses to type errors in \ocaml,
 but this does not fully address our original goal --- to \emph{explain}
 the errors.
 %
-Having identified an input vector that triggers a bug, a common next
+Having identified an input vector that triggers a crash, a common next
 step is to step through the program with a \emph{debugger} to observe
 how the program evolves.
 %
@@ -225,8 +225,23 @@ applicable traversal strategies --- described in
 \S~\ref{sec:interactive} --- to insert another term into the
 visualization.
 
-\paragraph{Jump Compressed Witnesses}
-\RJ{add this para here with example}
+\paragraph{Jump-compressed Witnesses}
+It is rare for the initial state of the visualization to be
+informative enough to diagnose the error.
+%
+We provide a short-cut to expand the witness to a \emph{jump-compressed}
+trace, which contains every function call and return step.
+%
+The jump-compressed trace abstracts the computation as a sequence of
+call-response pairs, providing a high-level overview of steps taken
+to reach the crash, and a high level of compression compared to the
+full trace.
+%
+For example, the jump-compressed trace in Figure~\ref{fig:factorial}
+contains 4 nodes compared to the 19 in the fully expanded trace.
+%
+Our benchmark suite of student programs shows that jump-compression is
+practical, with an average trace size of 7 nodes and a median of 5.
 
 % A sample interaction with the trace of @fac 1@ can be seen in
 % Figure~\ref{fig:nanomaly-factorial}.

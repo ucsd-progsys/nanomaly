@@ -58,13 +58,14 @@ If so, the function cannot possibly terminate and we report an error.
 While not a \emph{type error}, infinite recursion is still a clear bug
 in the program, and thus valuable feedback for the user.
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
 \begin{minipage}{\linewidth}
-\includegraphics[width=\linewidth]{coverage.png}
-\end{minipage}
-\begin{minipage}{\linewidth}
-\includegraphics[width=\linewidth]{distrib.png}
+\centering
+\includegraphics[width=0.49\linewidth]{coverage.png}
+% \end{minipage}
+% \begin{minipage}{\linewidth}
+\includegraphics[width=0.49\linewidth]{distrib.png}
 \end{minipage}
 % \vspace{-8ex}
 \caption{Results of our coverage testing and the distribution of test
@@ -75,7 +76,7 @@ in the program, and thus valuable feedback for the user.
   diverging loops 2-3\% of the time. For the remaining 11-12\% of the
   programs we are unable to provide any useful feedback.  }
 \label{fig:results-witness}
-\end{figure}
+\end{figure*}
 
 \paragraph{Results}
 \label{sec:results-witness}
@@ -111,60 +112,17 @@ For each of the ill-typed programs for which we could
 find a witness, we measure the complexity of the generated
 trace according to two metrics.
 
-\paragraph{Jump Compression}
-%
-A \emph{jump compressed} trace is one whose edges are limited to forward
-or backward jumps. (The sizes of these traces is equal to the jump
-metric below.)
-%
-In our experience, jump compression abstracts many details of the
-computation that are often uninteresting or irrelevant to the
-explanation.
-% 
-In particular, jump compressed traces hide low-level operations and
-summarize function calls as call-return pairs, see
-Figure~\ref{fig:fac-jump} for a variant of @fac@ that implements the
-subtraction as a function call instead of a primitive.
-%
-\begin{figure}[t]
-\centering
-\includegraphics[height=2in]{fac-minus.png}
-\caption{Jump-compressed trace of \texttt{fac 1} with subtraction
-  implemented as a function call.}
-\label{fig:fac-jump}
-\end{figure}
-%
-Once the user has identified an interesting call-return pair, they can
-step into the call and proceed with more fine-grained steps.
-%
-% Expanding the initial visualization to a jump-compressed trace is often
-% an ideal first step;
-% % expanding a jump-compressed traces ideal for the initial state of the
-% they provide a concise overview of the execution and allow the user to
-% step directly into an interesting function call, at which point the can
-% proceed with more fine-grained steps.
-%
-Note that jump compressed traces are not quite the same as
-stack-traces as they show \emph{all} function calls, including
-those that returned successfully.
-%
-For example, the display on the right in Figure~\ref{fig:factorial} shows
-a jump-compressed trace, of size 4. The full trace for
-the same example has size 20.
-
-\paragraph{Metrics} Thus, our two metrics are:
+% \paragraph{Metrics} Thus, our two metrics are:
 % size of the full trace,
 % \ie the number of small-step reductions, and the size of the jump-compressed
 % version of the trace.
 %
 \begin{enumerate}
-\item \emphbf{Single-Step Metric} The size of the trace after expanding
+\item \emphbf{Single-step Metric} The size of the trace after expanding
   all of the single-step edges from the witness to the stuck term, and
   % This can be thought of as a worst-case
   % complexity, \ie ``How big is the fully-expanded trace?''
-\item \emphbf{Jump Metric} The size of the trace for after expanding
-  only the forward (or backward) jumps from the witness to the stuck
-  term.
+\item \emphbf{Jump-compressed Metric} The size of the jump-compressed trace.
 \end{enumerate}
 
 

@@ -86,6 +86,9 @@ the program ``go wrong''~(\S~\ref{sec:soundness}).
 Finally, we refine the operational semantics into a
 \emph{search procedure} that returns concrete (general)
 witnesses for ill-typed programs~\S~(\ref{sec:search-algorithm}).
+%
+We have formalized and tested our semantics and generality theorem
+in \textsc{PLT-Redex}~\cite{felleisen2009semantics}.
 
 \subsection{Syntax}
 \label{sec:syntax}
@@ -617,29 +620,6 @@ $\vsub{\ptype{\trace}{f}}{\resolve{\vhole{\thole}}{\vsu}}$.
   %
 \end{proof}
 
-\ES{Where does this fit in??}
-Next, we introduce a notion of type % and value
-contexts, defined analogously to evaluation contexts.
-%
-$$
-\begin{array}{lcl}
-  T &::=& \bullet \spmid \ttree{T} \spmid \tprod{T}{t} \spmid \tprod{t}{T} \\
-  % V &::=& \bullet \spmid \vnode{t}{V}{v}{v} \spmid \vnode{t}{v}{V}{v} \spmid \vnode{t}{v}{v}{V} \\
-\end{array}
-$$
-%
-
-\begin{lem}
-\label{lem:context-compat}
-For all types $s$ and $t$,
-if $\tcompat{\intctx{s}}{t}$
-then $t = \intctx{s'}$
-such that $\tcompat{s}{s'}$.
-\end{lem}
-\begin{proof}
-  By induction on $t$.
-\end{proof}
-
 \paragraph{Incompatible Types Are Wrong}
 \emph{For all} types that are \emph{incompatible} with the
 partial input type up to trace $\trace$, there exists a value
@@ -680,6 +660,16 @@ if $\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu}
   $\tcompat{\ptype{\trace_i}{f}}{t}$,
   % $\tcompat{\resolve{\thole}{\tsu_{i}}}{t}$,
   the current step would have gotten $\stuck$.
+
+  % Next, we introduce a notion of type % and value
+  % contexts, defined analogously to evaluation contexts.
+  % %
+  % $$
+  % \begin{array}{lcl}
+  %   T &::=& \bullet \spmid \ttree{T} \spmid \tprod{T}{t} \spmid \tprod{t}{T} \\
+  %   % V &::=& \bullet \spmid \vnode{t}{V}{v}{v} \spmid \vnode{t}{v}{V}{v} \spmid \vnode{t}{v}{v}{V} \\
+  % \end{array}
+  % $$
 
   % By Lemma~\ref{lem:fixme} we know that
   % $\vcompat{\resolve{\vhole{\thole}}{\vsu}}{\resolve{\thole}{\tsu}}$.
