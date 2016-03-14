@@ -211,10 +211,10 @@ $$
 % \end{cases} \\
 \force{\vhole{\thole}}{t}{\vsu}{\tsu} & \defeq & \hspace{-1ex}
 \begin{cases}
-  \triple{v}{\vsu}{\tsu'}    & \mbox{if } v = \lookupsu{\vsu}{\ehole},
+  \triple{v}{\vsu}{\tsu'}    & \mbox{if } v = \lookupsu{\vsu}{\vhole{\thole}},
                                          \tsu' = \unify{\{\thole, t, \typeof{v}\}}{\tsu}\\
-  \triple{\stuck}{\vsu}{\tsu} & \mbox{if } v = \lookupsu{\vsu}{\ehole} \\
-  \triple{v}{\extendsu{\vsu}{\ehole}{v}}{\tsu'} & \mbox{if}\ \tsu' = \unify{\{\thole, t\}}{\tsu}, v = \gen{t}{\tsu'}\\
+  \triple{\stuck}{\vsu}{\tsu} & \mbox{if } v = \lookupsu{\vsu}{\vhole{\thole}} \\
+  \triple{v}{\extendsu{\vsu}{\vhole{\thole}}{v}}{\tsu'} & \mbox{if}\ \tsu' = \unify{\{\thole, t\}}{\tsu}, v = \gen{t}{\tsu'}\\
 \end{cases} \\
 % \begin{cases}
 %   \triple{\lookupsu{\vsu}{\ehole}}{\vsu}{\tsu} & \mbox{if}\ \ehole \in dom(\vsu), \hastype{\lookupsu{\vsu}{\ehole}}{t} \\
@@ -376,7 +376,7 @@ type, under which the program would not have gone wrong.
 We now show that our evaluation relation instantiates holes
 in a \emph{general} manner. That is, given a lambda-term $f$,
 if we have $\steps{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$,
-then \emph{for every} input type $t$, we can find a value
+then \emph{for every} concrete type $t$, we can find a value
 $v$ of type $t$ such that $\eapp{f}{v}$ goes wrong.
 
 \begin{thm}{\textbf{[Witness Generality]}}
@@ -431,13 +431,14 @@ We can think of the evaluation of \eapp{f}{\vhole{\thole}}
 as synthesizing a partial instantiation of \thole, and hence,
 \emph{dynamically inferring} a (partial) type for $f$'s input.
 %
-We can extract this type from an evaluation trace, by
-\emph{resolving} the \thole\ with the final type
-substitution at the end of the trace.
+We can extract this type from an evaluation trace by
+applying the final type substitution to \thole.
+% \emph{resolving} the \thole\ with the final type
+% substitution at the end of the trace.
 %
 Formally, we say that if
 $\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{\estuck}{\vsu}{\tsu}$,
-then the \emph{partial input type} of $f$ upto $\trace$, written
+then the \emph{partial input type} of $f$ up to $\trace$, written
 \ptype{\trace}{f}, is $\resolve{\thole}{\tsu}$.
 
 %repeatedly
@@ -465,41 +466,41 @@ then the \emph{partial input type} of $f$ upto $\trace$, written
 % then the final step must have \emph{successfully} invoked \forcesym.
 % \end{lem}
 
-\paragraph{Narrowing}
-%
-Only a successful call to \forcesym can change the partial
-input type of $f$.
-%
-\begin{lem}
-\label{lem:force-inst}
-If
-$\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e}{\vsu}{\tsu}$
-and
-$\trace' \defeq \trace, \step{e}{\vsu}{\tsu}{e'}{\vsu'}{\tsu'}$
-(\ie $\trace'$ is a single-step extension of $\trace$)
-and
-$\ptype{\trace}{f} \neq \ptype{\trace'}{f}$,
-then the final step $\step{e}{\vsu}{\tsu}{e'}{\vsu'}{\tsu'}$
- successfully invokes \forcesym.
-%
-\ES{not clear we still need this}
-\end{lem}
+% \paragraph{Narrowing}
+% %
+% Only a successful call to \forcesym can change the partial
+% input type of $f$.
+% %
+% \begin{lem}
+% \label{lem:force-inst}
+% If
+% $\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e}{\vsu}{\tsu}$
+% and
+% $\trace' \defeq \trace, \step{e}{\vsu}{\tsu}{e'}{\vsu'}{\tsu'}$
+% (\ie $\trace'$ is a single-step extension of $\trace$)
+% and
+% $\ptype{\trace}{f} \neq \ptype{\trace'}{f}$,
+% then the final step $\step{e}{\vsu}{\tsu}{e'}{\vsu'}{\tsu'}$
+%  successfully invokes \forcesym.
+% %
+% \ES{not clear we still need this}
+% \end{lem}
 
-\begin{proof}
-  By case analysis on the evaluation rules.
-  %
-  If $\ptype{\trace}{f} \neq \ptype{\trace'}{f}$ then,
-  % one of the holes in $f$'s
-  % argument must have been instantiated with a concrete value at the last step.
-  by the definition of $\ptype{\trace}{f}$, $\tsu \neq \tsu'$, as \thole
-  does not change.
-  %
-  % An examination of the rules shows that only place this happens is
-  % in the second case of \forcesym.
-  An examination of the rules shows that only \forcesym can update \tsu,
-  and furthermore that only the successful cases of \forcesym do update
-  \tsu.
-\end{proof}
+% \begin{proof}
+%   By case analysis on the evaluation rules.
+%   %
+%   If $\ptype{\trace}{f} \neq \ptype{\trace'}{f}$ then,
+%   % one of the holes in $f$'s
+%   % argument must have been instantiated with a concrete value at the last step.
+%   by the definition of $\ptype{\trace}{f}$, $\tsu \neq \tsu'$, as \thole
+%   does not change.
+%   %
+%   % An examination of the rules shows that only place this happens is
+%   % in the second case of \forcesym.
+%   An examination of the rules shows that only \forcesym can update \tsu,
+%   and furthermore that only the successful cases of \forcesym do update
+%   \tsu.
+% \end{proof}
 
 
 \paragraph{Compatibility}
@@ -514,37 +515,37 @@ A value $v$ is \emph{compatible} with a type $t$, written \vcompat{v}{t},
 if $\tcompat{\typeof{v}}{t}$, that is, if the dynamic type of $v$ is
 compatible with $t$.
 
-\paragraph{Preservation}
-We prove that each evaluation step \emph{refines} the partial input type
-of $f$, \ie\ preserves type compatibility.
-%
-\begin{lem}
-\label{lem:refine-partial}
-If $\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots$ and
-$\trace'$ is a single-step extension of $\trace$, % \defeq \trace, \triple{\estuck'}{\vsu'}{\tsu'}$
-%
-%The partial type of $f$ upto $\trace$ is compatible
-%with the partial type upto $\trace'$, \ie\
-%
-then \tcompat{\ptype{\trace}{f}}{\ptype{\trace'}{f}}.
-%
-\ES{not clear we still need this}
-\end{lem}
-\begin{proof}
-  By case analysis on the evaluation rules.
-  %
-  First note that by Lemma~\ref{lem:force-inst} we can immediately
-  discharge the \rulename{E-*-Bad} rules as they cannot change
-  \ptype{\trace}{f} at all, and are thus trivially
-  compatibility-preserving. For the \rulename{E-*-Good} rules we can
-  show that, by virtue of \forcesym succeeding, all must preseve
-  compatibility.
-  % Note that all rules preserve partial types with the exception of when
-  % \forcesym\ is called on a hole, in which case we may instantiate the hole with
-  % a concrete value.
-  % %
-  % But $\typeof{\vhole{\thole}} = \thole$, which is compatible with any type.
-\end{proof}
+% \paragraph{Preservation}
+% We prove that each evaluation step \emph{refines} the partial input type
+% of $f$, \ie\ preserves type compatibility.
+% %
+% \begin{lem}
+% \label{lem:refine-partial}
+% If $\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots$ and
+% $\trace'$ is a single-step extension of $\trace$, % \defeq \trace, \triple{\estuck'}{\vsu'}{\tsu'}$
+% %
+% %The partial type of $f$ upto $\trace$ is compatible
+% %with the partial type upto $\trace'$, \ie\
+% %
+% then \tcompat{\ptype{\trace}{f}}{\ptype{\trace'}{f}}.
+% %
+% \ES{not clear we still need this}
+% \end{lem}
+% \begin{proof}
+%   By case analysis on the evaluation rules.
+%   %
+%   First note that by Lemma~\ref{lem:force-inst} we can immediately
+%   discharge the \rulename{E-*-Bad} rules as they cannot change
+%   \ptype{\trace}{f} at all, and are thus trivially
+%   compatibility-preserving. For the \rulename{E-*-Good} rules we can
+%   show that, by virtue of \forcesym succeeding, all must preseve
+%   compatibility.
+%   % Note that all rules preserve partial types with the exception of when
+%   % \forcesym\ is called on a hole, in which case we may instantiate the hole with
+%   % a concrete value.
+%   % %
+%   % But $\typeof{\vhole{\thole}} = \thole$, which is compatible with any type.
+% \end{proof}
 
 \paragraph{Type Refinement}
 A type $s$ is a \emph{refinement} of a type $t$, written $\tsub{s}{t}$,
@@ -561,30 +562,14 @@ dynamic type of $v$.
 
 We prove that the partial instantiation of a type hole $\thole$
 is always a refinement of the partial instantiation of the
-associated value hole $\ehole$.
+associated value hole $\vhole{\thole}$.
 
-\begin{lem}
-\label{lem:resolve-compat}
-For all traces
-$\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e}{\vsu}{\tsu}$,
-$\vsub{\resolve{\thole}{\tsu}}{\resolve{\ehole}{\vsu}}$.
-\end{lem}
-\begin{proof}
-  By induction on $\trace$.
-  %
-  In the base case $\trace = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}$
-  and $\thole$ is trivially a refinement of $\vhole{\thole}$.
-  %
-  In the inductive case, consider the single-step extension of $\trace$,
-  $\trace' = \trace,\triple{e'}{\vsu'}{\tsu'}$.
-  %
-  We show by case analysis on the evaluation rules that if
-  $\vsub{\resolve{\thole}{\tsu}}{\resolve{\ehole}{\vsu}}$, then
-  $\vsub{\resolve{\thole}{\tsu'}}{\resolve{\ehole}{\vsu'}}$.
-  %
-\end{proof}
-
-
+\paragraph{Preservation}
+%
+We prove two preservation lemmas. First, we show that each evaluation
+step refines the partial input type of $f$, thus preserving type
+compatibility.
+%
 \begin{lem}
 \label{lem:vsu-ext}
 If  $\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots$
@@ -605,9 +590,34 @@ then $\tsu' = \tsu[\thole_1 \mapsto t_1] \ldots [\thole_n \mapsto t_n]$.
   % when we extend \vsu\ with $[\ehole \mapsto v]$,
   % does.
   %
-  \ES{fill in cases in the appendix}
+  % \ES{fill in cases in the appendix}
+\end{proof}
+%
+Second, we show that at each step of evaluation, the partial input type of $f$
+is a refinement of the instantiation of $\vhole{\thole}$.
+%
+\begin{lem}
+\label{lem:resolve-compat}
+For all traces
+$\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e}{\vsu}{\tsu}$,
+$\vsub{\ptype{\trace}{f}}{\resolve{\vhole{\thole}}{\vsu}}$.
+\end{lem}
+\begin{proof}
+  By induction on $\trace$.
+  %
+  In the base case $\trace = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}$
+  and $\thole$ is trivially a refinement of $\vhole{\thole}$.
+  %
+  In the inductive case, consider the single-step extension of $\trace$,
+  $\trace' = \trace,\triple{e'}{\vsu'}{\tsu'}$.
+  %
+  We show by case analysis on the evaluation rules that if
+  $\vsub{\ptype{\trace}{f}}{\resolve{\vhole{\thole}}{\vsu}}$, then
+  $\vsub{\ptype{\trace'}{f}}{\resolve{\vhole{\thole}}{\vsu'}}$.
+  %
 \end{proof}
 
+\ES{Where does this fit in??}
 Next, we introduce a notion of type % and value
 contexts, defined analogously to evaluation contexts.
 %
@@ -695,14 +705,19 @@ if $\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu}
   We show by case analysis on the evaluation rules that
   %
   $$\step{e_{i-1}}{\vsu_{i-1}}{\tsu_{i-1}[\thole' \mapsto s]}{\stuck}{\vsu}{\tsu}$$
-  %
+
   Finally, by Lemma~\ref{lem:resolve-compat} we know that
   % $\vsub{\resolve{\thole}{\tsu_{i-1}}}{\resolve{\ehole}{\vsu_{i-1}}}$,
-  $\vsub{\ptype{\trace_{i-1}}{f}}{\resolve{\ehole}{\vsu_{i-1}}}$,
-  thus $\vsub{\intctx{\thole'}}{\resolve{\ehole}{\vsu_{i-1}}}$.
+  $\vsub{\ptype{\trace_{i-1}}{f}}{\resolve{\vhole{\thole}}{\vsu_{i-1}}}$
+  and thus $\vsub{\intctx{\thole'}}{\resolve{\vhole{\thole}}{\vsu_{i-1}}}$.
   %
-  Let $u = \gen{s}{\tsu}$
-  and $v = \resolve{\ehole}{\vsu_{i-1}}\sub{\ehole'[\thole']}{u}\sub{\thole'}{s}$,
+  Let
+  $$
+  \begin{array}{lcl}
+  u &=& \gen{s}{\tsu} \\
+  v &=& \resolve{\vhole{\thole}}{\vsu_{i-1}}\sub{\ehole'[\thole']}{u}\sub{\thole'}{s} \\
+  \end{array}
+  $$
   $\steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$ in $i$ steps.
   %and
   % $\vsub{\resolve{\thole}{\tsu_{i}}}{\resolve{\ehole}{\vsu_{i}}}$.
@@ -796,7 +811,7 @@ compatible with $s$. %the partial type upto $\trace$.
 \item [Case \tcompat{s}{t}:]
   Let $\trace = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{\stuck}{\vsu}{\tsu}$.
   %
-  The value $v = \resolve{\ehole}{\vsu}$ demonstrates that
+  The value $v = \resolve{\vhole{\thole}}{\vsu}$ demonstrates that
   $\eapp{f}{v}$ gets stuck.
 \item [Case \tincompat{s}{t}:] By Lemma~\ref{lem:k-stuck}, we can derive
   a $v$ from $\trace$ such that $\hastype{v}{t}$ and $\eapp{f}{v}$ gets

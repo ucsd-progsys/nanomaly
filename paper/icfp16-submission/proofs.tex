@@ -1,154 +1,154 @@
 \section{Proofs for Section~\ref{sec:semantics}}
 \label{sec:proofs}
 
-\begin{proof}[Proof of Lemma~\ref{lem:force-inst}]
-  By case analysis on the evaluation rules.
-  %
-  If $\ptype{\trace}{f} \neq \ptype{\trace'}{f}$ then,
-  % one of the holes in $f$'s
-  % argument must have been instantiated with a concrete value at the last step.
-  by the definition of $\ptype{\trace}{f}$, $\tsu \neq \tsu'$, as \thole
-  does not change.
-  %
-  % An examination of the rules shows that only place this happens is
-  % in the second case of \forcesym.
-  An examination of the rules shows that only \forcesym can update \tsu.
+% \begin{proof}[Proof of Lemma~\ref{lem:force-inst}]
+%   By case analysis on the evaluation rules.
+%   %
+%   If $\ptype{\trace}{f} \neq \ptype{\trace'}{f}$ then,
+%   % one of the holes in $f$'s
+%   % argument must have been instantiated with a concrete value at the last step.
+%   by the definition of $\ptype{\trace}{f}$, $\tsu \neq \tsu'$, as \thole
+%   does not change.
+%   %
+%   % An examination of the rules shows that only place this happens is
+%   % in the second case of \forcesym.
+%   An examination of the rules shows that only \forcesym can update \tsu.
 
 
-  Furthermore, an examination of \forcesym immediately shows that in the
-  cases where \forcesym returns \stuck, \tsu\ is unmodified. Thus only
-  \emph{successful} calls to \forcesym can change \tsu\ and, by
-  extension, \ptype{\trace}{f}.
+%   Furthermore, an examination of \forcesym immediately shows that in the
+%   cases where \forcesym returns \stuck, \tsu\ is unmodified. Thus only
+%   \emph{successful} calls to \forcesym can change \tsu\ and, by
+%   extension, \ptype{\trace}{f}.
 
-  % - narrow(leaf[t_1], t_2, \sigma, \theta)
-  %   - t_1 != \alpha because E-Leaf always creates fresh \alpha
-  %   - what aboue t_2? could mention \alpha in E-Node-*..
+%   % - narrow(leaf[t_1], t_2, \sigma, \theta)
+%   %   - t_1 != \alpha because E-Leaf always creates fresh \alpha
+%   %   - what aboue t_2? could mention \alpha in E-Node-*..
 
-  % By case analysis on the evaluation rules. As above we are only
-  % concerned with the sucessful steps, and can thus ignore the
-  % \rulename{E-*-Bad} rules.
+%   % By case analysis on the evaluation rules. As above we are only
+%   % concerned with the sucessful steps, and can thus ignore the
+%   % \rulename{E-*-Bad} rules.
 
-  % In each case we will show that only
-  % the calls to \forcesym can change the partial input type of $f$.
+%   % In each case we will show that only
+%   % the calls to \forcesym can change the partial input type of $f$.
 
-  % \begin{description}
-  % % \item[Case \reholegood] \hastype{\ehole}{\thole}, which is
-  % %   alpha-equivalent to \typeof{\vhole{\thole}}, thus this step does not
-  % %   change the partial type.
-  % \item[Case \replusgood] Since narrowing succeeded on $v_1$ and $v_2$,
-  %   they must have both either been ints or unconstrained holes.
-  %   The only way the partial input type could have changed is if one or the
-  %   other was a hole, and was instantiated by \forcesym.
-  % \item[Case \rulename{E-If-Good-\{1,2\}}] Since narrowing succeeded on
-  %   $v$, it must have either been a bool or an unconstrained hole.
-  %   The only way the partial input type could have changed is if $v$ was a
-  %   hole and was instantiated by \forcesym.
-  % \item[Case \reappgood] Since narrowing succeeded on $v$, it must have
-  %   either been a lambda or an unconstrained hole. The only way the
-  %   partial input type could have changed is if $v$ was a hole and was
-  %   instantiated by \forcesym.
-  % \item[Case \releafgood] This rule does not call \forcesym, thus it
-  %   cannot change the partial input type, and cannot have been applied.
-  % \item[Case \renodegood] In this case the partial input type could have
-  %   changed if any of $v_1$, $v_2$, or $v_3$ were unconstrained holes.
-  %   Since both \forcesym calls succeeded \emph{and} the partial input
-  %   type changed
+%   % \begin{description}
+%   % % \item[Case \reholegood] \hastype{\ehole}{\thole}, which is
+%   % %   alpha-equivalent to \typeof{\vhole{\thole}}, thus this step does not
+%   % %   change the partial type.
+%   % \item[Case \replusgood] Since narrowing succeeded on $v_1$ and $v_2$,
+%   %   they must have both either been ints or unconstrained holes.
+%   %   The only way the partial input type could have changed is if one or the
+%   %   other was a hole, and was instantiated by \forcesym.
+%   % \item[Case \rulename{E-If-Good-\{1,2\}}] Since narrowing succeeded on
+%   %   $v$, it must have either been a bool or an unconstrained hole.
+%   %   The only way the partial input type could have changed is if $v$ was a
+%   %   hole and was instantiated by \forcesym.
+%   % \item[Case \reappgood] Since narrowing succeeded on $v$, it must have
+%   %   either been a lambda or an unconstrained hole. The only way the
+%   %   partial input type could have changed is if $v$ was a hole and was
+%   %   instantiated by \forcesym.
+%   % \item[Case \releafgood] This rule does not call \forcesym, thus it
+%   %   cannot change the partial input type, and cannot have been applied.
+%   % \item[Case \renodegood] In this case the partial input type could have
+%   %   changed if any of $v_1$, $v_2$, or $v_3$ were unconstrained holes.
+%   %   Since both \forcesym calls succeeded \emph{and} the partial input
+%   %   type changed
 
-  %   Since narrowing succeeded on $v_2$ and $v_3$,
-  %   they must have both been trees or unconstrained holes
+%   %   Since narrowing succeeded on $v_2$ and $v_3$,
+%   %   they must have both been trees or unconstrained holes
 
-  %   \ES{come back to this, not entirely clear it
-  %     holds as we might learn the element type from one of the subtrees}
-  % \item[Case \rulename{E-Case-Good\{1,2\}}] Since narrowing succeeded on
-  %   $v$, it must have either been a tree or an unconstrained hole.
-  %   The only way the partial input type could have changed is if $v$ was a
-  %   hole and was instantiated by \forcesym.
-  % \end{description}
-\end{proof}
+%   %   \ES{come back to this, not entirely clear it
+%   %     holds as we might learn the element type from one of the subtrees}
+%   % \item[Case \rulename{E-Case-Good\{1,2\}}] Since narrowing succeeded on
+%   %   $v$, it must have either been a tree or an unconstrained hole.
+%   %   The only way the partial input type could have changed is if $v$ was a
+%   %   hole and was instantiated by \forcesym.
+%   % \end{description}
+% \end{proof}
 
 
-\begin{proof}[Proof of Lemma~\ref{lem:refine-partial}]
-  By case analysis on the evaluation rules.
+% \begin{proof}[Proof of Lemma~\ref{lem:refine-partial}]
+%   By case analysis on the evaluation rules.
 
-  We can immediately discharge the $\rulename{E-*-Bad}$ rules as they
-  result in the \stuck state, and by Lemma~\ref{lem:force-inst} we know
-  that these rules cannot change \ptype{\trace}{f} at all.
+%   We can immediately discharge the $\rulename{E-*-Bad}$ rules as they
+%   result in the \stuck state, and by Lemma~\ref{lem:force-inst} we know
+%   that these rules cannot change \ptype{\trace}{f} at all.
 
-  % and
-  % an inspection of \forcesym shows that when \forcesym returns \stuck,
-  % it does not modify \vsu or \tsu. Furthermore, \forcesym is the only
-  % procedure that can modify the substitutions.
+%   % and
+%   % an inspection of \forcesym shows that when \forcesym returns \stuck,
+%   % it does not modify \vsu or \tsu. Furthermore, \forcesym is the only
+%   % procedure that can modify the substitutions.
 
-  % For the remainder of the rules we must
-  % consider how they might affect both the input (by instantiating holes)
-  % and output components of the partial type.
+%   % For the remainder of the rules we must
+%   % consider how they might affect both the input (by instantiating holes)
+%   % and output components of the partial type.
 
-  % We will call a type hole \thole \emph{unconstrained} if applying the
-  % current type substitution \subst{\tsu}{\thole} produces a type hole.
+%   % We will call a type hole \thole \emph{unconstrained} if applying the
+%   % current type substitution \subst{\tsu}{\thole} produces a type hole.
 
-  \begin{description}
-  \item[Case \replusgood] Both $v_1$ and $v_2$ successfully narrowed to
-    \tint, so they must have either been ints or unconstrained
-    holes. Thus partial input type compatibility is preserved.
+%   \begin{description}
+%   \item[Case \replusgood] Both $v_1$ and $v_2$ successfully narrowed to
+%     \tint, so they must have either been ints or unconstrained
+%     holes. Thus partial input type compatibility is preserved.
 
-    % \hastype{\eplus{v_1}{v_2}}{\thole} and
-    % \hastype{n}{\tint}, so partial type compatibility of the output is
-    % preserved.
-  \item[Case \rulename{E-If-Good-\{1,2\}}] $v$ successfully narrowed to
-    \tbool, so it must have either been a bool or an unconstrained hole.
-    Thus partial input type compatibility is preserved.
+%     % \hastype{\eplus{v_1}{v_2}}{\thole} and
+%     % \hastype{n}{\tint}, so partial type compatibility of the output is
+%     % preserved.
+%   \item[Case \rulename{E-If-Good-\{1,2\}}] $v$ successfully narrowed to
+%     \tbool, so it must have either been a bool or an unconstrained hole.
+%     Thus partial input type compatibility is preserved.
 
-    % \hastype{\eif{v}{e_1}{e_2}}{\thole}, which is compatible with any
-    % type $e_1$ or $e_2$ might have, so partial type compatibility of the
-    % output is also preserved.
-  \item[Case \reappgood] $v_1$ successfully narrowed to \tfun, so it
-    must have either been a lambda or an unconstrained hole, so partial
-    input type compatibility is preserved.
+%     % \hastype{\eif{v}{e_1}{e_2}}{\thole}, which is compatible with any
+%     % type $e_1$ or $e_2$ might have, so partial type compatibility of the
+%     % output is also preserved.
+%   \item[Case \reappgood] $v_1$ successfully narrowed to \tfun, so it
+%     must have either been a lambda or an unconstrained hole, so partial
+%     input type compatibility is preserved.
 
-    % \hastype{\eapp{v_1}{v_2}}{\thole}, which is compatible with any type
-    % $e$ might have, so partial type compatiblity of the output is
-    % preserved.
-  \item[Case \releafgood] This rule does not call \forcesym, so this
-    step cannot affect partial input type compatibility.
+%     % \hastype{\eapp{v_1}{v_2}}{\thole}, which is compatible with any type
+%     % $e$ might have, so partial type compatiblity of the output is
+%     % preserved.
+%   \item[Case \releafgood] This rule does not call \forcesym, so this
+%     step cannot affect partial input type compatibility.
 
-    % \eleaf steps to \vleaf{\thole} with a fresh \thole,
-    % but \hastype{\eleaf}{\ttree{\thole}}, so partial type compatibility
-    % of the output is preserved.
-  \item[Case \renodegood]
-    % $v_1$ successfully narrowed to $t$, so it must
-    % have already been a $t$ or an unconstrained hole. Likewise,
-    $v_2$ and $v_3$ successfully narrowed to \ttree{t}, so they must have
-    already been \ttree{t}'s or unconstrained holes. Thus partial input type
-    compatibility is preserved.
-    %
-    $v_1$ is not narrowed, but if it \vhole{\thole} we may constrain
-    \thole by narrowing $v_2$ or $v_3$. However, partial input type
-    compatibility must still be preserved as the calls to \forcesym will
-    only succeed if \thole is either completely unconstrained (in which
-    case compatibility is trivial), or if it were constrained to a type
-    that is compatible with the types of $v_2$ and $v_3$.
+%     % \eleaf steps to \vleaf{\thole} with a fresh \thole,
+%     % but \hastype{\eleaf}{\ttree{\thole}}, so partial type compatibility
+%     % of the output is preserved.
+%   \item[Case \renodegood]
+%     % $v_1$ successfully narrowed to $t$, so it must
+%     % have already been a $t$ or an unconstrained hole. Likewise,
+%     $v_2$ and $v_3$ successfully narrowed to \ttree{t}, so they must have
+%     already been \ttree{t}'s or unconstrained holes. Thus partial input type
+%     compatibility is preserved.
+%     %
+%     $v_1$ is not narrowed, but if it \vhole{\thole} we may constrain
+%     \thole by narrowing $v_2$ or $v_3$. However, partial input type
+%     compatibility must still be preserved as the calls to \forcesym will
+%     only succeed if \thole is either completely unconstrained (in which
+%     case compatibility is trivial), or if it were constrained to a type
+%     that is compatible with the types of $v_2$ and $v_3$.
 
-    % so if it was a hole it would not be
-    % instantiated here, thus it cannot affect partial input type compatibility.
+%     % so if it was a hole it would not be
+%     % instantiated here, thus it cannot affect partial input type compatibility.
 
-    % \hastype{\enode{v_1}{v_2}{v_3}}{\ttree{\thole}}, with a fresh \thole
-    % and\\ \hastype{\vnode{t}{v_1}{v_2}{v_3}}{\ttree{t}}. But
-    % \tcompat{\thole}{\ttree{t}} because we can just map \thole to
-    % \ttree{t} (as \thole is fresh), so partial type compatibility of the
-    % output is preserved.
-  \item[Case \rulename{E-Case-Good-\{1,2\}}] $v$ successfully narrowed to
-    \ttree{\thole} so it must have either been a tree or an
-    unconstrained hole, so partial input type compatibility is
-    preserved.
+%     % \hastype{\enode{v_1}{v_2}{v_3}}{\ttree{\thole}}, with a fresh \thole
+%     % and\\ \hastype{\vnode{t}{v_1}{v_2}{v_3}}{\ttree{t}}. But
+%     % \tcompat{\thole}{\ttree{t}} because we can just map \thole to
+%     % \ttree{t} (as \thole is fresh), so partial type compatibility of the
+%     % output is preserved.
+%   \item[Case \rulename{E-Case-Good-\{1,2\}}] $v$ successfully narrowed to
+%     \ttree{\thole} so it must have either been a tree or an
+%     unconstrained hole, so partial input type compatibility is
+%     preserved.
 
-    % \hastype{\ecase{v}{e_1}{x_1}{x_2}{x_3}{e_2}}{\thole}, which is
-    % compatible with any type $e_1$ and $e_2$ might have, so partial type
-    % compatibility of the output is preserved.
-  % \item[Case \reholegood] \hastype{\ehole}{\thole}, with a fresh \thole,
-  %   and \hastype{\vhole{\thole}}{\thole}, but a fresh hole is compatible
-  %   with anything, so partial input type compatibility is preserved.
-  \end{description}
-\end{proof}
+%     % \hastype{\ecase{v}{e_1}{x_1}{x_2}{x_3}{e_2}}{\thole}, which is
+%     % compatible with any type $e_1$ and $e_2$ might have, so partial type
+%     % compatibility of the output is preserved.
+%   % \item[Case \reholegood] \hastype{\ehole}{\thole}, with a fresh \thole,
+%   %   and \hastype{\vhole{\thole}}{\thole}, but a fresh hole is compatible
+%   %   with anything, so partial input type compatibility is preserved.
+%   \end{description}
+% \end{proof}
 
 % \begin{proof}[Proof of Lemma~\ref{lem:refine-partial}]
 %   By case analysis on the evaluation rules. We can immediately discharge
