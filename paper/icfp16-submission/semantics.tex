@@ -177,7 +177,8 @@ giving us a form of dynamic type inference.
 %
 Each primitive evaluation step tells us more about the types of the
 program values. For example, addition tells us that the addends must be
-integers, and case-analysis tells us that the scrutinee must be a tree.
+integers, and % case-analysis tells us that the scrutinee must be a tree.
+an if-expression tells us the condition must be a boolean.
 %
 When a hole appears in such a context, we know what type it must have
 in order to make progress and can fill it in with a concrete value.
@@ -248,22 +249,25 @@ do not need to \forcesym\ the result of the substitution, the sub-hole
 will be narrowed when the context demands it.
 
 \paragraph{Generating Values} The (non-deterministic)
-$\gen{t}{\tsu}$ in Figure~\ref{fig:gen}, takes
+$\gen{t}{\tsu}$ in Figure~\ref{fig:gen} takes
 as input a type $t$ and returns a value of that type.
 %
-For base types, the procedure returns an arbitrary value of
+For base types the procedure returns an arbitrary value of
 that type.
 %
-For functions, it returns a lambda with a \emph{new} hole
-denoting the return value, and unconstrained types (denoted
-by $\thole$) yield fresh holes constrained to have type
+For functions it returns a lambda with a \emph{new} hole
+denoting the return value.
+%
+For unconstrained types (denoted
+by $\thole$) it yields a fresh hole constrained to have type
 \thole (denoted by $\vhole{\thole}$).
 %
 When generating a $\ttree{t}$ we must take care to ensure
 the resulting tree is well-typed.
 %
 For a polymorphic type $\ttree{\thole}$ %, eg in \recasegoodone,
-we will place holes in the generated nodes; they will be lazily filled
+or $\tprod{\thole_1}{\thole_2}$
+we will place holes in the generated value; they will be lazily filled
 in later, on demand.
 
 
@@ -374,7 +378,7 @@ that we have no (static) type information to rely upon.
 Thus, we must avoid the trap of generating \emph{spurious}
 witnesses that arise from picking irrelevant values, when
 instead there exist perfectly good values of a \emph{different}
-type, under which the program would not have gone wrong.
+type under which the program would not have gone wrong.
 %
 We now show that our evaluation relation instantiates holes
 in a \emph{general} manner. That is, given a lambda-term $f$,
@@ -389,13 +393,13 @@ $v$ of type $t$ such that $\eapp{f}{v}$ goes wrong.
   then for every % inhabitable
   type
   % \footnote{We exclude builtin functions that subvert the type system, \eg \texttt{Obj.magic}, and thus consider the type $\forall a b. \tfun{a}{b}$ to be uninhabitable.}
-  $t$ there exists a $v$ of type $t$ such that
-  $\steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$.
+  $t$ there exists a value $v$ of type $t$ such that
+  $\steps{\eapp{f}{v}}{\emptysu}{\emptysu}{\stuck}{\vsu'}{\tsu'}$.
 \end{thm}
 
 We need to develop some machinery in order to prove this theorem.
 First, we show how our evaluation rules encode a dynamic form of
-type inference, and next, we show that the types inferred via
+type inference, and then we show that the witnesses found by
 evaluation are indeed maximally general.
 
 \paragraph{The Type of a Value} The \emph{dynamic type}
@@ -405,12 +409,14 @@ in Figure~\ref{fig:typeof}.
 The types of primitive values are defined in the natural manner.
 %
 The types of functions are \emph{approximated}, which is all
-that is needed to ensure an application does not get stuck, \eg
+that is needed to ensure an application does not get stuck.
+%
+For example,
 $$\typeof{\efun{x}{\eplus{x}{1}}} = \tfun$$
 instead of $\tint \rightarrow \tint$.
 %
-The types of (polymorphic) data types are obtained from the
-labels on their values.
+The types of (polymorphic) trees are obtained from the labels on their
+values, and the types of tuples directly from their values.
 
 \begin{figure}[ht]
 \[ \begin{array}{lcll}
@@ -431,7 +437,7 @@ labels on their values.
 
 \paragraph{Dynamic Type Inference}
 We can think of the evaluation of \eapp{f}{\vhole{\thole}}
-as synthesizing a partial instantiation of \thole, and hence,
+as synthesizing a partial instantiation of \thole, and thus
 \emph{dynamically inferring} a (partial) type for $f$'s input.
 %
 We can extract this type from an evaluation trace by
@@ -563,9 +569,9 @@ dynamic type of $v$.
 %
 \ES{calling a type a refinement of a value sounds really weird..}
 
-We prove that the partial instantiation of a type hole $\thole$
-is always a refinement of the partial instantiation of the
-associated value hole $\vhole{\thole}$.
+% We prove that the partial instantiation of a type hole $\thole$
+% is always a refinement of the partial instantiation of the
+% associated value hole $\vhole{\thole}$.
 
 \paragraph{Preservation}
 %
@@ -622,7 +628,7 @@ $\vsub{\ptype{\trace}{f}}{\resolve{\vhole{\thole}}{\vsu}}$.
 
 \paragraph{Incompatible Types Are Wrong}
 \emph{For all} types that are \emph{incompatible} with the
-partial input type up to trace $\trace$, there exists a value
+partial input type up to $\trace$, there exists a value
 that will cause $f$ to get stuck in \emph{at most} $k$ steps,
 where $k$ is the length of $\trace$.
 
@@ -817,7 +823,7 @@ compatible with $s$. %the partial type upto $\trace$.
 %
 So far, we have seen how a trace leading to a stuck configuration yields
 a general witness demonstrating that the program is ill-typed (\ie\ goes
-wrong for at least one input of every type.)
+wrong for at least one input of every type).
 In particular, we have shown how to non-deterministically find a witnesses
 for a function of a \emph{single} argument.
 
@@ -855,7 +861,7 @@ The witness generation procedure returns as output a list of (general)
 witness expressions, each of which is of the form $e\ v_1 \ldots v_n$.
 %
 The \emph{empty} list is returned when no witness can be found after
-exploring $n$ traces.
+exploring $k$ traces.
 
 
 \paragraph{Modeling Semantics}
@@ -917,7 +923,7 @@ $$
 \paragraph{Generating Witnesses}
 %
 Finally, Figure~\ref{fig:algo-gen-witness} summarizes the overall
-implementation of our search for witnesses, in the procedure
+implementation of our search for witnesses with the procedure
 $\genWitness{k}{e}$, which takes as input a bound $k$ and the
 target expression $e$, and returns a list of witness expressions
 $\eapp{e}{v_1 \ldots v_n}$ that demonstrate how the input program
@@ -941,13 +947,13 @@ We obtain the following corollary of Theorem~\ref{thm:soundness}:
 
 \begin{cor}{\textbf{[Witness Generation]}}
 \label{thm:generation}
-  If $$\genWitness{k}{e} = \triple{\eapp{e}{v_1 \ldots v_n}}{\vsu}{\tsu}\ldots$$
+  If $$\genWitness{k}{e} = \triple{\eapp{e}{v_1 \ldots v_n}}{\vsu}{\tsu},\ldots$$
   then for all types $t_1 \ldots t_n$ there exist values $w_1 \ldots w_n$ such that
   $\steps{\eapp{e}{w_1 \ldots w_n}}{\emptysu}{\emptysu}{\stuck}{\vsu'}{\tsu'}$.
 \end{cor}
 \begin{proof}
   For any function $f$ of multiple arguments, we can define $f'$ to be
-  the uncurried version of $f$ that takes all of its arguments as a
+  the uncurried version of $f$ that takes all of its arguments as a single
   nested pair, and then apply Theorem~\ref{thm:soundness} to $f'$.
 \end{proof}
 
