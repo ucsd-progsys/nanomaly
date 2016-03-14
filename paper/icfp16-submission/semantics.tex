@@ -144,17 +144,21 @@ comprised of normalized values.
 %
 In the sequel, we will assume and ensure that all value substitutions
 are normalized.
+%
+We ensure additionally that the co-domain of a substitution does not
+refer to any elements of its domain, \ie when we extend a substitution
+with a new binding we apply the substitution to itself.
 
-\paragraph{Resolving Holes}
-We \emph{resolve} a hole with respect to a substitution by
-transitively applying the substitution as long as it contains
-any holes that are defined in the substitution.
-%
-We write \resolve{\thole}{\tsu} to denote the the resolution
-of \thole\ with respect to \tsu.
-%
-Note that by definition, \resolve{\thole}{\tsu} does not contain
-any holes in the domain of \tsu.
+% \paragraph{Resolving Holes}
+% We \emph{resolve} a hole with respect to a substitution by
+% transitively applying the substitution as long as it contains
+% any holes that are defined in the substitution.
+% %
+% We write \resolve{\thole}{\tsu} to denote the the resolution
+% of \thole\ with respect to \tsu.
+% %
+% Note that by definition, \resolve{\thole}{\tsu} does not contain
+% any holes in the domain of \tsu.
 
 
 \subsection{Semantics}
