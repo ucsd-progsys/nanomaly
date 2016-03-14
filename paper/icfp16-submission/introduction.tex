@@ -48,13 +48,18 @@ program is wrong.
     else
       n * fac (n-1)
 \end{code}
-\end{minipage}
-% \hspace{0.3in}
-\begin{minipage}{.49\linewidth}
+\vspace{3em}
+% \end{minipage}
+% % \hspace{0.3in}
+% \begin{minipage}{.39\linewidth}
 \centering
   \includegraphics[height=1.5in]{fac-overview.png}
 \end{minipage}
-\caption{(L) An ill-typed \texttt{fac} function; (R) Dynamically witnessing the type error in \texttt{fac}.}
+\begin{minipage}{.49\linewidth}
+\centering
+\includegraphics[height=3in]{fac-long.png}
+\end{minipage}
+\caption{(TL) An ill-typed \texttt{fac} function; (BL) Dynamically witnessing the type error in \texttt{fac}, showing only function calls; (R) The same trace, fully expanded.}
 \label{fig:factorial}
 \end{figure}
 
@@ -64,7 +69,7 @@ how an ill-typed program goes wrong.
 %
 We have developed \toolname, an interactive tool that uses
 the source of the ill-typed function to automatically synthesize
-the result on the right in Figure~\ref{fig:factorial}, which
+the result on the bottom-left in Figure~\ref{fig:factorial}, which
 shows how the recursive calls reduce to a configuration where
 the program ``goes wrong'' --- \ie\ the @int@ value @1@ is to be
 multiplied with the @bool@ value @true@.
@@ -83,8 +88,16 @@ that cause irrelevant problems that would be avoided by picking
 values of a different, relevant type.
 %
 We solve this problem by developing a novel operational semantics
-that corresponds to executing the program with \emph{holes} ---
-values whose type is unknown.
+that combines evaluation and type inference.
+%
+We execute the program with \emph{holes} --- values whose type is
+unknown --- as the inputs.
+% that corresponds to executing the program with \emph{holes} ---
+% values whose type is unknown.
+%
+A hole remains abstract until the evaluation context tells us what type
+it must have, for example the parameters to an addition operation must
+both be integers.
 %
 Our semantics \emph{conservatively} instantiates holes with concrete
 values; thereby dynamically inferring the type of the input
@@ -122,6 +135,18 @@ stepping \emph{forward} or \emph{into} or \emph{over} calls, as well
 stepping or jumping \emph{backward} to understand how a particular
 value was created, while preserving a context of the intermediate
 steps that allow the user to keep track of a term's provenance.
+
+We introduce a notion of \emph{jump-compressed} traces to abstract away
+the irrelevant details of a computation.
+%
+A jump-compressed trace includes only big steps to the next function
+call or return, for example the trace in the bottom-left of
+Figure~\ref{fig:factorial} is a jump-compressed trace.
+%
+Jump-compressed traces are similar to stack traces in that both show a
+sequence of function calls that lead to a crash, but the jump-compressed
+trace also shows the return values of successful calls, which can be
+useful in understanding why a particular path was taken.
 
 \paragraph{3. Evaluating Witnesses}
 %
