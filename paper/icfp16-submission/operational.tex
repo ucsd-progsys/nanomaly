@@ -103,6 +103,18 @@
   }
   {\step{\inctx{\ecase{v}{e_1}{x_1}{x_2}{x_3}{e_2}}}{\vsu}{\tsu}
         {\stuck}{\vsu_1}{\tsu_1}}
+\\ \\
+\inference[\repcasegood]
+  {\thole_1, \thole_2 \mbox{ are fresh}, \triple{\epair{v_1}{v_2}}{\vsu_1}{\tsu_1} = \force{v}{\tprod{\thole_1}{\thole_2}}{\vsu}{\tsu}
+  }
+  {\step{\inctx{\epcase{v}{x_1}{x_2}{e}}}{\vsu}{\tsu}
+        {\inctx{e\sub{x_1}{v_1}\sub{x_2}{v_2}}}{\vsu_1}{\tsu_1}}
+\\ \\
+\inference[\repcasebad]
+  {\thole_1, \thole_2 \mbox{ are fresh}, \triple{\stuck}{\vsu_1}{\tsu_1} = \force{v}{\tprod{\thole_1}{\thole_2}}{\vsu}{\tsu}
+  }
+  {\step{\inctx{\epcase{v}{x_1}{x_2}{e}}}{\vsu}{\tsu}
+        {\stuck}{\vsu_1}{\tsu_1}}
 % \\ \\
 % \inference[\relet]
 %   {}

@@ -10,6 +10,7 @@ $$
   & e & ::=    & v \spmid x \spmid \eapp{e}{e} \spmid \eplus{e}{e}\\
   &   & \spmid & \eif{e}{e}{e} \\
   % &   & \spmid & \elet{x}{e}{e} \\
+  &   & \spmid & \epair{e}{e} \spmid \epcase{e}{x}{x}{e} \\
   &   & \spmid & \enode{e}{e}{e} \spmid \eleaf \\
   &   & \spmid & \ecase{e}{e}{x}{x}{x}{e} \\[0.1in]
 
@@ -25,7 +26,7 @@ $$
 
 \emphbf{Types}
   & t & ::=     & \tbool \spmid \tint \spmid \tfun \\
-  &   &  \spmid & \ttree{t} \spmid \thole \\[0.05in]
+  &   &  \spmid & \tprod{t}{t} \spmid \ttree{t} \spmid \thole \\[0.05in]
 
 \emphbf{Substitutions}
   & \vsu & ::= & \emptysu \spmid \extendsu{\vsu}{\ehole}{v} \\

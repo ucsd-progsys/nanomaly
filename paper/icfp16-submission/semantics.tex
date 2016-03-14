@@ -92,7 +92,7 @@ witnesses for ill-typed programs~\S~(\ref{sec:search-algorithm}).
 \input{syntax.tex}
 %
 Figure~\ref{fig:syntax} describes the syntax of \lang, a simple lambda
-calculus with integers, booleans, and binary trees.
+calculus with integers, booleans, pairs, and binary trees.
 %
 As we are specifically interested in programs that \emph{do} go wrong,
 we include an explicit \stuck\ term in our syntax. We write $\estuck$ to
@@ -228,6 +228,7 @@ $$
 \force{n}{\tint}{\vsu}{\tsu}     & \defeq & \triple{n}{\vsu}{\tsu} \\
 \force{b}{\tbool}{\vsu}{\tsu}    & \defeq & \triple{b}{\vsu}{\tsu} \\
 \force{\efun{x}{e}}{\tfun}{\vsu}{\tsu} & \defeq & \triple{\efun{x}{e}}{\vsu}{\tsu} \\
+\force{\epair{v_1}{v_2}}{\tprod{t_1}{t_2}}{\vsu}{\tsu} & \defeq & \triple{\epair{v_1}{v_2}}{\vsu}{\tsu''}, \mbox{if}\ \tsu' = \unify{\{\typeof{v_1}, t_1\}}{\tsu}, \tsu'' = \unify{\{\typeof{v_2}, t_2\}}{\tsu'}  \\
 \force{\vleaf{t_1}}{\ttree{t_2}}{\vsu}{\tsu} & \defeq & \triple{\vleaf{t_1}}{\vsu}{\tsu'}, \mbox{if}\ \tsu' = \unify{\{t_1, t_2\}}{\tsu} \\
 \force{\vnode{t_1}{v_1}{v_2}{v_3}}{\ttree{t_2}}{\vsu}{\tsu} & \defeq & \triple{\vnode{t_1}{v_1}{v_2}{v_3}}{\vsu}{\tsu'}, \mbox{if}\ \tsu' = \unify{\{t_1, t_2\}}{\tsu} \\
 \force{v}{t}{\vsu}{\tsu} & \defeq & \triple{\stuck}{\vsu}{\tsu}
@@ -267,12 +268,13 @@ in later, on demand.
 $$
 \begin{array}{lcll}
 \gensym       & :   & t \times \tsu \rightarrow v \\
-\gen{\thole}{\tsu}  & \defeq  & \gen{\subst{\tsu}{\thole}}{\tsu}, & \quad \text{if } \thole \in dom(\tsu) \\
-\gen{\tint}{\tsu}   & \defeq  & n, & \quad \text{non-deterministic} \\
-\gen{\tbool}{\tsu}  & \defeq  & b, & \quad \text{non-deterministic} \\
-\gen{\ttree{t}}{\tsu}  & \defeq  & tr, & \quad \text{non-deterministic} \\
-\gen{\tfun}{\tsu}   & \defeq & \efun{x}{\vhole{\thole}}, & \quad \text{\ehole and \thole are fresh} \\
-\gen{\thole}{\tsu}  & \defeq & \vhole{\thole}, & \quad \text{\ehole is fresh} \\
+\gen{\thole}{\tsu}  & \defeq  & \gen{\subst{\tsu}{\thole}}{\tsu}, &  \text{if } \thole \in dom(\tsu) \\
+\gen{\tint}{\tsu}   & \defeq  & n, &  \text{non-deterministic} \\
+\gen{\tbool}{\tsu}  & \defeq  & b, &  \text{non-deterministic} \\
+\gen{\tprod{t_1}{t_2}}{\tsu}  & \defeq  & \epair{\gen{t_1}{\tsu}}{\gen{t_2}{\tsu}} & \\ % \begin{subarray}{l} v_1 = \gen{t_1}{\tsu}\\ v_2 = \gen{t_2}{\tsu}\end{subarray} \\
+\gen{\ttree{t}}{\tsu}  & \defeq  & tr, &  \text{non-deterministic} \\
+\gen{\tfun}{\tsu}   & \defeq & \efun{x}{\vhole{\thole}}, &  \text{\ehole and \thole are fresh} \\
+\gen{\thole}{\tsu}  & \defeq & \vhole{\thole}, & \text{\ehole is fresh} \\
 \end{array}
 $$
 \caption{Generating values}
@@ -412,6 +414,7 @@ labels on their values.
     \typeof{n}   & \defeq & \tint & \\
     \typeof{b}   & \defeq & \tbool & \\
     \typeof{\efun{x}{e}} & \defeq & \tfun \\
+    \typeof{\epair{v_1}{v_2}} & \defeq & \tprod{\typeof{v_1}}{\typeof{v_2}} \\
     \typeof{\vleaf{t}} & \defeq & \ttree{t} \\
     \typeof{\vnode{t}{v_1}{v_2}{v_3}} & \defeq & \ttree{t} \\
     \typeof{\vhole{\thole}} & \defeq & \thole \\
@@ -937,6 +940,11 @@ We obtain the following corollary of Theorem~\ref{thm:soundness}:
   then for all types $t_1 \ldots t_n$ there exist values $w_1 \ldots w_n$ such that
   $\steps{\eapp{e}{w_1 \ldots w_n}}{\emptysu}{\emptysu}{\stuck}{\vsu'}{\tsu'}$.
 \end{cor}
+\begin{proof}
+  For any function $f$ of multiple arguments, we can define $f'$ to be
+  the uncurried version of $f$ that takes all of its arguments as a
+  nested pair, and then apply Theorem~\ref{thm:soundness} to $f'$.
+\end{proof}
 
 \begin{figure}[t]
 \centering
