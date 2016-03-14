@@ -254,6 +254,9 @@
   \item[Case \rulename{E-Case-Good\{1,2\}}:]
     %
     Similar to \replusgood.
+  \item[Case \repcasegood:]
+    %
+    Similar to \replusgood.
   \end{description}
 \end{proof}
 
@@ -290,15 +293,31 @@
   some $\thole$, and $T$ must be $\bullet$. This means that $s = s'$
   which implies that $\tcompat{s}{s'}$.
   %
-  In the inductive case let $t = \ttree{t'}$, we show that
+  In the inductive case we must consider
+  $t = \ttree{t'}$,
+  $t = \tprod{t'}{t''}$, and
+  $t = \tprod{t''}{t'}$,
+  and show that
+  % let $t = \ttree{t'}$, we show that
   if $\tcompat{T'[s]}{t'}$ implies that $t' = T'[s']$ such that
      $\tcompat{s}{s'}$,
   then $\tcompat{T[s]}{t}$ implies that $t = T[s']$ such that
        $\tcompat{s}{s'}$.
   %
-  If $\tcompat{T[s]}{\ttree{t'}}$ then either
-    $T = \ttree{T'}$, in which case the inductive hypothesis applies,
-    or $T = \bullet$, in which case $s = s'$ and the consequent holds trivially.
+  \begin{description}
+  \item[Case $t = \ttree{t'}$:]
+    %
+    If $\tcompat{T[s]}{\ttree{t'}}$ then either $T = \ttree{T'}$, in
+    which case the inductive hypothesis applies, or $T = \bullet$, in
+    which case $s = s'$ and the consequent holds trivially.
+  \item[Case $t = \tprod{t'}{t''}$:]
+    %
+    If $\tcompat{T[s]}{\tprod{t'}{t''}}$
+    then either $T = \tprod{T'}{s''}$ such that $\tcompat{t''}{s''}$, in
+    which case the inductive hypothesis applies, or $T = \bullet$, in
+    which case $s = s'$ and the consequent holds trivially.
+  \item[Case $t = \tprod{t''}{t'}$:] Symmetric to $t = \tprod{t'}{t''}$.
+  \end{description}
 \end{proof}
 
 \begin{proof}[Proof of Lemma~\ref{lem:k-stuck}]
@@ -453,7 +472,22 @@
       % \renodegood to derive a value $u$ that will cause stuckness.
     \item[Case \rulename{E-Case-Good\{1,2\}}:]
       %
-      Similar to \replusgood.
+      Here we \forcesym $v$ to $\ttree{\thole}$,
+      so we must consider three cases of \forcesym.
+      \begin{description}
+      \item[\force{\vhole{\thole}}{t}{\vsu}{\tsu}:]
+        %
+        Similar to \replusgood.
+      \item[\force{\vleaf{t_1}}{\ttree{t_2}}{\vsu}{\tsu}:]
+        %
+        This case cannot extend \tsu\ with $[\thole' \mapsto t']$ as we
+        use a fresh $\thole$, which cannot be referenced by
+        $\ptype{\trace_{i-1}}{f}$, in the call to \forcesym, and thus it
+        cannot apply.
+      \item[\force{\vnode{t_1}{v_1}{v_2}{v_3}}{\ttree{t_2}}{\vsu}{\tsu}:]
+        %
+        Same as \vleaf{t_1}.
+      \end{description}
       % Here we \forcesym $v$ to $\ttree{\thole}$, so the first case of \forcesym
       % must apply
       % (neither\\ $\force{\vleaf{\ttree{t_1}}}{\ttree{t_2}}{\vsu}{\tsu}$
@@ -466,6 +500,25 @@
       % Let $u$ be any concrete value that is incompatible with $\ttree{\thole}$,
       % $\force{u}{\ttree{\thole}}{\vsu}{\tsu} = \triple{\stuck}{\vsu}{\tsu}$.
     \item[Case \recasebad:]
+      %
+      This case cannot apply as \forcesym does not update \tsu\ whe
+      it returns \stuck.
+    \item[Case \repcasegood]
+      %
+      Here we \forcesym $v$ to $\tprod{\thole_1}{\thole_2}$,
+      so we must consider two cases of \forcesym.
+      \begin{description}
+      \item[\force{\vhole{\thole}}{t}{\vsu}{\tsu}:]
+        %
+        Similar to \replusgood.
+      \item[\force{\epair{v_1}{v_2}}{\tprod{t_1}{t_2}}{\vsu}{\tsu}:]
+        %
+        This case cannot extend \tsu\ with $[\thole' \mapsto t']$ as we
+        use a fresh $\thole_1$ and $\thole_2$, which cannot be
+        referenced by $\ptype{\trace_{i-1}}{f}$, in the call to
+        \forcesym, and thus it cannot apply.
+      \end{description}
+    \item[Case \repcasebad:]
       %
       This case cannot apply as \forcesym does not update \tsu\ whe
       it returns \stuck.
