@@ -601,6 +601,28 @@ then $\tsu' = \tsu[\thole_1 \mapsto t_1] \ldots [\thole_n \mapsto t_n]$.
   \ES{fill in cases in the appendix}
 \end{proof}
 
+Next, we introduce a notion of type % and value
+contexts, defined analogously to evaluation contexts.
+%
+$$
+\begin{array}{lcl}
+  T &::=& \bullet \spmid \ttree{T} \\
+  % V &::=& \bullet \spmid \vnode{t}{V}{v}{v} \spmid \vnode{t}{v}{V}{v} \spmid \vnode{t}{v}{v}{V} \\
+\end{array}
+$$
+%
+
+\begin{lem}
+\label{lem:context-compat}
+For all types $s$ and $t$,
+if $\tcompat{\intctx{s}}{t}$
+then $t = \intctx{s'}$
+such that $\tcompat{s}{s'}$.
+\end{lem}
+\begin{proof}
+  By induction on $t$.
+\end{proof}
+
 \paragraph{Incompatible Types Are Wrong}
 \emph{For all} types that are \emph{incompatible} with the
 partial input type up to trace $\trace$, there exists a value
@@ -651,17 +673,6 @@ if $\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu}
   We will assume, without loss of generality, that
   $\tsu_{i} = \tsu_{i-1}[\thole' \mapsto t']$.
   %
-  Next, we introduce a notion of type % and value
-  contexts, defined
-  analogously to evaluation contexts.
-  %
-  $$
-  \begin{array}{lcl}
-    T &::=& \bullet \spmid \ttree{T} \\
-    % V &::=& \bullet \spmid \vnode{t}{V}{v}{v} \spmid \vnode{t}{v}{V}{v} \spmid \vnode{t}{v}{v}{V} \\
-  \end{array}
-  $$
-  %
   Since $\tsu_{i-1}$ and $\tsu_{i}$ differ only in $\thole'$ but the resolved
   types differ,
   $\ptype{\trace_{i-1}}{f} = \intctx{\thole'}$
@@ -671,7 +682,8 @@ if $\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu}
   % and
   % $\resolve{\thole}{\tsu_{i}} = \intctx{t'}$.
   %
-  Let $s$ be a concrete type such that $\intctx{s} = t$.
+  By Lemma~\ref{lem:context-compat},
+  let $s$ be a concrete type such that $\intctx{s} = t$.
   %
   We show by case analysis on the evaluation rules that
   %
@@ -768,10 +780,10 @@ if $\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu}
 \begin{proof}[\textbf{Proof of Theorem~\ref{thm:soundness}}]
 %
 Suppose $\trace$ witnesses that $f$ gets stuck,
-and let $t = \ptype{\trace}{f}$.
-We show that \emph{all} types $s$ have stuck-inducing
-values by splitting cases on whether the type is
-compatible with $t$. %the partial type upto $\trace$.
+and let $s = \ptype{\trace}{f}$.
+We show that \emph{all} types $t$ have stuck-inducing
+values by splitting cases on whether $t$ is
+compatible with $s$. %the partial type upto $\trace$.
 %
 \begin{description}
 \item [Case \tcompat{s}{t}:]
@@ -780,7 +792,7 @@ compatible with $t$. %the partial type upto $\trace$.
   The value $v = \resolve{\ehole}{\vsu}$ demonstrates that
   $\eapp{f}{v}$ gets stuck.
 \item [Case \tincompat{s}{t}:] By Lemma~\ref{lem:k-stuck}, we can derive
-  a $v$ from $\trace$ such that \hastype{v}{t} and $\eapp{f}{v}$ gets
+  a $v$ from $\trace$ such that $\hastype{v}{t}$ and $\eapp{f}{v}$ gets
   stuck.
 % \item [Case \tincompat{s}{t}:] By Lemma~\ref{lem:k-stuck}, every $v$
 %   such that \hastype{v}{t} demonstrates that $\eapp{f}{v}$ gets stuck.

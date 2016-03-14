@@ -273,6 +273,34 @@
 %   \end{description}
 % \end{proof}
 
+\begin{proof}[Proof of Lemma~\ref{lem:context-compat}]
+  % By induction on $T$.
+
+  % In the base case $T$ must be $\bullet$, which means that $t = s'$
+  % and thus $\tcompat{s}{s'}$ holds trivially.
+
+  % In the inductive case let $T = \ttree{T'}$. First note that in order
+  % to satisfy the antecedent, $t = \ttree{t'}$. Furthermore, the
+  % inductive hypothesis tells us that if $\tcompat{T'[s]}{t'}$ then
+  % $t' = T'[s']$ such that $\tcompat{s}{s'}$.
+
+  By induction on $t$.
+  %
+  In the base case $t$ must be one of $\tint$, $\tbool$, $\tfun$, or
+  some $\thole$, and $T$ must be $\bullet$. This means that $s = s'$
+  which implies that $\tcompat{s}{s'}$.
+  %
+  In the inductive case let $t = \ttree{t'}$, we show that
+  if $\tcompat{T'[s]}{t'}$ implies that $t' = T'[s']$ such that
+     $\tcompat{s}{s'}$,
+  then $\tcompat{T[s]}{t}$ implies that $t = T[s']$ such that
+       $\tcompat{s}{s'}$.
+  %
+  If $\tcompat{T[s]}{\ttree{t'}}$ then either
+    $T = \ttree{T'}$, in which case the inductive hypothesis applies,
+    or $T = \bullet$, in which case $s = s'$ and the consequent holds trivially.
+\end{proof}
+
 \begin{proof}[Proof of Lemma~\ref{lem:k-stuck}]
   We can construct $v$ from $\trace$ as follows.
   %
@@ -307,17 +335,6 @@
   %
   We will assume, without loss of generality, that
   $\tsu_{i} = \tsu_{i-1}[\thole' \mapsto t']$.
-
-  Next, we introduce a notion of type % and value
-  contexts, defined
-  analogously to evaluation contexts.
-  %
-  $$
-  \begin{array}{lcl}
-    T &::=& \bullet \spmid \ttree{T} \\
-    % V &::=& \bullet \spmid \vnode{t}{V}{v}{v} \spmid \vnode{t}{v}{V}{v} \spmid \vnode{t}{v}{v}{V} \\
-  \end{array}
-  $$
   %
   Since $\tsu_{i-1}$ and $\tsu_{i}$ differ only in $\thole'$ but the resolved
   types differ,
@@ -328,7 +345,8 @@
   % and
   % $\resolve{\thole}{\tsu_{i}} = \intctx{t'}$.
   %
-  Let $s$ be a concrete type such that $\intctx{s} = t$.
+  By Lemma~\ref{lem:context-compat},
+  let $s$ be a concrete type such that $\intctx{s} = t$.
   %
   We show by case analysis on the evaluation rules that
   %
