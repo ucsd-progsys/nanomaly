@@ -275,56 +275,56 @@
 
 %   \end{description}
 % \end{proof}
-\begin{lem}
-\label{lem:context-compat}
-For all types $s$ and $t$,
-if $\tcompat{\intctx{s}}{t}$
-then $t = \intctx{s'}$
-such that $\tcompat{s}{s'}$.
-\end{lem}
-\begin{proof} [Proof of Lemma~\ref{lem:context-compat}]
-  % By induction on $T$.
+% \begin{lem}
+% \label{lem:context-compat}
+% For all types $s$ and $t$,
+% if $\tcompat{\intctx{s}}{t}$
+% then $t = \intctx{s'}$
+% such that $\tcompat{s}{s'}$.
+% \end{lem}
+% \begin{proof} [Proof of Lemma~\ref{lem:context-compat}]
+%   % By induction on $T$.
 
-  % In the base case $T$ must be $\bullet$, which means that $t = s'$
-  % and thus $\tcompat{s}{s'}$ holds trivially.
+%   % In the base case $T$ must be $\bullet$, which means that $t = s'$
+%   % and thus $\tcompat{s}{s'}$ holds trivially.
 
-  % In the inductive case let $T = \ttree{T'}$. First note that in order
-  % to satisfy the antecedent, $t = \ttree{t'}$. Furthermore, the
-  % inductive hypothesis tells us that if $\tcompat{T'[s]}{t'}$ then
-  % $t' = T'[s']$ such that $\tcompat{s}{s'}$.
+%   % In the inductive case let $T = \ttree{T'}$. First note that in order
+%   % to satisfy the antecedent, $t = \ttree{t'}$. Furthermore, the
+%   % inductive hypothesis tells us that if $\tcompat{T'[s]}{t'}$ then
+%   % $t' = T'[s']$ such that $\tcompat{s}{s'}$.
 
-  By induction on $t$.
-  %
-  In the base case $t$ must be one of $\tint$, $\tbool$, $\tfun$, or
-  some $\thole$, and $T$ must be $\bullet$. This means that $s = s'$
-  which implies that $\tcompat{s}{s'}$.
-  %
-  In the inductive case we must consider
-  $t = \ttree{t'}$,
-  $t = \tprod{t'}{t''}$, and
-  $t = \tprod{t''}{t'}$,
-  and show that
-  % let $t = \ttree{t'}$, we show that
-  if $\tcompat{T'[s]}{t'}$ implies that $t' = T'[s']$ such that
-     $\tcompat{s}{s'}$,
-  then $\tcompat{T[s]}{t}$ implies that $t = T[s']$ such that
-       $\tcompat{s}{s'}$.
-  %
-  \begin{description}
-  \item[Case $t = \ttree{t'}$:]
-    %
-    If $\tcompat{T[s]}{\ttree{t'}}$ then either $T = \ttree{T'}$, in
-    which case the inductive hypothesis applies, or $T = \bullet$, in
-    which case $s = s'$ and the consequent holds trivially.
-  \item[Case $t = \tprod{t'}{t''}$:]
-    %
-    If $\tcompat{T[s]}{\tprod{t'}{t''}}$
-    then either $T = \tprod{T'}{s''}$ such that $\tcompat{t''}{s''}$, in
-    which case the inductive hypothesis applies, or $T = \bullet$, in
-    which case $s = s'$ and the consequent holds trivially.
-  \item[Case $t = \tprod{t''}{t'}$:] Symmetric to $t = \tprod{t'}{t''}$.
-  \end{description}
-\end{proof}
+%   By induction on $t$.
+%   %
+%   In the base case $t$ must be one of $\tint$, $\tbool$, $\tfun$, or
+%   some $\thole$, and $T$ must be $\bullet$. This means that $s = s'$
+%   which implies that $\tcompat{s}{s'}$.
+%   %
+%   In the inductive case we must consider
+%   $t = \ttree{t'}$,
+%   $t = \tprod{t'}{t''}$, and
+%   $t = \tprod{t''}{t'}$,
+%   and show that
+%   % let $t = \ttree{t'}$, we show that
+%   if $\tcompat{T'[s]}{t'}$ implies that $t' = T'[s']$ such that
+%      $\tcompat{s}{s'}$,
+%   then $\tcompat{T[s]}{t}$ implies that $t = T[s']$ such that
+%        $\tcompat{s}{s'}$.
+%   %
+%   \begin{description}
+%   \item[Case $t = \ttree{t'}$:]
+%     %
+%     If $\tcompat{T[s]}{\ttree{t'}}$ then either $T = \ttree{T'}$, in
+%     which case the inductive hypothesis applies, or $T = \bullet$, in
+%     which case $s = s'$ and the consequent holds trivially.
+%   \item[Case $t = \tprod{t'}{t''}$:]
+%     %
+%     If $\tcompat{T[s]}{\tprod{t'}{t''}}$
+%     then either $T = \tprod{T'}{s''}$ such that $\tcompat{t''}{s''}$, in
+%     which case the inductive hypothesis applies, or $T = \bullet$, in
+%     which case $s = s'$ and the consequent holds trivially.
+%   \item[Case $t = \tprod{t''}{t'}$:] Symmetric to $t = \tprod{t'}{t''}$.
+%   \end{description}
+% \end{proof}
 
 \begin{proof}[Proof of Lemma~\ref{lem:k-stuck}]
   We can construct $v$ from $\trace$ as follows.
@@ -355,23 +355,16 @@ such that $\tcompat{s}{s'}$.
   % By Lemma~\ref{lem:fixme} we know that
   % $\vcompat{\resolve{\vhole{\thole}}{\vsu}}{\resolve{\thole}{\tsu}}$.
   %
-  By Lemma~\ref{lem:vsu-ext} we know that
-  $\tsu_{i} = \tsu_{i-1}[\thole_1 \mapsto t_1] \ldots [\thole_n \mapsto t_n]$.
-  %
-  We will assume, without loss of generality, that
-  $\tsu_{i} = \tsu_{i-1}[\thole' \mapsto t']$.
-  %
   Since $\tsu_{i-1}$ and $\tsu_{i}$ differ only in $\thole'$ but the resolved
-  types differ,
-  $\ptype{\trace_{i-1}}{f} = \intctx{\thole'}$
+  types differ, we have
+  $\thole' \in \ptype{\trace_{i-1}}{f}$
   and
-  $\ptype{\trace_i}{f} = \intctx{t'}$.
-  % $\resolve{\thole}{\tsu_{i-1}} = \intctx{\thole'}$
-  % and
-  % $\resolve{\thole}{\tsu_{i}} = \intctx{t'}$.
+  $\ptype{\trace_i}{f} = \ptype{\trace_{i-1}}{f}\sub{\thole'}{t'}$.
   %
-  By Lemma~\ref{lem:context-compat},
-  let $s$ be a concrete type such that $\intctx{s} = t$.
+  % We prove\includeTechReport{, in Lemma~\ref{lem:context-compat},}
+  % that for all types $s$ and $t$, if.
+  Let $s$ be a
+  concrete type such that $\ptype{\trace_{i-1}}{f}\sub{\thole'}{s} = t$.
   %
   We show by case analysis on the evaluation rules that
   %
@@ -532,8 +525,9 @@ such that $\tcompat{s}{s'}$.
   %
   Finally, by Lemma~\ref{lem:resolve-compat} we know that
   % $\vsub{\resolve{\thole}{\tsu_{i-1}}}{\resolve{\ehole}{\vsu_{i-1}}}$,
-  $\vsub{\ptype{\trace_{i-1}}{f}}{\resolve{\ehole}{\vsu_{i-1}}}$,
-  thus $\vsub{\intctx{\thole'}}{\resolve{\ehole}{\vsu_{i-1}}}$.
+  $\vsub{\ptype{\trace_{i-1}}{f}}{\resolve{\ehole}{\vsu_{i-1}}}$
+  and thus $\thole' \in \resolve{\vhole{\thole}}{\vsu_{i-1}}$.
+  %thus $\vsub{\intctx{\thole'}}{\resolve{\ehole}{\vsu_{i-1}}}$.
   %
   Let $u = \gen{s}{\tsu}$
   and $v = \resolve{\ehole}{\vsu_{i-1}}\sub{\ehole'[\thole']}{u}\sub{\thole'}{s}$,
