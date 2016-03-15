@@ -687,16 +687,15 @@ if $\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu}
   $\tsu_{i} = \tsu_{i-1}[\thole' \mapsto t']$.
   %
   Since $\tsu_{i-1}$ and $\tsu_{i}$ differ only in $\thole'$ but the resolved
-  types differ,
+  types differ, we have, for some type context $T$,
   $\ptype{\trace_{i-1}}{f} = \intctx{\thole'}$
   and
   $\ptype{\trace_i}{f} = \intctx{t'}$.
-  % $\resolve{\thole}{\tsu_{i-1}} = \intctx{\thole'}$
-  % and
-  % $\resolve{\thole}{\tsu_{i}} = \intctx{t'}$.
   %
-  By Lemma~\ref{lem:context-compat},
-  let $s$ be a concrete type such that $\intctx{s} = t$.
+  We prove, in Lemma~\ref{lem:context-compat},
+  that \RJ{rephrase lamma here}.
+  Thus, by Lemma~\ref{lem:context-compat}, let $s$ be a
+  concrete type such that $\intctx{s} = t$.
   %
   We show by case analysis on the evaluation rules that
   %

@@ -152,7 +152,7 @@ The average number of jumps per trace is 7 (also 7 for \uwbench) with a
 maximium of 353 (105 for \uwbench) and a median of 4 (also 4 for
 \uwbench).
 %
-In both datasets at least 80\% of the traces contain at most 10 jumps.
+In both datasets 80\% or more traces have at most 10 jumps.
 %
 
 \subsection{Discussion}
@@ -181,16 +181,12 @@ search techniques, likely because the novice programs tend to be simple.
 \paragraph{Infinite Types}
 Our implementation does check for infinite types inside \forcesym, but
 there are some degenerate cases where it is unable to detect
-them. Consider, for example, the following buggy version of @replicate@.
-% ,
-% which is supposed to produce a list containing @n@ copies of @x@.
+them. Consider, the following buggy @replicate@
 %
 \begin{code}
   let rec replicate n x =
-    if n <= 0 then
-      []
-    else
-      replicate (n-1) [x]
+    if n <= 0 then []
+              else replicate (n-1) [x]
 \end{code}
 %
 This code produces a nested list (with @n@ levels of nesting) containing
@@ -211,7 +207,7 @@ jumps, there are some extreme outliers. We cannot reasonably expect a
 novice user to explore a trace containing 50+ terms and draw a
 conclusion about which pieces contributed to the bug in their
 program. Enhancing our visualization to slice out program paths relevant
-to specific values, \eg\ in the style of~\cite{perera_functional_2012},
+to specific values~\cite{perera_functional_2012},
 would likely help alleviate this issue, allowing users to
 highlight a confusing value and ask: ``Where did this come from?''
 
@@ -222,7 +218,7 @@ highlight a confusing value and ask: ``Where did this come from?''
 % \item how many of the ``safe'' programs are actually safe??
 % \end{itemize}
 
-%%% Local Variables: 
+%%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "main"
-%%% End: 
+%%% End:
