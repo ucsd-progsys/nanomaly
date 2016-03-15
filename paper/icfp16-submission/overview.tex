@@ -113,7 +113,9 @@ other paths.
 Returning to @fac@, given a hole as input we will narrow the hole
 to an @int@ upon reaching the @<=@ test.
 %
-At this point we choose a random @int@ for the instantiation and
+At this point we choose a
+random @int@\footnote{With standard heuristics to favor small values.}
+for the instantiation and
 concrete execution takes over entirely, leading us to the expected crash
 in the multiplication.
 
@@ -132,7 +134,7 @@ that will cause the function to go wrong.
 
 \paragraph{Problem: How many inputs does a function take?}
 %
-There is another wrinkle though, how did we know
+There is another wrinkle, though; how did we know
 that @fac@ takes a single argument instead of two
 (or none)?
 %

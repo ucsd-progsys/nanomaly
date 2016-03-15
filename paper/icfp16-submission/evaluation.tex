@@ -34,6 +34,10 @@ from which we extracted \ucsdsize\ distinct, ill-typed \ocaml programs.
 The second dataset --- widely used in the literature --- comes from a
 similar course at the University of Washington~\cite{lerner_seminal:_2006},
 from which we extracted 284 ill-typed programs.
+%
+Both datasets include programs that demonstrate a variety of functional
+programming idioms, including (tail) recursive functions, higher-order
+functions, polymorphic data types, and expression evaluators.
 
 \subsection{Witness Coverage}
 \label{sec:eval:witness-coverage}
@@ -89,8 +93,9 @@ compile-time check. If we extend our tolerance to a 10 second timeout,
 we hit a maximum of 87\% coverage.
 %
 Interestingly, while the vast majority of witnesses corresponded to a
-type-error, as expected, 3-4\% triggered an unbound variable error and
-2-3\% triggered an infinite recursion error.
+type-error, as expected, 3-4\% triggered an unbound variable error (even
+though \ocaml reported a type error) and 2-3\% triggered an infinite
+recursion error.
 %
 For the remaining 12\% of programs we were unable to provide any useful
 feedback as they either completed 1,000 tests successfully, or timed out
