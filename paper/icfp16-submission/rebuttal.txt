@@ -1,0 +1,61 @@
+We thank the reviewers for their thoughtful remarks, and will respond
+briefly to a few categories of concerns.
+
+
+1. Related Work
+
+We thank reviewer C for the pointers to extra related work. We will
+greatly expand the section in the next revision of the paper.
+
+TODO: list a few additional citations we would talk about
+
+2. Bias in Type Variable Instantiation
+
+In the `fac` example, asserting that `n` must be an int without looking
+at the rest of the code is indeed biased, but any inference scheme will
+be biased in one direction or another. Our bias is towards the
+evaluation semantics of the language, other techniques are biased by
+their traversal strategy (eg top-down vs bottom-up) or by various
+heuristics (whether provided by the compiler or through generic
+reasoning).
+
+We would argue, however, (as in Section 5.4) that our bias is more
+natural as it is based on a concrete instance of the program crashing.
+
+
+3. Overloading / Type Classes
+
+Overloaded operators can be problematic for our approach. In reviewer
+C's variant of `fac`, our approach would get stuck at the `if n <= m`
+test, because we cannot know how to instantiate `n` or `m` at that point
+in the program. This does not signify a type error of course, but our
+approach would fail to discover a witness. We suspect this is relatively
+uncommon in novice OCaml programs (TODO: there were no instances of
+this scenario in either of our datasets), but the issue would surely be
+exacerbated if we ported the approach to Haskell due to the prevalence
+of type classes.
+
+We will add a paragraph describing this issue to the Discussion section,
+and defer a treatment of overloading to future work.
+
+
+4. Scaling to Real-World Code
+
+Our benchmarks are small programs as they were drawn from homework
+submissions. The UW dataset had programs generally in the 100-200 LoC
+range, while the programs from our dataset were generally <50 LoC (we
+had already sliced out a minimal program for each error in our dataset).
+It is quite possible that our heuristic for compressing the trace based
+on function calls would not suffice for larger programs, though there is
+a broad literature on program slicing to draw from there.
+
+
+5. Language Features
+
+By "pure subset" of OCaml we mean polymorphic datatypes and records, and
+we will clarify this in the text. We do not support references, modules,
+or the object system.
+
+It is true that we implicitly assume all types are inhabited in the
+formalism, and that the generality theorem is weaker in the presence of
+uninhabited types. We will clarify this in the text.

@@ -1,0 +1,300 @@
+===========================================================================
+                           ICFP 2016 Review #10A
+---------------------------------------------------------------------------
+            Paper #10: Dynamic Witnesses for Static Type Errors
+---------------------------------------------------------------------------
+
+                      Overall merit: A. Good paper, I will champion it
+                         Confidence: Y. I am knowledgeable in this area,
+                                        but not an expert
+
+                         ===== Paper summary =====
+
+The paper tackles the popular issue of bad type errors, but rather than improve the type errors, it focuses on counterexample generation.  The scope of the work is novice programs; the language formalized is small, though I gather that the implementation is much larger (the "pure subset of OCaml").  Considerable attention is given to practical details, e.g. making traces concise, so while the scope of the work isn't huge, the problem seems to have been tackled end-to-end, up to and including a user study.
+
+From a research standpoint I'm not that interested in this kind of system, but having taught typed functional programming to novices, I appreciate the possible practical impact.  I also appreciate that the authors have tried something other than "improving type errors", which seems to be something of a quagmire.
+
+Positive aspects:
+
++ likely practical impact, supported by very promising user studies
++ appears simple and straightforward, with most details well-explained
+
+Negative aspects:
+
+- the formal language is small, and I found no explanation of how the implementation scales up, or even a clear statement of what is included; "the purely functional subset of OCaml" can be interpreted in many different ways
+- some explanations and metatheory seem valid only for the small language, not for OCaml
+- the paper doesn't speculate on extensions—neither scaling up the formalism to cover the implementation, nor scaling up the formalism/implementation to cover additional features, e.g. mutable references
+
+On the second point, the main issue I see is that, while your formalization is simple enough that all types are inhabited (for any t, there exists at least one value of type t), this is not the case for real languages, including many subsets of OCaml that have the empty type but could reasonably be considered "purely functional".  If there is an empty type, your theorems don't hold.  Your theorems seem fine for the language you're defining, but you should at least point out this issue in the paper, especially since you make variants of this claim all over the paper, including in the abstract ("for all input types, there exist inhabitants") and introduction, when the scope of the claim isn't clear.
+
+Specifically, I would like the authors to:
+
+1. Clarify exactly what is "the purely functional subset of OCaml", which is supported by the implementation, and give at least some high-level explanation of what was involved to scale the formal language up to that subset of OCaml.  (There is no universal agreement on what the word "purely" means, so what's in the subset really needs to be spelled out.)
+
+2. Mention when results are contingent on a language having no empty types, and that types in OCaml can actually be empty.
+
+Both of these seem like feasible revisions, so I am willing to champion the paper.
+
+                      ===== Comments for author =====
+
+The slogan "well-typed programs don't go wrong" has been more trouble than it's worth, and I fear your subtitle "ill-typed programs *usually* go wrong" is the same: what you actually show is that "novices' ill-typed programs can usually be made to go wrong".  Glossing over "usually go wrong"/"can usually be made to go wrong" is probably okay, but the title shouldn't suggest that this is the case for everyone's ill-typed programs; you provide no evidence (either way) on that question.
+
+Mention that the supplementary material includes full proofs; if you did mention this and I missed it, mention it again around the results that have proofs (or longer proofs) in the appendix.
+
+Fig. 1, "TL", "BL" are uncommon; say "top left", "bottom left".  Colours may be problematic in black-and-white; use a thicker border or something, for redundancy.
+
+"Of course, the problem of finding witnesses is undecidable."  This is certainly true for real languages, but whether it's true for the (as yet) unspecified language of the paper is less obvious, at least at this point in the paper.
+
+"and appreciate the benefits of static typing"  I like static typing, but this phrase felt too much like propaganda.
+
+"with any type other than int"  Yes, if <= only works on int, which is true for the formalized language, but the reader doesn't know what that language is yet.  (Standard ML, for example, overloads <=.)  Perhaps rephrase, e.g. "The <= operator only works on ints, so we want to avoid..."
+
+The last paragraph before "Narrowing Input Types" made me think of symbolic execution, which you mention in the last section, so a forward reference might be good.
+
+"Witness Generality": "for any type you might assign...there exist inhabitants": Two quibbles: the type needs to be inhabited; not all inhabited types have inhabitant*s* (e.g. unit).  Empty types can be defined in OCaml; see, e.g. http://stackoverflow.com/a/33097567
+(It would be interesting to see what your implementation does with the example linked above...)
+
+footnote 1, p. 2: Please give a citation for these "standard" heuristics.
+
+2.2, first sentence: "We have shown how to reliably find witnesses": At this point you have only given a high-level overview of how to do that.  Replacing "shown" with "described" might suffice.
+
+"solve this problem be equipping"
+
+"the type holes α can be viewed as type variables that we will not generalize over": I appreciate you are following the unfortunate Damas-Milner terminology, which handwaves whether a variable is universal or existential, but perhaps add "i.e., existentially quantified variables".
+
+"Recursion": First, a typo: "defining recursive function+s+".  More importantly, I don't understand why you wouldn't just add a 'rec' construct to the language, rather than trying to justify including a (normally) untypable fixed-point operator.  It makes it harder to believe that your language scales up to (a purely functional subset of) OCaml if you have to throw in a construct that has no analog in OCaml (AFAIK).
+
+"for every concrete type t": see above concerns about uninhabited types.
+
+"Type Refinement": I would rather call this instantiation than refinement.
+
+Fig. 5: drop the commas at the end of the equations (which you don't use elsewhere, and which aren't necessary).
+
+Fig. 6:
+Usually, equations-as-premises, e.g. the premise of E-Plus-Bad1, are written the other way: narrow(...) = ..., rather than ... = narrow(...).  Changing this would be more standard, and would flow better: for example, in E-Plus-Good, the first premise produces σ' and θ' which are used in the second premise, the second premise produces σ'' which is used in the conclusion, etc.
+
+Most premises are separated by newlines, but the premises in the E-Case-* reuls are written on one line and separated with commas.  One line is fine, but it's customary to separate them with horizontal space.
+
+
+End of 3.3: use \qedhere to remove the extra blank line before the QED box.
+
+5.4 heading: "Of" should not be capitalized
+
+First example (sqsum): "Both OCaml and SHErrLoc blame the wrong location".  Is it objectively the wrong location?  Is there even a principled definition of what a wrong location is?  This is a persistent problem with type error messages: our definitions of "right location" and "wrong location" seem to all be either subjective (based on what the programmer intended) or dubious (minimum edit distance).
+
+Second example (sumList): Why did the trace come up with a 2-element list?  A 1-element list should be enough to produce a witness.
+
+"asummptions"
+
+Citations in section 6 mix up authors and subsets of authors: "Lerner et al.", plural, become "Lerner", singular; "Chen and Erwig" become "Chen's", "Perera et al." become "Perera's".
+
+
+Bibliography:
+
+- missing accented characters in [9], [16], [17]; BibTeX is a bad system, you need to check its output
+
+- [16]: "d. Halleux" → "de Halloux"
+
+- most title words are capitalized, which is nonstandard
+
+===========================================================================
+                           ICFP 2016 Review #10B
+---------------------------------------------------------------------------
+            Paper #10: Dynamic Witnesses for Static Type Errors
+---------------------------------------------------------------------------
+
+                      Overall merit: A. Good paper, I will champion it
+                         Confidence: X. I am an expert in this area
+
+                         ===== Paper summary =====
+
+This paper gives a new way to investigate type errors for (novice)
+OCaml programs: It generates a dynamic witness (i.e., input) for which
+the program /will/ get stuck if run (although it may not find one or
+one might not even exist).  This is nicely complementary to prior
+approaches to explaining type errors in languages with Hindley-Milner
+style inference.  It is particularly good at handling cases where a
+helper function is used that happens to type-check but not with a type
+that is useful for the rest of the program.  The authors provide a
+formalization of their approach, a proof that if it finds a witness
+then the program cannot type-check, and empirical results from files
+collected from two programming classes showing fast and usually
+successful results.
+
+                      ===== Comments for author =====
+
+I very much like this work and advocate accepting it.  It's a good
+high-level idea, well explained, with several clever points made along
+the way.  It seems like a genuinely good idea.  I would want it for my
+teaching, and arguably the focus on novice programs is selling the
+work a bit short as it /may/ be complementary to existing
+error-diagnosis tools beyond the novice space.
+
+Some of the nice points made along the way that I particularly liked:
+
+* The nice approach to saturating curried functions.
+
+* The fact that this approach cannot always succeed, particularly it
+  cannot succeed for code that does not type-check but which cannot go
+  wrong.
+
+* The lack of need for built-in fix in the formalism.
+
+* The replicate example on page 9.
+
+* The point that the operational semantics presented would support
+  dynamic symbolic evaluation, with some trade-offs in that approach.
+
+A few things would improve the presentation in my opinion:
+
+1. Related work: (A) Prior to reference 17 was work by Bayne et al in
+ICSE2011 that deserves relevant credit albeit outside the FP sphere.
+(B) There was follow up work to the very-related reference 18 in
+PLDI2015 to support type classes in Haskell.  This should be cited and
+discussed -- would type classes cause you trouble?
+
+2. I was always curious about the jump-compressed traces and how
+/this/ part might be specific to novice programs.  It's sort of a
+"convenient heuristic" to treat + as "not a function" even though it
+basically is one.  Functional programs are generally /lots/ of
+calls/returns, so it's not clear how much "compression" you get for
+less novice assignments.
+
+3. The paragraph "Inputs and Outputs" on page 5 had a couple issues for
+me.   First, I'm not sure what "without loss of generality" means in
+this context.  It seems like a reasonable (approximated with a
+timeout) assumption, but still an assumption.  Second the sentence
+starting, "Second, the target expression..." doesn't seem to parse.
+
+4. The heuristic for detecting infinite recursion may be fine in
+practice, but seems rather simple.  A table of all recursive calls
+might not be too expensive.
+
+A last detail: The UW dataset is from a Masters course for full-time
+software developers.  So while they were mostly new to FP and
+therefore were OCaml novices, it might be a bit confusing to consider
+this "a similar course" to the authors new data.
+
+===========================================================================
+                           ICFP 2016 Review #10C
+---------------------------------------------------------------------------
+            Paper #10: Dynamic Witnesses for Static Type Errors
+---------------------------------------------------------------------------
+
+                      Overall merit: D. Reject
+                         Confidence: X. I am an expert in this area
+
+                         ===== Paper summary =====
+
+The paper discusses an interesting idea: instead of providing a type error
+message (which is what most compilers do), why not provide the programmer
+with an input that makes the program go wrong? Especially for novice programmers
+who may still need to be convinced of the usefulness of a type system and
+who may not yet be very familiar with some the intricacies this might in fact
+be much more useful.
+
+The process is broken down into two separate pieces of work: one is the authors
+develop a semantics from which, particularly for type incorrect programs,
+the type of variables along an execution can be determined. Essentially,
+variables are associated with holes (=type variable), and when ``executing''
+the program more information can be found about these variables. Eg. a hole
+might be replaced by a ``list of holes''. When a type of a variable becomes
+completely known, a random value is elected for that variable, and execution
+continues. At some point execution may get stuck, signalling a type error.
+The generated values (and types) can then be communicated to the programmer
+by means of a compact trace, so that he/she can investigate where things
+go wrong. The trace allows choosing between stepping into and stepping over
+function calls, to allow for quick tracing.
+An Ocaml tool NanoMaly implements the ideas.
+
+The authors also provide rather good percentages of programs for which
+a witness can be generated (88 percent). They also compare their output with
+the output of two other tools: the Ocaml compiler, and Sherrloc.
+
+                      ===== Comments for author =====
+
+I like this idea, and think it can be particularly useful for educating
+programmers. For the trained programmer, I think this will be much less useful.
+
+I have two main issues with your paper:
+* the related work section and the positioning of your work leaves much to be
+desired, particularly when you consider work on type error diagnosis. I get the
+strong impression that you have restricted yourselves to only very recent work
+at flagship conferences. And that is just the tip of the iceberg. Particularly
+I miss references and relationship with work by Haack, Wells, Rahli and others
+on type error slicing (which is in a setting rather close to yours, ML),
+work by Hage, Heeren and others (ICFP 2003, IFL 2006, VODCA 2008) and more
+recently by Hage and Serrano Mena (ESOP 2013) in the context of Haskell. And
+from these papers you will find people like Bruce McAdam, Thomas Schilling,
+Yun Jang, Phil Trinder and much much more older work.
+For example, you say that much recent work focuses on localization and not
+explaining why. But there is work that does try to do that, and you completely
+ignore it. Note that I am not saying that any of these authors do what you have
+done, since I do think you have something new to contribute, but you should
+1) pay proper tribute to these people, 2) should not generalize your opinion
+on the papers you do mention to the entire field, and 3) help people that
+are familiar with that field connect your work up to that field.
+* I sometimes have trouble following the reasoning, particularly in section 3.
+I get the feeling that you should have taken some more time explaining and
+illustrating the formalities. For example, take your fac example.
+One aspect of that example is that at the condition we find out that n MUST be
+int. The following questions come to mind:
+  * do you have any reason to believe that n is an int is correct without
+    looking at the rest of the code? Does that not include some kind of bias?
+    What does the type inferencer tell you, besides that fac is type incorrect.
+  * what if we had
+    let rec fac n m =
+        if n <= m then
+          true
+        else
+          n * fac (n-1) m
+    or some such. What do you learn then when you look at n <= m.
+    Maybe that n and m have the same type (assuming an overloaded <= here),
+    or is that something you choose in fact not to learn. And if you do take
+    advantage does that introduced bias, and is that bad?
+    I have the feeling that this is related to your rule for if: you have a rule
+    in which you know the condition is true, one in which it is false,
+    and one in which it is stuck. But what happens if you do not know?
+
+Now, I am pretty sure you have thought of all this, but the problem is: there
+is no easy way to decide from your formalization that you have. And I am really
+interested to know. Can you enlighten me? And is this something that I have
+missed in that it should be clear from the paper, or do you agree some more
+examples are necessary to drive this home?
+
+(I note that the paper does have space to add examples, and more related work).
+
+Lesser questions/remarks:
+* I did not see a polymorphic let. Can you reflect on this?
+Is that only for explanatory purposes? Are there any challenges there, or in the
+rest of Ocaml for that matter?
+* when you talk of median and average jump-compressed trace sizes, do you mean
+when measured from the start of the program? What kind of program sizes are
+we talking of?
+* you use the function that has a type error as an entry point:
+  1. does that introduce bias, because the compiler's localization is biased?
+  2. again, I wonder what the trace sizes refer to.
+* in your comparison, you omit type signatures from functions like append.
+  This can strongly effect the localization of type errors. We always demand
+  of our students to give every top level a type signature. What happens
+  in these cases?
+
+Contextual remarks:
+* does this easily transfer to a lazy setting, e.g., using things like the ART
+(Chitil, Runciman and various others). How much can be reused do you think?
+* how easily can this be retrofitted into a compiler? What do you need?
+
+Some smaller comments:
+* when you talk of ``inhabitants'' do you in fact mean values that inhabit a
+type? Is there a reason for not simply saying ``value'' then?
+* problem BY equipping
+* did you ever define single-step extension that you use in Lemma 2?
+* you say that without loss of generality you assume traces are finite. But it
+could be that constructing a trace until a stuck term takes forever, right?
+Something like in syntax invented here on the spot:
+  let f = f in if x then { f ; x + 1 } else { f ; x + 2}
+* Figure 13 has a column >100, but I think you mean here "any number". Also
+your y-axes are fractions, not percentages.
+* asummptions
+* can you explain in more detail what it means that Chen's search is complete
+due the finite universes of types?
