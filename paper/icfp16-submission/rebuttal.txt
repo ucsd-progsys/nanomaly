@@ -27,13 +27,13 @@ natural as it is based on a concrete instance of the program crashing.
 
 Overloaded operators can be problematic for our approach. In reviewer
 C's variant of `fac`, our approach would get stuck at the `if n <= m`
-test, because we cannot know how to instantiate `n` or `m` at that point
-in the program. This does not signify a type error of course, but our
-approach would fail to discover a witness. We suspect this is relatively
-uncommon in novice OCaml programs (TODO: there were no instances of
-this scenario in either of our datasets), but the issue would surely be
-exacerbated if we ported the approach to Haskell due to the prevalence
-of type classes.
+test, because `n` and `m` are both unconstrained at this point (apart
+from having the same type), so we do not know how to instantiate
+them. This does not signify a type error of course, but our approach
+would fail to discover a witness. We suspect this is relatively uncommon
+in novice OCaml programs (there were no instances of this scenario in
+either of our datasets), but the issue would surely be exacerbated if we
+ported the approach to Haskell due to the prevalence of type classes.
 
 We will add a paragraph describing this issue to the Discussion section,
 and defer a treatment of overloading to future work.
