@@ -6,42 +6,31 @@ to a few categories of concerns.
 
 We thank reviewers B and C for the pointers to extra related work.
 
-Type error slicing shares a common goal with us of providing
-more diagnostic information to the programmer, though the techniques
-differ significantly. Error slicing is based on a static analysis of
-the typing data, usually as a constraint system, and presents
-multiple candidate error locations, possibly ranked according to
-some heuristic. In contrast, our approach executes the program and
-presents a concrete execution trace demonstrating the error. Gast's
-IFL 2004 paper is perhaps the most similar to ours as he produces
-a data flow that would violate the typing rules.
+We share a common goal with type error slicing, though the techniques
+differ significantly. Error slicing involves a static analysis of the
+typing data and presents multiple candidate error locations, possibly
+ranked according to some heuristic. In contrast, we execute the program
+and present an execution trace demonstrating the error. Gast's IFL 2004
+paper is perhaps the most similar to ours as he produces a data flow
+that would violate the typing rules.
 
 Customizable type error messages along the lines of Heeren 2003,
-Christiansen 2015, and Serrano Mena 2016 also addresses the issue
-of poor type errors. The difference with our work is more pronounced,
-as these techniques often rely on a library author (or instructor)
-with domain-specific knowledge to craft high-quality error messages,
-whereas our approach is fully automatic but ignorant of the application
-domain.
-
-We might also add the algorithmic type debugging work of Chitil 2001
-and Stuckey 2003, which presents the user with a series of queries
-about the types of intermediate expressions to help isolate and
-explain the error.
+Christiansen 2015, and Serrano Mena 2016 also addresses the issue of
+poor type errors. The difference with our work is more pronounced, as
+these techniques often rely on domain-specific knowledge to craft
+high-quality error messages, whereas our approach is fully automatic but
+ignorant of the application domain.
 
 We will extend the Related Work section to reference all of these
 techniques and papers.
 
 
-2. Bias in Type Variable Instantiation
+2. Bias in Type Instantiation
 
-In the `fac` example, asserting that `n` must be an int without looking
-at the rest of the code is indeed biased, but any inference scheme will
-be biased in one direction or another. Our bias is towards the
-evaluation semantics of the language, other techniques are biased by
-their traversal strategy (eg top-down vs bottom-up) or by various
-heuristics (whether provided by the compiler or through generic
-reasoning).
+In the `fac` example, asserting that `n` must be an int at the branch is
+indeed biased. Our bias is towards the evaluation semantics of the
+language, other techniques are biased by their traversal strategy or by
+various heuristics.
 
 We would argue, however, (as in Section 5.4) that our bias is more
 natural as it is based on a concrete instance of the program crashing.
@@ -50,30 +39,26 @@ We will expand the relevant text to clarify this issue.
 
 3. Overloading / Type Classes
 
-Overloaded operators can be problematic for our approach. In reviewer
-C's variant of `fac`, our approach would get stuck at the `if n <= m`
-test, because `n` and `m` are both unconstrained at this point (apart
-from having the same type), so we do not know how to instantiate
-them. This does not signify a type error of course, but our approach
-would fail to discover a witness. We suspect this is relatively uncommon
-in novice OCaml programs (there were no instances of this scenario in
-either of our datasets), but the issue would surely be exacerbated if we
-ported the approach to Haskell due to the prevalence of type classes.
+Overloaded operators are problematic for our approach. In reviewer C's
+variant of `fac`, we would get stuck at the `if n <= m` test because `n`
+and `m` are constrained to the same unknown type. Thus we do not know
+how to instantiate them, and would fail to discover a witness. Our
+benchmarks suggest this is rare in novice programs, but the issue would
+be exacerbated if we ported the approach to Haskell, due to the
+prevalence of type classes.
 
-We will add a paragraph describing this issue to the Discussion section,
-and defer a treatment of overloading to future work.
+We will describe this issue in the Discussion section, and defer a
+treatment of overloading to future work.
 
 
 4. Scaling to Real-World Code
 
 Our benchmarks are small programs as they were drawn from homework
-submissions. The UW dataset had programs generally in the 100-200 LoC
-range, while the programs from our dataset were generally <50 LoC (we
-had already sliced out a minimal program for each error in our dataset).
-It is quite possible that our heuristic for compressing the trace based
-on function calls would not suffice for larger programs, though there is
-a broad literature on program slicing to draw from there. We will augment
-our discussion of this threat to generality in the text. 
+submissions, the largest being around 200 LoC. It is quite possible
+that our heuristic for compressing the trace based on function calls
+would not suffice for larger programs, though there is a broad
+literature on program slicing to draw from there. We will augment our
+discussion of this threat to generality in the text.
 
 
 5. Language Features
