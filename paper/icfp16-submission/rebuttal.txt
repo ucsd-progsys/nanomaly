@@ -1,10 +1,10 @@
-We thank the reviewers for their thoughtful remarks, and will respond
-to a few categories of concerns.
-
+Thank you for your thoughtful feedback! 
 
 1. Related Work
 
-We thank reviewers B and C for the pointers to extra related work.
+We thank reviewers B and C for the pointers to extra related 
+work -- we will extend the Related Work section to reference 
+all of these techniques and papers. 
 
 We share a common goal with type error slicing, though the techniques
 differ significantly. Error slicing involves a static analysis of the
@@ -21,11 +21,8 @@ these techniques often rely on domain-specific knowledge to craft
 high-quality error messages, whereas our approach is fully automatic but
 ignorant of the application domain.
 
-We will extend the Related Work section to reference all of these
-techniques and papers.
 
-
-2. Bias in Type Instantiation
+2. Bias in Type Instantiation (?CUT?)
 
 In the `fac` example, asserting that `n` must be an int at the branch is
 indeed biased. Our bias is towards the evaluation semantics of the
@@ -39,13 +36,17 @@ We will expand the relevant text to clarify this issue.
 
 3. Overloading / Type Classes
 
-Overloaded operators are problematic for our approach. In reviewer C's
-variant of `fac`, we would get stuck at the `if n <= m` test because `n`
-and `m` are constrained to the same unknown type. Thus we do not know
-how to instantiate them, and would fail to discover a witness. Our
-benchmarks suggest this is rare in novice programs, but the issue would
-be exacerbated if we ported the approach to Haskell, due to the
-prevalence of type classes.
+Currently our approach does not support overloading. 
+
+With an overloaded language, reviewer C's variant of `fac`, 
+we would get stuck at the `if n <= m` test because `n` and `m` 
+are constrained to the same unknown type, but as we do not know 
+how to instantiate such types, we  would fail to discover a witness. 
+
+Thus, our formalization (theory) assumes there are no overloaded
+(or polymorphic) operators. Furthermore, in our implementation, 
+i.e. over *all* our benchmarks,  all the operands are concretized 
+*before* they are applied the any (overloaded) operator.
 
 We will describe this issue in the Discussion section, and defer a
 treatment of overloading to future work.
@@ -54,19 +55,16 @@ treatment of overloading to future work.
 4. Scaling to Real-World Code
 
 Our benchmarks are small programs as they were drawn from homework
-submissions, the largest being around 200 LoC. It is quite possible
-that our heuristic for compressing the trace based on function calls
-would not suffice for larger programs, though there is a broad
-literature on program slicing to draw from there. We will augment our
-discussion of this threat to generality in the text.
-
+submissions, the largest being around 200 LoC. While our jump compression 
+heuristic may not suffice for larger programs, we could extend it with 
+ideas from the slicing literature.
 
 5. Language Features
 
-By "pure subset" of OCaml we mean polymorphic datatypes and records, and
-we will clarify this in the text. We do not support references, modules,
-or the object system.
+By "pure subset" of OCaml we mean polymorphic datatypes and records, 
+and we will clarify this in the text. Currently, we do not support 
+references, modules, or the object system.
 
-It is true that we implicitly assume all types are inhabited in the
-formalism, and that the generality theorem is weaker in the presence of
-uninhabited types. We will clarify this in the text.
+Indeed, we implicitly assume all types are inhabited in the formalism, 
+and that the generality theorem is weaker in the presence of uninhabited 
+types. We will clarify this in the text.
