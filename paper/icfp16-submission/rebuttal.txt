@@ -4,22 +4,33 @@ to a few categories of concerns.
 
 1. Related Work
 
-We thank reviewers B and C for the pointers to extra related work. We
-will greatly expand the section in the next revision of the paper to
-include many of the following references.
+We thank reviewers B and C for the pointers to extra related work.
 
-- Haack and Wells, ESOP 2003
-- Rahli et al., Tech Report 2010
-- Schilling, TFP 2011
-- Gast, IFL 2004
-- Heeren et al., ICFP 2003
-- Hage and Heeren, IFL 2006
-- Christiansen, TFP 2014
-- Serrano and Hage, ESOP 2016
-- Chitil, ICFP 2001
-- Stuckey et al., Haskell 2003
-- Bayne et al., ICSE 2011
-- Zhang et al., PLDI 2015
+Type error slicing shares a common goal with us of providing
+more diagnostic information to the programmer, though the techniques
+differ significantly. Error slicing is based on a static analysis of
+the typing data, usually as a constraint system, and presents
+multiple candidate error locations, possibly ranked according to
+some heuristic. In contrast, our approach executes the program and
+presents a concrete execution trace demonstrating the error. Gast's
+IFL 2004 paper is perhaps the most similar to ours as he produces
+a data flow that would violate the typing rules.
+
+Customizable type error messages along the lines of Heeren 2003,
+Christiansen 2015, and Serrano Mena 2016 also addresses the issue
+of poor type errors. The difference with our work is more pronounced,
+as these techniques often rely on a library author (or instructor)
+with domain-specific knowledge to craft high-quality error messages,
+whereas our approach is fully automatic but ignorant of the application
+domain.
+
+We might also add the algorithmic type debugging work of Chitil 2001
+and Stuckey 2003, which presents the user with a series of queries
+about the types of intermediate expressions to help isolate and
+explain the error.
+
+We will extend the Related Work section to reference all of these
+techniques and papers.
 
 
 2. Bias in Type Variable Instantiation
