@@ -1,6 +1,6 @@
 Thank you for your thoughtful feedback! 
 
-1. Related Work
+1. Related Work [B, C]
 
 We thank reviewers B and C for the pointers to extra related 
 work -- we will extend the Related Work section to reference 
@@ -22,19 +22,18 @@ high-quality error messages, whereas our approach is fully automatic but
 ignorant of the application domain.
 
 
-2. Bias in Type Instantiation (?CUT?)
+2. Bias in Type Instantiation [C]
 
-In the `fac` example, asserting that `n` must be an int at the branch is
-indeed biased. Our bias is towards the evaluation semantics of the
-language, other techniques are biased by their traversal strategy or by
-various heuristics.
+Our goal is to be as lenient as possible in type instantation. In the
+`fac` example, we assert that `n` must be an int at the branch condition
+because that is the only way to make progress. This is indeed biased, as
+the `n <= 0` expression may be the source of the error, but it is
+necessary to continue evaluation.
 
-We would argue, however, (as in Section 5.4) that our bias is more
-natural as it is based on a concrete instance of the program crashing.
-We will expand the relevant text to clarify this issue. 
+We will expand the relevant text to clarify this issue.
 
 
-3. Overloading / Type Classes
+3. Overloading / Type Classes [A,B,C]
 
 Currently our approach does not support overloading. 
 
@@ -52,14 +51,14 @@ We will describe this issue in the Discussion section, and defer a
 treatment of overloading to future work.
 
 
-4. Scaling to Real-World Code
+4. Scaling to Real-World Code [C]
 
 Our benchmarks are small programs as they were drawn from homework
 submissions, the largest being around 200 LoC. While our jump compression 
 heuristic may not suffice for larger programs, we could extend it with 
 ideas from the slicing literature.
 
-5. Language Features
+5. Language Features [A]
 
 By "pure subset" of OCaml we mean polymorphic datatypes and records, 
 and we will clarify this in the text. Currently, we do not support 
