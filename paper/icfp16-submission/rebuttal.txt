@@ -45,6 +45,7 @@ reasoning).
 
 We would argue, however, (as in Section 5.4) that our bias is more
 natural as it is based on a concrete instance of the program crashing.
+We will expand the relevant text to clarify this issue. 
 
 
 3. Overloading / Type Classes
@@ -71,7 +72,8 @@ range, while the programs from our dataset were generally <50 LoC (we
 had already sliced out a minimal program for each error in our dataset).
 It is quite possible that our heuristic for compressing the trace based
 on function calls would not suffice for larger programs, though there is
-a broad literature on program slicing to draw from there.
+a broad literature on program slicing to draw from there. We will augment
+our discussion of this threat to generality in the text. 
 
 
 5. Language Features
