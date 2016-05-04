@@ -1,13 +1,26 @@
 We thank the reviewers for their thoughtful remarks, and will respond
-briefly to a few categories of concerns.
+to a few categories of concerns.
 
 
 1. Related Work
 
-We thank reviewer C for the pointers to extra related work. We will
-greatly expand the section in the next revision of the paper.
+We thank reviewers B and C for the pointers to extra related work. We
+will greatly expand the section in the next revision of the paper to
+include many of the following references.
 
-TODO: list a few additional citations we would talk about
+- Haack and Wells, ESOP 2003
+- Rahli et al., Tech Report 2010
+- Schilling, TFP 2011
+- Gast, IFL 2004
+- Heeren et al., ICFP 2003
+- Hage and Heeren, IFL 2006
+- Christiansen, TFP 2014
+- Serrano and Hage, ESOP 2016
+- Chitil, ICFP 2001
+- Stuckey et al., Haskell 2003
+- Bayne et al., ICSE 2011
+- Zhang et al., PLDI 2015
+
 
 2. Bias in Type Variable Instantiation
 
