@@ -1,0 +1,72 @@
+\begin{figure}
+% \hrule width 0.48\textwidth \vspace{0.05in}
+$$
+\begin{array}{rrcl}
+% \emphbf{Configurations} \quad
+%   & c & ::=    & \triple{e}{\vsu}{\tsu} \spmid \triple{\stuck}{\vsu}{\tsu} \\[0.05in]
+
+\emphbf{Expressions}
+  & \estuck & ::= & e \spmid \stuck \\
+  & e & ::=    & v \spmid x \spmid \eapp{e}{e} \spmid \eplus{e}{e}\\
+  &   & \spmid & \eif{e}{e}{e} \\
+  % &   & \spmid & \elet{x}{e}{e} \\
+  &   & \spmid & \epair{e}{e} \spmid \epcase{e}{x}{x}{e} \\
+  &   & \spmid & \enode{e}{e}{e} \spmid \eleaf \\
+  &   & \spmid & \ecase{e}{e}{x}{x}{x}{e} \\[0.1in]
+
+\emphbf{Values}
+  & v  & ::= & n \spmid b \spmid \efun{x}{e} \spmid \vhole{\thole} \spmid tr \\
+  & tr & ::= & \vnode{t}{v}{v}{v} \spmid \vleaf{t} \\[0.05in]
+
+\emphbf{Integers}
+  & n & ::= &  0,1,-1,\ldots \\[0.05in]
+
+\emphbf{Booleans}
+  & b & ::= &  \etrue \spmid \efalse \\[0.05in]
+
+\emphbf{Types}
+  & t & ::=     & \tbool \spmid \tint \spmid \tfun \\
+  &   &  \spmid & \tprod{t}{t} \spmid \ttree{t} \spmid \thole \\[0.05in]
+
+\emphbf{Substitutions}
+  & \vsu & ::= & \emptysu \spmid \extendsu{\vsu}{\vhole{\thole}}{v} \\
+  & \tsu & ::= & \emptysu \spmid \extendsu{\tsu}{\thole}{t} \\[0.1in]
+% \end{array}
+% $$
+% % \hrule width 0.48\textwidth
+% $$
+% \begin{array}{rrcl}
+\emphbf{Contexts}
+  & C
+  & ::=
+  &   	 \bullet
+  \spmid \eapp{C}{e}
+  \spmid \eapp{v}{C} \\
+  & & \spmid & \eplus{C}{e} \spmid \eplus{v}{C} \\
+  & & \spmid & \eif{C}{e}{e} \\
+  % & & \spmid & \elet{x}{C}{e} \\
+  & & \spmid & \epair{C}{e} \spmid \epair{v}{C} \\
+  & & \spmid & \epcase{C}{x}{x}{e} \\
+  & & \spmid & \enode{C}{e}{e} \\
+  & & \spmid & \enode{v}{C}{e} \\
+  & & \spmid & \enode{v}{v}{C} \\
+  & & \spmid & \ecase{C}{e}{x}{x}{x}{e} \\[0.05in]
+\end{array}
+$$
+
+% \judgementHead{Reduction}{\eval{e}{e}}
+
+% $$
+% \begin{array}{rcl}
+% \eval{C[e]&}{&C[e']} \qquad \text{if}\ \eval{e}{e'} \\
+% 	\eval{\eapp{c}{v}&}{& \ceval{c}{v}}\\
+% \eval{\eapp{(\efun{x}{\tau_x}{e})}{e_x}&}{&e\sub{x}{e_x}}\\
+% 	\eval{\elet{x}{e_x}{e}&}{&e\sub{x}{e_x}} \\
+% 	\eval{\ecase{D_j\ \overline{e}}{D_i}{\overline{y_i}}{e_i}{x}&}
+% 	{&e_j\sub{x}{D_j\ \overline{e}}\sub{\overline{y_j}}{\overline{e}}} \\
+% \end{array}
+% $$
+
+\caption{Syntax of \lang}
+\label{fig:syntax}
+\end{figure}

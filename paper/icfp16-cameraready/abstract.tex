@@ -1,0 +1,27 @@
+\begin{abstract}
+  %
+  \emph{Static} type errors are a common stumbling block
+  for newcomers to typed functional languages.
+  %
+  We present a \emph{dynamic} approach to explaining type
+  errors by generating counterexample witness inputs that
+  illustrate \emph{how} an ill-typed program goes wrong.
+  %
+  First, given an ill-typed function, we symbolically
+  execute the body to dynamically synthesize witness values
+  that can make the program go wrong.
+  We prove that our procedure synthesizes
+  \emph{general witnesses} in that if a witness is
+  found, then \emph{for all} input types, there exist
+  inhabitants that can make the function go wrong.
+  %
+  Second, we show how to extend the above procedure to
+  produce a \emph{reduction graph} that can be used to
+  interactively visualize and debug witness executions.
+  %
+  Third, we evaluate our approach on two data sets
+  comprising over 4,500 ill-typed student programs.
+  Our technique is able to generate witnesses for
+  88\% of the programs, and our reduction graph
+  yields small counterexamples for 81\% of the witnesses.
+\end{abstract}
