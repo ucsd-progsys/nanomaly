@@ -170,10 +170,11 @@ to type errors: (1) with high coverage in a timespan amenable to
 compile-time analysis, and (2) with traces that have a low average
 complexity of 7 jumps.
 
-There are, of course, drawbacks to our approach. Three that stand out
+There are, of course, drawbacks to our approach. Four that stand out
 are: (1) coverage limits due to random generation, (2) the inability to
-handle certain instances of infinite types, and (3) dealing with an
-explosion in the size of generated traces.
+handle certain instances of infinite types, (3) dealing with an
+explosion in the size of generated traces, and (4) handling ad-hoc
+polymorphism.
 
 \paragraph{Random Generation}
 Random test generation has difficulty generating highly constrained
@@ -218,6 +219,32 @@ to specific values~\cite{Perera2012-dy},
 would likely help alleviate this issue, allowing users to
 highlight a confusing value and ask: ``Where did this come from?''
 
+\paragraph{Ad-hoc Polymorphism}
+Our approach can only support ad-hoc polymorphism (\eg\ type-classes in
+\haskell\ or polymorphic comparison functions in \ocaml) in limited cases
+where we have enough typing information at the call-site to resolve the
+overloading. For example, consider the @n <= 0@ test in our @fac@ example.
+@<=@ is polymorphic in \ocaml, but in this case we can make progress because
+the literal @0@ is not. If we parameterized @fac@ by a lower bound, \eg
+%
+\begin{code}
+  let rec fac n m =
+    if n <= m then
+      1
+    else
+      n * fac (n - 1) m
+\end{code}
+%
+and called @fac@ with two holes, we would get stuck at the @n <= m@
+test; not because of a type error, but because all we know about
+@n@ and @m@ at that point is that they must have the same (unknown)
+type.
+
+This issue is uncommon in \ocaml\ (we did not detect a single instance
+of it across all of our benchmarks), but it would surely be exacerbated
+by a language like \haskell, which makes heavy use of overloading. We
+suspect that dynamic-symbolic execution would allow us to handle ad-hoc
+polymorphism, but defer a proper treatment to future work.
 
 % \begin{itemize}
 % \item benchmarks: our data + seminal data
