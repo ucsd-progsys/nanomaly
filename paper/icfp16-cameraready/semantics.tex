@@ -88,7 +88,7 @@ Finally, we refine the operational semantics into a
 witnesses for ill-typed programs~\S~(\ref{sec:search-algorithm}).
 %
 We have formalized and tested our semantics and generality theorem
-in \textsc{PLT-Redex}~\cite{felleisen2009semantics}.
+in \textsc{PLT-Redex}~\cite{Felleisen2009-ya}.
 
 \subsection{Syntax}
 \label{sec:syntax}
@@ -109,7 +109,7 @@ Recall that a key challenge in our setting is to find witnesses
 that are meaningful and do not arise from choosing values from
 irrelevant types.
 %
-We solve this problem be equipping our term language with a
+We solve this problem by equipping our term language with a
 notion of a \emph{hole}, written \vhole{\thole}, which represents
 an \emph{unconstrained} value $\ehole$ that may be replaced with
 \emph{any} value of an unknown type \thole.
@@ -129,7 +129,7 @@ normalized value.
 Our semantics ensure the generality of witnesses by incrementally
 \emph{refining} holes, filling in just as much information as is
 needed locally to make progress (inspired by the manner in
-which SmallCheck uses lazy evaluation~\cite{runciman_smallcheck_2008}).
+which SmallCheck uses lazy evaluation~\cite{Runciman2008-ka}).
 %
 We track how the holes are incrementally filled in, by using
 value (resp.\ type) \emph{substitutions} $\vsu$ (resp. $\tsu$)
@@ -275,13 +275,13 @@ in later, on demand.
 $$
 \begin{array}{lcll}
 \gensym       & :   & t \times \tsu \rightarrow v \\
-\gen{\thole}{\tsu}  & \defeq  & \gen{\subst{\tsu}{\thole}}{\tsu}, &  \text{if } \thole \in dom(\tsu) \\
-\gen{\tint}{\tsu}   & \defeq  & n, &  \text{non-deterministic} \\
-\gen{\tbool}{\tsu}  & \defeq  & b, &  \text{non-deterministic} \\
+\gen{\thole}{\tsu}  & \defeq  & \gen{\subst{\tsu}{\thole}}{\tsu} &  \text{if } \thole \in dom(\tsu) \\
+\gen{\tint}{\tsu}   & \defeq  & n &  \text{non-det.} \\
+\gen{\tbool}{\tsu}  & \defeq  & b &  \text{non-det.} \\
 \gen{\tprod{t_1}{t_2}}{\tsu}  & \defeq  & \epair{\gen{t_1}{\tsu}}{\gen{t_2}{\tsu}} & \\ % \begin{subarray}{l} v_1 = \gen{t_1}{\tsu}\\ v_2 = \gen{t_2}{\tsu}\end{subarray} \\
-\gen{\ttree{t}}{\tsu}  & \defeq  & tr, &  \text{non-deterministic} \\
-\gen{\tfun}{\tsu}   & \defeq & \efun{x}{\vhole{\thole}}, &  \text{\ehole and \thole are fresh} \\
-\gen{\thole}{\tsu}  & \defeq & \vhole{\thole}, & \text{\ehole is fresh} \\
+\gen{\ttree{t}}{\tsu}  & \defeq  & tr &  \text{non-det.} \\
+\gen{\tfun}{\tsu}   & \defeq & \efun{x}{\vhole{\thole}} &  \text{\ehole, \thole are fresh} \\
+\gen{\thole}{\tsu}  & \defeq & \vhole{\thole} & \text{\ehole is fresh} \\
 \end{array}
 $$
 \caption{Generating values}
@@ -343,7 +343,7 @@ a function.
 %
 % \RJ{this para appears out of nowhere --- non-sequitur}
 Our semantics lacks a built-in $\mathtt{fix}$ construct
-for defining recursive function, which may surprise
+for defining recursive functions, which may surprise
 the reader.
 %
 Fixed-point operators often cannot be typed in static type
@@ -581,8 +581,10 @@ compatibility.
 %
 \begin{lem}
 \label{lem:vsu-ext}
-If  $\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots$
-and $\trace'$ is a single-step extension of $\trace$
+If  $\trace \defeq \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu},\ldots,\triple{e}{\vsu}{\tsu}$
+and $\trace' \defeq \trace, \step{e}{\vsu}{\tsu}{e'}{\vsu'}{\tsu'}$
+  (\ie\ $\trace'$ is a single-step extension of $\trace$)
+% and $\trace'$ is a single-step extension of $\trace$
 and $\ptype{\trace}{f} \neq \ptype{\trace'}{f}$
 % and $\resolve{\thole}{\tsu} \neq \resolve{\thole}{\tsu'}$
 then $\tsu' = \tsu[\thole_1 \mapsto t_1] \ldots [\thole_n \mapsto t_n]$.
@@ -593,7 +595,8 @@ then $\tsu' = \tsu[\thole_1 \mapsto t_1] \ldots [\thole_n \mapsto t_n]$.
   $\thole$ does not change, so if the partial input types differ then
   $\tsu \neq \tsu'$.
   %
-  Note that only \forcesym can change \tsu, and it can only do so
+  Note that only \forcesym\ can change \tsu,
+  %, and it can only do so via \unifysym
   via \unifysym, which can only extend \tsu.
   % and only the first case,
   % when we extend \vsu\ with $[\ehole \mapsto v]$,
@@ -815,6 +818,7 @@ compatible with $s$. %the partial type upto $\trace$.
 % \item [Case \tincompat{s}{t}:] By Lemma~\ref{lem:k-stuck}, every $v$
 %   such that \hastype{v}{t} demonstrates that $\eapp{f}{v}$ gets stuck.
 %   % \ES{do we need to say anythign else?}
+\qedhere
 \end{description}
 \end{proof}
 

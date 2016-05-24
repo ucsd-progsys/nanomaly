@@ -15,11 +15,11 @@ produce poor error messages, and in particular, can misidentify the
 Thus, many groups have explored techniques to pinpoint the true source
 of the error and recommend fixes.
 
-Lerner \etal~\cite{lerner_searching_2007} attempt to localize the type
+Lerner \etal~\cite{Lerner2007-dt} attempt to localize the type
 error and suggest a fix by replacing expressions (or removing them
 entirely) with alternatives based on the surrounding program context.
 %
-Chen and Erwig~\cite{chen_counter-factual_2014} use a variational type
+Chen and Erwig~\cite{Chen2014-gd} use a variational type
 system to allow for the possibility of changing an expression's type,
 and search for an expression whose type can be changed such that type
 inference would succeed.
@@ -32,17 +32,17 @@ In contrast to Lerner, who searches for changes at the
 value-level, by searching at the type level Chen's search is complete due
 the finite universe of types in a program.
 %
-Neubauer and Thiemann~\cite{neubauer_discriminative_2003} present a
+Neubauer and Thiemann~\cite{Neubauer2003-xv} present a
 decidable type system based on discriminative sum types, in which all
 terms are typeable and type derivations contain all type errors in a
 program. They then use the typing derivation to slice out the parts of
 the expression related to each error.
 %
-Zhang and Myers~\cite{zhang_toward_2014} present an algorithm for
+Zhang and Myers~\cite{Zhang2014-lv} present an algorithm for
 identifying the most likely culprit in a system of unsatisfiable
 constraints (\eg type equalities), based on Bayesian reasoning.
 %
-Pavlinovic \etal~\cite{pavlinovic_finding_2014} translate the %error
+Pavlinovic \etal~\cite{Pavlinovic2014-mr} translate the %error
 localization problem to a MaxSMT optimization problem, using
 compiler-provided weights to rank the possible sources.
 % \item \cite{chen_error-tolerant_2012}
@@ -60,7 +60,7 @@ evolution.
 
 \paragraph{Running Ill-Typed Programs}
 \label{sec:running-ill-typed}
-Vytiniotis \etal~\cite{vytiniotis_equality_2012} extend the Haskell
+Vytiniotis \etal~\cite{Vytiniotis2012-gh} extend the Haskell
 compiler GHC to support compiling ill-typed programs, but their intent
 is rather different from ours. Their goal was to allow programmers to
 incrementally test refactorings, which often cause type errors in
@@ -74,7 +74,7 @@ at runtime.
 work.
 %
 Our use of holes to represent unknown values is inspired by the work of
-Runciman, Naylor, and Lindblad~\cite{runciman_smallcheck_2008,naylor_finding_2007,lindblad_property_2007},
+Runciman, Naylor, and Lindblad~\cite{Runciman2008-ka,Naylor2007-mi,Lindblad2007-oy},
 %
 who use lazy evaluation to drastically reduce the search space for
 exhaustive test generation, by grouping together equivalent inputs by
@@ -86,7 +86,7 @@ limited without advanced grouping and filtering techniques.
 Our search is not exhaustive; instead we use random generation to fill
 in holes on demand.
 %
-Random test generation~\cite{claessen_quickcheck:_2000,csallner_jcrasher:_2004,pacheco_feedback-directed_2007}
+Random test generation~\cite{Claessen2000-lj,Csallner2004-bf,Pacheco2007-at}
 %
 is by its nature incomplete, but is able to check larger inputs than
 exhaustive testing as a result.
@@ -94,7 +94,7 @@ exhaustive testing as a result.
 Instead of enumerating values, which may trigger the same path through
 the program, one might enumerate paths. 
 %
-Dynamic-symbolic execution~\cite{godefroid_dart:_2005,cadar_klee:_2008,tillmann_pex_2008}
+Dynamic-symbolic execution~\cite{Godefroid2005-am,Cadar2008-kg,Tillmann2008-qc}
 %
 combines symbolic execution (to track which path a given input
 triggers) with concrete execution (to ensure failures are
@@ -113,15 +113,15 @@ because it is efficient, and % does not incur the overhead of an external solver
 produces high coverage for our domain of novice programs.
 
 % \begin{itemize}
-% \item \cite{claessen_quickcheck:_2000}
+% \item \cite{Claessen2000-lj}
 % \item 
-% \item \cite{godefroid_dart:_2005}
-% \item \cite{cadar_klee:_2008}
-% \item \cite{tillmann_pex_2008}
+% \item \cite{Godefroid2005-am}
+% \item \cite{Cadar2008-kg}
+% \item \cite{Tillmann2008-qc}
 % \end{itemize}
 
 \paragraph{Program Exploration}
-Perera \etal~\cite{perera_functional_2012} present a tracing semantics
+Perera \etal~\cite{Perera2012-dy} present a tracing semantics
 for functional programs that tags values with their provenance, enabling
 a form of backwards program slicing from a final value to the sequence
 of reductions that produced it. Notably, they allow the user to supply a

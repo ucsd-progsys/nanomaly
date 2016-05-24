@@ -87,31 +87,31 @@
         {\stuck}{\vsu_3}{\tsu_3}}
 \\ \\
 \inference[\recasegoodone]
-  {\thole \mbox{ is fresh}, \triple{\vleaf{t}}{\vsu_1}{\tsu_1} = \force{v}{\ttree{\thole}}{\vsu}{\tsu}
+  {\thole \mbox{ is fresh} \qquad \triple{\vleaf{t}}{\vsu_1}{\tsu_1} = \force{v}{\ttree{\thole}}{\vsu}{\tsu}
   }
   {\step{\inctx{\ecase{v}{e_1}{x_1}{x_2}{x_3}{e_2}}}{\vsu}{\tsu}
         {\inctx{e_1}}{\vsu_1}{\tsu_1}}
 \\ \\
 \inference[\recasegoodtwo]
-  {\thole \mbox{ is fresh}, \triple{\vnode{t}{v_1}{v_2}{v_3}}{\vsu_1}{\tsu_1} = \force{v_1}{\ttree{\thole}}{\vsu}{\tsu}
+  {\thole \mbox{ is fresh} \qquad \triple{\vnode{t}{v_1}{v_2}{v_3}}{\vsu_1}{\tsu_1} = \force{v_1}{\ttree{\thole}}{\vsu}{\tsu}
   }
   {\step{\inctx{\ecase{v}{e_1}{x_1}{x_2}{x_3}{e_2}}}{\vsu}{\tsu}
         {\inctx{e_2\sub{x_1}{v_1}\sub{x_2}{v_2}\sub{x_3}{v_3}}}{\vsu_1}{\tsu_1}}
 \\ \\
 \inference[\recasebad]
-  {\thole \mbox{ is fresh}, \triple{\stuck}{\vsu_1}{\tsu_1} = \force{v}{\ttree{\thole}}{\vsu}{\tsu}
+  {\thole \mbox{ is fresh} \qquad \triple{\stuck}{\vsu_1}{\tsu_1} = \force{v}{\ttree{\thole}}{\vsu}{\tsu}
   }
   {\step{\inctx{\ecase{v}{e_1}{x_1}{x_2}{x_3}{e_2}}}{\vsu}{\tsu}
         {\stuck}{\vsu_1}{\tsu_1}}
 \\ \\
 \inference[\repcasegood]
-  {\thole_1, \thole_2 \mbox{ are fresh}, \triple{\epair{v_1}{v_2}}{\vsu_1}{\tsu_1} = \force{v}{\tprod{\thole_1}{\thole_2}}{\vsu}{\tsu}
+  {\thole_1, \thole_2 \mbox{ are fresh} \qquad \triple{\epair{v_1}{v_2}}{\vsu_1}{\tsu_1} = \force{v}{\tprod{\thole_1}{\thole_2}}{\vsu}{\tsu}
   }
   {\step{\inctx{\epcase{v}{x_1}{x_2}{e}}}{\vsu}{\tsu}
         {\inctx{e\sub{x_1}{v_1}\sub{x_2}{v_2}}}{\vsu_1}{\tsu_1}}
 \\ \\
 \inference[\repcasebad]
-  {\thole_1, \thole_2 \mbox{ are fresh}, \triple{\stuck}{\vsu_1}{\tsu_1} = \force{v}{\tprod{\thole_1}{\thole_2}}{\vsu}{\tsu}
+  {\thole_1, \thole_2 \mbox{ are fresh} \qquad \triple{\stuck}{\vsu_1}{\tsu_1} = \force{v}{\tprod{\thole_1}{\thole_2}}{\vsu}{\tsu}
   }
   {\step{\inctx{\epcase{v}{x_1}{x_2}{e}}}{\vsu}{\tsu}
         {\stuck}{\vsu_1}{\tsu_1}}

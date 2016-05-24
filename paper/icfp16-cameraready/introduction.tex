@@ -32,7 +32,7 @@ This further increases the novice's confusion and can actively mislead
 them to focus their investigation on an irrelevant piece of code.
 %
 Much recent work has focused on analyzing unification constraints
-to properly \emph{localize} a type error~\cite{lerner_searching_2007,chen_counter-factual_2014,zhang_toward_2014,pavlinovic_finding_2014},
+to properly \emph{localize} a type error~\cite{Lerner2007-dt,Chen2014-gd,Zhang2014-lv,Pavlinovic2014-mr},
 but an accurate source location still does not explain \emph{why} the
 program is wrong.
 
@@ -59,7 +59,7 @@ program is wrong.
 \centering
 \includegraphics[height=3in]{fac-long.png}
 \end{minipage}
-\caption{(TL) An ill-typed \texttt{fac} function; (BL) Dynamically witnessing the type error in \texttt{fac}, showing only function calls; (R) The same trace, fully expanded.}
+\caption{(top-left) An ill-typed \texttt{fac} function; (bottom-left) Dynamically witnessing the type error in \texttt{fac}, showing only function calls; (right) The same trace, fully expanded.}
 \label{fig:factorial}
 \end{figure}
 
@@ -164,7 +164,7 @@ Our third contribution is an extensive evaluation of our approach
 on two different sets of ill-typed programs obtained by instrumenting
 compilers used in beginner's classes~(\S~\ref{sec:evaluation}).
 %
-The first is the \uwbench\ data set~\cite{lerner_searching_2007}
+The first is the \uwbench\ data set~\cite{Lerner2007-dt}
 comprising \uwsize\ ill-typed programs.
 %
 The second is a new \ucsdbench\ data set, comprising \ucsdsize\

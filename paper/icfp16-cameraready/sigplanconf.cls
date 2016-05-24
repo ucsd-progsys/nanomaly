@@ -548,9 +548,9 @@
 \fi
 \setlength{\bibsep}{3pt plus .5pt minus .25pt}
 
+\def \bibfont {\small}
 \fi
 
-\def \bibfont {\small}
 
 %                       Categories
 %                       ----------

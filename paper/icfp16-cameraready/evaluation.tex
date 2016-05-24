@@ -34,7 +34,7 @@ course of the first three assignments (IRB
 from which we extracted \ucsdsize\ distinct, ill-typed \ocaml programs.
 %
 The second dataset --- widely used in the literature --- comes from a
-similar course at the University of Washington~\cite{lerner_seminal:_2006},
+graduate-level course at the University of Washington~\cite{Lerner2006-pj},
 from which we extracted 284 ill-typed programs.
 %
 Both datasets include programs that demonstrate a variety of functional
@@ -78,8 +78,8 @@ in the program, and thus valuable feedback for the user.
   outcomes. Our random search successfully finds witnesses for 83\% of
   the programs in under one second, improving slightly to 87\% in under
   10 seconds. In both datasets we detect actual type errors about 82\%
-  of the time, unbound variables or constructors 3-4\% of the time, and
-  diverging loops 2-3\% of the time. For the remaining 11-12\% of the
+  of the time, unbound variables or constructors 3--4\% of the time, and
+  diverging loops 2--3\% of the time. For the remaining 11--12\% of the
   programs we are unable to provide any useful feedback.  }
 \label{fig:results-witness}
 \end{figure*}
@@ -90,13 +90,13 @@ The results of our experiments are summarized in
 Figure~\ref{fig:results-witness}.
 %
 In both datasets our tool was able to find a witness for 83\% of the
-programs in under one second, \ie fast enough to be integrated as a
+programs in under one second, \ie\ fast enough to be integrated as a
 compile-time check. If we extend our tolerance to a 10 second timeout,
 we hit a maximum of 87\% coverage.
 %
 Interestingly, while the vast majority of witnesses corresponded to a
-type-error, as expected, 3-4\% triggered an unbound variable error (even
-though \ocaml reported a type error) and 2-3\% triggered an infinite
+type-error, as expected, 3--4\% triggered an unbound variable error (even
+though \ocaml\ reported a type error) and 2--3\% triggered an infinite
 recursion error.
 %
 For the remaining 12\% of programs we were unable to provide any useful
@@ -106,7 +106,7 @@ after 10 minutes.
 % XX programs were deemed safe and XX timed out even at 3,000 steps, \ie
 % we could not provide any useful feedback for XX\% of the total programs.
 %
-While a more advanced search procedure, \eg dynamic-symbolic execution,
+While a more advanced search procedure, \eg\ dynamic-symbolic execution,
 could likely trigger more of the type errors, our experiments show that
 type errors are coarse enough (or that novice programs are \emph{simple}
 enough) that these techniques are not necessary.
@@ -214,7 +214,7 @@ jumps, there are some extreme outliers. We cannot reasonably expect a
 novice user to explore a trace containing 50+ terms and draw a
 conclusion about which pieces contributed to the bug in their
 program. Enhancing our visualization to slice out program paths relevant
-to specific values~\cite{perera_functional_2012},
+to specific values~\cite{Perera2012-dy},
 would likely help alleviate this issue, allowing users to
 highlight a confusing value and ask: ``Where did this come from?''
 

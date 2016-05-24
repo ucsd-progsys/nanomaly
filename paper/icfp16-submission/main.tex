@@ -42,7 +42,7 @@
 
 
 \usepackage{ifthen}
-\newcommand{\isTechReport}{true} % true or false
+\newcommand{\isTechReport}{false} % true or false
 \newcommand\includeTechReport[1]{%
   \ifthenelse{\equal{\isTechReport}{true}}
     {{#1}}
@@ -57,17 +57,15 @@
 
 \subtitle{(or, ill-typed programs \emph{usually} go wrong)}
 
-\authorinfo{Eric L. Seidel \and Ranjit Jhala}
-           {UC San Diego}
-           {\{eseidel,rjhala\}@cs.ucsd.edu}
+\authorinfo{}{}{}
 
-%%\authorinfo{Ranjit Jhala}
-%%           {UC San Diego}
-%%           {jhala@cs.ucsd.edu}
+% \authorinfo{Eric L. Seidel \and Ranjit Jhala}
+%            {UC San Diego}
+%            {\{eseidel,rjhala\}@cs.ucsd.edu}
 
-\authorinfo{Westley Weimer}
-           {University of Virginia}
-           {weimer@viginia.edu}
+% \authorinfo{Westley Weimer}
+%            {University of Virginia}
+%            {weimer@viginia.edu}
 
 \maketitle
 

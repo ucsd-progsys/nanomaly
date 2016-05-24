@@ -1,9 +1,9 @@
-\subsection{The Advantage Of Traces}\label{sec:advantage-traces}
+\subsection{The Advantage of Traces}\label{sec:advantage-traces}
 
 Next, we present a \emph{qualitative} evaluation that compares
 the explanations provided by \toolname's dynamic witnesses with
 the static reports produced by the \ocaml\ compiler and \sherrloc,
-a state-of-the-art fault localization approach~\cite{zhang_toward_2014}.
+a state-of-the-art fault localization approach~\cite{Zhang2014-lv}.
 %
 In particular, we illustrate, using a series of examples drawn
 from student programs in the \ucsdbench\ dataset, how \toolname's
@@ -166,7 +166,7 @@ Though incorrect, @append@ still type-checks and thus \ocaml and
     'a list
 \end{verbatim}
 %
-\toolname, in contrast, makes no asummptions about @append@ and produces
+\toolname, in contrast, makes no assumptions about @append@ and produces
 a trace that illustrates the true error on line 4, by
 highlighting the conflict in consing a list onto a list of integers.
 %

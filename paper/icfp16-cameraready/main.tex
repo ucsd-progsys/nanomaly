@@ -1,4 +1,10 @@
-\documentclass[blind,preprint,nocopyrightspace,numbers]{sigplanconf}
+\documentclass[9pt,nonatbib]{sigplanconf}
+\pdfpagewidth=8.5in
+\pdfpageheight=11in
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
 
 %
 % the following standard packages may be helpful, but are not required
@@ -49,29 +55,56 @@
     {\ignorespaces}
 \xspace}
 
+%% avoid orphan text and headings
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+
+%% balance columns on final page
+\usepackage{flushend}
+
+%% bibliography
+\usepackage[backend=biber,isbn=false,firstinits=true,style=trad-abbrv]{biblatex}
+\addbibresource{paperpile.bib}
 
 \begin{document}
-
+\toappear{}
 
 \title{Dynamic Witnesses for Static Type Errors}
 
 \subtitle{(or, ill-typed programs \emph{usually} go wrong)}
 
-\authorinfo{}{}{}
+\authorinfo{Eric L. Seidel \and Ranjit Jhala}
+           {UC San Diego}
+           {\{eseidel,rjhala\}@cs.ucsd.edu}
 
-% \authorinfo{Eric L. Seidel \and Ranjit Jhala}
-%            {UC San Diego}
-%            {\{eseidel,rjhala\}@cs.ucsd.edu}
-
-% \authorinfo{Westley Weimer}
-%            {University of Virginia}
-%            {weimer@viginia.edu}
+\authorinfo{Westley Weimer}
+           {University of Virginia}
+           {weimer@viginia.edu}
 
 \maketitle
 
 \input{haskellListings}
 
 \input{abstract}
+
+\category{D.3.2}
+         {Programming Languages}
+         {Language Classifications}
+         [Applicative (functional) languages]
+\category{D.3.4}
+         {Programming Languages}
+         {Processors}
+         [Debuggers]
+\category{F.3.3}
+         {Logics and Meanings of Programs}
+         {Studies of Program Constructs}
+         [Type structure]
+\terms
+Languages
+\keywords
+debugging, testing, type errors
+
 \input{introduction}
 \input{overview}
 \input{semantics}
@@ -82,9 +115,16 @@
 \input{related}
 % \input{conclusion}
 
+\acks
+This work was supported by \ES{XXX}.
+%
+We thank the anonymous reviewers for their insightful comments.
+
 {
-\bibliographystyle{abbrvnat}
-\bibliography{main}
+\printbibliography
+%% \bibliographystyle{abbrvnat}
+%% \bibliography{paperpile}
+%\bibliography{main}
 }
 
 \includeTechReport
