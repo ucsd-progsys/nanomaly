@@ -20,7 +20,7 @@ There are two questions we seek to answer with our evaluation:
 \end{enumerate}
 
 \paragraph{Benchmarks}
-We answer these questions on two sets of ill-typed programs, \ie
+We answer these questions on two sets of ill-typed programs, \ie\
 programs that were rejected by the \ocaml\ compiler because of a
 type error.
 %
@@ -31,15 +31,17 @@ We recorded each interaction with the \ocaml\ top-level system over the
 course of the first three assignments (IRB  
 % \# hidden for blind review),
 \#140608),
-from which we extracted \ucsdsize\ distinct, ill-typed \ocaml programs.
+from which we extracted \ucsdsize\ distinct, ill-typed \ocaml\ programs.
 %
 The second dataset --- widely used in the literature --- comes from a
 graduate-level course at the University of Washington~\cite{Lerner2006-pj},
 from which we extracted 284 ill-typed programs.
 %
-Both datasets include programs that demonstrate a variety of functional
-programming idioms, including (tail) recursive functions, higher-order
-functions, polymorphic data types, and expression evaluators.
+Both datasets contain relatively small programs, the largest being 348
+SLoC; however, they demonstrate a variety of functional programming
+idioms including (tail) recursive functions, higher-order functions,
+polymorphic data types, and expression evaluators.
+
 
 \subsection{Witness Coverage}
 \label{sec:eval:witness-coverage}
@@ -55,7 +57,7 @@ per program.
 % of reductions to perform, increasing in 500-step increments from 500
 % steps to 3,000 steps total.
 %
-We also added a na\"ive check for infinite recursion; at each recursive
+We also added a na{\"\i}ve check for infinite recursion; at each recursive
 function call we check whether the new arguments are identical to the
 current arguments.
 %
@@ -182,7 +184,7 @@ values, \eg red-black trees or a pair of equal integers. If the type
 error is hidden behind a complex branch condition \nanomaly may not be
 able to trigger it. Exhaustive testing and dynamic-symbolic execution
 can address this short-coming by performing an exhaustive search for
-inputs (\emph{resp}. paths through the program). As our experiments
+inputs (\emph{resp}.\ paths through the program). As our experiments
 show, however, novice programs do not appear to require more advanced
 search techniques, likely because the novice programs tend to be simple.
 
@@ -211,13 +213,16 @@ would be useful.
 
 \paragraph{Trace Explosion}
 Though the average complexity of our generated traces is low in terms of
-jumps, there are some extreme outliers. We cannot reasonably expect a
-novice user to explore a trace containing 50+ terms and draw a
-conclusion about which pieces contributed to the bug in their
-program. Enhancing our visualization to slice out program paths relevant
-to specific values~\cite{Perera2012-dy},
-would likely help alleviate this issue, allowing users to
-highlight a confusing value and ask: ``Where did this come from?''
+jumps, there are some extreme outliers.
+%
+We cannot reasonably expect a novice user to explore a trace containing
+50+ terms and draw a conclusion about which pieces contributed to the
+bug in their program.
+%
+Enhancing our visualization to slice out program paths relevant to
+specific values~\cite{Perera2012-dy}, would likely help alleviate this
+issue, allowing users to highlight a confusing value and ask: ``Where
+did this come from?''
 
 \paragraph{Ad-hoc Polymorphism}
 Our approach can only support ad-hoc polymorphism (\eg\ type-classes in
