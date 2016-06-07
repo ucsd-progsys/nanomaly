@@ -30,7 +30,7 @@ inference would succeed.
 %
 In contrast to Lerner, who searches for changes at the
 value-level, by searching at the type level Chen's search is complete due
-the finite universe of types in a program.
+the finite universe of types used in the program.
 %
 Neubauer and Thiemann~\cite{Neubauer2003-xv} present a
 decidable type system based on discriminative sum types, in which all
@@ -38,7 +38,7 @@ terms are typeable and type derivations contain all type errors in a
 program. They then use the typing derivation to slice out the parts of
 the expression related to each error.
 %
-Zhang and Myers~\cite{Zhang2014-lv} present an algorithm for
+Zhang and Myers~\cite{Zhang2014-lv,Zhang2015-yu} present an algorithm for
 identifying the most likely culprit in a system of unsatisfiable
 constraints (\eg type equalities), based on Bayesian reasoning.
 %
@@ -60,13 +60,20 @@ evolution.
 
 \paragraph{Running Ill-Typed Programs}
 \label{sec:running-ill-typed}
-Vytiniotis \etal~\cite{Vytiniotis2012-gh} extend the Haskell
+Vytiniotis~\etal~\cite{Vytiniotis2012-gh} extend the \haskell
 compiler GHC to support compiling ill-typed programs, but their intent
 is rather different from ours. Their goal was to allow programmers to
 incrementally test refactorings, which often cause type errors in
 distant functions. They replace any expression that fails to type
 check with a \emph{runtime} error, but do not check types
 at runtime.
+%
+Bayne~\etal~\cite{Bayne2011-cn} also provide a semantics for running
+ill-typed (\java) programs, but in constrast transform the program to
+perform nearly all type checking at run-time. The key difference between
+Bayne~\etal and our work is that we use the dynamic semantics to
+automatically search for a witness to the type error, while their focus
+is on incremental, programmer-driven testing.
 
 \paragraph{Testing}
 \label{sec:testing}
@@ -125,7 +132,7 @@ Perera \etal~\cite{Perera2012-dy} present a tracing semantics
 for functional programs that tags values with their provenance, enabling
 a form of backwards program slicing from a final value to the sequence
 of reductions that produced it. Notably, they allow the user to supply a
-\emph{partial value} -- containing holes -- and present a partial slice,
+\emph{partial value} --- containing holes --- and present a partial slice,
 containing only those steps that affected the the partial value.
 % This
 % system is designed to answer questions of the form ``Where did this
@@ -135,7 +142,7 @@ contrast, our visualization supports forward \emph{and} backward
 exploration, though our backward steps are more limited than
 Perera's. Specifically, we do not support selecting a value and
 inserting the intermediate terms that preceded it while ignoring
-unrelated computation steps; this would be interesting future work.
+unrelated computation steps. %; this would be interesting future work.
 
 % \ES{todo: more on program exploration}
 

@@ -1,4 +1,4 @@
-\documentclass[9pt,nonatbib]{sigplanconf}
+\documentclass[9pt,numbers]{sigplanconf}
 \pdfpagewidth=8.5in
 \pdfpageheight=11in
 
@@ -64,8 +64,8 @@
 \usepackage{flushend}
 
 %% bibliography
-\usepackage[backend=biber,isbn=false,firstinits=true,style=trad-abbrv]{biblatex}
-\addbibresource{main.bib}
+%% \usepackage[backend=biber,isbn=false,firstinits=true,style=trad-abbrv]{biblatex}
+%% \addbibresource{main.bib}
 
 \begin{document}
 \toappear{}
@@ -121,10 +121,10 @@ This work was supported by \ES{XXX}.
 We thank the anonymous reviewers for their insightful comments.
 
 {
-\printbibliography
-%% \bibliographystyle{abbrvnat}
+%% \printbibliography
+\bibliographystyle{abbrvnat}
 %% \bibliography{paperpile}
-%\bibliography{main}
+\bibliography{main}
 }
 
 \includeTechReport
