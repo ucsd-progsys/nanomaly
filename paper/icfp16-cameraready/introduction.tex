@@ -103,10 +103,10 @@ Our semantics \emph{conservatively} instantiates holes with concrete
 values; thereby dynamically inferring the type of the input
 until the program goes wrong.
 %
-We prove that our procedure synthesizes \emph{general witnesses},
-which means, intuitively, that if a witness is found for a given
-ill-typed function, then, \emph{for all} input types, there exist
-inhabitants that can make the function go wrong.
+We prove that our procedure synthesizes \emph{general witnesses}, which
+means, intuitively, that if a witness is found for a given ill-typed
+function, then, \emph{for all} (inhabited) input types, there exist
+values that can make the function go wrong.
 
 Given a witness to a type error, the novice may still be at a loss.
 %

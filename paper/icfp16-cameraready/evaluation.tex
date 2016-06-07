@@ -3,10 +3,16 @@
 \label{sec:evaluation}
 
 We have implemented a prototype of our search procedure and trace
-visualization for the purely functional subset of \ocaml, in a tool called \nanomaly.
+visualization for a purely functional subset of \ocaml\
+--- with polymorphic types and records, but no modules, objects, or polymorphic variants ---
+in a tool called \nanomaly.
+%
+We treat explicit type signatures, \eg @(x : int)@, as
+primitive operations that narrow the type of the wrapped value.
+%
 In our implementation we instantiated \gensym\ with a simple random
-generation of values, which we will show suffices for the
-majority of type errors.
+generation of values, which we will show suffices for the majority of
+type errors.
 
 \paragraph{Evaluation Goals}
 %
