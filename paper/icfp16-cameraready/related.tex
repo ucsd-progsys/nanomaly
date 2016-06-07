@@ -6,7 +6,7 @@ testing, and program exploration.
 % \paragraph{Type Errors}
 % \label{sec:type-error}
 
-\paragraph{Diagnosing and Repairing Type Errors}
+\paragraph{Localizing and Repairing Type Errors}
 \label{sec:diagnosis-repair}
 It is well known that unification-based type inference procedures can
 produce poor error messages, and in particular, can misidentify the
@@ -15,14 +15,48 @@ produce poor error messages, and in particular, can misidentify the
 Thus, many groups have explored techniques to pinpoint the true source
 of the error and recommend fixes.
 
-Lerner \etal~\cite{Lerner2007-dt} attempt to localize the type
-error and suggest a fix by replacing expressions (or removing them
-entirely) with alternatives based on the surrounding program context.
+% \subparagraph{Localization}
+The traditional Damas-Milner type inference
+algorithm~\cite{Damas1982-uw} reports the first program location where a
+type mismatch is discovered (subject to the traversal
+strategy~\cite{Lee1998-ys}).
 %
-Chen and Erwig~\cite{Chen2014-gd} use a variational type
-system to allow for the possibility of changing an expression's type,
-and search for an expression whose type can be changed such that type
-inference would succeed.
+As a result the error can be reported far away from its
+source~\cite{McAdam1998-ub} without enough information to guide the
+user.
+%
+Type-error slicing~\cite{Haack2003-vc,Schilling2011-yf,Rahli2015-tt,Sagonas2013-bf,Gast2004-zd,Neubauer2003-xv}
+%treats type inference as a constraint-satisfaction problem and
+recognizes this flaw and instead produces a slice of the program
+containing \emph{all} program locations that are connected to the type
+error.
+%
+%% \citet{Neubauer2003-xv} present a decidable type system based on
+%% discriminative sum types, in which all terms are typeable and type
+%% derivations contain all type errors in a program. They then use the
+%% typing derivation to slice out the parts of the expression related to
+%% each error.
+%
+Though the program slice must contain the source of the error, it can
+suffer from the opposite problem of providing \emph{too much}
+information, motivating recent work in ranking the program locations.
+%
+Zhang~\etal~\cite{Zhang2014-lv,Zhang2015-yu} present an algorithm for
+identifying the most likely culprit using Bayesian reasoning.
+%
+\citet{Pavlinovic2014-mr,Pavlinovic2015-kh} translate the %error
+localization problem to a MaxSMT optimization problem, using
+compiler-provided weights to rank the possible sources.
+
+% \subparagraph{Repairing}
+In addition to localizing the error, \citet{Lerner2007-dt} attempt to
+suggest a fix by replacing expressions (or removing them entirely) with
+alternatives based on the surrounding program context.
+%
+\citet{Chen2014-gd} use a variational type system to allow for the
+possibility of changing an expression's type, and search for an
+expression whose type can be changed such that type inference would
+succeed.
 %
 % It then attempts to deduce the error source by searching for an
 % expression whose type can be changed such that type inference would
@@ -32,23 +66,11 @@ In contrast to Lerner, who searches for changes at the
 value-level, by searching at the type level Chen's search is complete due
 the finite universe of types used in the program.
 %
-Neubauer and Thiemann~\cite{Neubauer2003-xv} present a
-decidable type system based on discriminative sum types, in which all
-terms are typeable and type derivations contain all type errors in a
-program. They then use the typing derivation to slice out the parts of
-the expression related to each error.
-%
-Zhang and Myers~\cite{Zhang2014-lv,Zhang2015-yu} present an algorithm for
-identifying the most likely culprit in a system of unsatisfiable
-constraints (\eg type equalities), based on Bayesian reasoning.
-%
-Pavlinovic \etal~\cite{Pavlinovic2014-mr} translate the %error
-localization problem to a MaxSMT optimization problem, using
-compiler-provided weights to rank the possible sources.
 % \item \cite{chen_error-tolerant_2012}
 % \item \cite{okeefe_type_1992}
 % \item \cite{gomard_partial_1990}
 % \item \cite{thatte_type_1988}
+%
 
 In contrast to these approaches, we do not attempt to localize or fix
 the type error. Instead we try to explain it to the novice user using a
@@ -58,9 +80,29 @@ program (even knowing that it is wrong) enables experimentation and the
 use of debuggers to step through the program and investigate its
 evolution.
 
+\paragraph{Improving Error Messages}
+The content and quality of the error messages themselves has also been
+studied extensively.
+%
+\citet{Marceau2011-ok,Marceau2011-cy} study the effectiveness of error
+messages in novice environments and present suggestions for improving
+their quality and consistency.
+%
+\citet{Hage2006-hc} identify a variety of general heuristics to improve
+the quality of type error messages, based on their teaching experience.
+%
+\citet{Heeren2003-db}, \citet{Christiansen2014-qc}, and
+\citet{Serrano2016-oo} provide methods for library authors to specialize
+type errors with domain-specific knowledge.
+%
+The difference with our work is more pronounced here as we do not
+attempt to improve the quality of the error message, instead we search
+for a witness to the error and explain it with the resulting execution
+trace.
+
 \paragraph{Running Ill-Typed Programs}
 \label{sec:running-ill-typed}
-Vytiniotis~\etal~\cite{Vytiniotis2012-gh} extend the \haskell
+\citet{Vytiniotis2012-gh} extend the \haskell
 compiler GHC to support compiling ill-typed programs, but their intent
 is rather different from ours. Their goal was to allow programmers to
 incrementally test refactorings, which often cause type errors in
@@ -68,10 +110,10 @@ distant functions. They replace any expression that fails to type
 check with a \emph{runtime} error, but do not check types
 at runtime.
 %
-Bayne~\etal~\cite{Bayne2011-cn} also provide a semantics for running
+\citet{Bayne2011-cn} also provide a semantics for running
 ill-typed (\java) programs, but in constrast transform the program to
 perform nearly all type checking at run-time. The key difference between
-Bayne~\etal and our work is that we use the dynamic semantics to
+Bayne~\etal\ and our work is that we use the dynamic semantics to
 automatically search for a witness to the type error, while their focus
 is on incremental, programmer-driven testing.
 
@@ -103,21 +145,23 @@ the program, one might enumerate paths.
 %
 Dynamic-symbolic execution~\cite{Godefroid2005-am,Cadar2008-kg,Tillmann2008-qc}
 %
-combines symbolic execution (to track which path a given input
-triggers) with concrete execution (to ensure failures are
-not spurious). The system collects a path condition during execution,
-which tracks symbolically what conditions must be met to trigger the
-current path. Upon successfully completing a test run, it negates the
-path condition and queries a solver for another set of inputs that
-satisfy the negated path condition, \ie inputs that will not trigger the
-same path. Thus, it can prune the search space
-much faster than techniques based on enumerating values, but is limited
-by the expressiveness of the underlying solver. Our operational
-semantics is amenable to dynamic-symbolic execution, one would just need
-to collect the path condition and replace our implementation of \gensym
-by a call to the solver. We chose to use lazy, random generation instead
-because it is efficient, and % does not incur the overhead of an external solver, and
-produces high coverage for our domain of novice programs.
+combines symbolic execution (to track which path a given input triggers)
+with concrete execution (to ensure failures are not spurious). The
+system collects a path condition during execution, which tracks
+symbolically what conditions must be met to trigger the current
+path. Upon successfully completing a test run, it negates the path
+condition and queries a solver for another set of inputs that satisfy
+the negated path condition, \ie inputs that will not trigger the same
+path. Thus, it can prune the search space much faster than techniques
+based on enumerating values, but is limited by the expressiveness of the
+underlying solver.
+
+Our operational semantics is amenable to dynamic-symbolic execution, one
+would just need to collect the path condition and replace our
+implementation of \gensym by a call to the solver. We chose to use lazy,
+random generation instead because it is efficient, and % does not incur
+the overhead of an external solver, and produces high coverage for our
+domain of novice programs.
 
 % \begin{itemize}
 % \item \cite{Claessen2000-lj}
