@@ -391,7 +391,7 @@ $v$ of type $t$ such that $\eapp{f}{v}$ goes wrong.
   For any lambda-term $f$, if
   \hbox{$\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$,}
   then for every
-  (inhabited~\footnote{All types in our formalism are inhabited, but in a larger language like \ocaml this may not be the case.})
+  (inhabited\footnote{All types in our formalism are inhabited, but in a larger language like \ocaml this may not be the case.})
   type
   % \footnote{We exclude builtin functions that subvert the type system, \eg \texttt{Obj.magic}, and thus consider the type $\forall a b. \tfun{a}{b}$ to be uninhabitable.}
   $t$ there exists a value $v$ of type $t$ such that
@@ -853,14 +853,14 @@ executions for general type error witnesses.
 %
 The problem of generating inputs is undecidable in general.
 %
-Our witness generation procedure takes two inputs.
+Our witness generation procedure takes two inputs:
 %
-First, a search bound $k$ which is used to define the \emph{number} of
-traces to explore. (We assume, without loss of generality, that all
-traces are finite.)
+(1) a search bound $k$ which is used to define the \emph{number} of
+traces to explore\footnote{We assume, without loss of generality, that all
+traces are finite.} and
 %
-Second, the target expression $e$ that contains the type error,
-and may be a curried function of multiple arguments.
+(2) the target expression $e$ that contains the type error
+(which may be a curried function of multiple arguments).
 %
 The witness generation procedure returns as output a list of (general)
 witness expressions, each of which is of the form $e\ v_1 \ldots v_n$.

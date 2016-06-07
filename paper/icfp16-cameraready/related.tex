@@ -62,9 +62,9 @@ succeed.
 % expression whose type can be changed such that type inference would
 % succeed.
 %
-In contrast to Lerner, who searches for changes at the
-value-level, by searching at the type level Chen's search is complete due
-the finite universe of types used in the program.
+In contrast to Lerner~\etal, who search for changes at the value-level,
+Chen~\etal\ search at the type-level and are thus complete due the finite
+universe of types used in the program.
 %
 % \item \cite{chen_error-tolerant_2012}
 % \item \cite{okeefe_type_1992}
@@ -181,12 +181,13 @@ containing only those steps that affected the the partial value.
 % This
 % system is designed to answer questions of the form ``Where did this
 % value come from?'' and thus is focused on backward exploration. 
-Perera's system focuses on backward exploration; in
-contrast, our visualization supports forward \emph{and} backward
-exploration, though our backward steps are more limited than
-Perera's. Specifically, we do not support selecting a value and
-inserting the intermediate terms that preceded it while ignoring
-unrelated computation steps. %; this would be interesting future work.
+Perera~\etal\ focus on backward exploration; in contrast, our
+visualization supports forward \emph{and} backward exploration, though
+our backward steps are more limited.
+%
+Specifically, we do not support selecting a value and inserting the
+intermediate terms that preceded it while ignoring unrelated computation
+steps. %; this would be interesting future work.
 
 % \ES{todo: more on program exploration}
 
