@@ -78,7 +78,7 @@ We achieve this via three concrete contributions.
 \paragraph{1. Finding Witnesses}
 Our first contribution is an algorithm for searching for
 \emph{witnesses} to type errors, \ie\ inputs that cause a
-program to go wrong~(\S~\ref{sec:semantics}).
+program to go wrong~(\S~\ref{sec:searching-witness}).
 %
 This problem is surprisingly tricky when we cannot rely on
 static type information.
@@ -151,7 +151,7 @@ useful in understanding why a particular path was taken.
 \paragraph{3. Evaluating Witnesses}
 %
 Of course, the problem of finding witnesses is
-undecidable. In fact, due to the necessarily
+undecidable in general. In fact, due to the necessarily
 conservative nature of static typing, there
 may not even exist any witnesses for a given
 ill-typed program.
