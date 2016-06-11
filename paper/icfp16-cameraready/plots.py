@@ -23,6 +23,9 @@ ALL_DL = [ 'Witness', 'Unbound', 'Diverge', 'No Witness'] #   ['S', 'T'], ['U'],
 def read_csv(f):
     with open(f) as f:
         return list(csv.reader(f))
+def read_csv_dict(f):
+    with open(f) as f:
+        return list(csv.DictReader(f))
 
 def autolabel(ax, rects):
     # attach some text labels
@@ -68,6 +71,93 @@ def plot_coverage(seminal, ucsd):
 
     # plt.show()
     fig.savefig('coverage.png')
+    plt.close()
+
+
+def plot_user_study():
+    a = read_csv_dict('study-data/A-Eric-scores.csv')
+    b = read_csv_dict('study-data/B-Eric-scores.csv')
+
+    def f(xs):
+        return [int(x) for x in xs if int(x) >= 0]
+
+    def err(xs):
+        p = np.average(xs)
+        return 100 * np.sqrt(p * (1-p) / len(xs))
+
+    ## REASON
+    sumlist_a = f([r['5: sumlist reason'] for r in a])
+    append_a = f([r['1: append reason'] for r in a])
+    digitsofint_a = f([r['3: digitsofint reason'] for r in a])
+    wwhile_a = f([r['7: wwhile reason'] for r in a])
+
+    sumlist_b = f([r['1: sumlist reason'] for r in b])
+    append_b = f([r['5: append reason'] for r in b])
+    digitsofint_b = f([r['7: digitsofint reason'] for r in b])
+    wwhile_b = f([r['3: wwhile reason'] for r in b])
+
+    ind = np.arange(4)
+    width = 0.35
+
+    fig = plt.figure()
+    p_o = plt.bar(ind,
+                  [100*np.average(sumlist_b), 100*np.average(append_a), 100*np.average(digitsofint_a), 100*np.average(wwhile_b)],
+                  width,
+                  color=COLORS[0],
+                  yerr=map(err, [sumlist_b, append_a, digitsofint_a, wwhile_b]))
+    p_n = plt.bar(ind + width,
+                  [100*np.average(sumlist_a), 100*np.average(append_b), 100*np.average(digitsofint_b), 100*np.average(wwhile_a)],
+                  width,
+                  color=COLORS[1],
+                  yerr=map(err, [sumlist_a, append_b, digitsofint_b, wwhile_a]))
+
+    plt.title('Explanation',fontsize=24)
+    # plt.xlabel('Problem', fontsize=20)
+    plt.ylabel('% Correct', fontsize=20)
+    plt.xticks(ind + width, ['sumList', 'append', 'digitsOfInt', 'wwhile'], fontsize='large')
+    plt.legend((p_o[0], p_n[1]), ('OCaml', 'NanoMaLy'), 'lower right', fontsize=16)
+    # autolabel(plt, p_o)
+    # autolabel(plt, p_n)
+
+    fig.savefig('user-study-reason.png')
+    plt.close()
+
+
+    ## FIX
+    sumlist_a = f([r['6: sumlist fix'] for r in a])
+    append_a = f([r['2: append fix'] for r in a])
+    digitsofint_a = f([r['4: digitsofint fix'] for r in a])
+    wwhile_a = f([r['8: wwhile fix'] for r in a])
+
+    sumlist_b = f([r['2: sumlist fix'] for r in b])
+    append_b = f([r['6: append fix'] for r in b])
+    digitsofint_b = f([r['8: digitsofint fix'] for r in b])
+    wwhile_b = f([r['4: wwhile fix'] for r in b])
+
+    ind = np.arange(4)
+    width = 0.35
+
+    fig = plt.figure()
+    p_o = plt.bar(ind,
+                  [100*np.average(sumlist_b), 100*np.average(append_a), 100*np.average(digitsofint_a), 100*np.average(wwhile_b)],
+                  width,
+                  color=COLORS[0],
+                  yerr=map(err, [sumlist_b, append_a, digitsofint_a, wwhile_b]))
+    p_n = plt.bar(ind + width,
+                  [100*np.average(sumlist_a), 100*np.average(append_b), 100*np.average(digitsofint_b), 100*np.average(wwhile_a)],
+                  width,
+                  color=COLORS[1],
+                  yerr=map(err, [sumlist_a, append_b, digitsofint_b, wwhile_a]))
+
+    plt.title('Fix',fontsize=24)
+    # plt.xlabel('Problem', fontsize=20)
+    plt.ylabel('% Correct', fontsize=20)
+    plt.xticks(ind + width, ['sumList', 'append', 'digitsOfInt', 'wwhile'], fontsize='large')
+    plt.legend((p_o[0], p_n[1]), ('OCaml', 'NanoMaLy'), 'lower right', fontsize=16)
+    # autolabel(plt, p_o)
+    # autolabel(plt, p_n)
+
+    fig.savefig('user-study-fix.png')
     plt.close()
 
 BINS = [5, 10, 20, 50, 100, 1000]
@@ -245,6 +335,7 @@ def plot_distrib(seminal, ucsd):
     plt.close()
 
 
+
 if __name__ == '__main__':
     seminal = read_csv('../../seminal.csv')
     ucsd = read_csv('../../ucsd.csv')
@@ -256,3 +347,5 @@ if __name__ == '__main__':
     # plot_trace_size(ucsd, UCSD)
 
     plot_coverage(seminal, ucsd)
+
+    plot_user_study()

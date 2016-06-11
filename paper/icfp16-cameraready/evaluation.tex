@@ -170,6 +170,60 @@ maximium of 353 (105 for \uwbench) and a median of 4 (also 4 for
 In both datasets 80\% or more traces have at most 10 jumps.
 %
 
+\input{gallery2}
+
+\subsection{User Study}
+\label{sec:user-study}
+Finally, to test the explanatory power of our jump-compressed traces, we
+ran a user study (IRB \#XXXX) at the University of Virginia (UVA).
+%
+We added four questions to an exam in the Spring session of UVA's
+undergraduate Programming Languages course (CS XXX), in which presented
+the students with ill-typed \ocaml\ programs and asked them to
+%
+(1) \emph{explain} the type error, and
+%
+(2) \emph{fix} the type error.
+%
+For each problem the student would be given the ill-typed program and
+either \ocaml's error message or \toolname's jump-compressed trace.
+%
+The four problems assigned to the students were the
+%
+@sumList@, @digitsOfInt@, and @wwhile@ programs from \S~\ref{sec:advantage-traces}
+as well as the following @append@ program....\ES{HERE}
+
+We then instructed four annotators (one of whom is an author, the other
+three were teaching assistants at UCSD) to classify the answers as
+correct or incorrect.
+
+We performed an inter-rater reliability (IRR) analysis to determine the
+degree to which the annotators consistently graded the exams.
+%
+As we had more than two annotators assigning nominal ratings we used
+Fleiss' kappa~\cite{XXX} to measure IRR.
+%
+The resulting kappa values, $\kappa = 0.72$ for the explanations and
+$\kappa = 0.83$ for the fixes, indicate substantial agreement among
+the annotators~\cite{XXX}.
+
+The results of one of the annotators are shown in
+Figure~\ref{fig:results-user-study}.
+%
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.49\linewidth]{user-study-reason.png}
+\includegraphics[width=0.49\linewidth]{user-study-fix.png}
+\caption{Results of the user study. The students given \toolname's
+  jump-compressed trace consistently scored better than those
+  given \ocaml's type error.}
+\label{fig:results-user-study}
+\end{figure*}
+%
+The students given \toolname's jump-compressed trace were consistently
+more likely to correctly explain and fix the type error than those
+given \ocaml's error message.
+
 \subsection{Discussion}
 \label{sec:discussion}
 

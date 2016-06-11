@@ -42,6 +42,7 @@ reasons3 = c(a3$X1..append.reason,
              b3$X5..append.reason,
              b3$X7..digitsofint.reason)
 reasons = data.frame(reasons0, reasons1, reasons2, reasons3)
+reasons = reasons[reasons$reasons0 != -1 & reasons$reasons1 != -1 & reasons$reasons2 != -1 & reasons$reasons3 != -1,]
 
 fixes0 = c(a0$X2..append.fix,
            a0$X4..digitsofint.fix,
@@ -76,7 +77,7 @@ fixes3 = c(a3$X2..append.fix,
            b3$X6..append.fix,
            b3$X8..digitsofint.fix)
 fixes = data.frame(fixes0, fixes1, fixes2, fixes3)
-
+fixes = fixes[fixes$fixes0 != -1 & fixes$fixes1 != -1 & fixes$fixes2 != -1 & fixes$fixes3 != -1,]
 
 print("REASONS")
 print(table(reasons[,1]))
@@ -84,6 +85,7 @@ print(table(reasons[,2]))
 print(table(reasons[,3]))
 print(table(reasons[,4]))
 print(kappam.fleiss(reasons,detail=TRUE))
+#print(kappam.fleiss(reasons[1:3],detail=TRUE))
 
 print("FIXES")
 print(table(fixes[,1]))
@@ -91,3 +93,4 @@ print(table(fixes[,2]))
 print(table(fixes[,3]))
 print(table(fixes[,4]))
 print(kappam.fleiss(fixes,detail=TRUE))
+#print(kappam.fleiss(fixes[1:3],detail=TRUE))
