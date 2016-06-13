@@ -34,7 +34,7 @@ The first dataset comes from the Spring 2014 undergraduate Programming
 Languages course at UC San Diego.
 %
 We recorded each interaction with the \ocaml\ top-level system over the
-course of the first three assignments (IRB  
+course of the first three assignments (IRB
 % \# hidden for blind review),
 \#140608),
 from which we extracted \ucsdsize\ distinct, ill-typed \ocaml\ programs.
@@ -83,7 +83,7 @@ in the program, and thus valuable feedback for the user.
 \end{minipage}
 % \vspace{-8ex}
 \caption{Results of our coverage testing and the distribution of test
-  outcomes. Our random search successfully finds witnesses for 83\% of
+  outcomes. Our random search successfully finds witnesses for 79--85\% of
   the programs in under one second, improving slightly to 87\% in under
   10 seconds. In both datasets we detect actual type errors about 82\%
   of the time, unbound variables or constructors 3--4\% of the time, and
@@ -161,10 +161,10 @@ Figure~\ref{fig:results-complexity}.
 %
 The average number of single-step reductions per trace is 31 for the
 \ucsdbench\ dataset (35 for the \uwbench\ dataset) with a maximum of
-2,745 (660 for \uwbench) and a median of 16 (also 16 for \uwbench).
+2,745 (986 for \uwbench) and a median of 17 (also 17 for \uwbench).
 %
 The average number of jumps per trace is 7 (also 7 for \uwbench) with a
-maximium of 353 (105 for \uwbench) and a median of 4 (also 4 for
+maximium of 353 (185 for \uwbench) and a median of 4 (also 4 for
 \uwbench).
 %
 In both datasets 80\% or more traces have at most 10 jumps.
@@ -240,8 +240,8 @@ polymorphism.
 
 \paragraph{Random Generation}
 Random test generation has difficulty generating highly constrained
-values, \eg red-black trees or a pair of equal integers. If the type
-error is hidden behind a complex branch condition \nanomaly may not be
+values, \eg\ red-black trees or a pair of equal integers. If the type
+error is hidden behind a complex branch condition \nanomaly\ may not be
 able to trigger it. Exhaustive testing and dynamic-symbolic execution
 can address this short-coming by performing an exhaustive search for
 inputs (\emph{resp}.\ paths through the program). As our experiments
@@ -260,9 +260,9 @@ them. Consider, the following buggy @replicate@
 \end{code}
 %
 This code produces a nested list (with @n@ levels of nesting) containing
-a single copy of @x@, instead of a list with @n@ copies of @x@. \ocaml
+a single copy of @x@, instead of a list with @n@ copies of @x@. \ocaml\
 detects a cyclic \hbox{@'a = 'a list@} constraint in the recursive call
-and throws a type error, whereas \nanomaly happily % recurses @n@ times to
+and throws a type error, whereas \nanomaly\ happily % recurses @n@ times to
 produces the nested list.  Strictly speaking, this function itself cannot
 ``go wrong'', the program would not get stuck until a \emph{client}
 attempted to use the result expecting a flat list. But this is not very
@@ -321,3 +321,4 @@ polymorphism, but defer a proper treatment to future work.
 %%% mode: latex
 %%% TeX-master: "main"
 %%% End:
+%!TEX root = main.tex
