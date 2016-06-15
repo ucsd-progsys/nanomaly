@@ -104,12 +104,14 @@ def plot_user_study():
                   [100*np.average(sumlist_b), 100*np.average(append_a), 100*np.average(digitsofint_a), 100*np.average(wwhile_b)],
                   width,
                   color=COLORS[0],
-                  yerr=map(err, [sumlist_b, append_a, digitsofint_a, wwhile_b]))
+                  # yerr=map(err, [sumlist_b, append_a, digitsofint_a, wwhile_b])
+    )
     p_n = plt.bar(ind + width,
                   [100*np.average(sumlist_a), 100*np.average(append_b), 100*np.average(digitsofint_b), 100*np.average(wwhile_a)],
                   width,
                   color=COLORS[1],
-                  yerr=map(err, [sumlist_a, append_b, digitsofint_b, wwhile_a]))
+                  # yerr=map(err, [sumlist_a, append_b, digitsofint_b, wwhile_a])
+    )
 
     plt.title('Explanation',fontsize=24)
     # plt.xlabel('Problem', fontsize=20)
@@ -142,12 +144,14 @@ def plot_user_study():
                   [100*np.average(sumlist_b), 100*np.average(append_a), 100*np.average(digitsofint_a), 100*np.average(wwhile_b)],
                   width,
                   color=COLORS[0],
-                  yerr=map(err, [sumlist_b, append_a, digitsofint_a, wwhile_b]))
+                  # yerr=map(err, [sumlist_b, append_a, digitsofint_a, wwhile_b])
+    )
     p_n = plt.bar(ind + width,
                   [100*np.average(sumlist_a), 100*np.average(append_b), 100*np.average(digitsofint_b), 100*np.average(wwhile_a)],
                   width,
                   color=COLORS[1],
-                  yerr=map(err, [sumlist_a, append_b, digitsofint_b, wwhile_a]))
+                  # yerr=map(err, [sumlist_a, append_b, digitsofint_b, wwhile_a])
+    )
 
     plt.title('Fix',fontsize=24)
     # plt.xlabel('Problem', fontsize=20)

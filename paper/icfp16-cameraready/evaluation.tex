@@ -3,9 +3,9 @@
 \label{sec:evaluation}
 
 We have implemented a prototype of our search procedure and trace
-visualization for a purely functional subset of \ocaml\
---- with polymorphic types and records, but no modules, objects, or polymorphic variants ---
-in a tool called \nanomaly.
+visualization for a purely functional subset of \ocaml\ --- with
+polymorphic types and records, but no modules, objects, or polymorphic
+variants --- in a tool called \nanomaly.
 %
 We treat explicit type signatures, \eg @(x : int)@, as
 primitive operations that narrow the type of the wrapped value.
@@ -16,18 +16,20 @@ type errors.
 
 \paragraph{Evaluation Goals}
 %
-There are two questions we seek to answer with our evaluation:
+There are three questions we seek to answer with our evaluation:
 %
 \begin{enumerate}
 \item \emphbf{Witness Coverage}
       How many ill-typed programs can we find witnesses for?
 \item \emphbf{Witness Complexity}
       How \emph{complex} are the traces produced by the witnesses?
+\item \emphbf{Witness Utility}
+      How \emph{helpful} are the witnesses and traces in debugging type errors?
 \end{enumerate}
 
 \paragraph{Benchmarks}
-We answer these questions on two sets of ill-typed programs, \ie\
-programs that were rejected by the \ocaml\ compiler because of a
+We answer the first two questions on two sets of ill-typed programs,
+\ie\ programs that were rejected by the \ocaml\ compiler because of a
 type error.
 %
 The first dataset comes from the Spring 2014 undergraduate Programming
@@ -72,7 +74,7 @@ If so, the function cannot possibly terminate and we report an error.
 While not a \emph{type error}, infinite recursion is still a clear bug
 in the program, and thus valuable feedback for the user.
 
-\begin{figure*}[t]
+\begin{figure*}[ht]
 \centering
 \begin{minipage}{\linewidth}
 \centering
@@ -120,7 +122,7 @@ type errors are coarse enough (or that novice programs are \emph{simple}
 enough) that these techniques are not necessary.
 
 
-\subsection{Trace Complexity}
+\subsection{Witness Complexity}
 \label{sec:trace-complexity}
 
 For each of the ill-typed programs for which we could
@@ -143,7 +145,7 @@ trace according to two metrics.
 
 % \item \ES{others?}
 %
-\begin{figure*}[t]
+\begin{figure*}[ht]
 \centering
 \includegraphics[width=0.49\linewidth]{trace_size_step.png}
 \includegraphics[width=0.49\linewidth]{trace_size_jump.png}
@@ -172,14 +174,16 @@ In both datasets 80\% or more traces have at most 10 jumps.
 
 \input{gallery2}
 
-\subsection{User Study}
+\subsection{Measuring Witness Utility}
 \label{sec:user-study}
 Finally, to test the explanatory power of our jump-compressed traces, we
 ran a user study (IRB \#XXXX) at the University of Virginia (UVA).
 %
-We added four questions to an exam in the Spring session of UVA's
-undergraduate Programming Languages course (CS XXX), in which presented
-the students with ill-typed \ocaml\ programs and asked them to
+We included four problems in an exam in the Spring session of UVA's
+undergraduate Programming Languages course (CS XXX).
+%
+The problems presented the students with ill-typed \ocaml\ programs and
+asked them to
 %
 (1) \emph{explain} the type error, and
 %
@@ -188,49 +192,69 @@ the students with ill-typed \ocaml\ programs and asked them to
 For each problem the student would be given the ill-typed program and
 either \ocaml's error message or \toolname's jump-compressed trace.
 %
-The four problems assigned to the students were the
+The four problems assigned to the students were the @sumList@,
+@digitsOfInt@, and @wwhile@ programs from \S~\ref{sec:advantage-traces},
+as well as the following @append@ program
 %
-@sumList@, @digitsOfInt@, and @wwhile@ programs from \S~\ref{sec:advantage-traces}
-as well as the following @append@ program....\ES{HERE}
-
+\begin{ecode}
+  let append x l =
+    match x with
+    | []   -> l
+    | h::t -> h :: t :: l
+\end{ecode}
+%
+which triggers an occurs-check error in the ``cons'' case.
+%
 We then instructed four annotators (one of whom is an author, the other
-three were teaching assistants at UCSD) to classify the answers as
+three are teaching assistants at UCSD) to classify the answers as
 correct or incorrect.
 
 We performed an inter-rater reliability (IRR) analysis to determine the
 degree to which the annotators consistently graded the exams.
 %
-As we had more than two annotators assigning nominal ratings we used
-Fleiss' kappa~\cite{XXX} to measure IRR.
+As we had more than two annotators assigning nominal (``correct'' or
+``incorrect'') ratings we used Fleiss' kappa~\cite{Fleiss1971-du} to
+measure IRR.\@
 %
-The resulting kappa values, $\kappa = 0.72$ for the explanations and
-$\kappa = 0.83$ for the fixes, indicate substantial agreement among
-the annotators~\cite{XXX}.
+Fleiss' kappa is measured on a scale from $1$, indicating total
+agreement, to $-1$, indicating total disagreement, with $0$ indicating
+random agreement.
 
-The results of one of the annotators are shown in
-Figure~\ref{fig:results-user-study}.
+\paragraph{Results}
 %
-\begin{figure*}[t]
+Figure~\ref{fig:results-user-study} summarizes a single annotator's
+results, which show that students given \toolname's jump-compressed
+trace were consistently more likely to correctly explain and fix the
+type error than those given \ocaml's error message.
+%
+The measured kappa values were $\kappa = 0.72$ for the explanations and
+$\kappa = 0.83$ for the fixes; while there is no formal notion for what
+consititutes strong agreement~\cite{Krippendorff2012-wd}, kappa values
+above $0.60$ are often called ``substantial''
+agreement~\cite{Landis1977-ey}.
+%
+\begin{figure*}[ht]
 \centering
 \includegraphics[width=0.49\linewidth]{user-study-reason.png}
 \includegraphics[width=0.49\linewidth]{user-study-fix.png}
-\caption{Results of the user study. The students given \toolname's
-  jump-compressed trace consistently scored better than those
-  given \ocaml's type error.}
+\caption{A classification of students' explanations and fixes for type
+  errors, given either \ocaml's error % message
+  or \toolname's
+  jump-compressed trace. The students given \toolname's jump-compressed
+  trace consistently scored better than those given \ocaml's type
+  error.}
 \label{fig:results-user-study}
 \end{figure*}
 %
-The students given \toolname's jump-compressed trace were consistently
-more likely to correctly explain and fix the type error than those
-given \ocaml's error message.
 
 \subsection{Discussion}
 \label{sec:discussion}
 
 To summarize, our experiments demonstrate that \nanomaly finds witnesses
 to type errors: (1) with high coverage in a timespan amenable to
-compile-time analysis, and (2) with traces that have a low average
-complexity of 7 jumps.
+compile-time analysis, (2) with traces that have a low average
+complexity of 7 jumps, and (3) that are more helpful to novice
+programmers than traditional type error messages.
 
 There are, of course, drawbacks to our approach. Four that stand out
 are: (1) coverage limits due to random generation, (2) the inability to
@@ -255,8 +279,10 @@ them. Consider, the following buggy @replicate@
 %
 \begin{code}
   let rec replicate n x =
-    if n <= 0 then []
-              else replicate (n-1) [x]
+    if n <= 0 then
+      []
+    else
+      replicate (n-1) [x]
 \end{code}
 %
 This code produces a nested list (with @n@ levels of nesting) containing
