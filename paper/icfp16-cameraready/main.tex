@@ -46,7 +46,7 @@
 
 
 \usepackage{ifthen}
-\newcommand{\isTechReport}{true} % true or false
+\newcommand{\isTechReport}{false} % true or false
 \newcommand\includeTechReport[1]{%
   \ifthenelse{\equal{\isTechReport}{true}}
     {{#1}}
@@ -59,7 +59,8 @@
 \displaywidowpenalty=10000
 
 %% balance columns on final page
-\usepackage{flushend}
+%\usepackage{flushend}
+\usepackage{balance}
 
 %% bibliography
 %% \usepackage[backend=biber,isbn=false,firstinits=true,style=trad-abbrv]{biblatex}
@@ -127,11 +128,13 @@ feedback.
 \bibliographystyle{abbrvnat}
 %% \bibliography{paperpile}
 \bibliography{main}
+\balance
 }
 
 \includeTechReport
 {
 
+\clearpage
 \appendix
 \input{proofs}
 %\input{interactive}
