@@ -42,6 +42,7 @@ reasons3 = c(a3$X1..append.reason,
              b3$X5..append.reason,
              b3$X7..digitsofint.reason)
 reasons = data.frame(reasons0, reasons1, reasons2, reasons3)
+## filter out answers that any annotator marked as INCOMPLETE
 reasons = reasons[reasons$reasons0 != -1 & reasons$reasons1 != -1 & reasons$reasons2 != -1 & reasons$reasons3 != -1,]
 
 fixes0 = c(a0$X2..append.fix,
@@ -77,6 +78,7 @@ fixes3 = c(a3$X2..append.fix,
            b3$X6..append.fix,
            b3$X8..digitsofint.fix)
 fixes = data.frame(fixes0, fixes1, fixes2, fixes3)
+## filter out answers that any annotator marked as INCOMPLETE
 fixes = fixes[fixes$fixes0 != -1 & fixes$fixes1 != -1 & fixes$fixes2 != -1 & fixes$fixes3 != -1,]
 
 print("REASONS")

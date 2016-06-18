@@ -86,7 +86,7 @@ in the program, and thus valuable feedback for the user.
 % \vspace{-8ex}
 \caption{Results of our coverage testing and the distribution of test
   outcomes. Our random search successfully finds witnesses for 79--85\% of
-  the programs in under one second, improving slightly to 87\% in under
+  the programs in under one second, improving to 87\% in under
   10 seconds. In both datasets we detect actual type errors about 82\%
   of the time, unbound variables or constructors 3--4\% of the time, and
   diverging loops 2--3\% of the time. For the remaining 11--12\% of the
@@ -117,7 +117,7 @@ after one minute.
 % we could not provide any useful feedback for XX\% of the total programs.
 %
 While a more advanced search procedure, \eg\ dynamic-symbolic execution,
-could likely trigger more of the type errors, our experiments show that
+could likely trigger more of the type errors, our experiments suggest that
 type errors are coarse enough (or that novice programs are \emph{simple}
 enough) that these techniques are not necessary.
 
@@ -182,14 +182,14 @@ ran a user study (IRB \#XXXX) at the University of Virginia (UVA).
 We included four problems in an exam in the Spring session of UVA's
 undergraduate Programming Languages course (CS XXX).
 %
-The problems presented the students with ill-typed \ocaml\ programs and
+We presented the students with ill-typed \ocaml\ programs and
 asked them to
 %
 (1) \emph{explain} the type error, and
 %
 (2) \emph{fix} the type error.
 %
-For each problem the student would be given the ill-typed program and
+For each problem the student was given the ill-typed program and
 either \ocaml's error message or \toolname's jump-compressed trace.
 %
 The four problems assigned to the students were the @sumList@,
@@ -203,7 +203,7 @@ as well as the following @append@ program
     | h::t -> h :: t :: l
 \end{ecode}
 %
-which triggers an occurs-check error in the ``cons'' case.
+which triggers an occurs-check error on line 4.
 %
 We then instructed four annotators (one of whom is an author, the other
 three are teaching assistants at UCSD) to classify the answers as
@@ -220,10 +220,49 @@ Fleiss' kappa is measured on a scale from $1$, indicating total
 agreement, to $-1$, indicating total disagreement, with $0$ indicating
 random agreement.
 
-\paragraph{Results}
+\paragraph{Threats to Validity}
+\subparagraph{Construct}
+%
+Measuring understanding is a difficult task; we used the correctness of
+the student's explanation of, and fix for, the type error as a proxy for
+her understanding, but it is possible that other metrics would produce
+different results.
+
+\subparagraph{Internal}
+%
+We assigned students randomly to two groups. The first group was given
+\ocaml's errors for @append@ and \hbox{@digitsOfInt@,} and \toolname's trace
+for @sumList@ and @wwhile@. The second group was given the opposite
+assignment of errors and traces. This assignment ensured that (1) each
+student was given \ocaml and \toolname problems, and (2) each student
+was given an ``easy'' and ``hard'' problem for both \ocaml and
+\toolname. Students without sufficient knowledge of \ocaml could affect
+the results, as could the time-constrained nature of an exam. For these
+reasons we excluded any answers left blank from our analysis.
+
+\subparagraph{External}
+%
+Our experiment is based on students in the process of learning \ocaml,
+and thus may not generalize to all developers. The four
+programs we used were chosen manually, via a random selection and
+filtering of the programs in the \ucsdbench dataset. In some cases we made
+minor simplifying edits (\eg alpha-renaming, dead-code removal) to the
+programs to make them more understandable in the short timeframe of an
+exam; however, we never altered the resulting type-error. A different
+selection of programs may lead to different results.
+
+\subparagraph{Conclusion}
 %
 We collected exams from 60 students, though due to the nature of the
-study not every student completed every problem.
+study not every student completed every problem. The number of
+incomplete submissions ranges from 2 (for the \ocaml version of
+@sumList@) to 17 (for the \toolname version of @wwhile@). Collecting
+more responses per test pair was not possible, as it would require
+having students answer the same problem twice (once with \ocaml and once
+with \toolname).
+
+
+\subsubsection{Results}
 %
 Figure~\ref{fig:results-user-study} summarizes a single annotator's
 results, which show that students given \toolname's jump-compressed
