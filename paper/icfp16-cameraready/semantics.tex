@@ -200,7 +200,7 @@ possible. In the case where $v$ is a hole, it first checks in the given
 $\vsu$ to see if the hole has already been instantiated and, if so,
 returns the existing instantiation.
 %
-\begin{figure*}[ht]
+\begin{figure*}[t]
 $$
 \begin{array}{lcl}
 %% \multicolumn{3}{l}{\forcesym \ :: \  (e, t) \rightarrow \pair{e}{\vsu}} \\
@@ -271,7 +271,7 @@ we will place holes in the generated value; they will be lazily filled
 in later, on demand.
 
 
-\begin{figure}[ht]
+\begin{figure}[t]
 $$
 \begin{array}{lcll}
 \gensym       & :   & t \times \tsu \rightarrow v \\
@@ -419,7 +419,7 @@ instead of $\tint \rightarrow \tint$.
 The types of (polymorphic) trees are obtained from the labels on their
 values, and the types of tuples directly from their values.
 
-\begin{figure}[ht]
+\begin{figure}[t]
 \[ \begin{array}{lcll}
     \typeof{n}   & \defeq & \tint & \\
     \typeof{b}   & \defeq & \tbool & \\

@@ -1,4 +1,5 @@
-\documentclass[9pt,numbers]{sigplanconf}
+\documentclass[9pt,numbers,preprint]{sigplanconf}
+\pdfoutput=1
 \pdfpagewidth=8.5in
 \pdfpageheight=11in
 
@@ -40,15 +41,12 @@
 \theoremstyle{definition}
 \newtheorem{defn}{Definition} % [section]
 
-\usepackage{pgfplots}
-\usepackage{pgfkeys}
-\pgfplotsset{compat=1.12}
 
 \usepackage[inference]{semantic}
 
 
 \usepackage{ifthen}
-\newcommand{\isTechReport}{false} % true or false
+\newcommand{\isTechReport}{true} % true or false
 \newcommand\includeTechReport[1]{%
   \ifthenelse{\equal{\isTechReport}{true}}
     {{#1}}
@@ -118,7 +116,11 @@ debugging, testing, type errors
 \acks
 % This work was supported by \ES{XXX}.
 %
-We thank the anonymous reviewers for their insightful and enthusiastic feedback.
+This work was supported by NSF grants CCF-1422471, CCF-1223850,
+CCF-1218344, and a generous gift from Microsoft Research.
+%
+We thank the anonymous reviewers for their insightful and enthusiastic
+feedback.
 
 {
 %% \printbibliography

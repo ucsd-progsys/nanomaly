@@ -13,9 +13,8 @@ and so \ocaml responds with the error message:
 %
 \begin{verbatim}
  File "fac.ml", line 5, characters 8-17:
- Error: This expression has type bool
-        but an expression was expected
-        of type int
+ Error: This expression has type bool but an
+        expression was expected of type int.
 \end{verbatim}
 %
 This message makes perfect sense to an expert who is familiar
@@ -33,7 +32,7 @@ them to focus their investigation on an irrelevant piece of code.
 %
 Much recent work has focused on analyzing unification constraints
 to properly \emph{localize} a type error~\cite{Lerner2007-dt,Chen2014-gd,Zhang2014-lv,Pavlinovic2014-mr},
-but an accurate source location still does not explain \emph{why} the
+but an accurate source location does not explain \emph{why} the
 program is wrong.
 
 
@@ -100,7 +99,7 @@ it must have, for example the parameters to an addition operation must
 both be integers.
 %
 Our semantics \emph{conservatively} instantiates holes with concrete
-values; thereby dynamically inferring the type of the input
+values, dynamically inferring the type of the input
 until the program goes wrong.
 %
 We prove that our procedure synthesizes \emph{general witnesses}, which
@@ -139,11 +138,11 @@ steps that allow the user to keep track of a term's provenance.
 We introduce a notion of \emph{jump-compressed} traces to abstract away
 the irrelevant details of a computation.
 %
-A jump-compressed trace includes only big steps to the next function
-call or return, for example the trace in the bottom-left of
-Figure~\ref{fig:factorial} is a jump-compressed trace.
+A jump-compressed trace includes only function
+calls and returns, for example the trace in the bottom-left of
+Figure~\ref{fig:factorial} is jump-compressed.
 %
-Jump-compressed traces are similar to stack traces in that both show a
+Jump-compressed traces are similar to stack traces, both show a
 sequence of function calls that lead to a crash, but the jump-compressed
 trace also shows the return values of successful calls, which can be
 useful in understanding why a particular path was taken.
@@ -178,11 +177,33 @@ Furthermore, we show that a simple interactive strategy yields
 compact counterexample traces with at most 5 steps for 57\%
 of the programs, and at most 10 steps for 81\% of the programs.
 
+\subparagraph{Witness Utility}
+%
+Even if we can find small witnesses for the majority of type errors, it
+may be that the witnesses do not actually help developers
+\emph{understand} the errors.
+%
+In other words, perhaps the static error message is sufficient to
+diagnose and fix the error, or perhaps the witness simply does not add
+enough information to make a difference.
+%
+Thus, our final contribution is a user study that compares the utility
+of our witnesses with that of the error messages provided by the \ocaml
+compiler~(\S~\ref{sec:user-study}).
+%
+We show that students given one of our witnesses are consistently more
+likely to correctly explain and fix a type error than those given
+the standard error message produced by the \ocaml compiler.
+
 \smallskip
 Our results show that in the vast majority of
-cases, (novices') ill-typed programs \emph{do} go wrong.
+cases, (novices') ill-typed programs \emph{do} go wrong,
+and that the witnesses to these errors can be helpful in
+understanding the source of the error.
+%
 This, in turn, opens the door to a novel dynamic way to
 explain, understand, and appreciate the benefits of static typing.
+
 
 %%% Local Variables:
 %%% mode: latex
