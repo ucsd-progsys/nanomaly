@@ -177,7 +177,19 @@ Furthermore, we show that a simple interactive strategy yields
 compact counterexample traces with at most 5 steps for 57\%
 of the programs, and at most 10 steps for 81\% of the programs.
 
-\subparagraph{Witness Utility}
+The ultimate purpose of an error report is to assist the programmer 
+in \emph{understanding} and \emph{fixing} problematic code.
+%
+Thus, our final contribution is a user study that compares \ocaml's 
+errors and our dynamic witnesses against \ocaml's type errors 
+along this dimension~(\S~\ref{sec:user-study}).
+%
+We show that students given one of our witnesses are consistently more
+likely to correctly explain and fix a type error than those given
+the standard error message produced by the \ocaml compiler.
+
+
+% \subparagraph{Witness Utility}
 %
 Even if we can find small witnesses for the majority of type errors, it
 may be that the witnesses do not actually help developers
@@ -187,6 +199,7 @@ In other words, perhaps the static error message is sufficient to
 diagnose and fix the error, or perhaps the witness simply does not add
 enough information to make a difference.
 %
+
 Thus, our final contribution is a user study that compares the utility
 of our witnesses with that of the error messages provided by the \ocaml
 compiler~(\S~\ref{sec:user-study}).
