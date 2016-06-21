@@ -24,7 +24,8 @@ There are three questions we seek to answer with our evaluation:
 \item \emphbf{Witness Complexity}
       How \emph{complex} are the traces produced by the witnesses?
 \item \emphbf{Witness Utility}
-      How \emph{helpful} are the witnesses and traces in debugging type errors?
+      How \emph{helpful} (qualitatively and quantitatively)
+      are the witnesses and traces in debugging type errors?
 \end{enumerate}
 
 \paragraph{Benchmarks}
@@ -33,7 +34,7 @@ We answer the first two questions on two sets of ill-typed programs,
 type error.
 %
 The first dataset comes from the Spring 2014 undergraduate Programming
-Languages course at UC San Diego.
+Languages (CSE 130) course at UC San Diego.
 %
 We recorded each interaction with the \ocaml\ top-level system over the
 course of the first three assignments (IRB
@@ -49,6 +50,25 @@ Both datasets contain relatively small programs, the largest being 348
 SLoC; however, they demonstrate a variety of functional programming
 idioms including (tail) recursive functions, higher-order functions,
 polymorphic data types, and expression evaluators.
+
+We answer the third question in two steps.
+%
+First, we present a qualitative evaluation of \toolname's traces on a
+selection of programs drawn from the UCSD dataset.
+%
+Second, we present a quantitative user study of students in the
+University of Virginia's Spring 2016 undergraduate Programming Languages
+(CS 4501) course.
+%
+As part of an exam, we presented the students with ill-typed \ocaml\
+programs and asked them to
+%
+(1) \emph{explain} the type error, and
+%
+(2) \emph{fix} the type error (IRB \#2014009900).
+%
+For each problem the students were given the ill-typed program and
+either \ocaml's error message or \toolname's jump-compressed trace.
 
 
 \subsection{Witness Coverage}
@@ -172,29 +192,31 @@ maximium of 353 (185 for \uwbench) and a median of 4 (also 4 for
 In both datasets 80\% or more traces have at most 10 jumps.
 %
 
+
+\subsection{Witness Utility}
 \input{gallery2}
 
-\subsection{Measuring Witness Utility}
+\subsubsection{Quantitative}
 \label{sec:user-study}
-Finally, to test the explanatory power of our jump-compressed traces, we
-ran a user study (IRB \#XXXX) at the University of Virginia (UVA).
+% Finally, to test the explanatory power of our jump-compressed traces, we
+% ran a user study (IRB \#2014009900) at the University of Virginia (UVA).
+% %
+% We included four problems in an exam in the Spring session of UVA's
+% undergraduate Programming Languages course (CS 4501).
+% %
+% We presented the 60 students in the course with ill-typed \ocaml\
+% programs and asked them to
+% %
+% (1) \emph{explain} the type error, and
+% %
+% (2) \emph{fix} the type error.
+% %
+% For each problem the student was given the ill-typed program and
+% either \ocaml's error message or \toolname's jump-compressed trace.
 %
-We included four problems in an exam in the Spring session of UVA's
-undergraduate Programming Languages course (CS XXX).
-%
-We presented the students with ill-typed \ocaml\ programs and
-asked them to
-%
-(1) \emph{explain} the type error, and
-%
-(2) \emph{fix} the type error.
-%
-For each problem the student was given the ill-typed program and
-either \ocaml's error message or \toolname's jump-compressed trace.
-%
-The four problems assigned to the students were the @sumList@,
-@digitsOfInt@, and @wwhile@ programs from \S~\ref{sec:advantage-traces},
-as well as the following @append@ program
+We assigned four problems to the ($n=60$) students in the course: the
+@sumList@, @digitsOfInt@, and @wwhile@ programs from
+\S~\ref{sec:advantage-traces}, as well as the following @append@ program
 %
 \begin{ecode}
   let append x l =
@@ -205,10 +227,17 @@ as well as the following @append@ program
 %
 which triggers an occurs-check error on line 4.
 %
+For each problem the students were given the ill-typed program and
+either \ocaml's error message or \toolname's jump-compressed trace.
+%
+Due to the nature of an in-class exam, not every student answered every
+question; we received between 13 and 28 (out of a possible 30) responses
+for each problem-tool pair.
+
 We then instructed four annotators (one of whom is an author, the other
 three are teaching assistants at UCSD) to classify the answers as
 correct or incorrect.
-
+%
 We performed an inter-rater reliability (IRR) analysis to determine the
 degree to which the annotators consistently graded the exams.
 %
@@ -254,20 +283,28 @@ selection of programs may lead to different results.
 \subparagraph{Conclusion}
 %
 We collected exams from 60 students, though due to the nature of the
-study not every student completed every problem. The number of
-incomplete submissions ranges from 2 (for the \ocaml version of
-@sumList@) to 17 (for the \toolname version of @wwhile@). Collecting
-more responses per test pair was not possible, as it would require
-having students answer the same problem twice (once with \ocaml and once
-with \toolname).
+study not every student completed every problem.
+%
+The number of complete submissions ranges from 13 (for the \toolname
+version of @wwhile@) to 28 (for the \ocaml version of @sumList@), out of
+a maximum of 30 per program-tool pair.
+%
+Collecting more responses per test pair was not possible, as it
+would require having students answer the same problem twice (once with
+\ocaml and once with \toolname).
 
 
-\subsubsection{Results}
+\paragraph{Results}
 %
 Figure~\ref{fig:results-user-study} summarizes a single annotator's
 results, which show that students given \toolname's jump-compressed
-trace were consistently more likely to correctly explain and fix the
-type error than those given \ocaml's error message.
+trace were consistently more likely to correctly explain
+and fix the type error than those given \ocaml's error message.
+%
+Across each problem the \toolname responses were marked correct
+$10-30\%$ more often than the \ocaml responses, which suggests that
+the students who had access to \toolname's traces had a better
+understanding of the type errors.
 %
 The measured kappa values were $\kappa = 0.72$ for the explanations and
 $\kappa = 0.83$ for the fixes; while there is no formal notion for what
@@ -283,7 +320,7 @@ agreement~\cite{Landis1977-ey}.
   errors, given either \ocaml's error % message
   or \toolname's
   jump-compressed trace. The students given \toolname's jump-compressed
-  trace consistently scored better than those given \ocaml's type
+  trace consistently scored better ($\ge 10\%$) than those given \ocaml's type
   error.}
 \label{fig:results-user-study}
 \end{figure*}

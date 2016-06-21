@@ -99,6 +99,11 @@ def plot_user_study():
     ind = np.arange(4)
     width = 0.35
 
+    print([np.average(sumlist_a) - np.average(sumlist_b),
+           np.average(append_b) - np.average(append_a),
+           np.average(digitsofint_b) - np.average(digitsofint_a),
+           np.average(wwhile_a) - np.average(wwhile_b)])
+
     fig = plt.figure()
     p_o = plt.bar(ind,
                   [100*np.average(sumlist_b), 100*np.average(append_a), 100*np.average(digitsofint_a), 100*np.average(wwhile_b)],
