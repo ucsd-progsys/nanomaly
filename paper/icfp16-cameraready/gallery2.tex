@@ -21,12 +21,24 @@ For each example we will present
 (2)~the error message returned \ocaml,
 (3)~the error locations returned by \ocaml\ (underlined) and \sherrloc\ (in bold),\footnote{When the locations from \ocaml\ and \sherrloc\ overlap,
 we just underline the relevant code.}
-and (4)~the jump-compressed trace produced by \toolname.
+and (4)~the jump-compressed trace produced by \toolname (in Figure~\ref{fig:traces}).
 
 % \begin{figure*}[ht]
 % \centering
 % \begin{minipage}{0.49\linewidth}
 % \centering
+
+\begin{figure*}[htp]
+  \centering
+  \includegraphics[height=125px]{sqsum.png}
+  \includegraphics[height=125px]{sumlist.png}
+  \includegraphics[height=150px]{digitsOfInt.png}
+  \includegraphics[height=125px]{wwhile.png}
+  \caption{(Left to right) Jump-compressed traces showing how
+    \texttt{sqsum}, \texttt{sumList}, \texttt{digitsOfInt}, and
+    \texttt{wwhile} go wrong in \S~\ref{sec:advantage-traces}.}
+  \label{fig:traces}
+\end{figure*}
 
 
 \paragraph{Example: Recursion with Bad Operator}
@@ -53,14 +65,14 @@ namely the recursive call @sqsum t@ with the message
     'a list
 \end{verbatim}
 %
-\toolname\ produces the following trace showing how the evaluation of
-@sqsum [1]@ gets stuck:
+\toolname\ produces a trace (see Figure~\ref{fig:traces}) showing how the evaluation of
+@sqsum [1]@ gets stuck.
 %
-\begin{center}
-  \includegraphics[height=125px]{sqsum.png}
-\end{center}
+% \begin{center}
+%   \includegraphics[height=125px]{sqsum.png}
+% \end{center}
 %
-The figure highlights the entire stuck term
+The trace highlights the entire stuck term
 (not just the recursive call), emphasizing
 the \emph{conflict} between @int@ and @list@
 rather than assuming one or the other is correct.
@@ -92,13 +104,13 @@ the \emph{recursive call} on line 3:
 %
 Both of the above are parts of the full story, which
 is summarized by \toolname's trace showing
-how @sumList [1; 2]@ gets stuck at @2 + []@.
+how @sumList [1; 2]@ gets stuck at @2 + []@ (see Figure~\ref{fig:traces}).
 %
-\begin{center}
-  \includegraphics[height=125px]{sumlist.png}
-\end{center}
+% \begin{center}
+%   \includegraphics[height=125px]{sumlist.png}
+% \end{center}
 %
-The trace clarifies immediately (via the third step)
+The trace clarifies (via the third step)
 that the @[]@ is the result of the recursive call
 @sumList []@, and shows how it is incompatible with
 the subsequent \texttt{+} operation.
@@ -154,6 +166,7 @@ the digits of the input integer.
              [__n mod 10__]
 \end{ecode}
 %
+%\pagebreak
 Unfortunately, the student's @append@ function \emph{conses} an element
 onto a list instead of appending two lists.
 %
@@ -168,12 +181,12 @@ Though incorrect, @append@ still type-checks and thus \ocaml and
 \end{verbatim}
 %
 \toolname, in contrast, makes no assumptions about @append@ and produces
-a trace that illustrates the true error on line 4, by
+a trace (see Figure~\ref{fig:traces}) that illustrates the true error on line 4, by
 highlighting the conflict in consing a list onto a list of integers.
 %
-\begin{center}
-  \includegraphics[height=175px]{digitsOfInt.png}
-\end{center}
+% \begin{center}
+%   \includegraphics[height=175px]{digitsOfInt.png}
+% \end{center}
 %
 
 \paragraph{Example: Higher-Order Functions}
@@ -212,13 +225,13 @@ and \sherrloc\ which blame the use-site on line 10.
     'a * bool
 \end{verbatim}
 %
-\toolname\ synthesizes a trace that draws the eye to the
+\toolname\ synthesizes a trace (see Figure~\ref{fig:traces}) that draws the eye to the
 true error: the @match@ expression on line 2, and highlights
 the conflict in matching a function against a pair pattern.
 %
-\begin{center}
-  \includegraphics[height=150px]{wwhile.png}
-\end{center}
+% \begin{center}
+%   \includegraphics[height=150px]{wwhile.png}
+% \end{center}
 %
 By highlighting conflicting values (\ie\ the source and sink
 of the problem) and not making assumption about function correctness, \toolname\
