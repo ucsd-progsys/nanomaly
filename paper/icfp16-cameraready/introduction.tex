@@ -79,33 +79,33 @@ Our first contribution is an algorithm for searching for
 \emph{witnesses} to type errors, \ie\ inputs that cause a
 program to go wrong~(\S~\ref{sec:searching-witness}).
 %
-This problem is surprisingly tricky when we cannot rely on
-static type information.
+This problem is tricky when we cannot rely on
+static type information, as we must avoid the
+trap of \emph{spurious} inputs that cause
+irrelevant problems that would be avoided
+by picking values of a different, relevant type.
 %
-In particular, we must avoid the trap of \emph{spurious} inputs
-that cause irrelevant problems that would be avoided by picking
-values of a different, relevant type.
-%
-We solve this problem by developing a novel operational semantics
-that combines evaluation and type inference.
+We solve this problem by developing a novel
+operational semantics that combines evaluation
+and type inference.
 %
 We execute the program with \emph{holes} --- values whose type is
 unknown --- as the inputs.
-% that corresponds to executing the program with \emph{holes} ---
-% values whose type is unknown.
 %
-A hole remains abstract until the evaluation context tells us what type
-it must have, for example the parameters to an addition operation must
-both be integers.
+A hole remains abstract until the evaluation
+context tells us what type it must have, for
+example the parameters to an addition operation
+must both be integers.
 %
-Our semantics \emph{conservatively} instantiates holes with concrete
-values, dynamically inferring the type of the input
-until the program goes wrong.
+Our semantics conservatively instantiates holes
+with concrete values, dynamically inferring the
+type of the input until the program goes wrong.
 %
-We prove that our procedure synthesizes \emph{general witnesses}, which
-means, intuitively, that if a witness is found for a given ill-typed
-function, then, \emph{for all} (inhabited) input types, there exist
-values that can make the function go wrong.
+We prove that our procedure synthesizes \emph{general}
+witnesses, which means, intuitively, that if a witness
+is found for a given ill-typed function, then, \emph{for all}
+(inhabited) input types, there exist values that can make
+the function go wrong.
 
 Given a witness to a type error, the novice may still be at a loss.
 %
@@ -125,7 +125,7 @@ which records all of the small-step reductions and the context
 in which they occur.
 %
 The graph lets us visualize the sequence of
-steps from the source witness to the stuck term. The user can 
+steps from the source witness to the stuck term. The user can
 interactively expand the computation to expose intermediate steps
 by selecting an expression and choosing a traversal strategy.
 %
@@ -177,16 +177,16 @@ Furthermore, we show that a simple interactive strategy yields
 compact counterexample traces with at most 5 steps for 57\%
 of the programs, and at most 10 steps for 81\% of the programs.
 
-The ultimate purpose of an error report is to help the programmer 
+The ultimate purpose of an error report is to help the programmer
 \emph{comprehend} and \emph{fix} problematic code.
 %
-Thus, our final contribution is a user study that compares \toolname's 
+Thus, our final contribution is a user study that compares \toolname's
 dynamic witnesses against \ocaml's type errors along the dimension of
 comprehensibility~(\S~\ref{sec:user-study}).
 %
-Our study finds that students given one of our witnesses are 
+Our study finds that students given one of our witnesses are
 consistently more likely to correctly explain and fix a type
-error than those given the standard error message produced by 
+error than those given the standard error message produced by
 the \ocaml compiler.
 
 
@@ -208,10 +208,10 @@ the \ocaml compiler.
 %
 
 \smallskip
-All together, our results show that in the vast majority of cases, (novices') ill-typed 
-programs \emph{do} go wrong, and that the witnesses to these errors can be 
-helpful in understanding the source of the error. This, in turn, opens the 
-door to a novel dynamic way to explain, understand, and appreciate the 
+All together, our results show that in the vast majority of cases, (novices') ill-typed
+programs \emph{do} go wrong, and that the witnesses to these errors can be
+helpful in understanding the source of the error. This, in turn, opens the
+door to a novel dynamic way to explain, understand, and appreciate the
 benefits of static typing.
 
 

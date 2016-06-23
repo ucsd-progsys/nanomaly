@@ -8,18 +8,19 @@
 
 \paragraph{Localizing and Repairing Type Errors}
 \label{sec:diagnosis-repair}
-It is well known that unification-based type inference procedures can
-produce poor error messages, and in particular, can misidentify the
-\emph{source} of the type error.
+% It is well known that
+% unification-based type inference procedures can
+% produce poor error messages, and in particular, can misidentify the
+% \emph{source} of the type error.
 %
-Thus, many groups have explored techniques to pinpoint the true source
-of the error and recommend fixes.
-
+Many groups have explored techniques to pinpoint the true source
+of errors reported by static type checkers.
+% unification-based type inference procedures.
+%
 % \subparagraph{Localization}
-The traditional Damas-Milner type inference
-algorithm~\cite{Damas1982-uw} reports the first program location where a
-type mismatch is discovered (subject to the traversal
-strategy~\cite{Lee1998-ys}).
+The traditional Damas-Milner type inference algorithm~\cite{Damas1982-uw}
+reports the first program location where a type mismatch is discovered
+(subject to the traversal strategy~\cite{Lee1998-ys}).
 %
 As a result the error can be reported far away from its
 source~\cite{McAdam1998-ub} without enough information to guide the
@@ -82,6 +83,7 @@ use of debuggers to step through the program and investigate its
 evolution.
 
 \paragraph{Improving Error Messages}
+%
 The content and quality of the error messages themselves has also been
 studied extensively.
 %
@@ -100,6 +102,9 @@ The difference with our work is more pronounced here as we do not
 attempt to improve the quality of the error message, instead we search
 for a witness to the error and explain it with the resulting execution
 trace.
+%
+
+
 
 \paragraph{Running Ill-Typed Programs}
 \label{sec:running-ill-typed}
@@ -118,10 +123,10 @@ Bayne~\etal\ and our work is that we use the dynamic semantics to
 automatically search for a witness to the type error, while their focus
 is on incremental, programmer-driven testing.
 
-\paragraph{Testing}
-\label{sec:testing}
-\nanomaly is at its heart a test generator, and builds on a rich line of
-work.
+\paragraph{Testing}\label{sec:testing}
+%
+\nanomaly is at its heart a test generator, and as such,
+builds on a rich line of work.
 %
 Our use of holes to represent unknown values is inspired by the work of
 Runciman, Naylor, and Lindblad~\cite{Runciman2008-ka,Naylor2007-mi,Lindblad2007-oy},
@@ -142,7 +147,7 @@ is by its nature incomplete, but is able to check larger inputs than
 exhaustive testing as a result.
 
 Instead of enumerating values, which may trigger the same path through
-the program, one might enumerate paths. 
+the program, one might enumerate paths.
 %
 Dynamic-symbolic execution~\cite{Godefroid2005-am,Cadar2008-kg,Tillmann2008-qc}
 %
@@ -164,15 +169,28 @@ random generation instead because it is efficient, and % does not incur
 the overhead of an external solver, and produces high coverage for our
 domain of novice programs.
 
+A function's type is a theorem about the function's behavior.
+Thus, \toolname's witnesses can be viewed as \emph{counterexamples},
+thereby connecting it to work on using test generation to find
+counterexamples prior to starting a proof proof~\cite{ACL2Testing, Seidel15}.
+
 % \begin{itemize}
 % \item \cite{Claessen2000-lj}
-% \item 
+% \item
 % \item \cite{Godefroid2005-am}
 % \item \cite{Cadar2008-kg}
 % \item \cite{Tillmann2008-qc}
 % \end{itemize}
 
 \paragraph{Program Exploration}
+
+\cite{Flanagan96} describes a static debugger for Scheme, which helps
+the programmer interactively visualize problematic source-sink flows
+corresponding soft-typing errors. The debugger allows the user to explore
+an abstract reduction graph computed from a static value set analysis of
+the program. In contrast, \toolname generates witnesses and allows the user
+to explore the resulting dynamic execution.
+%
 Perera \etal~\cite{Perera2012-dy} present a tracing semantics
 for functional programs that tags values with their provenance, enabling
 a form of backwards program slicing from a final value to the sequence
@@ -181,7 +199,7 @@ of reductions that produced it. Notably, they allow the user to supply a
 containing only those steps that affected the the partial value.
 % This
 % system is designed to answer questions of the form ``Where did this
-% value come from?'' and thus is focused on backward exploration. 
+% value come from?'' and thus is focused on backward exploration.
 Perera~\etal\ focus on backward exploration; in contrast, our
 visualization supports forward \emph{and} backward exploration, though
 our backward steps are more limited.
@@ -192,7 +210,7 @@ steps. %; this would be interesting future work.
 
 % \ES{todo: more on program exploration}
 
-%%% Local Variables: 
+%%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "main"
-%%% End: 
+%%% End:
