@@ -12,9 +12,10 @@ The function returns @true@ in the base case (instead of @1@),
 and so \ocaml responds with the error message:
 %
 \begin{verbatim}
- File "fac.ml", line 5, characters 8-17:
- Error: This expression has type bool but an
-        expression was expected of type int.
+  This expression has type
+    bool
+  but an expression was expected of type
+    int.
 \end{verbatim}
 %
 This message makes perfect sense to an expert who is familiar
@@ -40,13 +41,13 @@ program is wrong.
 \centering
 \begin{minipage}{.49\linewidth}
 \centering
-\begin{code}
-  let rec fac n =
-    if n <= 0 then
-      true
-    else
-      n * fac (n-1)
-\end{code}
+\begin{ecode}
+let rec fac n =
+  if n <= 0 then
+    true
+  else
+    n * __fac (n-1)__
+\end{ecode}
 \vspace{3em}
 % \end{minipage}
 % % \hspace{0.3in}
@@ -58,7 +59,7 @@ program is wrong.
 \centering
 \includegraphics[height=3in]{fac-long.png}
 \end{minipage}
-\caption{(top-left) An ill-typed \texttt{fac} function; (bottom-left) Dynamically witnessing the type error in \texttt{fac}, showing only function calls; (right) The same trace, fully expanded.}
+\caption{(top-left) An ill-typed \texttt{fac} function, the error location reported by \ocaml is underlined; (bottom-left) Dynamically witnessing the type error in \texttt{fac}, showing only function calls; (right) The same trace, fully expanded.}
 \label{fig:factorial}
 \end{figure}
 
