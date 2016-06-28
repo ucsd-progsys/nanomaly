@@ -1438,3 +1438,36 @@
   isbn      = "9781412983150",
   lccn      = "2011048278"
 }
+
+@misc{Seidel2016Dynamic-TechRep,
+    abstract = {Static type errors are a common stumbling block for newcomers to typed
+functional languages. We present a dynamic approach to explaining type errors
+by generating counterexample witness inputs that illustrate how an ill-typed
+program goes wrong. First, given an ill-typed function, we symbolically execute
+the body to dynamically synthesize witness values that can make the program go
+wrong. We prove that our procedure synthesizes general witnesses in that if a
+witness is found, then for all inhabited input types, there exist values that
+can make the function go wrong. Second, we show how to extend the above
+procedure to produce a reduction graph that can be used to interactively
+visualize and debug witness executions. Third, we evaluate the coverage of our
+approach on two data sets comprising over 4,500 ill-typed student programs. Our
+technique is able to generate witnesses for 88\% of the programs, and our
+reduction graph yields small counterexamples for 81\% of the witnesses. Finally,
+we evaluate the utility of our witnesses in helping students understand and fix
+type errors, and find that students presented with our witnesses consistently
+show a greater understanding of type errors than those presented with a
+standard error message.},
+    archivePrefix = {arXiv},
+    author = {Seidel, Eric L. and Jhala, Ranjit and Weimer, Westley},
+    citeulike-article-id = {14078642},
+    citeulike-linkout-0 = {http://arxiv.org/abs/1606.07557},
+    citeulike-linkout-1 = {http://arxiv.org/pdf/1606.07557},
+    day = {24},
+    eprint = {1606.07557},
+    month = jun,
+    posted-at = {2016-06-28 02:51:39},
+    priority = {0},
+    title = {Dynamic Witnesses for Static Type Errors},
+    url = {http://arxiv.org/abs/1606.07557},
+    year = {2016}
+}
