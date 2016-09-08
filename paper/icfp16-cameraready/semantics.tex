@@ -89,6 +89,13 @@ witnesses for ill-typed programs~\S~(\ref{sec:search-algorithm}).
 %
 We have formalized and tested our semantics and generality theorem
 in \textsc{PLT-Redex}~\cite{Felleisen2009-ya}.
+%
+Detailed proofs for the theorems in this section can be found in
+%
+\ifthenelse{\equal{\isTechReport}{true}}
+{Appendix~\ref{sec:proofs}.}
+{Appendix A of the accompanying tech report~\cite{Seidel2016Dynamic-TechRep}.}
+
 
 \subsection{Syntax}
 \label{sec:syntax}
@@ -200,7 +207,7 @@ possible. In the case where $v$ is a hole, it first checks in the given
 $\vsu$ to see if the hole has already been instantiated and, if so,
 returns the existing instantiation.
 %
-\begin{figure*}[ht]
+\begin{figure*}[t]
 $$
 \begin{array}{lcl}
 %% \multicolumn{3}{l}{\forcesym \ :: \  (e, t) \rightarrow \pair{e}{\vsu}} \\
@@ -271,7 +278,7 @@ we will place holes in the generated value; they will be lazily filled
 in later, on demand.
 
 
-\begin{figure}[ht]
+\begin{figure}[t]
 $$
 \begin{array}{lcll}
 \gensym       & :   & t \times \tsu \rightarrow v \\
@@ -390,7 +397,8 @@ $v$ of type $t$ such that $\eapp{f}{v}$ goes wrong.
 \label{thm:soundness}
   For any lambda-term $f$, if
   \hbox{$\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$,}
-  then for every % inhabitable
+  then for every
+  (inhabited\footnote{All types in our formalism are inhabited, but in a larger language like \ocaml this may not be the case.})
   type
   % \footnote{We exclude builtin functions that subvert the type system, \eg \texttt{Obj.magic}, and thus consider the type $\forall a b. \tfun{a}{b}$ to be uninhabitable.}
   $t$ there exists a value $v$ of type $t$ such that
@@ -418,7 +426,7 @@ instead of $\tint \rightarrow \tint$.
 The types of (polymorphic) trees are obtained from the labels on their
 values, and the types of tuples directly from their values.
 
-\begin{figure}[ht]
+\begin{figure}[t]
 \[ \begin{array}{lcll}
     \typeof{n}   & \defeq & \tint & \\
     \typeof{b}   & \defeq & \tbool & \\
@@ -798,6 +806,7 @@ if $\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{e}{\vsu}{\tsu}
 % \end{description}
 % \end{proof}
 
+\pagebreak
 \begin{proof}[\textbf{Proof of Theorem~\ref{thm:soundness}}]
 %
 Suppose $\trace$ witnesses that $f$ gets stuck,
@@ -852,14 +861,14 @@ executions for general type error witnesses.
 %
 The problem of generating inputs is undecidable in general.
 %
-Our witness generation procedure takes two inputs.
+Our witness generation procedure takes two inputs:
 %
-First, a search bound $k$ which is used to define the \emph{number} of
-traces to explore. (We assume, without loss of generality, that all
-traces are finite.)
+(1) a search bound $k$ which is used to define the \emph{number} of
+traces to explore\footnote{We assume, without loss of generality, that all
+traces are finite.} and
 %
-Second, the target expression $e$ that contains the type error,
-and may be a curried function of multiple arguments.
+(2) the target expression $e$ that contains the type error
+(which may be a curried function of multiple arguments).
 %
 The witness generation procedure returns as output a list of (general)
 witness expressions, each of which is of the form $e\ v_1 \ldots v_n$.

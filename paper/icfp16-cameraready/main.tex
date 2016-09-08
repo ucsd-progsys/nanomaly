@@ -1,4 +1,5 @@
-\documentclass[9pt,nonatbib]{sigplanconf}
+\documentclass[9pt,numbers]{sigplanconf}
+\pdfoutput=1
 \pdfpagewidth=8.5in
 \pdfpageheight=11in
 
@@ -17,7 +18,7 @@
 \usepackage{url}                  % format URLs
 \usepackage{listings}          % format code
 \usepackage{enumitem}      % adjust spacing in enums
-\usepackage[colorlinks=true,allcolors=blue,breaklinks,draft=false]{hyperref}   % hyperlinks, including DOIs and URLs in bibliography
+\usepackage[colorlinks=false,allcolors=blue,breaklinks,draft=false]{hyperref}   % hyperlinks, including DOIs and URLs in bibliography
 % known bug: http://tex.stackexchange.com/questions/1522/pdfendlink-ended-up-in-different-nesting-level-than-pdfstartlink
 \newcommand{\doi}[1]{doi:~\href{http://dx.doi.org/#1}{\Hurl{#1}}}   % print a hyperlinked DOI
 \usepackage{xspace}
@@ -40,9 +41,6 @@
 \theoremstyle{definition}
 \newtheorem{defn}{Definition} % [section]
 
-\usepackage{pgfplots}
-\usepackage{pgfkeys}
-\pgfplotsset{compat=1.12}
 
 \usepackage[inference]{semantic}
 
@@ -61,25 +59,27 @@
 \displaywidowpenalty=10000
 
 %% balance columns on final page
-\usepackage{flushend}
+%\usepackage{flushend}
+\usepackage{balance}
 
 %% bibliography
-\usepackage[backend=biber,isbn=false,firstinits=true,style=trad-abbrv]{biblatex}
-\addbibresource{main.bib}
+%% \usepackage[backend=biber,isbn=false,firstinits=true,style=trad-abbrv]{biblatex}
+%% \addbibresource{main.bib}
 
 \begin{document}
 \toappear{}
 
-\title{Dynamic Witnesses for Static Type Errors}
-
-\subtitle{(or, ill-typed programs \emph{usually} go wrong)}
+\title{Dynamic Witnesses for Static Type Errors\thanks{This work was supported by NSF grants CCF-1422471, CCF-1223850,
+CCF-1218344, CCF-1116289, CCF-0954024, Air Force grant FA8750-15-2-0075,
+and a generous gift from Microsoft Research.} \\
+(or, Ill-Typed Programs \emph{Usually} Go Wrong)}
 
 \authorinfo{Eric L. Seidel \and Ranjit Jhala}
-           {UC San Diego}
-           {\{eseidel,rjhala\}@cs.ucsd.edu}
+           {UC San Diego, USA}
+           {\{eseidel,jhala\}@cs.ucsd.edu}
 
 \authorinfo{Westley Weimer}
-           {University of Virginia}
+           {University of Virginia, USA}
            {weimer@viginia.edu}
 
 \maketitle
@@ -111,25 +111,30 @@ debugging, testing, type errors
 \input{interactive-short}
 \input{evaluation}
 % \input{gallery}
-\input{gallery2}
+% \input{gallery2}
 \input{related}
 % \input{conclusion}
 
 \acks
-This work was supported by \ES{XXX}.
+
+We thank Ethan Chan, Matthew Chan and Timothy Nguyen for assisting
+with our user study, and we thank the anonymous reviewers and
+Matthias Felleisen for their insightful feedback on earlier drafts
+of this paper.
 %
-We thank the anonymous reviewers for their insightful comments.
 
 {
-\printbibliography
-%% \bibliographystyle{abbrvnat}
+%% \printbibliography
+\bibliographystyle{abbrvnat}
 %% \bibliography{paperpile}
-%\bibliography{main}
+\bibliography{main}
+\balance
 }
 
 \includeTechReport
 {
-\newpage
+
+\clearpage
 \appendix
 \input{proofs}
 %\input{interactive}
