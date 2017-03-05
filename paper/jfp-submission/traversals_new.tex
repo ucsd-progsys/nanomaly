@@ -1,0 +1,40 @@
+\begin{figure*}[t]
+\[
+\begin{array}{lcl}
+\stepforward{\vstate}{e}  & \defeq
+  & e' \quad \mbox{where } \singlestep{e}{e'} \in \tr \\ \\
+
+\stepbackward{\vstate}{e} & \defeq
+  & e' \quad \mbox{where } \singlestep{e'}{e} \in \tr \mbox{ and } e' \in \vpath{\vstate}{e} \\ \\
+
+\jumpforward{\vstate}{e} & \defeq
+  & \begin{cases}
+    e'                         & \mbox{if } e' = \eapp{v}{v'} \\
+    \jumpforward{\vstate}{e'}  & \text{otherwise}
+    \end{cases}
+    \mbox{\qquad where } e' = \stepforward{\vstate}{e} \\ \\
+
+\jumpbackward{\vstate}{e} & \defeq
+  & \begin{cases}
+    e'                         & \mbox{if } e' = \eapp{v}{v'} \\
+    \jumpbackward{\vstate}{e'} & \text{otherwise}
+    \end{cases}
+    \mbox{\qquad where } e' = \stepbackward{\vstate}{e} \\ \\
+
+\stepinto{\vstate}{e} & \defeq
+  & e'\sub{x}{v'} \quad \mbox{if } e = C[\eapp{v}{v'}] \mbox{ and } \singlestep{\eapp{v}{v'}}{e'\sub{x}{v'}}  \\ \\
+
+\stepover{\vstate}{e} & \defeq
+  & C[v''] \quad \mbox{if } e = C[\eapp{v}{v'}] \mbox{ and } \multistep{\eapp{v}{v'}}{v''} \in \tr \\[0.25in]
+
+\vpath{\vstate}{e} & \defeq
+  & \{e' \spmid \multistep{\vroot{\vstate}{e}}{e'} \in \tr
+                \mbox{ and }
+                \multistep{e'}{e} \in \tr \} \\[0.15in]
+\end{array}
+\]
+\caption{Rules for computing the \emph{next} term given a
+         visualization state $\vstate$, selected term $e$
+         and command.}
+\label{fig:traversing-graph}
+\end{figure*}

@@ -1,0 +1,216 @@
+\section{Related Work}
+\label{sec:related-work}
+% In this section we connect our work to related efforts on type errors,
+% testing, and program exploration.
+
+% \paragraph{Type Errors}
+% \label{sec:type-error}
+
+\paragraph{Localizing and Repairing Type Errors}
+\label{sec:diagnosis-repair}
+% It is well known that
+% unification-based type inference procedures can
+% produce poor error messages, and in particular, can misidentify the
+% \emph{source} of the type error.
+%
+Many groups have explored techniques to pinpoint the true source
+of errors reported by static type checkers.
+% unification-based type inference procedures.
+%
+% \subparagraph{Localization}
+The traditional Damas-Milner type inference algorithm~\cite{Damas1982-uw}
+reports the first program location where a type mismatch is discovered
+(subject to the traversal strategy~\cite{Lee1998-ys}).
+%
+As a result the error can be reported far away from its
+source~\cite{McAdam1998-ub} without enough information to guide the
+user.
+%
+Type-error slicing~\cite{Haack2003-vc,Schilling2011-yf,Rahli2015-tt,Sagonas2013-bf,Gast2004-zd,Neubauer2003-xv}
+%treats type inference as a constraint-satisfaction problem and
+recognizes this flaw and instead produces a slice of the program
+containing \emph{all} program locations that are connected to the type
+error.
+%
+%% \cite{Neubauer2003-xv} present a decidable type system based on
+%% discriminative sum types, in which all terms are typeable and type
+%% derivations contain all type errors in a program. They then use the
+%% typing derivation to slice out the parts of the expression related to
+%% each error.
+%
+Though the program slice must contain the source of the error, it can
+suffer from the opposite problem of providing \emph{too much}
+information, motivating recent work in ranking the candidate locations.
+%
+Zhang~\etal~\cite{Zhang2014-lv,Zhang2015-yu} present an algorithm for
+identifying the most likely culprit using Bayesian reasoning.
+%
+\cite{Pavlinovic2014-mr,Pavlinovic2015-kh} translate the %error
+localization problem to a MaxSMT optimization problem, using
+compiler-provided weights to rank the possible sources.
+
+% \subparagraph{Repairing}
+In addition to localizing the error, \cite{Lerner2007-dt} attempt to
+suggest a fix by replacing expressions (or removing them entirely) with
+alternatives based on the surrounding program context.
+%
+\cite{Chen2014-gd} use a variational type system to allow for the
+possibility of changing an expression's type, and search for an
+expression whose type can be changed such that type inference would
+succeed.
+%
+% It then attempts to deduce the error source by searching for an
+% expression whose type can be changed such that type inference would
+% succeed.
+%
+In contrast to Lerner~\etal, who search for changes at the value-level,
+Chen~\etal\ search at the type-level and are thus complete due the finite
+universe of types used in the program.
+%
+% \item \cite{chen_error-tolerant_2012}
+% \item \cite{okeefe_type_1992}
+% \item \cite{gomard_partial_1990}
+% \item \cite{thatte_type_1988}
+%
+
+In contrast to these approaches, we do not attempt to localize or fix
+the type error. Instead we try to explain it to the user using a
+dynamic witness that demonstrates how the program is not just
+ill-typed but truly wrong. In addition, allowing users to run their
+program % (even knowing that it is wrong)
+enables experimentation and the
+use of debuggers to step through the program and investigate its
+evolution.
+
+\paragraph{Improving Error Messages}
+%
+The content and quality of the error messages themselves has also been
+studied extensively.
+%
+\cite{Marceau2011-ok,Marceau2011-cy} study the effectiveness of error
+messages in novice environments and present suggestions for improving
+their quality and consistency.
+%
+\cite{Hage2006-hc} identify a variety of general heuristics to improve
+the quality of type error messages, based on their teaching experience.
+%
+\cite{Heeren2003-db}, \cite{Christiansen2014-qc}, and
+\cite{Serrano2016-oo} provide methods for library authors to specialize
+type errors with domain-specific knowledge.
+%
+The difference with our work is more pronounced here as we do not
+attempt to improve the quality of the error message, instead we search
+for a witness to the error and explain it with the resulting execution
+trace.
+%
+
+
+
+\paragraph{Running Ill-Typed Programs}
+\label{sec:running-ill-typed}
+\cite{Vytiniotis2012-gh} extend the \haskell
+compiler GHC to support compiling ill-typed programs, but their intent
+is rather different from ours. Their goal was to allow programmers to
+incrementally test refactorings, which often cause type errors in
+distant functions. They replace any expression that fails to type
+check with a \emph{runtime} error, but do not check types
+at runtime.
+%
+\cite{Bayne2011-cn} also provide a semantics for running
+ill-typed (\java) programs, but in constrast transform the program to
+perform nearly all type checking at run-time. The key difference between
+Bayne~\etal\ and our work is that we use the dynamic semantics to
+automatically search for a witness to the type error, while their focus
+is on incremental, programmer-driven testing.
+
+\paragraph{Testing}\label{sec:testing}
+%
+\nanomaly is at its heart a test generator, and as such,
+builds on a rich line of work.
+%
+Our use of holes to represent unknown values is inspired by the work of
+Runciman, Naylor, and Lindblad~\cite{Runciman2008-ka,Naylor2007-mi,Lindblad2007-oy},
+%
+who use lazy evaluation to drastically reduce the search space for
+exhaustive test generation, by grouping together equivalent inputs by
+the set of values they force. An exhaustive search is complete (up to
+the depth bound), if a witness exists it will be found, but due to the
+exponential blowup in the search space the depth bound can be quite
+limited without advanced grouping and filtering techniques.
+%
+Our search is not exhaustive; instead we use random generation to fill
+in holes on demand.
+%
+Random test generation~\cite{Claessen2000-lj,Csallner2004-bf,Pacheco2007-at}
+%
+is by its nature incomplete, but is able to check larger inputs than
+exhaustive testing as a result.
+
+Instead of enumerating values, which may trigger the same path through
+the program, one might enumerate paths.
+%
+Dynamic-symbolic execution~\cite{Godefroid2005-am,Cadar2008-kg,Tillmann2008-qc}
+%
+combines symbolic execution (to track which path a given input triggers)
+with concrete execution (to ensure failures are not spurious). The
+system collects a path condition during execution, which tracks
+symbolically what conditions must be met to trigger the current
+path. Upon successfully completing a test run, it negates the path
+condition and queries a solver for another set of inputs that satisfy
+the negated path condition, \ie inputs that will not trigger the same
+path. Thus, it can prune the search space much faster than techniques
+based on enumerating values, but is limited by the expressiveness of the
+underlying solver.
+
+Our operational semantics is amenable to dynamic-symbolic execution, one
+would just need to collect the path condition and replace our
+implementation of \gensym by a call to the solver. We chose to use lazy,
+random generation instead because it is efficient, and % does not incur
+the overhead of an external solver, and produces high coverage for our
+domain of novice programs.
+
+A function's type is a theorem about the function's behavior.
+Thus, \toolname's witnesses can be viewed as \emph{counter-examples},
+thereby connecting it to work on using test generation to find
+counter-examples prior to starting a proof~\cite{ACL2Testing, Seidel15}.
+
+% \begin{itemize}
+% \item \cite{Claessen2000-lj}
+% \item
+% \item \cite{Godefroid2005-am}
+% \item \cite{Cadar2008-kg}
+% \item \cite{Tillmann2008-qc}
+% \end{itemize}
+
+\paragraph{Program Exploration}
+
+Flanagan \etal~\cite{Flanagan96} describe a static debugger for Scheme, which helps
+the programmer interactively visualize problematic source-sink flows
+corresponding to soft-typing errors. The debugger allows the user to explore
+an abstract reduction graph computed from a static value set analysis of
+the program. In contrast, \toolname generates witnesses and allows the user
+to explore the resulting dynamic execution.
+%
+Perera \etal~\cite{Perera2012-dy} present a tracing semantics
+for functional programs that tags values with their provenance, enabling
+a form of backwards program slicing from a final value to the sequence
+of reductions that produced it. Notably, they allow the user to supply a
+\emph{partial value} --- containing holes --- and present a partial slice,
+containing only those steps that affected the the partial value.
+% This
+% system is designed to answer questions of the form ``Where did this
+% value come from?'' and thus is focused on backward exploration.
+Perera~\etal\ focus on backward exploration; in contrast, our
+visualization supports forward \emph{and} backward exploration, though
+our backward steps are more limited.
+%
+Specifically, we do not support selecting a value and inserting the
+intermediate terms that preceded it while ignoring unrelated computation
+steps. %; this would be interesting future work.
+
+% \ES{todo: more on program exploration}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

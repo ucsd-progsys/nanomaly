@@ -1,0 +1,123 @@
+\RequirePackage{amsmath}
+\documentclass{jfp1}
+\pdfoutput=1
+\pdfpagewidth=8.5in
+\pdfpageheight=11in
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+
+%
+% the following standard packages may be helpful, but are not required
+%
+%\usepackage{amsmath}
+\usepackage{amssymb}
+% \usepackage{SIunits}            % typset units correctly
+\usepackage{courier}            % standard fixed width font
+% \usepackage[scaled]{helvet} % see www.ctan.org/get/macros/latex/required/psnfss/psnfss2e.pdf
+% \usepackage{url}                  % format URLs
+\usepackage{listings}          % format code
+% \usepackage{enumitem}      % adjust spacing in enums
+% \usepackage[colorlinks=false,allcolors=blue,breaklinks,draft=false]{hyperref}   % hyperlinks, including DOIs and URLs in bibliography
+% % known bug: http://tex.stackexchange.com/questions/1522/pdfendlink-ended-up-in-different-nesting-level-than-pdfstartlink
+% \newcommand{\doi}[1]{doi:~\href{http://dx.doi.org/#1}{\Hurl{#1}}}   % print a hyperlinked DOI
+\usepackage{xspace}
+\usepackage{commands}
+\usepackage{graphicx}
+%\usepackage{pdfpages}
+%\usepackage[doi]{natbib}
+
+% \usepackage{amsthm}
+% \renewcommand{\qedsymbol}{\ensuremath{\blacksquare}}
+% \newtheorem{lemma}{Lemma}
+% \newtheorem{corollary}{Corollary}
+% \newtheorem{theorem}{Theorem}
+% \newtheorem{definition}{Definition}
+% \theoremstyle{plain}% default
+\newtheorem{thm}{Theorem} % [section]
+\newtheorem{lem}[thm]{Lemma}
+% \newtheorem{prop}[thm]{Proposition}
+\newtheorem{cor}{Corollary}
+% \theoremstyle{definition}
+% \newtheorem{defn}{Definition} % [section]
+
+
+\usepackage[inference]{semantic}
+
+
+\usepackage{ifthen}
+\newcommand{\isTechReport}{true} % true or false
+\newcommand\includeTechReport[1]{%
+  \ifthenelse{\equal{\isTechReport}{true}}
+    {{#1}}
+    {\ignorespaces}
+\xspace}
+
+%% avoid orphan text and headings
+% \clubpenalty=10000
+% \widowpenalty=10000
+% \displaywidowpenalty=10000
+
+%% bibliography
+%% \usepackage[backend=biber,isbn=false,firstinits=true,style=trad-abbrv]{biblatex}
+%% \addbibresource{main.bib}
+
+\title[Dynamic Witnesses for Static Type Errors]
+      {Dynamic Witnesses for Static Type Errors\thanks{This work was supported by NSF grants CCF-1422471, CCF-1223850,
+CCF-1218344, CCF-1116289, CCF-0954024, Air Force grant FA8750-15-2-0075,
+and a generous gift from Microsoft Research.}\\
+      (or, Ill-Typed Programs \emph{Usually} Go Wrong)}
+
+\author[E. L. Seidel, R. Jhala, and W. Weimer]
+       {Eric L. Seidel, Ranjit Jhala\\
+         University of California, San Diego, USA\\
+         \email{\{eseidel,jhala\}@cs.ucsd.edu}
+       \and Westley Weimer\\
+         University of Virginia, USA\\
+         \email{weimer@virginia.edu}
+       }
+
+\begin{document}
+\maketitle
+
+\input{haskellListings}
+
+\input{abstract}
+
+\input{introduction}
+\input{overview}
+\input{semantics}
+\input{interactive-short}
+\input{evaluation}
+% \input{gallery}
+% \input{gallery2}
+\input{related}
+% \input{conclusion}
+
+\section*{Acknowledgments}
+
+We thank Ethan Chan, Matthew Chan and Timothy Nguyen for assisting
+with our user study, and we thank the anonymous reviewers and
+Matthias Felleisen for their insightful feedback on earlier drafts
+of this paper.
+%
+
+{
+%% \printbibliography
+\bibliographystyle{jfp}
+%% \bibliography{paperpile}
+\bibliography{main}
+}
+
+\includeTechReport
+{
+
+\clearpage
+\appendix
+\input{proofs}
+%\input{interactive}
+}
+
+
+\end{document}

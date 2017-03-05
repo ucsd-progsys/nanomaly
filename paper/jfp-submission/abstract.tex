@@ -1,0 +1,34 @@
+\begin{abstract}
+  %
+  {Static} type errors are a common stumbling block
+  for newcomers to typed functional languages.
+  %
+  We present a {dynamic} approach to explaining type
+  errors by generating counterexample witness inputs that
+  illustrate how an ill-typed program goes wrong.
+  %
+  First, given an ill-typed function, we symbolically
+  execute the body to synthesize witness values that
+  make the program go wrong.
+  We prove that our procedure synthesizes
+  {general} witnesses in that if a witness is
+  found, then for all inhabited input types,
+  there exist values that can make the function go wrong.
+  %
+  Second, we show how to extend the above procedure to
+  produce a reduction graph that can be used to
+  interactively visualize and debug witness executions.
+  %
+  Third, we evaluate the coverage of our approach
+  on two data sets comprising over 4,500 ill-typed
+  student programs.
+  Our technique is able to generate witnesses for
+  88\% of the programs, and our reduction graph
+  yields small counterexamples for 81\% of the witnesses.
+  %
+  Finally, we evaluate whether our witnesses help
+  students understand and fix type errors, and
+  find that students presented with our witnesses
+  show a greater understanding of type errors
+  than those presented with a standard error message.
+\end{abstract}

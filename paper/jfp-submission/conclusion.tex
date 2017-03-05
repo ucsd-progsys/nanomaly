@@ -1,0 +1,25 @@
+\section{Conclusion}
+\label{sec:conclusion}
+In this paper we have demonstrated how to find \emph{dynamic} witnesses
+to \emph{static} type errors.
+%
+Dynamic witnesses provide the user with more information than static
+error messages, and enable the use of standard debugging techniques
+to explore \emph{how} the program ``goes wrong''.
+%
+Our witness search produces general witnesses, precluding the
+possiblity of a valid typing for the program.
+%
+We have shown a novel interactive visualization of the execution of
+functional programs, which can be used to \emph{show} a novice how a
+witness makes their program crash.
+%
+Our evaluation shows that our search is effective at finding witnesses
+with a 87\% success rate, and that our jump-compressed traces
+effectively hide boring details of the execution, with 90\% of the
+benchmarks containing less than 10 jumps.
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End: 

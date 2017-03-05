@@ -1,0 +1,146 @@
+\begin{figure*}
+\judgementHead{Evaluation}{\step{\estuck}{\vsu}{\tsu}{\estuck}{\vsu}{\tsu}}
+\begin{gather*}
+% \inference[\recontext]
+%   {\step{e}{\su}{e'}{\su'}}
+%   {\step{C[e]}{\su}{C[e']}{\su'}}
+% \qquad
+% \inference[\restuck]
+%   {}
+%   {\step{C[\stuck]}{\su}{\stuck}{\su}}
+% \\ \\
+% \inference[\reholegood]
+%   {\thole \mbox{ is fresh}}
+%   {\step{\ehole}{\vsu}{\tsu}{\vhole{\thole}}{\vsu}{\tsu}}
+% \\ \\
+\inference[\replusgood]
+  {\triple{n_1}{\vsu'}{\tsu'} = \force{v_1}{\tint}{\vsu}{\tsu} \\
+   \triple{n_2}{\vsu''}{\tsu''} = \force{v_2}{\tint}{\vsu'}{\tsu'} \\
+   n = \eplus{n_1}{n_2}}
+  {\step{\inctx{\eplus{v_1}{v_2}}}{\vsu}{\tsu}{\inctx{n}}{\vsu''}{\tsu''}}
+\qquad
+\inference[\replusbadone]
+  {\triple{\stuck}{\vsu'}{\tsu'} = \force{v_1}{\tint}{\vsu}{\tsu}}
+  {\step{\inctx{\eplus{v_1}{v_2}}}{\vsu}{\tsu}{\stuck}{\vsu'}{\tsu'}}
+\\ \\
+\inference[\replusbadtwo]
+  {\triple{\stuck}{\vsu'}{\tsu'} = \force{v_2}{\tint}{\vsu}{\tsu}}
+  {\step{\inctx{\eplus{v_1}{v_2}}}{\vsu}{\tsu}{\stuck}{\vsu'}{\tsu'}}
+\qquad
+\inference[\reifgoodone]
+  {\triple{\etrue}{\vsu'}{\tsu'} = \force{v}{\tbool}{\vsu}{\tsu}}
+  {\step{\inctx{\eif{v}{e_1}{e_2}}}{\vsu}{\tsu}{\inctx{e_1}}{\vsu'}{\tsu'}}
+\\ \\
+\inference[\reifgoodtwo]
+  {\triple{\efalse}{\vsu'}{\tsu'} = \force{v}{\tbool}{\vsu}{\tsu}}
+  {\step{\inctx{\eif{v}{e_1}{e_2}}}{\vsu}{\tsu}{\inctx{e_2}}{\vsu'}{\tsu'}}
+\qquad
+\inference[\reifbad]
+  {\triple{\stuck}{\vsu'}{\tsu'} = \force{v}{\tbool}{\vsu}{\tsu}}
+  {\step{\inctx{\eif{v}{e_1}{e_2}}}{\vsu}{\tsu}{\stuck}{\vsu'}{\tsu'}}
+\\ \\
+\inference[\reappgood]
+  {\triple{\efun{x}{e}}{\vsu'}{\tsu'} = \force{v_1}{\tfun}{\vsu}{\tsu}}
+  {\step{\inctx{\eapp{v_1}{v_2}}}{\vsu}{\tsu}{\inctx{e\sub{x}{v_2}}}{\vsu'}{\tsu'}}
+\qquad
+\inference[\reappbad]
+  {\triple{\stuck}{\vsu'}{\tsu'} = \force{v_1}{\tfun}{\vsu}{\tsu}}
+  {\step{\inctx{\eapp{v_1}{v_2}}}{\vsu}{\tsu}{\stuck}{\vsu'}{\tsu'}}
+\\ \\
+\inference[\releafgood]
+  {\thole \mbox{ is fresh}}
+  {\step{\inctx{\eleaf}}{\vsu}{\tsu}{\inctx{\vleaf{\thole}}}{\vsu}{\tsu}}
+\qquad
+% \ES{what about $\tsu = unify(\thole, \typeof{v_1}, \typeof{v_2}, \typeof{v_3})$, then narrow to $\subst{\tsu}{\thole}$}
+\inference[\renodegood]
+  {
+   % \thole \mbox{ is fresh} \\
+   % \triple{v_1'}{\vsu_1}{\tsu_1} = \force{v_1}{\thole}{\vsu}{\tsu} \\
+   % \triple{v_2'}{\vsu_2}{\tsu_2} = \force{v_2}{\ttree{\thole}}{\vsu_1}{\tsu_1} \\
+   % \triple{v_3'}{\vsu_3}{\tsu_3} = \force{v_3}{\ttree{\thole}}{\vsu_2}{\tsu_2} \\
+   t = \typeof{v_1} \\
+   \triple{v_2'}{\vsu_2}{\tsu_2} = \force{v_2}{\ttree{t}}{\vsu_1}{\tsu_1} \\
+   \triple{v_3'}{\vsu_3}{\tsu_3} = \force{v_3}{\ttree{t}}{\vsu_2}{\tsu_2} \\
+  }
+  {\step{\inctx{\enode{v_1}{v_2}{v_3}}}{\vsu}{\tsu}
+        {\inctx{\vnode{t}{v_1}{v_2'}{v_3'}}}{\vsu_3}{\tsu_3}}
+\\ \\
+\inference[\renodebadone]
+  {
+   % \thole \mbox{ is fresh} \\
+   % \triple{v_1'}{\vsu_1}{\tsu_1}   = \force{v_1}{\thole}{\vsu}{\tsu} \\
+   t = \typeof{v_1} \\
+   \triple{\stuck}{\vsu_2}{\tsu_2} = \force{v_2}{\ttree{t}}{\vsu_1}{\tsu_1} \\
+  }
+  {\step{\inctx{\enode{v_1}{v_2}{v_3}}}{\vsu}{\tsu}
+        {\stuck}{\vsu_3}{\tsu_3}}
+\qquad
+\inference[\renodebadtwo]
+  {
+   % \thole \mbox{ is fresh} \\
+   % \triple{v_1'}{\vsu_1}{\tsu_1} = \force{v_1}{\thole}{\vsu}{\tsu} \\
+   t = \typeof{v_1} \\
+   \triple{v_2'}{\vsu_2}{\tsu_2} = \force{v_2}{\ttree{t}}{\vsu_1}{\tsu_1} \\
+   \triple{\stuck}{\vsu_3}{\tsu_3} = \force{v_3}{\ttree{t}}{\vsu_2}{\tsu_2} \\
+  }
+  {\step{\inctx{\enode{v_1}{v_2}{v_3}}}{\vsu}{\tsu}
+        {\stuck}{\vsu_3}{\tsu_3}}
+\\ \\
+\inference[\recasegoodone]
+  {\thole \mbox{ is fresh} \qquad \triple{\vleaf{t}}{\vsu_1}{\tsu_1} = \force{v}{\ttree{\thole}}{\vsu}{\tsu}
+  }
+  {\step{\inctx{\ecase{v}{e_1}{x_1}{x_2}{x_3}{e_2}}}{\vsu}{\tsu}
+        {\inctx{e_1}}{\vsu_1}{\tsu_1}}
+\\ \\
+\inference[\recasegoodtwo]
+  {\thole \mbox{ is fresh} \qquad \triple{\vnode{t}{v_1}{v_2}{v_3}}{\vsu_1}{\tsu_1} = \force{v_1}{\ttree{\thole}}{\vsu}{\tsu}
+  }
+  {\step{\inctx{\ecase{v}{e_1}{x_1}{x_2}{x_3}{e_2}}}{\vsu}{\tsu}
+        {\inctx{e_2\sub{x_1}{v_1}\sub{x_2}{v_2}\sub{x_3}{v_3}}}{\vsu_1}{\tsu_1}}
+\\ \\
+\inference[\recasebad]
+  {\thole \mbox{ is fresh} \qquad \triple{\stuck}{\vsu_1}{\tsu_1} = \force{v}{\ttree{\thole}}{\vsu}{\tsu}
+  }
+  {\step{\inctx{\ecase{v}{e_1}{x_1}{x_2}{x_3}{e_2}}}{\vsu}{\tsu}
+        {\stuck}{\vsu_1}{\tsu_1}}
+\\ \\
+\inference[\repcasegood]
+  {\thole_1, \thole_2 \mbox{ are fresh} \qquad \triple{\epair{v_1}{v_2}}{\vsu_1}{\tsu_1} = \force{v}{\tprod{\thole_1}{\thole_2}}{\vsu}{\tsu}
+  }
+  {\step{\inctx{\epcase{v}{x_1}{x_2}{e}}}{\vsu}{\tsu}
+        {\inctx{e\sub{x_1}{v_1}\sub{x_2}{v_2}}}{\vsu_1}{\tsu_1}}
+\\ \\
+\inference[\repcasebad]
+  {\thole_1, \thole_2 \mbox{ are fresh} \qquad \triple{\stuck}{\vsu_1}{\tsu_1} = \force{v}{\tprod{\thole_1}{\thole_2}}{\vsu}{\tsu}
+  }
+  {\step{\inctx{\epcase{v}{x_1}{x_2}{e}}}{\vsu}{\tsu}
+        {\stuck}{\vsu_1}{\tsu_1}}
+% \\ \\
+% \inference[\relet]
+%   {}
+%   {\step{\inctx{\elet{x}{v}{e}}}{\su}{\inctx{e\sub{x}{v}}}{\su}}
+\end{gather*}
+\\ % [0.05in]
+%% \relDescription{\forcesym and \gensym}
+%% \begin{gather*}
+%% \begin{array}{lcl}
+%% \force{\ehole{i}}{t} & \defeq & \elet{v}{\gen{t}}{\pair{v}{\ehole{i} \mapsto v}} \\
+%% \force{v}{\ehole{}}  & \defeq & \pair{v}{\emptysu} \\
+%% \force{n}{\tint}    & \defeq & \pair{n}{\emptysu} \\
+%% \force{v}{\tint}    & \defeq & \pair{\stuck}{\emptysu} \\
+%% \force{b}{\tbool}   & \defeq & \pair{b}{\emptysu} \\
+%% \force{v}{\tbool}   & \defeq & \pair{\stuck}{\emptysu} \\
+%% \force{\efun{x}{e}}{\tfun{\thole{}}{\thole{}}} & \defeq & \pair{\efun{x}{e}}{\emptysu} \\
+%% \force{v}{\tfun{\thole{}}{\thole{}}} & \defeq & \pair{\stuck}{\emptysu} \\
+%% \end{array}
+%% \qquad
+%% \begin{array}{lcll}
+%% \gen{\tint}   & \defeq & n & \\
+%% \gen{\tbool}  & \defeq & b & \\
+%% \gen{\tfun{t_1}{t_2}} & \defeq & \efun{x}{\ehole{i}}, & \quad \text{$i$ is fresh} \\
+%% \gen{\thole{}} & \defeq & \ehole{i}, & \quad \text{$i$ is fresh} \\
+%% \end{array}
+%% \end{gather*}
+\caption{Evaluation relation for \lang}
+\label{fig:operational}
+\end{figure*}
