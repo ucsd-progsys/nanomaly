@@ -9,7 +9,7 @@ $$
   & \estuck & ::= & e \spmid \stuck \\
   & e & ::=    & v \spmid x \spmid \eapp{e}{e} \spmid \eplus{e}{e}\\
   &   & \spmid & \eif{e}{e}{e} \\
-  % &   & \spmid & \elet{x}{e}{e} \\
+  &   & \spmid & \elet{x}{e}{e} \\
   &   & \spmid & \epair{e}{e} \spmid \epcase{e}{x}{x}{e} \\
   &   & \spmid & \enode{e}{e}{e} \spmid \eleaf \\
   &   & \spmid & \ecase{e}{e}{x}{x}{x}{e} \\[0.1in]
@@ -44,12 +44,10 @@ $$
   \spmid \eapp{v}{C} \\
   & & \spmid & \eplus{C}{e} \spmid \eplus{v}{C} \\
   & & \spmid & \eif{C}{e}{e} \\
-  % & & \spmid & \elet{x}{C}{e} \\
+  & & \spmid & \elet{x}{C}{e} \\
   & & \spmid & \epair{C}{e} \spmid \epair{v}{C} \\
   & & \spmid & \epcase{C}{x}{x}{e} \\
-  & & \spmid & \enode{C}{e}{e} \\
-  & & \spmid & \enode{v}{C}{e} \\
-  & & \spmid & \enode{v}{v}{C} \\
+  & & \spmid & \enode{C}{e}{e} \spmid \enode{v}{C}{e} \spmid \enode{v}{v}{C} \\
   & & \spmid & \ecase{C}{e}{x}{x}{x}{e} \\[0.05in]
 \end{array}
 $$

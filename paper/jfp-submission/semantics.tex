@@ -196,9 +196,9 @@ that ``dynamically'' perform type-checking and hole-filling
 respectively.
 
 \paragraph{Narrowing Types} The procedure % $\force{v}{t}{\vsu}{\tsu}$,
-$$
+\[
 \forcesym : v \times t \times \vsu \times \tsu \rightarrow \triple{v \cup \stuck}{\vsu}{\tsu}
-$$
+\]
 defined in Figure~\ref{fig:narrow}, takes as input a value $v$, a type
 $t$, and the current value and type substitutions, and refines $v$ to
 have type $t$ by yielding a triple of either the same value and
@@ -207,11 +207,11 @@ possible. In the case where $v$ is a hole, it first checks in the given
 $\vsu$ to see if the hole has already been instantiated and, if so,
 returns the existing instantiation.
 %
-\begin{figure*}[t]
-$$
-\begin{array}{lcl}
+\begin{figure}[t]
+\[
+\begin{array}{lll}
 %% \multicolumn{3}{l}{\forcesym \ :: \  (e, t) \rightarrow \pair{e}{\vsu}} \\
-\forcesym                  & : & v \times t \times \vsu \times \tsu \rightarrow \triple{v \cup \stuck}{\vsu}{\tsu} \\
+\forcesym                  & : v \times t \times \vsu \times \tsu \rightarrow \triple{v \cup \stuck}{\vsu}{\tsu} \\
 % \force{v}{\thole}{\vsu}{\tsu}  & \defeq & \hspace{-1ex}
 % \begin{cases}
 %   \triple{v}{\vsu}{\tsu'} & \mbox{if } \tsu' = \unify{\{\typeof{v}, \thole\}}{\tsu} \\
@@ -220,13 +220,13 @@ $$
 %   % \force{v}{\subst{\tsu}{\thole}}{\vsu}{\tsu} & \mbox{if}\ \thole \in dom(\tsu) \\
 %   % \triple{v}{\vsu}{\extendsu{\tsu}{\thole}{\typeof{v}}} & \mbox{otherwise} \\
 % \end{cases} \\
-\force{\vhole{\thole}}{t}{\vsu}{\tsu} & \defeq & \hspace{-1ex}
+\force{\vhole{\thole}}{t}{\vsu}{\tsu} & \defeq % \hspace{-1ex}
 \begin{cases}
-  \triple{v}{\vsu}{\tsu'}    & \mbox{if } v = \lookupsu{\vsu}{\vhole{\thole}},
-                                         \tsu' = \unify{\{\thole, t, \typeof{v}\}}{\tsu}\\
-  \triple{\stuck}{\vsu}{\tsu} & \mbox{if } v = \lookupsu{\vsu}{\vhole{\thole}} \\
-  \triple{v}{\extendsu{\vsu}{\vhole{\thole}}{v}}{\tsu'} & \mbox{if}\ \tsu' = \unify{\{\thole, t\}}{\tsu}, v = \gen{t}{\tsu'}\\
-\end{cases} \\
+  \triple{v}{\vsu}{\tsu'}    & \textbf{if} \begin{array}{l} v = \lookupsu{\vsu}{\vhole{\thole}}, \\
+                                         \tsu' = \unify{\{\thole, t, \typeof{v}\}}{\tsu}\end{array} \\
+  \triple{\stuck}{\vsu}{\tsu} & \textbf{if} \begin{array}{l} v = \lookupsu{\vsu}{\vhole{\thole}}\end{array} \\
+  \triple{v}{\extendsu{\vsu}{\vhole{\thole}}{v}}{\tsu'} & \textbf{if} \begin{array}{l} \tsu' = \unify{\{\thole, t\}}{\tsu}, \\ v = \gen{t}{\tsu'} \end{array}\\
+\end{cases}  \\
 % \begin{cases}
 %   \triple{\lookupsu{\vsu}{\ehole}}{\vsu}{\tsu} & \mbox{if}\ \ehole \in dom(\vsu), \hastype{\lookupsu{\vsu}{\ehole}}{t} \\
 %   \triple{\stuck}{\vsu}{\tsu}                  & \mbox{if}\ \ehole \in dom(\vsu) \\
@@ -236,18 +236,18 @@ $$
     % \mathtt{if}\ i \in \vsu\ \mathtt{then}\ \triple{\vsu(i)}{\vsu}\ \mathtt{else} \\
          % \elet{v}{\gen{t}}{\triple{v}{\ehole{i} \mapsto v}}
   % \end{array} \\
-\force{n}{\tint}{\vsu}{\tsu}     & \defeq & \triple{n}{\vsu}{\tsu} \\
-\force{b}{\tbool}{\vsu}{\tsu}    & \defeq & \triple{b}{\vsu}{\tsu} \\
-\force{\efun{x}{e}}{\tfun}{\vsu}{\tsu} & \defeq & \triple{\efun{x}{e}}{\vsu}{\tsu} \\
-\force{\epair{v_1}{v_2}}{\tprod{t_1}{t_2}}{\vsu}{\tsu} & \defeq & \triple{\epair{v_1}{v_2}}{\vsu}{\tsu''}, \mbox{if}\ \tsu' = \unify{\{\typeof{v_1}, t_1\}}{\tsu}, \tsu'' = \unify{\{\typeof{v_2}, t_2\}}{\tsu'}  \\
-\force{\vleaf{t_1}}{\ttree{t_2}}{\vsu}{\tsu} & \defeq & \triple{\vleaf{t_1}}{\vsu}{\tsu'}, \mbox{if}\ \tsu' = \unify{\{t_1, t_2\}}{\tsu} \\
-\force{\vnode{t_1}{v_1}{v_2}{v_3}}{\ttree{t_2}}{\vsu}{\tsu} & \defeq & \triple{\vnode{t_1}{v_1}{v_2}{v_3}}{\vsu}{\tsu'}, \mbox{if}\ \tsu' = \unify{\{t_1, t_2\}}{\tsu} \\
-\force{v}{t}{\vsu}{\tsu} & \defeq & \triple{\stuck}{\vsu}{\tsu}
+\force{n}{\tint}{\vsu}{\tsu}     & \defeq \triple{n}{\vsu}{\tsu} \\
+\force{b}{\tbool}{\vsu}{\tsu}    & \defeq \triple{b}{\vsu}{\tsu} \\
+\force{\efun{x}{e}}{\tfun}{\vsu}{\tsu} & \defeq \triple{\efun{x}{e}}{\vsu}{\tsu} \\
+\force{\epair{v_1}{v_2}}{\tprod{t_1}{t_2}}{\vsu}{\tsu} & \defeq \triple{\epair{v_1}{v_2}}{\vsu}{\tsu''} & \hspace{-42mm} \textbf{if} \begin{array}{l} \tsu' = \unify{\{\typeof{v_1}, t_1\}}{\tsu},\\ \tsu'' = \unify{\{\typeof{v_2}, t_2\}}{\tsu'} \end{array} \\
+\force{\vleaf{t_1}}{\ttree{t_2}}{\vsu}{\tsu} & \defeq \triple{\vleaf{t_1}}{\vsu}{\tsu'} & \hspace{-42mm} \textbf{if} \begin{array}{l} \tsu' = \unify{\{t_1, t_2\}}{\tsu} \end{array}\\
+\force{\vnode{t_1}{v_1}{v_2}{v_3}}{\ttree{t_2}}{\vsu}{\tsu} \hspace{-3mm} & \defeq \triple{\vnode{t_1}{v_1}{v_2}{v_3}}{\vsu}{\tsu'} & \hspace{-42mm} \textbf{if} \begin{array}{l} \tsu' = \unify{\{t_1, t_2\}}{\tsu} \end{array} \\
+\force{v}{t}{\vsu}{\tsu} & \defeq \triple{\stuck}{\vsu}{\tsu}
 \end{array}
-$$
+\]
 \caption{Narrowing values}
 \label{fig:narrow}
-\end{figure*}
+\end{figure}
 %
 %While a hole may map to a value that \emph{contains} another hole, \eg a
 %lambda or a tree, it may not map \emph{directly} to another hole,
@@ -279,7 +279,7 @@ in later, on demand.
 
 
 \begin{figure}[t]
-$$
+\[
 \begin{array}{lcll}
 \gensym       & :   & t \times \tsu \rightarrow v \\
 \gen{\thole}{\tsu}  & \defeq  & \gen{\subst{\tsu}{\thole}}{\tsu} &  \text{if } \thole \in dom(\tsu) \\
@@ -290,7 +290,7 @@ $$
 \gen{\tfun}{\tsu}   & \defeq & \efun{x}{\vhole{\thole}} &  \text{\ehole, \thole are fresh} \\
 \gen{\thole}{\tsu}  & \defeq & \vhole{\thole} & \text{\ehole is fresh} \\
 \end{array}
-$$
+\]
 \caption{Generating values}
 \label{fig:gen}
 \end{figure}
@@ -325,8 +325,8 @@ $\triple{\estuck_0}{\vsu_0}{\tsu_0}, \ldots, \triple{\estuck_n}{\vsu_n}{\tsu_n}$
 $\forall 0 \leq i < n$, we have
 $\step{\estuck_i}{\vsu_i}{\tsu_i}{\estuck_{i+1}}{\vsu_{i+1}}{\tsu_{i+1}}$.
 %
-We write \steptr{\trace}{\estuck}{\vsu}{\tsu}{\estuck'}{\vsu'}{\tsu'} if $\trace$ is
-a trace of the form $\triple{\estuck}{\vsu}{\tsu},\ldots,\triple{\estuck'}{\vsu'}{\tsu'}$.
+We write $\steptr{\trace}{\estuck}{\vsu}{\tsu}{\estuck'}{\vsu'}{\tsu'}$ if $\trace$ is
+a trace of the form $\triple{\estuck}{\vsu}{\tsu},\ldots,$ $\triple{\estuck'}{\vsu'}{\tsu'}$.
 %
 We write \steps{\estuck}{\vsu}{\tsu}{\estuck'}{\vsu'}{\tsu'} if
 \steptr{\trace}{\estuck}{\vsu}{\tsu}{\estuck'}{\vsu'}{\tsu'} for some trace $\trace$.

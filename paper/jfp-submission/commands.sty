@@ -43,8 +43,7 @@
 \newcommand\elet[3]{\ensuremath{\mathtt{let}\ #1 = #2\ \mathtt{in}\ #3}\xspace}
 \newcommand\enode[3]{\ensuremath{\mathtt{node}\ #1\ #2\ #3}\xspace}
 \newcommand\eleaf{\ensuremath{\mathtt{leaf}}\xspace}
-% \newcommand\ecase[6]{\ensuremath{\mathtt{case}\ #1\ \mathtt{of} \begin{cases} \eleaf \to #2\\ \enode{#3}{#4}{#5} \to #6 \end{cases}}\xspace}
-\newcommand\ecase[6]{\ensuremath{\mathtt{case}\ #1\ \mathtt{of} \eleaf \to #2; \enode{#3}{#4}{#5} \to #6}\xspace}
+\newcommand\ecase[6]{\ensuremath{\mathtt{case}\ #1\ \mathtt{of} \begin{cases} \eleaf \to #2\\ \enode{#3}{#4}{#5} \to #6 \end{cases}}\xspace}
 \newcommand\ehole{\ensuremath{\nu}\xspace}
 \newcommand\thole{\ensuremath{\alpha}\xspace}
 \newcommand\epair[2]{\ensuremath{\langle #1, #2 \rangle}\xspace}
@@ -87,7 +86,7 @@
 \newcommand\tincompat[2]{\ensuremath{#1 \nsim #2}}
 \newcommand\vincompat[2]{\tincompat{#1}{#2}}
 
-\newcommand\typeofsym{\ensuremath{\mathsf{typeof}}\xspace}
+\newcommand\typeofsym{\ensuremath{\mathsf{ty}}\xspace}
 \newcommand\typeof[1]{\ensuremath{\typeofsym(#1)}\xspace}
 \newcommand\ptype[2]{\ensuremath{\rho_{#1}(#2)}\xspace}
 
@@ -135,27 +134,27 @@
 \newcommand\subst[2]{\ensuremath{#1(#2)}}
 \newcommand\sub[2]{\ensuremath{\left[#2/#1\right]}}
 \newcommand\rulename[1]{\textsc{#1}\xspace}
-\newcommand{\recontext}{\rulename{E-Context}}
-\newcommand{\restuck}{\rulename{E-Stuck}}
-\newcommand{\replusgood}{\rulename{E-Plus-Good}}
-\newcommand{\replusbadone}{\rulename{E-Plus-Bad1}}
-\newcommand{\replusbadtwo}{\rulename{E-Plus-Bad2}}
-\newcommand{\reifgoodone}{\rulename{E-If-Good1}}
-\newcommand{\reifgoodtwo}{\rulename{E-If-Good2}}
-\newcommand{\reifbad}{\rulename{E-If-Bad}}
-\newcommand{\reappgood}{\rulename{E-App-Good}}
-\newcommand{\reappbad}{\rulename{E-App-Bad}}
-\newcommand{\relet}{\rulename{E-Let}}
-\newcommand{\renodegood}{\rulename{E-Node-Good}}
-\newcommand{\renodebadone}{\rulename{E-Node-Bad1}}
-\newcommand{\renodebadtwo}{\rulename{E-Node-Bad2}}
-\newcommand{\releafgood}{\rulename{E-Leaf-Good}}
-\newcommand{\recasegoodone}{\rulename{E-Case-Good1}}
-\newcommand{\recasegoodtwo}{\rulename{E-Case-Good2}}
-\newcommand{\recasebad}{\rulename{E-Case-Bad}}
-\newcommand{\repcasegood}{\rulename{E-Case-Pair-Good}}
-\newcommand{\repcasebad}{\rulename{E-Case-Pair-Bad}}
-\newcommand{\reholegood}{\rulename{E-Hole-Good}}
+\newcommand{\recontext}{\rulename{Context}}
+\newcommand{\restuck}{\rulename{Stuck}}
+\newcommand{\replusgood}{\rulename{Plus-G}}
+\newcommand{\replusbadone}{\rulename{Plus-B1}}
+\newcommand{\replusbadtwo}{\rulename{Plus-B2}}
+\newcommand{\reifgoodone}{\rulename{If-G1}}
+\newcommand{\reifgoodtwo}{\rulename{If-G2}}
+\newcommand{\reifbad}{\rulename{If-B}}
+\newcommand{\reappgood}{\rulename{App-G}}
+\newcommand{\reappbad}{\rulename{App-B}}
+\newcommand{\relet}{\rulename{Let}}
+\newcommand{\renodegood}{\rulename{Node-G}}
+\newcommand{\renodebadone}{\rulename{Node-B1}}
+\newcommand{\renodebadtwo}{\rulename{Node-B2}}
+\newcommand{\releafgood}{\rulename{Leaf-G}}
+\newcommand{\recasegoodone}{\rulename{Case-G1}}
+\newcommand{\recasegoodtwo}{\rulename{Case-G2}}
+\newcommand{\recasebad}{\rulename{Case-B}}
+\newcommand{\repcasegood}{\rulename{Case-Pair-G}}
+\newcommand{\repcasebad}{\rulename{Case-Pair-B}}
+\newcommand{\reholegood}{\rulename{Hole-G}}
 
 
 \newcommand{\relDescription}[1]{\ensuremath{\textrm{\textbf{#1}}}}

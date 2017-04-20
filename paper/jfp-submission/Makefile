@@ -1,6 +1,8 @@
 all:
-	latexmk -pdf main.tex
+	@latexmk -pdf main
 
-.PHONY: clean
+watch:
+	@latexmk -pdf -pvc main
+
 clean:
-	latexmk -c main.tex
+	@latexmk -c main
