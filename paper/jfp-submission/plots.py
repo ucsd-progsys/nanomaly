@@ -48,6 +48,8 @@ def plot_coverage(seminal, ucsd):
     xy_s = cumulative_coverage(seminal)
     xy_u = cumulative_coverage(ucsd)
 
+    print ('xy_s', xy_s)
+    print ('xy_u', xy_u)
 
     N = len(xy_s)
     ind = np.arange(N)    # the x locations for the groups
@@ -64,7 +66,7 @@ def plot_coverage(seminal, ucsd):
     plt.title('Cumulative Coverage', fontsize=24)
     plt.xticks(ind + width, [r[0] for r in xy_s], fontsize='large')
     plt.yticks(np.arange(0, 101, 10), fontsize='large')
-    plt.legend((p1[0], p2[0]), ('UW', UCSD), 'lower right', fontsize=16)
+    plt.legend((p1[0], p2[0]), ('UW', UCSD), loc='lower right', fontsize=16)
     # plt.legend((p1[0], p2[0]), ('Men', 'Women'))
     autolabel(plt, p1)
     autolabel(plt, p2)
@@ -226,7 +228,7 @@ def plot_trace_size(seminal, ucsd):
     print('ucsd:\t\t{}\t{}\t{}'.format(c_step_u[0], c_step_u[1], len(step_u)))
     print('avg/med/max:\t{}\t{}\t{}'.format(np.mean(step_u), np.median(step_s), np.max(step_u)))
     p2 = plt.bar(ind + width, c_step_u, label=UCSD, width=width, color=COLORS[1])
-    plt.legend((p1[0],p2[0]), ('UW',UCSD), fontsize=16)
+    plt.legend((p1[0],p2[0]), ('UW',UCSD), loc='lower right', fontsize=16)
     plt.title('Trace Complexity', fontsize=24)
     plt.xlabel('Total Steps', fontsize=20)
     plt.ylabel('Traces (%)', fontsize=20)
@@ -262,7 +264,7 @@ def plot_trace_size(seminal, ucsd):
     print('ucsd:\t\t{}\t{}\t{}'.format(c_jump_u[0], c_jump_u[1], len(jump_u)))
     print('avg/med/max:\t{}\t{}\t{}'.format(np.mean(jump_u), np.median(jump_s), np.max(jump_u)))
     p2 = plt.bar(ind + width, c_jump_u, label=UCSD, width=width, color=COLORS[1])
-    plt.legend((p1[0],p2[0]), ('UW',UCSD), fontsize=16)
+    plt.legend((p1[0],p2[0]), ('UW',UCSD), loc='lower right', fontsize=16)
     # plt.title('Complexity of Traces (in jumps)', fontsize=24)
     plt.xlabel('Total Jumps', fontsize=20)
     # plt.xlabel('Jumps', fontsize=20)
@@ -303,6 +305,9 @@ def plot_distrib(seminal, ucsd):
     rs_u = [len([r for r in ucsd[1:] if r[4] in o])
             for o in ALL_D]
 
+    print ('rs_s', rs_s)
+    print ('rs_u', rs_u)
+
     # N = len(xy)
     # ind = np.arange(N)    # the x locations for the groups
     # width = 0.5       # the width of the bars: can also be len(x) sequence
@@ -311,10 +316,11 @@ def plot_distrib(seminal, ucsd):
     #plt.figure(figsize=(1,1))
     #plt.axes(aspect=1)
     p1 = ax.pie(rs_s, labels=ALL_DL,
-                 autopct='%.1f%%',
+                 autopct='%.0f%%',
                  pctdistance=1.3,
                  labeldistance=10,
                  colors=COLORS,
+                 textprops={'fontsize':16},
                  shadow=True)
     ax.set_title('UW', fontsize=20)
 
@@ -322,17 +328,18 @@ def plot_distrib(seminal, ucsd):
     #ax.figure(figsize=(1,1))
     #plt.axes(aspect=1)
     p2 = ax.pie(rs_u, labels=ALL_DL,
-                 autopct='%.1f%%',
+                 autopct='%.0f%%',
                  pctdistance=1.3,
                  labeldistance=10,
                  colors=COLORS,
+                 textprops={'fontsize':16},
                  shadow=True)
     ax.set_title(UCSD, fontsize=20)
 
     #plt.tight_layout()
 
     plt.suptitle('Distribution of Results', fontsize=24, y=0.9)
-    plt.figlegend(p1[0], ALL_DL, 'lower center', fontsize=16, ncol=4)
+    plt.figlegend(p1[0], ALL_DL, 'lower center', fontsize=18, ncol=2)
 
 
     # p2 = plt.pie(rs, labels=ALL_L,
@@ -356,12 +363,12 @@ if __name__ == '__main__':
     seminal = read_csv('../../seminal.csv')
     ucsd = read_csv('../../ucsd.csv')
 
-    #plot_distrib(seminal, ucsd)
+    plot_distrib(seminal, ucsd)
 
-    #plot_trace_size(seminal, ucsd)
+    plot_trace_size(seminal, ucsd)
     # plot_trace_size(seminal, 'Seminal')
     # plot_trace_size(ucsd, UCSD)
 
-    #plot_coverage(seminal, ucsd)
+    plot_coverage(seminal, ucsd)
 
     plot_user_study()

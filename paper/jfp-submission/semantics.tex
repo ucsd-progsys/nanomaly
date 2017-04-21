@@ -222,10 +222,10 @@ returns the existing instantiation.
 % \end{cases} \\
 \force{\vhole{\thole}}{t}{\vsu}{\tsu} & \defeq % \hspace{-1ex}
 \begin{cases}
-  \triple{v}{\vsu}{\tsu'}    & \textbf{if} \begin{array}{l} v = \lookupsu{\vsu}{\vhole{\thole}}, \\
+  \triple{v}{\vsu}{\tsu'}    &\ \textbf{if} \begin{array}{l} v = \lookupsu{\vsu}{\vhole{\thole}}, \\
                                          \tsu' = \unify{\{\thole, t, \typeof{v}\}}{\tsu}\end{array} \\
-  \triple{\stuck}{\vsu}{\tsu} & \textbf{if} \begin{array}{l} v = \lookupsu{\vsu}{\vhole{\thole}}\end{array} \\
-  \triple{v}{\extendsu{\vsu}{\vhole{\thole}}{v}}{\tsu'} & \textbf{if} \begin{array}{l} \tsu' = \unify{\{\thole, t\}}{\tsu}, \\ v = \gen{t}{\tsu'} \end{array}\\
+  \triple{\stuck}{\vsu}{\tsu} &\ \textbf{if} \begin{array}{l} v = \lookupsu{\vsu}{\vhole{\thole}}\end{array} \\
+  \triple{v}{\extendsu{\vsu}{\vhole{\thole}}{v}}{\tsu'} &\ \textbf{if} \begin{array}{l} \tsu' = \unify{\{\thole, t\}}{\tsu}, \\ v = \gen{t}{\tsu'} \end{array}\\
 \end{cases}  \\
 % \begin{cases}
 %   \triple{\lookupsu{\vsu}{\ehole}}{\vsu}{\tsu} & \mbox{if}\ \ehole \in dom(\vsu), \hastype{\lookupsu{\vsu}{\ehole}}{t} \\
@@ -239,9 +239,9 @@ returns the existing instantiation.
 \force{n}{\tint}{\vsu}{\tsu}     & \defeq \triple{n}{\vsu}{\tsu} \\
 \force{b}{\tbool}{\vsu}{\tsu}    & \defeq \triple{b}{\vsu}{\tsu} \\
 \force{\efun{x}{e}}{\tfun}{\vsu}{\tsu} & \defeq \triple{\efun{x}{e}}{\vsu}{\tsu} \\
-\force{\epair{v_1}{v_2}}{\tprod{t_1}{t_2}}{\vsu}{\tsu} & \defeq \triple{\epair{v_1}{v_2}}{\vsu}{\tsu''} & \hspace{-42mm} \textbf{if} \begin{array}{l} \tsu' = \unify{\{\typeof{v_1}, t_1\}}{\tsu},\\ \tsu'' = \unify{\{\typeof{v_2}, t_2\}}{\tsu'} \end{array} \\
-\force{\vleaf{t_1}}{\ttree{t_2}}{\vsu}{\tsu} & \defeq \triple{\vleaf{t_1}}{\vsu}{\tsu'} & \hspace{-42mm} \textbf{if} \begin{array}{l} \tsu' = \unify{\{t_1, t_2\}}{\tsu} \end{array}\\
-\force{\vnode{t_1}{v_1}{v_2}{v_3}}{\ttree{t_2}}{\vsu}{\tsu} \hspace{-3mm} & \defeq \triple{\vnode{t_1}{v_1}{v_2}{v_3}}{\vsu}{\tsu'} & \hspace{-42mm} \textbf{if} \begin{array}{l} \tsu' = \unify{\{t_1, t_2\}}{\tsu} \end{array} \\
+\force{\epair{v_1}{v_2}}{\tprod{t_1}{t_2}}{\vsu}{\tsu} & \defeq \triple{\epair{v_1}{v_2}}{\vsu}{\tsu''} & \hspace{-43.5mm} \textbf{if} \begin{array}{l} \tsu' = \unify{\{\typeof{v_1}, t_1\}}{\tsu},\\ \tsu'' = \unify{\{\typeof{v_2}, t_2\}}{\tsu'} \end{array} \\
+\force{\vleaf{t_1}}{\ttree{t_2}}{\vsu}{\tsu} & \defeq \triple{\vleaf{t_1}}{\vsu}{\tsu'} & \hspace{-43.5mm} \textbf{if} \begin{array}{l} \tsu' = \unify{\{t_1, t_2\}}{\tsu} \end{array}\\
+\force{\vnode{t_1}{v_1}{v_2}{v_3}}{\ttree{t_2}}{\vsu}{\tsu} \hspace{-3mm} & \defeq \triple{\vnode{t_1}{v_1}{v_2}{v_3}}{\vsu}{\tsu'} & \hspace{-43.5mm} \textbf{if} \begin{array}{l} \tsu' = \unify{\{t_1, t_2\}}{\tsu} \end{array} \\
 \force{v}{t}{\vsu}{\tsu} & \defeq \triple{\stuck}{\vsu}{\tsu}
 \end{array}
 \]
@@ -959,7 +959,7 @@ We obtain the following corollary of Theorem~\ref{thm:soundness}:
 
 \begin{cor}{\textbf{[Witness Generation]}}
 \label{thm:generation}
-  If $$\genWitness{k}{e} = \triple{\eapp{e}{v_1 \ldots v_n}}{\vsu}{\tsu},\ldots$$
+  If $\genWitness{k}{e} = \triple{\eapp{e}{v_1 \ldots v_n}}{\vsu}{\tsu},\ldots$
   then for all types $t_1 \ldots t_n$ there exist values $w_1 \ldots w_n$ such that
   $\steps{\eapp{e}{w_1 \ldots w_n}}{\emptysu}{\emptysu}{\stuck}{\vsu'}{\tsu'}$.
 \end{cor}

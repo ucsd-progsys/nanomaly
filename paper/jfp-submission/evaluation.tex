@@ -94,16 +94,16 @@ If so, the function cannot possibly terminate and we report an error.
 While not a \emph{type error}, infinite recursion is still a clear bug
 in the program, and thus valuable feedback for the user.
 
-\begin{figure*}[htp]
-\centering
-\begin{minipage}{\linewidth}
-\centering
-\includegraphics[width=0.45\linewidth]{coverage.png}
+\begin{figure}[htp]
+\centerline{
+\begin{minipage}{1.2\textwidth}
+\includegraphics[width=0.5\linewidth]{coverage.png}
 % \end{minipage}
 % \begin{minipage}{\linewidth}
-\includegraphics[width=0.45\linewidth]{distrib.png}
+\includegraphics[width=0.5\linewidth]{distrib.png}
 \end{minipage}
-% \vspace{-8ex}
+}
+\vspace{3ex}
 \caption{Results of our coverage testing and the distribution of test
   outcomes. Our random search successfully finds witnesses for 79--85\% of
   the programs in under one second, improving to 87\% in under
@@ -112,7 +112,7 @@ in the program, and thus valuable feedback for the user.
   diverging loops 2--3\% of the time. For the remaining 11--12\% of the
   programs we are unable to provide any useful feedback.  }
 \label{fig:results-witness}
-\end{figure*}
+\end{figure}
 
 \paragraph{Results}
 \label{sec:results-witness}
@@ -165,20 +165,28 @@ trace using two metrics.
 
 % \item \ES{others?}
 %
-\begin{figure*}[htp]
-\centering
-\includegraphics[width=0.45\linewidth]{trace_size_step.png}
-\includegraphics[width=0.45\linewidth]{trace_size_jump.png}
+\begin{figure}[htp]
+\centerline{
+\begin{minipage}{1.2\textwidth}
+\includegraphics[width=0.5\linewidth]{trace_size_step.png}
+\includegraphics[width=0.5\linewidth]{trace_size_jump.png}
+\end{minipage}
+}
+\vspace{3ex}
 \caption{Complexity of the generated traces. 81\% of the combined traces
   have a jump complexity of at most 10, with an average complexity of 7
   and a median of 5.}
 \label{fig:results-complexity}
-\end{figure*}
+\end{figure}
 %
-\begin{figure*}[htp]
-\centering
-\includegraphics[width=0.45\linewidth]{user-study-reason.png}
-\includegraphics[width=0.45\linewidth]{user-study-fix.png}
+\begin{figure}[htp]
+\centerline{
+\begin{minipage}{1.2\textwidth}
+\includegraphics[width=0.5\linewidth]{user-study-reason.png}
+\includegraphics[width=0.5\linewidth]{user-study-fix.png}
+\end{minipage}
+}
+\vspace{3ex}
 \caption{A classification of students' explanations and fixes for type
   errors, given either \ocaml's error % message
   or \toolname's
@@ -186,7 +194,7 @@ trace using two metrics.
   trace consistently scored better ($\ge 10\%$) than those given \ocaml's type
   error.}
 \label{fig:results-user-study}
-\end{figure*}
+\end{figure}
 
 \paragraph{Results}
 \label{sec:results-complexity}
