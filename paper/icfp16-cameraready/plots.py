@@ -82,8 +82,11 @@ def plot_user_study():
         return [int(x) for x in xs if int(x) >= 0]
 
     def err(xs):
-        p = np.average(xs)
-        return 100 * np.sqrt(p * (1-p) / len(xs))
+        #p = np.average(xs)
+        #return 100 * np.sqrt(p * (1-p) / len(xs))
+        s = np.std(xs)
+        n = len(xs)
+        return 100 * (s / np.sqrt(n))
 
     ## REASON
     sumlist_a = f([r['5: sumlist reason'] for r in a])
@@ -109,20 +112,22 @@ def plot_user_study():
                   [100*np.average(sumlist_b), 100*np.average(append_a), 100*np.average(digitsofint_a), 100*np.average(wwhile_b)],
                   width,
                   color=COLORS[0],
-                  # yerr=map(err, [sumlist_b, append_a, digitsofint_a, wwhile_b])
+                  yerr=map(err, [sumlist_b, append_a, digitsofint_a, wwhile_b]),
+                  error_kw={'linewidth': 5}
     )
     p_n = plt.bar(ind + width,
                   [100*np.average(sumlist_a), 100*np.average(append_b), 100*np.average(digitsofint_b), 100*np.average(wwhile_a)],
                   width,
                   color=COLORS[1],
-                  # yerr=map(err, [sumlist_a, append_b, digitsofint_b, wwhile_a])
+                  yerr=map(err, [sumlist_a, append_b, digitsofint_b, wwhile_a]),
+                  error_kw={'linewidth': 5}
     )
 
     plt.title('Explanation',fontsize=24)
     # plt.xlabel('Problem', fontsize=20)
     plt.ylabel('% Correct', fontsize=20)
     plt.xticks(ind + width, ['sumList', 'append', 'digitsOfInt', 'wwhile'], fontsize='large')
-    plt.legend((p_o[0], p_n[1]), ('OCaml', 'NanoMaLy'), 'lower right', fontsize=16)
+    plt.legend(('OCaml', 'NanoMaLy'), loc='lower right', fontsize=16)
     # autolabel(plt, p_o)
     # autolabel(plt, p_n)
 
@@ -149,20 +154,22 @@ def plot_user_study():
                   [100*np.average(sumlist_b), 100*np.average(append_a), 100*np.average(digitsofint_a), 100*np.average(wwhile_b)],
                   width,
                   color=COLORS[0],
-                  # yerr=map(err, [sumlist_b, append_a, digitsofint_a, wwhile_b])
+                  yerr=map(err, [sumlist_b, append_a, digitsofint_a, wwhile_b]),
+                  error_kw={'linewidth': 5}
     )
     p_n = plt.bar(ind + width,
                   [100*np.average(sumlist_a), 100*np.average(append_b), 100*np.average(digitsofint_b), 100*np.average(wwhile_a)],
                   width,
                   color=COLORS[1],
-                  # yerr=map(err, [sumlist_a, append_b, digitsofint_b, wwhile_a])
+                  yerr=map(err, [sumlist_a, append_b, digitsofint_b, wwhile_a]),
+                  error_kw={'linewidth': 5}
     )
 
     plt.title('Fix',fontsize=24)
     # plt.xlabel('Problem', fontsize=20)
     plt.ylabel('% Correct', fontsize=20)
     plt.xticks(ind + width, ['sumList', 'append', 'digitsOfInt', 'wwhile'], fontsize='large')
-    plt.legend((p_o[0], p_n[1]), ('OCaml', 'NanoMaLy'), 'lower right', fontsize=16)
+    plt.legend(('OCaml', 'NanoMaLy'), loc='lower right', fontsize=16)
     # autolabel(plt, p_o)
     # autolabel(plt, p_n)
 
