@@ -48,6 +48,8 @@ def plot_coverage(seminal, ucsd):
     xy_s = cumulative_coverage(seminal)
     xy_u = cumulative_coverage(ucsd)
 
+    print ('xy_s', xy_s)
+    print ('xy_u', xy_u)
 
     N = len(xy_s)
     ind = np.arange(N)    # the x locations for the groups
@@ -295,6 +297,9 @@ def plot_distrib(seminal, ucsd):
             for o in ALL_D]
     rs_u = [len([r for r in ucsd[1:] if r[4] in o])
             for o in ALL_D]
+
+    print ('rs_s', rs_s)
+    print ('rs_u', rs_u)
 
     # N = len(xy)
     # ind = np.arange(N)    # the x locations for the groups
