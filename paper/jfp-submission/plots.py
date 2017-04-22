@@ -9,14 +9,14 @@ BUCKETS = [0.1, 0.2, 1.0, 10.0, 60.0 ] # range(500, 3001, 500)
 COLORS=['#90B0D4', '#90D492', '#D4B490', '#D490D2']
 #COLORS=['#348ABD', '#7A68A6', '#A60628', '#467821', '#CF4457', '#188487', '#E24A33']
 
-SAFE = ['S', 'T']
-SAFE_L = ['Safe', 'Timeout']
+SAFE = ['S', 'T', 'H']
+SAFE_L = ['Safe', 'Timeout', 'Hole']
 UNSAFE = ['U', 'B', 'D'] #, 'O']
 UNSAFE_L = ['Unsafe', 'Unbound', 'Diverge'] #, 'Output']
 ALL = UNSAFE + SAFE
 ALL_L = UNSAFE_L + SAFE_L
 
-ALL_D = [ ['U'], ['B'], ['D'], ['S', 'T']]
+ALL_D = [ ['U', 'O'], ['B'], ['D'], ['S', 'T', 'H']]
 ALL_DL = [ 'Witness', 'Unbound', 'Diverge', 'No Witness'] #   ['S', 'T'], ['U'], ['B'], ['D'] ]
 
 
