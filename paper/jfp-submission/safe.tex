@@ -1,0 +1,81 @@
+\subsubsection{How Safe are the ``Safe'' Programs?}
+\label{sec:how-safe}
+
+An immediate question arises regarding that 13--16\% of programs for
+which we could not synthesize a witness:
+%
+are they \emph{actually} safe (\ie is the type system being too conservative),
+%
+or did \toolname simply fail to find the witness?
+
+To answer this question, we investigated the 720 \ucsdbench programs for
+which we failed to find a witness.
+%
+We found that for 247 programs (roughly a third of the failures, or 5\%
+of all programs), \toolname got stuck when it tried to compare two holes.
+%
+\ocaml provides polymorphic equality and comparison operators,
+overloading them for each type.
+%
+While extremely convenient to use, they pose a challenge for \toolname's
+combination of execution and inference.
+%
+Consider, for example
+%
+\begin{code}
+  let bad x y =
+    if x < y then
+      1 + true
+    else
+      0
+\end{code}
+%
+When given @bad@ as input, \toolname will generate two fresh holes
+$\nu_1[\alpha_1]$ and $\nu_2[\alpha_2]$ and proceed directly into the
+@x < y@ comparison.
+%
+We cannot (yet) instantiate either hole because we have no constraints
+on the $\alpha$s (we know they must be equal, but nothing else), and
+furthermore we do not know what constraints we may encounter later on in
+the program.
+%
+Thus, we cannot perform the comparison and proceed, and must give up our
+search for a witness, even though one obviously exists, any pair of |x|
+and |y| such that |x < y| is true.
+%
+Extending \toolname with support for symbolic execution would alleviate
+this issue, as we could then begin symbolically executing the program
+until we learn how to instantiate |x| and |y|.
+
+The remaining 473 programs for which we could not produce a witness did
+not admit such an automatic diagnosis, so we selected a random sample of
+50 programs and manually searched for a witness.
+%
+We found only 8 cases (or 16\%) where a witness existed, but \toolname
+was unable to discover it.
+%
+Five involved synthesizing a \emph{pair} of specially-crafted inputs
+that would result in the function returning values of incompatible
+types.
+%
+The other three required synthesizing an input that would trigger a
+particular path through the program, and would likely have been caught
+by symbolic execution.
+%
+Overall, it appears that our random instantiation of holes is well-suited
+to finding type errors in student programs.
+
+We categorized the remaining 42 failures into four groups:
+%
+\begin{enumerate}
+\item 7 infinite type. program doesn't go wrong, but could search for
+  context that would go wrong
+\item 15 monomorphic functions. recall we abstract a function's type as
+  $\tfun$ rather than $\alpha \to \beta$. (may also admit witness by
+  searching for context?)
+\item 6 dead code. type error occurs in unreachable code, ``deficiency''
+  of the type system.
+\item 14 bad call. function is well-typed, student calls makes ill-typed
+  call, but no error triggered. nothing to be done, as we do not control
+  call-site.
+\end{enumerate}

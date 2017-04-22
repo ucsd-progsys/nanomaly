@@ -141,6 +141,8 @@ could likely trigger more of the type errors, our experiments suggest that
 type errors are coarse enough (or that novice programs are \emph{simple}
 enough) that these techniques are not necessary.
 
+\input{safe}
+
 
 \subsection{Witness Complexity}
 \label{sec:trace-complexity}
@@ -653,8 +655,9 @@ test; not because of a type error, but because all we know about
 @n@ and @m@ at that point is that they must have the same (unknown)
 type.
 
-This issue is uncommon in \ocaml\ (we did not detect a single instance
-of it across all of our benchmarks), but it would surely be exacerbated
+This issue is uncommon in \ocaml\
+(we detected it in around 5\% of our benchmarks),
+but it would surely be exacerbated
 by a language like \haskell, which makes heavy use of overloading. We
 suspect that dynamic-symbolic execution would allow us to handle ad-hoc
 polymorphism, but defer a proper treatment to future work.

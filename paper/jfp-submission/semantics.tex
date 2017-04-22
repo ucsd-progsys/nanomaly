@@ -398,7 +398,7 @@ $v$ of type $t$ such that $\eapp{f}{v}$ goes wrong.
   For any lambda-term $f$, if
   \hbox{$\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$,}
   then for every
-  (inhabited\footnote{All types in our formalism are inhabited, but in a larger language like \ocaml this may not be the case.})
+  (inhabited\footnote{All types in \lang are inhabited, but in a larger language like \ocaml this may not be true.})
   type
   % \footnote{We exclude builtin functions that subvert the type system, \eg \texttt{Obj.magic}, and thus consider the type $\forall a b. \tfun{a}{b}$ to be uninhabitable.}
   $t$ there exists a value $v$ of type $t$ such that
