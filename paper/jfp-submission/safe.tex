@@ -70,12 +70,13 @@ We categorized the remaining 42 failures into four groups.
 \paragraph{Dead Code}
 %
 Six programs (or 12\% the samples) contained type errors that were
-unreachable by any inputs.
+unreachable by any inputs, often due to overlapping patterns in a
+@match@ expression.
 %
 While technically safe, dead code is generally considered a ``code
 smell''; students would likely benefit from a warning in this case.
 
-\paragraph{Bad Function Call}
+\paragraph{Bad Function Calls}
 Fourteen programs contained a function call where the student had
 supplied incorrect inputs, yet no error was triggered.
 %
@@ -115,6 +116,58 @@ These calls are thus particularly harmless, indeed they may even be
 \emph{beneficial}, as the student may next try looking up a key that
 \emph{does not} exist, and realize that the returned values are
 incompatible.
+
+
+\paragraph{Non-Parametric Function Type}
+%
+Twenty-two programs (or 44\% of the samples) lack a witness in our
+semantics due to our non-parametric $\tfun$ type for functions.
+%
+Recall that our goal is to expose the runtime errors that would have
+been prevented by the type systems.
+%
+At runtime, it is always safe to call a function, thus we give functions
+a simple type $\tfun$ that says they may be applied, but says nothing
+about their inputs or outputs.
+%
+But consider the following @clone@ function, which is supposed to
+produce a list containing @n@ copies of the input @x@.
+%
+% Seven programs violated the \emph{occurs check} with cyclic typing
+% constraints like @'a = 'a list@, for example the following @clone@
+% function.
+%
+\begin{code}
+  let rec clone x n =
+    if n > 0 then
+      clone [x] (n - 1)
+    else
+      []
+\end{code}
+%
+Unfortunately, the student instead constructs an @n@-level nested list
+containing a single @x@.
+%
+The \ocaml compiler rejects this program because the recursive call to
+@clone@ induces a cyclic typing constraint @'a = 'a list@, capturing the
+fact that each call increases the nesting of the list.
+%
+\toolname fails to catch this because we do not track the types of the
+inputs to @clone@.
+
+We note, however, that @clone@ cannot go wrong; it is perfectly safe to
+repeatedly enclose a list inside another (disregarding the fact that the
+nested list is never returned).
+%
+Still, such a function would be very difficult to \emph{call} safely, as
+the programmer would have to reason about the dependency between the
+input @n@ and the nesting of the output list, which cannot be expressed
+in \ocaml's type system.
+%
+Thus, is it not particularly satisfying that \toolname fails to produce
+a witness here; a possible solution could be to track the types of the
+inputs, and demonstrate to the user how they change between recursive
+calls.
 
 % \begin{enumerate}
 % \item 7 infinite type. program doesn't go wrong, but could search for
