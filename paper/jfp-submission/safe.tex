@@ -51,8 +51,12 @@ The remaining 473 programs for which we could not produce a witness did
 not admit such an automatic diagnosis, so we selected a random sample of
 50 programs and manually searched for a witness.
 %
-We found only 8 cases (or 16\%) where a witness existed, but \toolname
-was unable to discover it.
+We categorized the programs into four groups.
+
+\paragraph{Witness Exists}
+%
+We found only eight cases (or 16\% of the samples) where a witness existed,
+but \toolname was unable to discover it.
 %
 Five involved synthesizing a \emph{pair} of specially-crafted inputs
 that would result in the function returning values of incompatible
@@ -62,10 +66,10 @@ The other three required synthesizing an input that would trigger a
 particular path through the program, and would likely have been caught
 by symbolic execution.
 %
-Overall, it appears that our random instantiation of holes is well-suited
-to finding type errors in student programs.
-
-We categorized the remaining 42 failures into four groups.
+% Overall, it appears that our random instantiation of holes is well-suited
+% to finding type errors in student programs.
+%
+%We categorized the remaining 42 failures into three groups.
 
 \paragraph{Dead Code}
 %
@@ -77,8 +81,9 @@ While technically safe, dead code is generally considered a ``code
 smell''; students would likely benefit from a warning in this case.
 
 \paragraph{Bad Function Calls}
-Fourteen programs contained a function call where the student had
-supplied incorrect inputs, yet no error was triggered.
+Fourteen programs (or 28\% of the samples) contained a function call
+where the student had supplied incorrect inputs, yet no error was
+triggered.
 %
 Consider, for example the following |assoc| function, which
 looks up a key in an \emph{association list} and returns a default if
@@ -168,6 +173,21 @@ Thus, is it not particularly satisfying that \toolname fails to produce
 a witness here; a possible solution could be to track the types of the
 inputs, and demonstrate to the user how they change between recursive
 calls.
+
+
+To summarize, our investigation suggests that the majority of programs
+(88\%) for which we fail to find a witness do not, in fact, admit a
+witness.
+%
+Overall, it appears that our random instantiation of holes is well-suited
+to finding type errors in student programs.
+%
+The remaining programs were all cases where \ocaml's type system was
+overly conservative.
+%
+Of course, the conservatism is somewhat justified as each case pointed
+to a ``code smell'' or difficult-to-use API; it would be interesting to
+investigate how demonstrate these issues in a similar manner.
 
 % \begin{enumerate}
 % \item 7 infinite type. program doesn't go wrong, but could search for
