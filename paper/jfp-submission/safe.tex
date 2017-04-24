@@ -13,6 +13,9 @@ or did \toolname simply fail to find the witness?
 To answer this question, we investigated the 720 \ucsdbench programs for
 which we failed to find a witness.
 %
+
+\paragraph{Overloaded Functions.}
+%
 We found that for 247 programs (roughly a third of the failures, or 5\%
 of all programs), \toolname got stuck when it tried to compare two holes.
 %
@@ -72,7 +75,7 @@ For example, suppose we are given
     if x < y then
       x *. y
     else
-      0.
+      0.0
 \end{code}
 %
 and choose to (speculatively) instantiate @x@ and @y@ as @int@s and proceed
@@ -91,89 +94,21 @@ narrowing point with two holes.
 This tells us that the \emph{correct} instantiation was in fact @float@,
 and we can then proceed as normal from the backtracking point with a
 concrete choice of @float@s.
-
+%
 Thus, it appears that speculative instantiation of holes may be a
 useful, lightweight alternative to symbolic execution for our purposes.
 
+\paragraph{} \hspace{0ex} \\
 The remaining 473 programs for which we could not produce a witness did
 not admit such an automatic diagnosis, so we selected a random sample of
 50 programs and manually searched for a witness.
 %
-We categorized the programs into four groups.
-
-\paragraph{Witness Exists}
-%
-We found only eight cases (or 16\% of the samples) where a witness existed,
-but \toolname was unable to discover it.
-%
-Five involved synthesizing a \emph{pair} of specially-crafted inputs
-that would result in the function returning values of incompatible
-types.
-%
-The other three required synthesizing an input that would trigger a
-particular path through the program, and would likely have been caught
-by symbolic execution.
-%
-% Overall, it appears that our random instantiation of holes is well-suited
-% to finding type errors in student programs.
-%
-%We categorized the remaining 42 failures into three groups.
-
-\paragraph{Dead Code}
-%
-Six programs (or 12\% the samples) contained type errors that were
-unreachable by any inputs, often due to overlapping patterns in a
-@match@ expression.
-%
-While technically safe, dead code is generally considered a ``code
-smell''; students would likely benefit from a warning in this case.
-
-\paragraph{Bad Function Calls}
-Fourteen programs (or 28\% of the samples) contained a function call
-where the student had supplied incorrect inputs, yet no error was
-triggered.
-%
-Consider, for example the following |assoc| function, which
-looks up a key in an \emph{association list} and returns a default if
-the key cannot be found.
-%
-\begin{code}
-  let rec assoc (d, k, l) = match l with
-    | (ki, vi)::tl ->
-       if ki = k then
-         vi
-       else
-         assoc (d, k, tl)
-    | _ -> d
-
-  let _ = assoc ([], 123, [(123, "sad"); (321, "happy")])
-\end{code}
-%
-The student's definition of |assoc| is correct, but \ocaml rejects their
-subsequent call because the default value |[]| is incompatible with the
-|string| values in the list.
-%
-In this particular call, the key |123| is in the list, so the default
-will not be used (and even if it were, no error would be triggered) and
-\ocaml's complaint is moot.
-%
-Of course, \ocaml cannot be expected to know that this particular call
-is safe, its type system is not sophisticated enough to express the
-necessary conditions.
-
-We note that all of the programs in this category appear to come from
-interactions with the \ocaml top-level, \ie the student defined a
-function and is now experimenting with it.
-%
-These calls are thus particularly harmless, indeed they may even be
-\emph{beneficial}, as the student may next try looking up a key that
-\emph{does not} exist, and realize that the returned values are
-incompatible.
+We categorized the programs into three groups.
 
 
-\paragraph{Non-Parametric Function Type}
+\paragraph{Non-Parametric Function Type.}
 %
-Twenty-two programs (or 44\% of the samples) lack a witness in our
+44\% of the samples lack a witness in our
 semantics due to our non-parametric $\tfun$ type for functions.
 %
 Recall that our goal is to expose the runtime errors that would have
@@ -216,15 +151,114 @@ Still, such a function would be very difficult to \emph{call} safely, as
 the programmer would have to reason about the dependency between the
 input @n@ and the nesting of the output list, which cannot be expressed
 in \ocaml's type system.
-%
-Thus, is it not particularly satisfying that \toolname fails to produce
+
+Thus, it is not particularly satisfying that \toolname fails to produce
 a witness here; a possible solution could be to track the types of the
 inputs, and demonstrate to the user how they change between recursive
 calls.
+%
+This would require maintaining a typing environment of variables in
+addition to the environments we maintain for holes.
+%
+We would have to modify the rule $\reappgood$ from
+Figure~\ref{fig:operational} to additionally $\forcesym$ the function's
+type against the concrete inputs.
+%
+However, we would want to ensure that this $\forcesym$ cannot fail ---
+it is preferable to report a stuck term as that provides a fuller view
+of the error.
+%
+Rather, we would note which evaluation steps induced incompatible
+type refinements, and if a traditional witness cannot be found, we could
+then report a trace expanded to show precisely these steps.
+%
+This seems like a modest extension to our semantics, and would be
+interesting to explore further.
+
+\paragraph{Dead Code.}
+%
+40\% of the samples contained type errors that were unreachable, either
+because they were dead code, or because the student called the function
+with inputs that could not trigger the error.
 
 
-To summarize, our investigation suggests that the majority of programs
-(88\%) for which we fail to find a witness do not, in fact, admit a
+12\% of the samples contained type errors that were
+unreachable by any inputs, often due to overlapping patterns in a
+@match@ expression.
+%
+% While technically safe, dead code is generally considered a ``code
+% smell''; students would likely benefit from a warning in this case.
+% \ES{Wes says this is too informal, source the claim}
+%
+While technically safe, dead code is generally considered a maintenance
+risk, as the programmer may not realize that it is dead~\cite{Wheeler2014-fg}
+or may accidentally bring it back to life~\cite{Seven2014-gf}.
+%
+Thus, a warning like that provided by \ocaml's pattern-exhaustiveness
+checker would be helpful.
+
+%\paragraph{Bad Function Calls}
+A further 28\% of the samples included a function call where the
+student had supplied ill-typed inputs, yet the path induced
+by the call contained no errors.
+%
+Consider, for example the following |assoc| function, which
+looks up a key in an \emph{association list} and returns a default if
+the key cannot be found.
+%
+\begin{code}
+  let rec assoc (d, k, l) = match l with
+    | (ki, vi)::tl ->
+       if ki = k then
+         vi
+       else
+         assoc (d, k, tl)
+    | _ -> d
+
+  let _ = assoc ([], 123, [(123, "sad"); (321, "happy")])
+\end{code}
+%
+The student's definition of |assoc| is correct, but \ocaml rejects their
+subsequent call because the default value |[]| is incompatible with the
+|string| values in the list.
+%
+In this particular call, the key |123| is in the list, so the default
+will not be used (and even if it were, no error would be triggered) and
+\ocaml's complaint is moot.
+
+Of course, \ocaml cannot be expected to know that this particular call
+is safe, its type system is not sophisticated enough to express the
+necessary conditions.
+%
+\ES{TODO: add some comment about using dependent types, though this particular example would be quite bizarre to encode in DT..}
+
+% We note that many of the programs in this category appear to come from
+% interactions with the \ocaml top-level, \ie the student defined a
+% function and is now experimenting with it.
+% %
+% These calls are thus particularly harmless, indeed they may even be
+% \emph{beneficial}, as the student may next try looking up a key that
+% \emph{does not} exist, and realize that the returned values are
+% incompatible.
+% \ES{Wes doesn't like this, sounds like punting on the issue}
+
+\paragraph{Witness Exists.}
+%
+We found that 16\% of the samples admitted a witness that \toolname
+was unable to discover.
+%
+Slightly over half involved synthesizing a \emph{pair} of
+specially-crafted inputs that would result in the function returning
+values of incompatible types.
+%
+The rest required synthesizing an input that would trigger a
+particular path through the program, and would likely have been caught
+by symbolic execution.
+
+\paragraph{Summary.}
+%
+Our investigation suggests that the majority of programs
+(84\%) for which we fail to find a witness do not, in fact, admit a
 witness.
 %
 Overall, it appears that our random instantiation of holes is well-suited
@@ -234,8 +268,10 @@ The remaining programs were all cases where \ocaml's type system was
 overly conservative.
 %
 Of course, the conservatism is somewhat justified as each case pointed
-to a ``code smell'' or difficult-to-use API;\ it would be interesting to
-investigate how demonstrate these issues in a similar manner.
+to code that would be difficult to use or maintain;
+%
+it would be interesting to investigate how demonstrate these issues in a
+similar manner.
 
 % \begin{enumerate}
 % \item 7 infinite type. program doesn't go wrong, but could search for
@@ -249,3 +285,8 @@ investigate how demonstrate these issues in a similar manner.
 %   call, but no error triggered. nothing to be done, as we do not control
 %   call-site.
 % \end{enumerate}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
