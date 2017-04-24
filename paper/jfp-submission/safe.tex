@@ -1,0 +1,203 @@
+\subsubsection{How Safe are the ``Safe'' Programs?}
+\label{sec:how-safe}
+
+An immediate question arises regarding that 13--16\% of programs for
+which we could not synthesize a witness:
+%
+are they \emph{actually} safe (\ie is the type system being too conservative),
+%
+or did \toolname simply fail to find the witness?
+
+To answer this question, we investigated the 720 \ucsdbench programs for
+which we failed to find a witness.
+%
+We found that for 247 programs (roughly a third of the failures, or 5\%
+of all programs), \toolname got stuck when it tried to compare two holes.
+%
+\ocaml provides polymorphic equality and comparison operators,
+overloading them for each type.
+%
+While extremely convenient to use, they pose a challenge for \toolname's
+combination of execution and inference.
+%
+Consider, for example
+%
+\begin{code}
+  let bad x y =
+    if x < y then
+      1 + true
+    else
+      0
+\end{code}
+%
+When given @bad@ as input, \toolname will generate two fresh holes
+$\nu_1[\alpha_1]$ and $\nu_2[\alpha_2]$ and proceed directly into the
+@x < y@ comparison.
+%
+We cannot (yet) instantiate either hole because we have no constraints
+on the $\alpha$s (we know they must be equal, but nothing else), and
+furthermore we do not know what constraints we may encounter later on in
+the program.
+%
+Thus, we cannot perform the comparison and proceed, and must give up our
+search for a witness, even though one obviously exists, any pair of |x|
+and |y| such that |x < y| is true.
+%
+Extending \toolname with support for symbolic execution would alleviate
+this issue, as we could then begin symbolically executing the program
+until we learn how to instantiate |x| and |y|.
+
+The remaining 473 programs for which we could not produce a witness did
+not admit such an automatic diagnosis, so we selected a random sample of
+50 programs and manually searched for a witness.
+%
+We categorized the programs into four groups.
+
+\paragraph{Witness Exists}
+%
+We found only eight cases (or 16\% of the samples) where a witness existed,
+but \toolname was unable to discover it.
+%
+Five involved synthesizing a \emph{pair} of specially-crafted inputs
+that would result in the function returning values of incompatible
+types.
+%
+The other three required synthesizing an input that would trigger a
+particular path through the program, and would likely have been caught
+by symbolic execution.
+%
+% Overall, it appears that our random instantiation of holes is well-suited
+% to finding type errors in student programs.
+%
+%We categorized the remaining 42 failures into three groups.
+
+\paragraph{Dead Code}
+%
+Six programs (or 12\% the samples) contained type errors that were
+unreachable by any inputs, often due to overlapping patterns in a
+@match@ expression.
+%
+While technically safe, dead code is generally considered a ``code
+smell''; students would likely benefit from a warning in this case.
+
+\paragraph{Bad Function Calls}
+Fourteen programs (or 28\% of the samples) contained a function call
+where the student had supplied incorrect inputs, yet no error was
+triggered.
+%
+Consider, for example the following |assoc| function, which
+looks up a key in an \emph{association list} and returns a default if
+the key cannot be found.
+%
+\begin{code}
+  let rec assoc (d, k, l) = match l with
+    | (ki, vi)::tl ->
+       if ki = k then
+         vi
+       else
+         assoc (d, k, tl)
+    | _ -> d
+
+  let _ = assoc ([], 123, [(123, "sad"); (321, "happy")])
+\end{code}
+%
+The student's definition of |assoc| is correct, but \ocaml rejects their
+subsequent call because the default value |[]| is incompatible with the
+|string| values in the list.
+%
+In this particular call, the key |123| is in the list, so the default
+will not be used (and even if it were, no error would be triggered) and
+\ocaml's complaint is moot.
+%
+Of course, \ocaml cannot be expected to know that this particular call
+is safe, its type system is not sophisticated enough to express the
+necessary conditions.
+
+We note that all of the programs in this category appear to come from
+interactions with the \ocaml top-level, \ie the student defined a
+function and is now experimenting with it.
+%
+These calls are thus particularly harmless, indeed they may even be
+\emph{beneficial}, as the student may next try looking up a key that
+\emph{does not} exist, and realize that the returned values are
+incompatible.
+
+
+\paragraph{Non-Parametric Function Type}
+%
+Twenty-two programs (or 44\% of the samples) lack a witness in our
+semantics due to our non-parametric $\tfun$ type for functions.
+%
+Recall that our goal is to expose the runtime errors that would have
+been prevented by the type systems.
+%
+At runtime, it is always safe to call a function, thus we give functions
+a simple type $\tfun$ that says they may be applied, but says nothing
+about their inputs or outputs.
+%
+But consider the following @clone@ function, which is supposed to
+produce a list containing @n@ copies of the input @x@.
+%
+% Seven programs violated the \emph{occurs check} with cyclic typing
+% constraints like @'a = 'a list@, for example the following @clone@
+% function.
+%
+\begin{code}
+  let rec clone x n =
+    if n > 0 then
+      clone [x] (n - 1)
+    else
+      []
+\end{code}
+%
+Unfortunately, the student instead constructs an @n@-level nested list
+containing a single @x@.
+%
+The \ocaml compiler rejects this program because the recursive call to
+@clone@ induces a cyclic typing constraint @'a = 'a list@, capturing the
+fact that each call increases the nesting of the list.
+%
+\toolname fails to catch this because we do not track the types of the
+inputs to @clone@.
+
+We note, however, that @clone@ cannot go wrong; it is perfectly safe to
+repeatedly enclose a list inside another (disregarding the fact that the
+nested list is never returned).
+%
+Still, such a function would be very difficult to \emph{call} safely, as
+the programmer would have to reason about the dependency between the
+input @n@ and the nesting of the output list, which cannot be expressed
+in \ocaml's type system.
+%
+Thus, is it not particularly satisfying that \toolname fails to produce
+a witness here; a possible solution could be to track the types of the
+inputs, and demonstrate to the user how they change between recursive
+calls.
+
+
+To summarize, our investigation suggests that the majority of programs
+(88\%) for which we fail to find a witness do not, in fact, admit a
+witness.
+%
+Overall, it appears that our random instantiation of holes is well-suited
+to finding type errors in student programs.
+%
+The remaining programs were all cases where \ocaml's type system was
+overly conservative.
+%
+Of course, the conservatism is somewhat justified as each case pointed
+to a ``code smell'' or difficult-to-use API; it would be interesting to
+investigate how demonstrate these issues in a similar manner.
+
+% \begin{enumerate}
+% \item 7 infinite type. program doesn't go wrong, but could search for
+%   context that would go wrong
+% \item 15 monomorphic functions. recall we abstract a function's type as
+%   $\tfun$ rather than $\alpha \to \beta$. (may also admit witness by
+%   searching for context?)
+% \item 6 dead code. type error occurs in unreachable code, ``deficiency''
+%   of the type system.
+% \item 14 bad call. function is well-typed, student calls makes ill-typed
+%   call, but no error triggered. nothing to be done, as we do not control
+%   call-site.
+% \end{enumerate}

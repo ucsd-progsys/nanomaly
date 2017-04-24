@@ -119,10 +119,10 @@
   {\step{\inctx{\epcase{v}{x_1}{x_2}{e}}}{\vsu}{\tsu}
         {\stuck}{\vsu_1}{\tsu_1}}
 \\[0.05in]
-\inference[\relet]
-  {}
-  {\step{\inctx{\elet{x}{v}{e}}}{\vsu}{\tsu}
-        {\inctx{e\sub{x}{v}}}{\vsu}{\tsu}}
+% \inference[\relet]
+%   {v' = \generalize{v}{\tsu}}
+%   {\step{\inctx{\elet{x}{v}{e}}}{\vsu}{\tsu}
+%         {\inctx{e\sub{x}{v'}}}{\vsu}{\tsu}}
 \end{gather*}
 \end{minipage}
 }
