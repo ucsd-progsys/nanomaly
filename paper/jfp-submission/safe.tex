@@ -1,23 +1,46 @@
 \subsubsection{How Safe are the ``Safe'' Programs?}
 \label{sec:how-safe}
 
-An immediate question arises regarding that 13--16\% of programs for
+An immediate question arises regarding the 13--16\% of programs for
 which we could not synthesize a witness:
 %
 are they \emph{actually} safe (\ie is the type system being too conservative),
 %
 or did \toolname simply fail to find the witness?
-
-\ES{Need better organization for the groupings of programs, maybe a pie chart to guide us?}
+%
+% \ES{Need better organization for the groupings of programs, maybe a pie chart to guide us?}
 
 To answer this question, we investigated the 720 \ucsdbench programs for
 which we failed to find a witness.
 %
+We used a combination of automatic and manual coding to categorize these
+programs into four classes.
+%
+The first class is easily detected by \toolname itself, and thus admits
+a precise count.
+%
+This left us with 473 programs requiring manual coding; we selected
+a random sample of 50 programs to investigate, and will report results
+based on that sample.
+%
+Figure~\ref{fig:no-witness} summarizes the results of our investigation,
+we note the classes that were based on a random sample with a ``*''.
+
+
+\begin{figure}[t]
+%\centering
+\includegraphics[width=0.8\linewidth]{distrib_ext.png}
+\vspace{-0.75cm}
+\caption{Results of our investigation into programs where \toolname
+  did not produce a witness. A ``*'' denotes that the percentage is an
+  estimate based on a random sampling of 50 programs.}
+\label{fig:no-witness}
+\end{figure}
 
 \paragraph{Overloaded Functions.}
 %
-We found that for 247 programs (roughly a third of the failures, or 5\%
-of all programs), \toolname got stuck when it tried to compare two holes.
+We found that for 5\% programs \toolname got stuck when it tried to
+compare two holes.
 %
 \ocaml provides polymorphic equality and comparison operators,
 overloading them for each type.
@@ -98,18 +121,18 @@ concrete choice of @float@s.
 Thus, it appears that speculative instantiation of holes may be a
 useful, lightweight alternative to symbolic execution for our purposes.
 
-\paragraph{} \hspace{0ex} \\
-The remaining 473 programs for which we could not produce a witness did
-not admit such an automatic diagnosis, so we selected a random sample of
-50 programs and manually searched for a witness.
-%
-We categorized the programs into three groups.
+% \paragraph{} \hspace{0ex} \\
+% The remaining 473 programs for which we could not produce a witness did
+% not admit such an automatic diagnosis, so we selected a random sample of
+% 50 programs and manually searched for a witness.
+% %
+% We categorized the programs into three groups.
 
 
-\paragraph{Non-Parametric Function Type.}
+\paragraph{Non-Parametric Function Type *.}
 %
-44\% of the samples lack a witness in our
-semantics due to our non-parametric $\tfun$ type for functions.
+5\% of programs lack a witness in our semantics due to our
+non-parametric $\tfun$ type for functions.
 %
 Recall that our goal is to expose the runtime errors that would have
 been prevented by the type systems.
@@ -175,16 +198,15 @@ then report a trace expanded to show precisely these steps.
 This seems like a modest extension to our semantics, and would be
 interesting to explore further.
 
-\paragraph{Dead Code.}
+\paragraph{Dead Code and ``Safe'' Function Calls *.}
 %
-40\% of the samples contained type errors that were unreachable, either
+4\% of programs contained type errors that were unreachable, either
 because they were dead code, or because the student called the function
 with inputs that could not trigger the error.
 
 
-12\% of the samples contained type errors that were
-unreachable by any inputs, often due to overlapping patterns in a
-@match@ expression.
+1\% contained type errors that were unreachable by any inputs, often due
+to overlapping patterns in a @match@ expression.
 %
 % While technically safe, dead code is generally considered a ``code
 % smell''; students would likely benefit from a warning in this case.
@@ -198,7 +220,7 @@ Thus, a warning like that provided by \ocaml's pattern-exhaustiveness
 checker would be helpful.
 
 %\paragraph{Bad Function Calls}
-A further 28\% of the samples included a function call where the
+A further 3\% included a function call where the
 student had supplied ill-typed inputs, yet the path induced
 by the call contained no errors.
 %
@@ -242,9 +264,9 @@ necessary conditions.
 % incompatible.
 % \ES{Wes doesn't like this, sounds like punting on the issue}
 
-\paragraph{Witness Exists.}
+\paragraph{Witness Exists *.}
 %
-We found that 16\% of the samples admitted a witness that \toolname
+We found that only 2\% of programs admit a witness that \toolname
 was unable to discover.
 %
 Slightly over half involved synthesizing a \emph{pair} of

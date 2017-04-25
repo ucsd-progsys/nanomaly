@@ -6,8 +6,9 @@ import numpy as np
 UCSD = 'UCSD'
 
 BUCKETS = [0.1, 0.2, 1.0, 10.0, 60.0 ] # range(500, 3001, 500)
-COLORS=['#90B0D4', '#90D492', '#D4B490', '#D490D2']
-#COLORS=['#348ABD', '#7A68A6', '#A60628', '#467821', '#CF4457', '#188487', '#E24A33']
+#COLORS=['#90B0D4', '#90D492', '#D4B490', '#D490D2']
+COLORS=['#8dd3c7','#bebada','#ffffb3','#fb8072','#80b1d3','#fdb462']
+COLORS_E=['#8dd3c7','#bebada','#80b1d3','#ffffb3','#fdb462','#fb8072']
 
 SAFE = ['S', 'T', 'H']
 SAFE_L = ['Safe', 'Timeout', 'Hole']
@@ -18,6 +19,9 @@ ALL_L = UNSAFE_L + SAFE_L
 
 ALL_D = [ ['U', 'O'], ['B'], ['D'], ['S', 'T', 'H']]
 ALL_DL = [ 'Witness', 'Unbound', 'Diverge', 'No Witness'] #   ['S', 'T'], ['U'], ['B'], ['D'] ]
+
+ALL_D_E = [ ['U', 'O', 'B', 'D'], ['H'], ['S', 'T']]
+ALL_DL_E = [ 'Witness Found', 'Overloaded Function', 'Non-Parametric Function *', 'Dead Code *', 'Safe Call *', 'Witness Exists *'] #   ['S', 'T'], ['U'], ['B'], ['D'] ]
 
 
 def read_csv(f):
@@ -229,7 +233,7 @@ def plot_trace_size(seminal, ucsd):
     print('avg/med/max:\t{}\t{}\t{}'.format(np.mean(step_u), np.median(step_s), np.max(step_u)))
     p2 = plt.bar(ind + width, c_step_u, label=UCSD, width=width, color=COLORS[1])
     plt.legend((p1[0],p2[0]), ('UW',UCSD), loc='lower right', fontsize=16)
-    plt.title('Trace Complexity', fontsize=24)
+    # plt.title('Trace Complexity', fontsize=24)
     plt.xlabel('Total Steps', fontsize=20)
     plt.ylabel('Traces (%)', fontsize=20)
     # ax.set_xlim(0,6)
@@ -358,12 +362,47 @@ def plot_distrib(seminal, ucsd):
     plt.close()
 
 
+def plot_distrib_extended(ucsd):
+    # data = data[1:]
+    rs_u = [len([r for r in ucsd[1:] if r[4] in o])
+            for o in ALL_D_E] + [0,0,0]
+    missed = rs_u[2]
+    rs_u[2] = int(missed * 0.44) # Non-parametric fun
+    rs_u[3] = int(missed * 0.12) # Dead code
+    rs_u[4] = int(missed * 0.28) # Safe call
+    rs_u[5] = int(missed * 0.16) # True miss
+
+    print ('rs_u', rs_u)
+
+    plt.axes(aspect=1)
+    p1 = plt.pie(rs_u,
+                 labels=ALL_DL_E,
+                 explode=[0, 0.2, 0.2, 0.3, 0.3, 0.2],
+                 autopct='%.0f%%',
+                 pctdistance=1.3,
+                 labeldistance=10,
+                 colors=COLORS_E,
+                 textprops={'fontsize':16},
+                 shadow=True)
+
+    plt.title('Distribution of Programs Lacking a Witness', fontsize=24)
+    plt.legend(p1[0], ALL_DL_E,
+               loc='center left',
+               bbox_to_anchor=(0.5,0.75),
+               ncol=1)
+
+    # plt.show()
+    plt.savefig('distrib_ext.png')
+    plt.close()
+
+
 
 if __name__ == '__main__':
     seminal = read_csv('../../seminal.csv')
     ucsd = read_csv('../../ucsd.csv')
 
     plot_distrib(seminal, ucsd)
+    plot_distrib_extended(ucsd)
 
     plot_trace_size(seminal, ucsd)
     # plot_trace_size(seminal, 'Seminal')
