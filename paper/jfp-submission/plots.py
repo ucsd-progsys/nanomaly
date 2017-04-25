@@ -119,14 +119,14 @@ def plot_user_study():
                   width,
                   color=COLORS[0],
                   yerr=map(err, [sumlist_b, append_a, digitsofint_a, wwhile_b]),
-                  error_kw={'linewidth': 5}
+                  error_kw={'linewidth': 3, 'ecolor': 'gray', 'capsize': 6, 'capthick': 3}
     )
     p_n = plt.bar(ind + width,
                   [100*np.average(sumlist_a), 100*np.average(append_b), 100*np.average(digitsofint_b), 100*np.average(wwhile_a)],
                   width,
                   color=COLORS[1],
                   yerr=map(err, [sumlist_a, append_b, digitsofint_b, wwhile_a]),
-                  error_kw={'linewidth': 5}
+                  error_kw={'linewidth': 3, 'ecolor': 'gray', 'capsize': 6, 'capthick': 3}
     )
 
     plt.title('Explanation',fontsize=24)
@@ -161,14 +161,14 @@ def plot_user_study():
                   width,
                   color=COLORS[0],
                   yerr=map(err, [sumlist_b, append_a, digitsofint_a, wwhile_b]),
-                  error_kw={'linewidth': 5}
+                  error_kw={'linewidth': 3, 'ecolor': 'gray', 'capsize': 6, 'capthick': 3}
     )
     p_n = plt.bar(ind + width,
                   [100*np.average(sumlist_a), 100*np.average(append_b), 100*np.average(digitsofint_b), 100*np.average(wwhile_a)],
                   width,
                   color=COLORS[1],
                   yerr=map(err, [sumlist_a, append_b, digitsofint_b, wwhile_a]),
-                  error_kw={'linewidth': 5}
+                  error_kw={'linewidth': 3, 'ecolor': 'gray', 'capsize': 6, 'capthick': 3}
     )
 
     plt.title('Fix',fontsize=24)
