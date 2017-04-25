@@ -377,7 +377,7 @@ def plot_distrib_extended(ucsd):
     plt.axes(aspect=1)
     p1 = plt.pie(rs_u,
                  labels=ALL_DL_E,
-                 explode=[0, 0.2, 0.2, 0.3, 0.3, 0.2],
+                 explode=[0, 0.2, 0.2, 0.2, 0.2, 0.2],
                  autopct='%.0f%%',
                  pctdistance=1.3,
                  labeldistance=10,
