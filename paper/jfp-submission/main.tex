@@ -1,5 +1,6 @@
 \RequirePackage{amsmath}
 \documentclass{jfp1}
+\synctex=1
 
 %
 % the following standard packages may be helpful, but are not required
@@ -16,7 +17,6 @@
 % % known bug: http://tex.stackexchange.com/questions/1522/pdfendlink-ended-up-in-different-nesting-level-than-pdfstartlink
 % \newcommand{\doi}[1]{doi:~\href{http://dx.doi.org/#1}{\Hurl{#1}}}   % print a hyperlinked DOI
 \usepackage{xspace}
-\usepackage{commands}
 \usepackage{graphicx}
 %\usepackage{pdfpages}
 %\usepackage[doi]{natbib}
@@ -28,10 +28,10 @@
 % \newtheorem{theorem}{Theorem}
 % \newtheorem{definition}{Definition}
 % \theoremstyle{plain}% default
-\newtheorem{thm}{Theorem} % [section]
-\newtheorem{lem}[thm]{Lemma}
+\newtheorem{thm}{\bf Theorem} % [section]
+\newtheorem{lem}[thm]{\bf Lemma}
 % \newtheorem{prop}[thm]{Proposition}
-\newtheorem{cor}{Corollary}
+\newtheorem{cor}{\bf Corollary}
 % \theoremstyle{definition}
 % \newtheorem{defn}{Definition} % [section]
 
@@ -47,6 +47,7 @@
     {\ignorespaces}
 \xspace}
 
+
 %% avoid orphan text and headings
 % \clubpenalty=10000
 % \widowpenalty=10000
@@ -59,22 +60,24 @@
 \title[Dynamic Witnesses for Static Type Errors]
       {Dynamic Witnesses for Static Type Errors\thanks{This work was supported by NSF grants CCF-1422471, CCF-1223850,
 CCF-1218344, CCF-1116289, CCF-0954024, Air Force grant FA8750-15-2-0075,
-and a generous gift from Microsoft Research.}\\
+and a gift from Microsoft Research.}\\
       (or, Ill-Typed Programs \emph{Usually} Go Wrong)}
 
 \author[E. L. Seidel, R. Jhala, and W. Weimer]
        {ERIC L. SEIDEL, RANJIT JHALA\\
          University of California, San Diego, USA\\
-         %\email{\{eseidel,jhala\}@cs.ucsd.edu}
+         % \email{\{eseidel,jhala\}@cs.ucsd.edu}
         WESTLEY WEIMER\\
-         University of Virginia, USA\\
-         \email{\{eseidel,jhala\}@cs.ucsd.edu, weimer@virginia.edu}
+         University of Virginia, USA
+         \email{eseidel@cs.ucsd.edu, jhala@cs.ucsd.edu, weimer@virginia.edu}
        }
+
+\usepackage{commands}
+\input{haskellListings}
 
 \begin{document}
 \maketitle
 
-\input{haskellListings}
 
 \input{abstract}
 

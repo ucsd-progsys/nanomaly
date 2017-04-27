@@ -42,23 +42,20 @@ program is wrong.
 \begin{minipage}{.49\linewidth}
 \centering
 \begin{ecode}
-let rec fac n =
-  if n <= 0 then
-    true
-  else
-    n * __fac (n-1)__
+  let rec fac n =
+    if n <= 0 then
+      true
+    else
+      n * __fac (n-1)__
 \end{ecode}
-\vspace{3em}
-% \end{minipage}
-% % \hspace{0.3in}
-% \begin{minipage}{.39\linewidth}
-\centering
-  \includegraphics[height=1.5in]{fac-overview.png}
+\vspace{2em}
+\includegraphics[height=1.5in]{fac-overview.png}
 \end{minipage}
 \begin{minipage}{.49\linewidth}
 \centering
 \includegraphics[height=3in]{fac-long.png}
 \end{minipage}
+\vspace{1em}
 \caption{(top-left) An ill-typed \texttt{fac} function, the error location reported by \ocaml is underlined; (bottom-left) Dynamically witnessing the type error in \texttt{fac}, showing only function calls; (right) The same trace, fully expanded.}
 \label{fig:factorial}
 \end{figure}

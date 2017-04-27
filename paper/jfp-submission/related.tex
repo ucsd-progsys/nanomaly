@@ -42,19 +42,25 @@ Though the program slice must contain the source of the error, it can
 suffer from the opposite problem of providing \emph{too much}
 information, motivating recent work in ranking the candidate locations.
 %
-Zhang~\etal~\cite{Zhang2014-lv,Zhang2015-yu} present an algorithm for
+Zhang~\etal~\shortcite{Zhang2014-lv,Zhang2015-yu} present an algorithm for
 identifying the most likely culprit using Bayesian reasoning.
 %
-\cite{Pavlinovic2014-mr,Pavlinovic2015-kh} translate the %error
+Pavlinovic~\etal~\shortcite{Pavlinovic2014-mr,Pavlinovic2015-kh}
+translate the %error
 localization problem to a MaxSMT optimization problem, using
 compiler-provided weights to rank the possible sources.
+%
+Loncaric~\etal~\shortcite{Loncaric2016-uk} improve the scalability of
+Pavlinovic~\etal by reusing the existing type checker as
+a theory solver in the Nelson-Oppen~\shortcite{Nelson1979-td}
+style, thus requiring only a MaxSAT solver.
 
 % \subparagraph{Repairing}
-In addition to localizing the error, \cite{Lerner2007-dt} attempt to
+In addition to localizing the error, Lerner~\etal~\shortcite{Lerner2007-dt} attempt to
 suggest a fix by replacing expressions (or removing them entirely) with
 alternatives based on the surrounding program context.
 %
-\cite{Chen2014-gd} use a variational type system to allow for the
+Chen~\&~Erwig~\shortcite{Chen2014-gd} use a variational type system to allow for the
 possibility of changing an expression's type, and search for an
 expression whose type can be changed such that type inference would
 succeed.
@@ -64,7 +70,7 @@ succeed.
 % succeed.
 %
 In contrast to Lerner~\etal, who search for changes at the value-level,
-Chen~\etal\ search at the type-level and are thus complete due the finite
+Chen~\&~Erwig search at the type-level and are thus complete due the finite
 universe of types used in the program.
 %
 % \item \cite{chen_error-tolerant_2012}
@@ -77,7 +83,7 @@ In contrast to these approaches, we do not attempt to localize or fix
 the type error. Instead we try to explain it to the user using a
 dynamic witness that demonstrates how the program is not just
 ill-typed but truly wrong. In addition, allowing users to run their
-program % (even knowing that it is wrong)
+program (even knowing that it is wrong)
 enables experimentation and the
 use of debuggers to step through the program and investigate its
 evolution.
@@ -87,15 +93,17 @@ evolution.
 The content and quality of the error messages themselves has also been
 studied extensively.
 %
-\cite{Marceau2011-ok,Marceau2011-cy} study the effectiveness of error
+Marceau~\etal~\shortcite{Marceau2011-ok,Marceau2011-cy} study the effectiveness of error
 messages in novice environments and present suggestions for improving
 their quality and consistency.
 %
-\cite{Hage2006-hc} identify a variety of general heuristics to improve
+Hage~\&~Heeren~\shortcite{Hage2006-hc} identify a variety of general heuristics to improve
 the quality of type error messages, based on their teaching experience.
 %
-\cite{Heeren2003-db}, \cite{Christiansen2014-qc}, and
-\cite{Serrano2016-oo} provide methods for library authors to specialize
+Heeren~\etal~\shortcite{Heeren2003-db},
+Christiansen~\shortcite{Christiansen2014-qc}, and
+Serrano~\&~Hage~\shortcite{Serrano2016-oo}
+provide methods for library authors to specialize
 type errors with domain-specific knowledge.
 %
 The difference with our work is more pronounced here as we do not
@@ -108,7 +116,7 @@ trace.
 
 \paragraph{Running Ill-Typed Programs}
 \label{sec:running-ill-typed}
-\cite{Vytiniotis2012-gh} extend the \haskell
+Vytiniotis~\etal~\shortcite{Vytiniotis2012-gh} extend the \haskell
 compiler GHC to support compiling ill-typed programs, but their intent
 is rather different from ours. Their goal was to allow programmers to
 incrementally test refactorings, which often cause type errors in
@@ -116,7 +124,7 @@ distant functions. They replace any expression that fails to type
 check with a \emph{runtime} error, but do not check types
 at runtime.
 %
-\cite{Bayne2011-cn} also provide a semantics for running
+Bayne~\etal~\shortcite{Bayne2011-cn} also provide a semantics for running
 ill-typed (\java) programs, but in constrast transform the program to
 perform nearly all type checking at run-time. The key difference between
 Bayne~\etal\ and our work is that we use the dynamic semantics to
@@ -165,13 +173,13 @@ underlying solver.
 Our operational semantics is amenable to dynamic-symbolic execution, one
 would just need to collect the path condition and replace our
 implementation of \gensym by a call to the solver. We chose to use lazy,
-random generation instead because it is efficient, and % does not incur
+random generation instead because it is efficient, does not incur
 the overhead of an external solver, and produces high coverage for our
 domain of novice programs.
 
-A function's type is a theorem about the function's behavior.
+A function's type is a theorem about the its behavior.
 Thus, \toolname's witnesses can be viewed as \emph{counter-examples},
-thereby connecting it to work on using test generation to find
+thereby connecting it to work on using test cases to find
 counter-examples prior to starting a proof~\cite{ACL2Testing, Seidel15}.
 
 % \begin{itemize}
@@ -184,14 +192,14 @@ counter-examples prior to starting a proof~\cite{ACL2Testing, Seidel15}.
 
 \paragraph{Program Exploration}
 
-Flanagan \etal~\cite{Flanagan96} describe a static debugger for Scheme, which helps
+Flanagan~\etal~\shortcite{Flanagan96} describe a static debugger for Scheme, which helps
 the programmer interactively visualize problematic source-sink flows
 corresponding to soft-typing errors. The debugger allows the user to explore
 an abstract reduction graph computed from a static value set analysis of
 the program. In contrast, \toolname generates witnesses and allows the user
 to explore the resulting dynamic execution.
 %
-Perera \etal~\cite{Perera2012-dy} present a tracing semantics
+Perera~\etal~\shortcite{Perera2012-dy} present a tracing semantics
 for functional programs that tags values with their provenance, enabling
 a form of backwards program slicing from a final value to the sequence
 of reductions that produced it. Notably, they allow the user to supply a

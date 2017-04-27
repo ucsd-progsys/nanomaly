@@ -195,10 +195,11 @@ The evaluation relation is parameterized by a pair of functions,
 that ``dynamically'' perform type-checking and hole-filling
 respectively.
 
-\paragraph{Narrowing Types} The procedure % $\force{v}{t}{\vsu}{\tsu}$,
+\paragraph{Narrowing Types}
+The procedure % $\force{v}{t}{\vsu}{\tsu}$,
 \[
 \forcesym : v \times t \times \vsu \times \tsu \rightarrow \triple{v \cup \stuck}{\vsu}{\tsu}
-\]
+\]%
 defined in Figure~\ref{fig:narrow}, takes as input a value $v$, a type
 $t$, and the current value and type substitutions, and refines $v$ to
 have type $t$ by yielding a triple of either the same value and
@@ -393,7 +394,7 @@ if we have $\steps{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\
 then \emph{for every} concrete type $t$, we can find a value
 $v$ of type $t$ such that $\eapp{f}{v}$ goes wrong.
 
-\begin{thm}{\textbf{[Witness Generality]}}
+\begin{thm}[Witness Generality]
 \label{thm:soundness}
   For any lambda-term $f$, if
   \hbox{$\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$,}
@@ -957,7 +958,7 @@ The search proceeds as follows.
 %
 We obtain the following corollary of Theorem~\ref{thm:soundness}:
 
-\begin{cor}{\textbf{[Witness Generation]}}
+\begin{cor}[Witness Generation]
 \label{thm:generation}
   If $\genWitness{k}{e} = \triple{\eapp{e}{v_1 \ldots v_n}}{\vsu}{\tsu},\ldots$
   then for all types $t_1 \ldots t_n$ there exist values $w_1 \ldots w_n$ such that

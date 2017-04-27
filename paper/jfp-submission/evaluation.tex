@@ -118,11 +118,11 @@ in the program, and thus valuable feedback for the user.
 }
 \vspace{3ex}
 \caption{Results of our coverage testing and the distribution of test
-  outcomes. Our random search successfully finds witnesses for 79--85\% of
-  the programs in under one second, improving to 87\% in under
-  10 seconds. In both datasets we detect actual type errors about 82\%
-  of the time, unbound variables or constructors 3--4\% of the time, and
-  diverging loops 2--3\% of the time. For the remaining 11--12\% of the
+  outcomes. Our random search successfully finds witnesses for 75--82\% of
+  the programs in under one second, improving to 84\% in under
+  10 seconds. In both datasets we detect actual type errors at least 75\%
+  of the time, unbound variables or constructors 4--5\% of the time, and
+  diverging loops 3\% of the time. For the remaining 13--16\% of the
   programs we are unable to provide any useful feedback.  }
 \label{fig:results-witness}
 \end{figure}
@@ -132,17 +132,17 @@ in the program, and thus valuable feedback for the user.
 The results of our experiments are summarized in
 Figure~\ref{fig:results-witness}.
 %
-In both datasets our tool was able to find a witness for 83\% of the
+In both datasets our tool was able to find a witness for at least 75\% of the
 programs in under one second, \ie\ fast enough to be integrated as a
 compile-time check. If we extend our tolerance to a 10 second timeout,
-we hit a maximum of 87\% coverage.
+we hit a maximum of 83--86\% coverage.
 %
 Interestingly, while the vast majority of witnesses corresponded to a
-type-error, as expected, 3--4\% triggered an unbound variable error (even
-though \ocaml\ reported a type error) and 2--3\% triggered an infinite
+type-error, as expected, 4--5\% triggered an unbound variable error (even
+though \ocaml\ reported a type error) and 3\% triggered an infinite
 recursion error.
 %
-For the remaining 12\% of programs we were unable to provide any useful
+For the remaining 13--16\% of programs we were unable to provide any useful
 feedback as they either completed 1,000 tests successfully, or timed out
 after one minute.
 %
@@ -150,7 +150,7 @@ after one minute.
 % we could not provide any useful feedback for XX\% of the total programs.
 %
 While a more advanced search procedure, \eg\ dynamic-symbolic execution,
-could likely trigger more of the type errors, our experiments suggest that
+could likely uncover more errors, our experiments suggest that
 type errors are coarse enough (or that novice programs are \emph{simple}
 enough) that these techniques are not necessary.
 
@@ -321,8 +321,8 @@ how @sumList [1; 2]@ gets stuck at @2 + []@.
 \end{center}
 %
 The trace clarifies (via the third step)
-that the @[]@ is the result of the recursive call
-@sumList []@, and shows how it is incompatible with
+that the @[]@ results from the recursive call
+\hbox{@sumList []@,} and shows how it is incompatible with
 the subsequent \texttt{+} operation.
 
 %% ES: append is actually a bit problematic as we don't find the nice
@@ -390,8 +390,8 @@ Though incorrect, @append@ still type-checks and thus \ocaml and
     'a list
 \end{verbatim}
 %
-In contrast, \toolname makes no assumptions about @append@
-yielding a trace that illustrates the true error on line 4, by
+In contrast, \toolname makes no assumptions about @append@,
+yielding a trace that illustrates the error on line 4, by
 highlighting the conflict in consing a list onto a list of integers.
 %
 \begin{center}
@@ -588,17 +588,27 @@ agreement~\cite{Landis1977-ey}.
 \label{sec:discussion}
 
 To summarize, our experiments demonstrate that \nanomaly finds witnesses
-to type errors: (1) with high coverage in a timespan amenable to
-compile-time analysis; (2) with traces that have a low average
-complexity of 7 jumps; (3) that are more helpful to novice
-programmers than traditional type error messages; and (4) that
-can be used to automatically locate the source of a type error.
+to type errors:
+%
+(1) with high coverage in a timespan amenable to compile-time analysis;
+%
+(2) with traces that have a low average complexity of 7 jumps;
+%
+(3) that are more helpful to novice programmers than traditional type
+error messages; and
+%
+(4) that can be used to automatically locate the source of a type error.
 
 There are, of course, drawbacks to our approach. Four that stand out
-are: (1) coverage limits due to random generation, (2) the inability to
-handle certain instances of infinite types, (3) dealing with an
-explosion in the size of generated traces, and (4) handling ad-hoc
-polymorphism.
+are:
+%
+(1) coverage limits due to random generation;
+%
+(2) the inability to handle certain instances of infinite types;
+%
+(3) dealing with an explosion in the size of generated traces; and
+%
+(4) handling ad-hoc polymorphism.
 
 \paragraph{Random Generation}
 Random test generation has difficulty generating highly constrained
@@ -608,7 +618,7 @@ able to trigger it. Exhaustive testing and dynamic-symbolic execution
 can address this short-coming by performing an exhaustive search for
 inputs (\emph{resp}.\ paths through the program). As our experiments
 show, however, novice programs do not appear to require more advanced
-search techniques, likely because the novice programs tend to be simple.
+search techniques, likely because they tend to be simple.
 
 \paragraph{Infinite Types}
 Our implementation does check for infinite types inside \forcesym, but
