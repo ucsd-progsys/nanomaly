@@ -404,7 +404,7 @@ def plot_blame():
 
     # FIXME: load these numbers from csv...
     tools = ['OCaml', 'NanoMaLy', 'Mycroft', 'SHErrLoc']
-    accs  = [45.7,    67.9,       71.5,      75.4      ]
+    accs  = [49.0,    70.7,       71.0,      78.9      ]
 
     N = len(tools)
     ind = np.arange(N)    # the x locations for the groups
