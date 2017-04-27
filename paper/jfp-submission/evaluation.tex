@@ -118,8 +118,8 @@ in the program, and thus valuable feedback for the user.
 }
 \vspace{3ex}
 \caption{Results of our coverage testing and the distribution of test
-  outcomes. Our random search successfully finds witnesses for 75--82\% of
-  the programs in under one second, improving to 84\% in under
+  outcomes. Our random search successfully finds witnesses for 76--82\% of
+  the programs in under one second, improving to 84--85\% in under
   10 seconds. In both datasets we detect actual type errors at least 75\%
   of the time, unbound variables or constructors 4--5\% of the time, and
   diverging loops 3\% of the time. For the remaining 13--16\% of the
@@ -132,10 +132,11 @@ in the program, and thus valuable feedback for the user.
 The results of our experiments are summarized in
 Figure~\ref{fig:results-witness}.
 %
-In both datasets our tool was able to find a witness for at least 75\% of the
+In both datasets our tool was able to find a witness for over 75\% of the
 programs in under one second, \ie\ fast enough to be integrated as a
 compile-time check. If we extend our tolerance to a 10 second timeout,
-we hit a maximum of 83--86\% coverage.
+we reach 84--85\% coverage, and if we allow a 60 second search,
+we hit a maximum of 84--87\% coverage.
 %
 Interestingly, while the vast majority of witnesses corresponded to a
 type-error, as expected, 4--5\% triggered an unbound variable error (even
@@ -188,7 +189,7 @@ trace using two metrics.
 \end{minipage}
 }
 \vspace{3ex}
-\caption{Complexity of the generated traces. 81\% of the combined traces
+\caption{Complexity of the generated traces. Over 80\% of the combined traces
   have a jump complexity of at most 10, with an average complexity of 7
   and a median of 5.}
 \label{fig:results-complexity}
@@ -199,12 +200,12 @@ trace using two metrics.
 The results of the experiment are summarized in
 Figure~\ref{fig:results-complexity}.
 %
-The average number of single-step reductions per trace is 31 for the
-\ucsdbench\ dataset (35 for the \uwbench\ dataset) with a maximum of
-2,745 (\resp 986) and a median of 17 (\resp 17).
+The average number of single-step reductions per trace is 30 for the
+\ucsdbench\ dataset (45 for the \uwbench\ dataset) with a maximum of
+2,745 (\resp 982) and a median of 14.5 (\resp 14.5).
 %
-The average number of jumps per trace is 7 (\resp 7) with a
-maximium of 353 (\resp 185) and a median of 4 (\resp 4).
+The average number of jumps per trace is 7 (\resp 10) with a
+maximium of 353 (\resp 221) and a median of 4 (\resp 4).
 %
 In both datasets 80\% or more traces have at most 10 jumps.
 

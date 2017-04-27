@@ -42,7 +42,7 @@ def autolabel(ax, rects):
 def cumulative_coverage(data):
     headers = data[0]
     data = data[1:]
-    return [(l, int(100 * len([r for r in data
+    return [(l, round(100 * len([r for r in data
                                if float(r[2]) <= l
                                and r[4] in UNSAFE])
                           / float(len(data))))
@@ -367,10 +367,10 @@ def plot_distrib_extended(ucsd):
     rs_u = [len([r for r in ucsd[1:] if r[4] in o])
             for o in ALL_D_E] + [0,0,0]
     missed = rs_u[2]
-    rs_u[2] = int(missed * 0.44) # Non-parametric fun
-    rs_u[3] = int(missed * 0.12) # Dead code
-    rs_u[4] = int(missed * 0.28) # Safe call
-    rs_u[5] = int(missed * 0.16) # True miss
+    rs_u[2] = round(missed * 0.44) # Non-parametric fun
+    rs_u[3] = round(missed * 0.12) # Dead code
+    rs_u[4] = round(missed * 0.28) # Safe call
+    rs_u[5] = round(missed * 0.16) # True miss
 
     print ('rs_u', rs_u)
 
