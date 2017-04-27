@@ -99,7 +99,7 @@ print(kappam.fleiss(fixes,exact=TRUE,detail=TRUE))
 
 
 significance <- function(x,y) {
-  wilcox.test(x, y)
+  wilcox.test(x, y, alternative="t")
 }
 
 print("append reason")

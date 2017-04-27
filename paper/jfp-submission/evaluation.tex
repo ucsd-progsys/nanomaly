@@ -167,7 +167,7 @@ trace using two metrics.
 
 % \item \ES{others?}
 %
-\begin{figure}[htp]
+\begin{figure}[t]
 \centerline{
 \begin{minipage}{1.2\textwidth}
 \includegraphics[width=0.5\linewidth]{trace_size_step.png}
@@ -181,23 +181,6 @@ trace using two metrics.
 \label{fig:results-complexity}
 \end{figure}
 %
-\begin{figure}[htp]
-\centerline{
-\begin{minipage}{1.2\textwidth}
-\includegraphics[width=0.5\linewidth]{user-study-reason.png}
-\includegraphics[width=0.5\linewidth]{user-study-fix.png}
-\end{minipage}
-}
-\vspace{3ex}
-\caption{A classification of students' explanations and fixes for type
-  errors, given either \ocaml's error % message
-  or \toolname's
-  jump-compressed trace. The students given \toolname's jump-compressed
-  trace consistently scored better ($\ge 10\%$) than those given \ocaml's type
-  error.}
-\label{fig:results-user-study}
-\end{figure}
-
 \paragraph{Results}
 \label{sec:results-complexity}
 The results of the experiment are summarized in
@@ -469,8 +452,8 @@ actually relevant to the error.
 % For each problem the student was given the ill-typed program and
 % either \ocaml's error message or \toolname's jump-compressed trace.
 %
-We assigned four problems to the ($n=60$) students in the course: the
-@sumList@, @digitsOfInt@, and @wwhile@ programs from
+We assigned four problems to the 60 students in the course: the
+@sumList@, \hbox{@digitsOfInt@,} and @wwhile@ programs from
 \S~\ref{sec:advantage-traces}, as well as the following @append@ program
 %
 \begin{ecode}
@@ -483,7 +466,7 @@ We assigned four problems to the ($n=60$) students in the course: the
 which triggers an occurs-check error on line 4.
 %
 For each problem the students were given the ill-typed program and
-either \ocaml's error message or \toolname's jump-compressed trace.
+either \ocaml's error or \toolname's jump-compressed trace.
 %
 Due to the nature of an in-class exam, not every student answered every
 question; we received between 13 and 28 (out of a possible 30) responses
@@ -550,6 +533,22 @@ Collecting more responses per test pair was not possible, as it
 would require having students answer the same problem twice (once with
 \ocaml and once with \toolname).
 
+\begin{figure}[t]
+\centerline{
+\begin{minipage}{1.2\textwidth}
+\includegraphics[width=0.5\linewidth]{user-study-reason.png}
+\includegraphics[width=0.5\linewidth]{user-study-fix.png}
+\end{minipage}
+}
+\vspace{3ex}
+\caption{A classification of students' explanations and fixes for type
+  errors, given either \ocaml's error % message
+  or \toolname's
+  jump-compressed trace. The students given \toolname's jump-compressed
+  trace consistently scored better ($\ge 10\%$) than those given \ocaml's type
+  error.}
+\label{fig:results-user-study}
+\end{figure}
 
 \paragraph{Results}
 %
@@ -570,6 +569,8 @@ above $0.60$ are often called ``substantial''
 agreement~\cite{Landis1977-ey}.
 %
 %
+
+\input{locating}
 
 \subsection{Discussion}
 \label{sec:discussion}

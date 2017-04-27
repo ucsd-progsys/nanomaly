@@ -36,7 +36,7 @@ def autolabel(ax, rects):
     for rect in rects:
         height = rect.get_height()
         ax.text(rect.get_x() + rect.get_width()/2., height,
-                '%d' % int(height),
+                '%d' % round(height),
                 ha='center', va='bottom')
 
 def cumulative_coverage(data):
@@ -395,6 +395,37 @@ def plot_distrib_extended(ucsd):
     plt.savefig('distrib_ext.png')
     plt.close()
 
+def plot_blame():
+    # xy_s = cumulative_coverage(seminal)
+    # xy_u = cumulative_coverage(ucsd)
+
+    # print ('xy_s', xy_s)
+    # print ('xy_u', xy_u)
+
+    # FIXME: load these numbers from csv...
+    tools = ['OCaml', 'NanoMaLy', 'Mycroft', 'SHErrLoc']
+    accs  = [45.7,    67.9,       71.5,      75.4      ]
+
+    N = len(tools)
+    ind = np.arange(N)    # the x locations for the groups
+    width = 0.5       # the width of the bars: can also be len(x) sequence
+
+    fig = plt.figure()
+    p1 = plt.bar(ind, accs, width,
+                 align='center',
+                 color=COLORS[0])
+
+    #plt.xlabel('Witness found in <= x seconds', fontsize=20)
+    plt.ylabel('Accuracy (%)', fontsize=20)
+    plt.title('Accuracy of Type Error Localization', fontsize=24)
+    plt.xticks(ind, tools, fontsize=20)
+    plt.yticks(np.arange(0, 101, 10), fontsize='large')
+    autolabel(plt, p1)
+    #autolabel(plt, p2)
+
+    # plt.show()
+    fig.savefig('blame.png')
+    plt.close()
 
 
 if __name__ == '__main__':
@@ -411,3 +442,5 @@ if __name__ == '__main__':
     plot_coverage(seminal, ucsd)
 
     plot_user_study()
+
+    plot_blame()
