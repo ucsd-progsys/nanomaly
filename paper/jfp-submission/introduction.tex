@@ -46,7 +46,7 @@ program is wrong.
     if n <= 0 then
       true
     else
-      n * __fac (n-1)__
+      n * (*@\hlOcaml{fac (n-1)}@*)
 \end{ecode}
 \vspace{2em}
 \includegraphics[height=1.5in]{fac-overview.png}
@@ -56,7 +56,7 @@ program is wrong.
 \includegraphics[height=3in]{fac-long.png}
 \end{minipage}
 \vspace{1em}
-\caption{(top-left) An ill-typed \texttt{fac} function, the error location reported by \ocaml is underlined; (bottom-left) Dynamically witnessing the type error in \texttt{fac}, showing only function calls; (right) The same trace, fully expanded.}
+\caption{(top-left) An ill-typed \texttt{fac} function \hlOcaml{highlighting} the error location reported by \ocaml. (bottom-left) Dynamically witnessing the type error in \texttt{fac}, showing only function call-return pairs. (right) The same trace, fully expanded to show each small-step reduction in the computation.}
 \label{fig:factorial}
 \end{figure}
 

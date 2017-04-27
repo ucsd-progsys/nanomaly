@@ -72,6 +72,22 @@ and a gift from Microsoft Research.}\\
          \email{eseidel@cs.ucsd.edu, jhala@cs.ucsd.edu, weimer@virginia.edu}
        }
 
+\usepackage{tcolorbox}
+
+% colors from http://colorbrewer2.org/?type=qualitative&scheme=Set2&n=3
+% \definecolor{tree}{HTML}{66C2A5}
+% \definecolor{sherrloc}{HTML}{FC8D62}
+% \definecolor{fix}{HTML}{8DA0CB}
+% \definecolor{sherrloc}{HTML}{FC8D62}
+\definecolor{ocaml}{HTML}{8dd3c7}
+\definecolor{sherrloc}{HTML}{FFFFB3}
+%\definecolor{fix}{HTML}{bebada}
+
+\tcbset{every box/.style={on line,colframe=black,size=fbox,boxrule=1pt}}
+\newtcbox{\hlOcaml}{colback=red!25,toprule=0pt,bottomrule=0pt}
+\newtcbox{\hlSherrloc}{colback=red!25,leftrule=0pt,rightrule=0pt}
+%\newtcbox{\hlFix}{colback=fix!50}
+
 \usepackage{commands}
 \input{haskellListings}
 

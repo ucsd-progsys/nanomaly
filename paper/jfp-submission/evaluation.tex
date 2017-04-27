@@ -227,12 +227,11 @@ shows the steps necessary to reach the stuck state, and
 %
 does not assume that a function is correct just because it type-checks.
 %
-For each example we will present
-(1)~the code,
-(2)~the error message returned \ocaml,
-(3)~the error locations returned by \ocaml\ (underlined) and \sherrloc\ (in bold),\footnote{When the locations from \ocaml\ and \sherrloc\ overlap,
-we just underline the relevant code.}
-and (4)~the jump-compressed trace produced by \toolname.
+For each example we will present:
+(1)~the code;
+(2)~the error message returned \ocaml;
+(3)~the error locations returned by \hlOcaml{\ocaml} and \hlSherrloc{\sherrloc};
+and (4)~\toolname's jump-compressed trace.
 
 % \begin{figure*}[ht]
 % \centering
@@ -259,7 +258,7 @@ of the result.
 \begin{ecode}
   let rec sqsum xs = match xs with
     | [] -> 0
-    | h::t -> __(sqsum t)__ @ (h * h)
+    | h::t -> (*@\hlOcaml{\hlSherrloc{sqsum t}}@*) @ (h * h)
 \end{ecode}
 %
 Unfortunately the student has used the list-append
@@ -294,8 +293,8 @@ the elements of its input list.
 %
 \begin{ecode}
   let rec sumList xs = match xs with
-    | []    -> ==[]==
-    | y::ys -> y + __sumList ys__
+    | []    -> (*@\hlSherrloc{hello}@*)
+    | y::ys -> y + (*@\hlOcaml{sumList ys}@*)
 \end{ecode}
 %
 Unfortunately, in the base case, it returns @[]@
@@ -372,8 +371,8 @@ the digits of the input integer.
     if n <= 0 then
       []
     else
-      append (==digitsOfInt (n / 10)==)
-             [__n mod 10__]
+      append ((*@\hlSherrloc{digitsOfInt (n / 10)}@*))
+             [(*@\hlOcaml{n mod 10}@*)]
 \end{ecode}
 %
 %\pagebreak
@@ -417,7 +416,7 @@ the initial @b@, till the second element is @false@.
     let xx = x * x in
     (xx, (xx < 100))
 
-  let _ = wwhile (__f__, 2)
+  let _ = wwhile ((*@\hlOcaml{\hlSherrloc{f}}@*), 2)
 \end{ecode}
 %
 The student has forgotten to \emph{apply} @f@ at all on line 2,
