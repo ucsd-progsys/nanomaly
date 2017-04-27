@@ -16,7 +16,7 @@ type errors.
 
 \paragraph{Evaluation Goals}
 %
-There are three questions we seek to answer with our evaluation:
+There are four questions we seek to answer with our evaluation:
 %
 \begin{enumerate}
 \item \emphbf{Witness Coverage}
@@ -24,8 +24,11 @@ There are three questions we seek to answer with our evaluation:
 \item \emphbf{Witness Complexity}
       How \emph{complex} are the traces produced by the witnesses?
 \item \emphbf{Witness Utility}
-      How \emph{helpful} (qualitatively and quantitatively)
+      How \emph{helpful} %(qualitatively and quantitatively)
       are the witnesses and traces in debugging type errors?
+\item \emphbf{Witness-based Blame}
+      Can witnesses be used to \emph{locate} the source
+      of a type error?
 \end{enumerate}
 
 \paragraph{Benchmarks}
@@ -70,6 +73,16 @@ programs and asked them to
 For each problem the students were given the ill-typed program and
 either \ocaml's error message or \toolname's jump-compressed trace.
 
+We answer the last question on a subset of the \ucsdbench dataset.
+%
+For each ill-typed program we identify the student's \emph{fix}
+by searching for the first type-correct program that follows it in
+the interaction trace.
+%
+We then use an expression-level \emph{diff}~\cite{Lempsink2009-xf} to
+determine which sub-expressions changed between the ill-typed program
+and the student's fix, and treat those expressions as the source of the
+type error.
 
 \subsection{Witness Coverage}
 \label{sec:eval:witness-coverage}
@@ -188,11 +201,10 @@ Figure~\ref{fig:results-complexity}.
 %
 The average number of single-step reductions per trace is 31 for the
 \ucsdbench\ dataset (35 for the \uwbench\ dataset) with a maximum of
-2,745 (986 for \uwbench) and a median of 17 (also 17 for \uwbench).
+2,745 (\resp 986) and a median of 17 (\resp 17).
 %
-The average number of jumps per trace is 7 (also 7 for \uwbench) with a
-maximium of 353 (185 for \uwbench) and a median of 4 (also 4 for
-\uwbench).
+The average number of jumps per trace is 7 (\resp 7) with a
+maximium of 353 (\resp 185) and a median of 4 (\resp 4).
 %
 In both datasets 80\% or more traces have at most 10 jumps.
 
@@ -491,13 +503,13 @@ random agreement.
 Measuring understanding is a difficult task; the following summarize
 the threats to the validity of our results.
 
-\subparagraph{Construct}
+\subparagraph{Construct.}
 %
 We used the correctness of the student's explanation of, and fix for,
 the type error as a proxy for her understanding, but it is possible
 that other metrics would produce different results.
 
-\subparagraph{Internal}
+\subparagraph{Internal.}
 %
 We assigned students randomly to two groups. The first group was given
 \ocaml's errors for @append@ and \hbox{@digitsOfInt@,} and \toolname's trace
@@ -509,18 +521,18 @@ was given an ``easy'' and ``hard'' problem for both \ocaml and
 the results, as could the time-constrained nature of an exam. For these
 reasons we excluded any answers left blank from our analysis.
 
-\subparagraph{External}
+\subparagraph{External.}
 %
-Our experiment is based on students in the process of learning \ocaml,
+Our experiment used students in the process of learning \ocaml,
 and thus may not generalize to all developers. The four
-programs we used were chosen manually, via a random selection and
+programs were chosen manually, via a random selection and
 filtering of the programs in the \ucsdbench dataset. In some cases we made
 minor simplifying edits (\eg alpha-renaming, dead-code removal) to the
 programs to make them more understandable in the short timeframe of an
 exam; however, we never altered the resulting type-error. A different
 selection of programs may lead to different results.
 
-\subparagraph{Conclusion}
+\subparagraph{Conclusion.}
 %
 We collected exams from 60 students, though due to the nature of the
 study not every student completed every problem.
@@ -577,9 +589,10 @@ agreement~\cite{Landis1977-ey}.
 
 To summarize, our experiments demonstrate that \nanomaly finds witnesses
 to type errors: (1) with high coverage in a timespan amenable to
-compile-time analysis, (2) with traces that have a low average
-complexity of 7 jumps, and (3) that are more helpful to novice
-programmers than traditional type error messages.
+compile-time analysis; (2) with traces that have a low average
+complexity of 7 jumps; (3) that are more helpful to novice
+programmers than traditional type error messages; and (4) that
+can be used to automatically locate the source of a type error.
 
 There are, of course, drawbacks to our approach. Four that stand out
 are: (1) coverage limits due to random generation, (2) the inability to

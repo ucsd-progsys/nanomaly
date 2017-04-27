@@ -45,7 +45,7 @@ compare two holes.
 \ocaml provides polymorphic equality and comparison operators,
 overloading them for each type.
 %
-While extremely convenient to use, they pose a challenge for \toolname's
+While convenient to use, they pose a challenge for \toolname's
 combination of execution and inference.
 %
 Consider, for example
@@ -58,7 +58,7 @@ Consider, for example
       0
 \end{code}
 %
-When given @bad@ as input, \toolname will generate two fresh holes
+When given @bad@, \toolname will generate two fresh holes
 $\nu_1[\alpha_1]$ and $\nu_2[\alpha_2]$ and proceed directly into the
 @x < y@ comparison.
 %
@@ -85,8 +85,7 @@ such instantiations.
 %
 We would need to track which holes were instantiated speculatively in
 order to distinguish type errors that would have happened regardless, as
-in the above @bad@ function, from type errors that were the fault of our
-instantiation.
+in @bad@, from type errors that were caused by our instantiation.
 
 Further, suppose that our speculative instantiation induces a frivolous
 type error.
@@ -252,7 +251,7 @@ Of course, \ocaml cannot be expected to know that this particular call
 is safe, its type system is not sophisticated enough to express the
 necessary conditions.
 %
-\ES{TODO: add some comment about using dependent types, though this particular example would be quite bizarre to encode in DT..}
+% \ES{TODO: add some comment about using dependent types, though this particular example would be quite bizarre to encode in DT..}
 
 % We note that many of the programs in this category appear to come from
 % interactions with the \ocaml top-level, \ie the student defined a

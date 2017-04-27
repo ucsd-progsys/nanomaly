@@ -190,8 +190,8 @@ an if-expression tells us the condition must be a boolean.
 When a hole appears in such a context, we know what type it must have
 in order to make progress and can fill it in with a concrete value.
 
-The evaluation relation is parameterized by a pair of functions:
-called \emph{narrow} (\forcesym) and \emph{generate} (\gensym),
+The evaluation relation is parameterized by a pair of functions,
+\emph{narrow} (\forcesym) and \emph{generate} (\gensym),
 that ``dynamically'' perform type-checking and hole-filling
 respectively.
 
@@ -603,7 +603,7 @@ then $\tsu' = \tsu[\thole_1 \mapsto t_1] \ldots [\thole_n \mapsto t_n]$.
   $\thole$ does not change, so if the partial input types differ then
   $\tsu \neq \tsu'$.
   %
-  Note that only \forcesym\ can change \tsu,
+  Only \forcesym\ can change \tsu,
   %, and it can only do so via \unifysym
   via \unifysym, which can only extend \tsu.
   % and only the first case,
@@ -626,7 +626,7 @@ $\vsub{\ptype{\trace}{f}}{\resolve{\vhole{\thole}}{\vsu}}$.
   By induction on $\trace$.
   %
   In the base case $\trace = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}$
-  and $\thole$ is trivially a refinement of $\vhole{\thole}$.
+  and $\thole$ trivially refines $\vhole{\thole}$.
   %
   In the inductive case, consider the single-step extension of $\trace$,
   $\trace' = \trace,\triple{e'}{\vsu'}{\tsu'}$.
@@ -869,7 +869,7 @@ traces are finite.} and
 (2) the target expression $e$ that contains the type error
 (which may be a curried function of multiple arguments).
 %
-The witness generation procedure returns as output a list of (general)
+The witness generation procedure returns a list of (general)
 witness expressions, each of which is of the form $e\ v_1 \ldots v_n$.
 %
 The \emph{empty} list is returned when no witness can be found after
@@ -964,8 +964,8 @@ We obtain the following corollary of Theorem~\ref{thm:soundness}:
   $\steps{\eapp{e}{w_1 \ldots w_n}}{\emptysu}{\emptysu}{\stuck}{\vsu'}{\tsu'}$.
 \end{cor}
 \begin{proof}
-  For any function $f$ of multiple arguments, we can define $f'$ to be
-  the uncurried version of $f$ that takes all of its arguments as a single
+  For any function $f$ of multiple arguments, we can define $f'$ as the
+  uncurried version of $f$ that takes all of its arguments as a single
   nested pair, and then apply Theorem~\ref{thm:soundness} to $f'$.
 \end{proof}
 
