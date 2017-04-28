@@ -19,16 +19,16 @@ type errors.
 There are four questions we seek to answer with our evaluation:
 %
 \begin{enumerate}
-\item \emphbf{Witness Coverage}
-      How many ill-typed programs can we find witnesses for?
-\item \emphbf{Witness Complexity}
+\item \emphbf{Witness Coverage} (\S~\ref{sec:eval:witness-coverage},~\ref{sec:how-safe})
+      How many ill-typed programs \emph{admit} witnesses?
+\item \emphbf{Witness Complexity} (\S~\ref{sec:trace-complexity})
       How \emph{complex} are the traces produced by the witnesses?
-\item \emphbf{Witness Utility}
+\item \emphbf{Witness Utility} (\S~\ref{sec:advantage-traces},~\ref{sec:user-study})
       How \emph{helpful} %(qualitatively and quantitatively)
-      are the witnesses and traces in debugging type errors?
-\item \emphbf{Witness-based Blame}
+      are the witnesses in debugging type errors?
+\item \emphbf{Witness-based Blame} (\S~\ref{sec:locating})
       Can witnesses be used to \emph{locate} the source
-      of a type error?
+      of an error?
 \end{enumerate}
 
 \paragraph{Benchmarks}
