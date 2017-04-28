@@ -31,7 +31,54 @@ There are four questions we seek to answer with our evaluation:
       of an error?
 \end{enumerate}
 
-\paragraph{Benchmarks}
+In the sequel we present our experimental methodology (\S~\ref{sec:methodology})
+and then answer the above questions.
+%
+However, for the impatient reader, we begin with a quick summary of our main results:
+
+\paragraph{1. Most Type Errors Admit Witnesses}
+Our prime result is that the vast majority of static type errors, around
+85\%, do in fact admit a dynamic witness.
+%
+Further, \toolname efficiently synthesizes witnesses with its randomized search;
+it can synthesize a witness for over 75\% of programs in under one second, \ie
+fast enough to be integrated into the edit-compile-debug cycle.
+%
+
+\paragraph{2. Jump-Compressed Traces Are Small}
+We find that our jump-compression heuristic effectively abstracts the
+pedestrian details of computation, compressing the median trace with
+14--15 single-step reductions to only 4 jumps.
+%
+Over 80\% of programs have a jump-compressed trace with at most 10
+jumps, providing a bird's-eye view from which we can launch a more
+in-depth investigation.
+
+\paragraph{3. Witnesses Help Novices}
+A witness should also help programmers \emph{understand} and
+\emph{fix} type errors.
+%
+We use a set of ill-typed student programs to show that \toolname's
+witnesses effectively demonstrate the runtime error that the type
+system prevented.
+%
+Furthermore, we find, in a study of undergraduate students, that
+\toolname's witnesses lead to more accurate diagnoses and fixes of type
+errors than \ocaml's type error messages.
+
+\paragraph{4. Witnesses Assign Blame}
+Finally, we find that a simple heuristic allows us to use witnesses
+to \emph{automatically} assign blame for type errors.
+%
+We treat the values inside the stuck term as \emph{sources} of typing
+constraints and the stuck term itself as a \emph{sink}, producing
+a small slice of the program that likely contains the error.
+%
+Using this heuristic, \toolname's witness are competitive with the
+state-of-the-art type error localization tools \mycroft and \sherrloc.
+
+\subsection{Methodology}
+\label{sec:methodology}
 We answer the first two questions on two sets of ill-typed programs,
 \ie\ programs that were rejected by the \ocaml\ compiler because of a
 type error.
@@ -75,9 +122,9 @@ either \ocaml's error message or \toolname's jump-compressed trace.
 
 We answer the last question on a subset of the \ucsdbench dataset.
 %
-For each ill-typed program we identify the student's \emph{fix}
-by searching for the first type-correct program that follows it in
-the interaction trace.
+For each ill-typed program in a student's interaction trace, we identify
+the student's \emph{fix} by searching for the first type-correct program
+that follows it in the trace.
 %
 We then use an expression-level \emph{diff}~\cite{Lempsink2009-xf} to
 determine which sub-expressions changed between the ill-typed program
@@ -302,7 +349,7 @@ the elements of its input list.
 %
 \begin{ecode}
   let rec sumList xs = match xs with
-    | []    -> (*@\hlSherrloc{hello}@*)
+    | []    -> (*@\hlSherrloc{[]}@*)
     | y::ys -> y + (*@\hlOcaml{sumList ys}@*)
 \end{ecode}
 %

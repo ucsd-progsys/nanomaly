@@ -10,14 +10,15 @@ Thus, our final experiment seeks to use \toolname's witnesses as
 localizations.
 
 
-As discussed at the beginning of \S~\ref{sec:evaluation}, we recorded
+As discussed in \S~\ref{sec:methodology}, we recorded
 each interaction of our students with the \ocaml top-level system.
 %
 In addition to collecting ill-typed programs, we collected
 subsequent, fixed versions of the programs.
 %
-We identify fixed programs by searching for the first type-correct
-program that follows the ill-typed program in the interaction trace.
+For each ill-typed program in a student's interaction trace, we identify
+the student's fix by searching for the first type-correct program
+that follows it in the trace.
 %
 We then use an expression-level \emph{diff}~\cite{Lempsink2009-xf} to
 determine which sub-expressions changed between the ill-typed program
