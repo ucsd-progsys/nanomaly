@@ -54,16 +54,16 @@ the literal @0@ from line 2 and the value @1@ produced by the
 @*@ on line 3.
 
 We compare \toolname's witness-based predictions against a baseline of
-the \ocaml compiler as well as the state-of-the-art tools \sherrloc
-and \mycroft.
+the \ocaml compiler as well as the state-of-the-art %type error
+localization tools \sherrloc and \mycroft.
 %
-\sherrloc attempts to predict the most likely source of a type error
-by searching the typing constraint graph for constraints that participate
-in many unsatisfiable paths and few satisfiable paths.
+\sherrloc~\cite{Zhang2014-lv} attempts to predict the most likely source
+of a type error by searching the typing constraint graph for constraints
+that participate in many unsatisfiable paths and few satisfiable paths.
 %
-\mycroft reduces the localization problem to MaxSAT by searching for a
-minimal subset of constraints that can be removed, such that the
-resulting system is satisfiable.
+\mycroft~\cite{Loncaric2016-uk} reduces the localization problem to
+MaxSAT by searching for a minimal subset of constraints that can be
+removed, such that the resulting system is satisfiable.
 %
 Both tools produce a \emph{set} of equally-likely expressions to blame
 for the error (in practice the set contains only a few expressions),
