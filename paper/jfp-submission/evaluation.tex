@@ -604,9 +604,10 @@ are:
 %
 (1) coverage limits due to random generation;
 %
-(2) the inability to handle certain instances of infinite types;
+(2) dealing with an explosion in the size of generated traces;
 %
-(3) dealing with an explosion in the size of generated traces; and
+%(3) the inability to handle certain instances of infinite types; and
+(3) our use of a non-parametric function type; and
 %
 (4) handling ad-hoc polymorphism.
 
@@ -620,30 +621,30 @@ inputs (\emph{resp}.\ paths through the program). As our experiments
 show, however, novice programs do not appear to require more advanced
 search techniques, likely because they tend to be simple.
 
-\paragraph{Infinite Types}
-Our implementation does check for infinite types inside \forcesym, but
-there are some degenerate cases where it is unable to detect
-them. Consider, the following buggy @replicate@
-%
-\begin{code}
-  let rec replicate n x =
-    if n <= 0 then
-      []
-    else
-      replicate (n-1) [x]
-\end{code}
-%
-This code produces a nested list (with @n@ levels of nesting) containing
-a single copy of @x@, instead of a list with @n@ copies of @x@. \ocaml\
-detects a cyclic \hbox{@'a = 'a list@} constraint in the recursive call
-and throws a type error, whereas \nanomaly\ happily % recurses @n@ times to
-produces the nested list.  Strictly speaking, this function itself cannot
-``go wrong'', the program would not get stuck until a \emph{client}
-attempted to use the result expecting a flat list. But this is not very
-satisfying as @replicate@ is clearly to blame. Furthermore, in our
-experience, infinite-type errors are often difficult to %some of the more difficult ones to
-debug (and to explain to novices), so better support for this scenario
-would be useful.
+% \paragraph{Infinite Types}
+% Our implementation does check for infinite types inside \forcesym, but
+% there are some degenerate cases where it is unable to detect
+% them. Consider the following buggy @replicate@.
+% %
+% \begin{code}
+%   let rec replicate n x =
+%     if n <= 0 then
+%       []
+%     else
+%       replicate (n-1) [x]
+% \end{code}
+% %
+% This code produces a nested list (with @n@ levels of nesting) containing
+% a single copy of @x@, instead of a list with @n@ copies of @x@. \ocaml\
+% detects a cyclic \hbox{@'a = 'a list@} constraint in the recursive call
+% and throws a type error, whereas \nanomaly\ happily recurses @n@ times to
+% produces the nested list.  Strictly speaking, this function itself cannot
+% ``go wrong'', the program would not get stuck until a \emph{client}
+% attempted to use the result expecting a flat list. But this is not very
+% satisfying as @replicate@ is clearly to blame. Furthermore, in our
+% experience, infinite-type errors are often difficult to %some of the more difficult ones to
+% debug (and to explain to novices), so better support for this scenario
+% would be useful.
 
 \paragraph{Trace Explosion}
 Though the average complexity of our generated traces is low in terms of
@@ -658,33 +659,57 @@ specific values~\cite{Perera2012-dy}, would likely help alleviate this
 issue, allowing users to highlight a confusing value and ask: ``Where
 did this come from?''
 
-\paragraph{Ad-hoc Polymorphism}
-Our approach can only support ad-hoc polymorphism (\eg\ type-classes in
-\haskell\ or polymorphic comparison functions in \ocaml) in limited cases
-where we have enough typing information at the call-site to resolve the
-overloading. For example, consider the @n <= 0@ test in our @fac@ example.
-@<=@ is polymorphic in \ocaml, but in this case we can make progress because
-the literal @0@ is not. If we parameterized @fac@ by a lower bound, \eg
+\paragraph{Non-Parametric Function Type}
+As we discussed in \S~\ref{sec:how-safe} some ill-typed programs
+lack a witness in our semantics due to our use of a non-parametric
+type $\tfun$ for functions.
 %
-\begin{code}
-  let rec fac n m =
-    if n <= m then
-      1
-    else
-      n * fac (n - 1) m
-\end{code}
+These programs cannot ``go wrong'', strictly speaking, but would be very
+difficult to \emph{use} in practice.
 %
-and called @fac@ with two holes, we would get stuck at the @n <= m@
-test; not because of a type error, but because all we know about
-@n@ and @m@ at that point is that they must have the same (unknown)
-type.
+We also note that many of these programs induce cyclic typing constraints,
+causing infinite-type errors, which in our experience can be particularly
+difficult to debug (and to explain to novices).
 
-This issue is uncommon in \ocaml\
-(we detected it in around 5\% of our benchmarks),
-but it would surely be exacerbated
-by a language like \haskell, which makes heavy use of overloading. We
-suspect that dynamic-symbolic execution would allow us to handle ad-hoc
-polymorphism, but defer a proper treatment to future work.
+Better support for these programs would be welcome.
+%
+For example, we might track how the types of inputs change between
+recursive calls.
+%
+If we cannot find a traditional witness, we could then produce a trace
+expanded to show these particular steps.
+
+\paragraph{Ad-Hoc Polymorphism}
+% Our approach can only support ad-hoc polymorphism (\eg\ type-classes in
+% \haskell\ or polymorphic comparison functions in \ocaml) in limited cases
+% where we have enough typing information at the call-site to resolve the
+% overloading. For example, consider the @n <= 0@ test in our @fac@ example.
+% @<=@ is polymorphic in \ocaml, but in this case we can make progress because
+% the literal @0@ is not. If we parameterized @fac@ by a lower bound, \eg
+% %
+% \begin{code}
+%   let rec fac n m =
+%     if n <= m then
+%       1
+%     else
+%       n * fac (n - 1) m
+% \end{code}
+% %
+% and called @fac@ with two holes, we would get stuck at the @n <= m@
+% test; not because of a type error, but because all we know about
+% @n@ and @m@ at that point is that they must have the same (unknown)
+% type.
+
+Also discussed in \S~\ref{sec:how-safe}, our approach can only support
+ad-hoc polymorphism (\eg\ type-classes in \haskell\ or polymorphic
+comparison functions in \ocaml) in limited cases where we have enough
+typing information at the call-site to resolve the overloading. This
+issue is uncommon in \ocaml\ (we detected it in around 5\% of our
+benchmarks), but it would surely be exacerbated by a language like
+\haskell, which makes heavy use of overloading. We suspect that either
+dynamic-symbolic execution or speculative instantiation of holes would
+allow us to handle ad-hoc polymorphism, but defer a proper treatment to
+future work.
 
 % \begin{itemize}
 % \item benchmarks: our data + seminal data

@@ -21,7 +21,7 @@ ALL_D = [ ['U', 'O'], ['B'], ['D'], ['S', 'T', 'H']]
 ALL_DL = [ 'Witness', 'Unbound', 'Diverge', 'No Witness'] #   ['S', 'T'], ['U'], ['B'], ['D'] ]
 
 ALL_D_E = [ ['U', 'O', 'B', 'D'], ['H'], ['S', 'T']]
-ALL_DL_E = [ 'Witness Found', 'Overloaded Function', 'Non-Parametric Function *', 'Dead Code *', 'Safe Call *', 'Witness Exists *'] #   ['S', 'T'], ['U'], ['B'], ['D'] ]
+ALL_DL_E = [ 'Witness Found', 'Ad-Hoc Polymorphism', 'Non-Parametric Function *', 'Dead Code *', 'Safe Call *', 'Witness Exists *'] #   ['S', 'T'], ['U'], ['B'], ['D'] ]
 
 
 def read_csv(f):

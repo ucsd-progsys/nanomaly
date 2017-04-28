@@ -37,7 +37,7 @@ we note the classes that were based on the random sample with a ``*''.
 \label{fig:no-witness}
 \end{figure}
 
-\paragraph{Overloaded Functions}
+\paragraph{Ad-Hoc Polymorphism}
 %
 We found that for 5\% programs \toolname got stuck when it tried to
 compare two holes.
@@ -48,19 +48,24 @@ overloading them for each type.
 While convenient to use, they pose a challenge for \toolname's
 combination of execution and inference.
 %
-Consider, for example
+For example, consider the \hbox{@n <= 0@} test in our @fac@ example.
+%
+The @<=@ operator is polymorphic, but in this case we can make progress because
+the literal @0@ is not.
+%
+Suppose, however, we parameterized @fac@ by a lower bound, \eg
 %
 \begin{code}
-  let bad x y =
-    if x < y then
-      1 + true
+  let rec fac n m =
+    if n <= m then
+      true
     else
-      0
+      n * fac (n - 1) m
 \end{code}
 %
-When given @bad@, \toolname will generate two fresh holes
+When given @fac@, \toolname will generate two fresh holes
 $\nu_1[\alpha_1]$ and $\nu_2[\alpha_2]$ and proceed directly into the
-@x < y@ comparison.
+@n < m@ comparison.
 %
 We cannot (yet) instantiate either hole because we have no constraints
 on the $\alpha$s (we know they must be equal, but nothing else), and
@@ -68,15 +73,15 @@ furthermore we do not know what constraints we may encounter later on in
 the program.
 %
 Thus, we cannot perform the comparison and proceed, and must give up our
-search for a witness, even though one obviously exists, any pair of |x|
-and |y| such that |x < y| is true.
+search for a witness, even though one obviously exists, any pair of |n|
+and |m| such that |n <= m| is false.
 
 Extending \toolname with support for symbolic execution would alleviate
 this issue, as we could then begin symbolically executing the program
-until we learn how to instantiate |x| and |y|.
+until we learn how to instantiate |n| and |m|.
 %
-Alternatively, we could \emph{speculatively} instantiate both |x| and
-|y| with some arbitrary type, and proceed with execution until we
+Alternatively, we could \emph{speculatively} instantiate both |n| and
+|m| with some arbitrary type, and proceed with execution until we
 discover a type error.
 %
 This speculative instantiation is of course unsound; we would have to
@@ -85,12 +90,12 @@ such instantiations.
 %
 We would need to track which holes were instantiated speculatively in
 order to distinguish type errors that would have happened regardless, as
-in @bad@, from type errors that were caused by our instantiation.
+in @fac@, from type errors that were caused by our instantiation.
 
 Further, suppose that our speculative instantiation induces a frivolous
 type error.
 %
-For example, suppose we are given \pagebreak
+For example, suppose we are given
 %
 \begin{code}
   let bad x y =
