@@ -233,7 +233,7 @@ def plot_trace_size(seminal, ucsd):
     print('avg/med/max:\t{}\t{}\t{}'.format(np.mean(step_u), np.median(step_s), np.max(step_u)))
     p2 = plt.bar(ind + width, c_step_u, label=UCSD, width=width, color=COLORS[1])
     plt.legend((p1[0],p2[0]), ('UW',UCSD), loc='lower right', fontsize=16)
-    # plt.title('Trace Complexity', fontsize=24)
+    plt.title('Step Complexity', fontsize=24)
     plt.xlabel('Total Steps', fontsize=20)
     plt.ylabel('Traces (%)', fontsize=20)
     # ax.set_xlim(0,6)
@@ -269,7 +269,7 @@ def plot_trace_size(seminal, ucsd):
     print('avg/med/max:\t{}\t{}\t{}'.format(np.mean(jump_u), np.median(jump_s), np.max(jump_u)))
     p2 = plt.bar(ind + width, c_jump_u, label=UCSD, width=width, color=COLORS[1])
     plt.legend((p1[0],p2[0]), ('UW',UCSD), loc='lower right', fontsize=16)
-    # plt.title('Complexity of Traces (in jumps)', fontsize=24)
+    plt.title('Jump Complexity', fontsize=24)
     plt.xlabel('Total Jumps', fontsize=20)
     # plt.xlabel('Jumps', fontsize=20)
     plt.ylabel('Traces (%)', fontsize=20)
@@ -342,7 +342,7 @@ def plot_distrib(seminal, ucsd):
 
     #plt.tight_layout()
 
-    plt.suptitle('Distribution of Results', fontsize=24, y=0.9)
+    plt.suptitle('Distribution of Test Outcomes', fontsize=24, y=0.9)
     plt.figlegend(p1[0], ALL_DL, 'lower center', fontsize=18, ncol=2)
 
 

@@ -107,30 +107,37 @@ If so, the function cannot possibly terminate and we report an error.
 While not a \emph{type error}, infinite recursion is still a clear bug
 in the program, and thus valuable feedback for the user.
 
-\begin{figure}[htp]
-\centerline{
-\begin{minipage}{1.2\textwidth}
-\includegraphics[width=0.5\linewidth]{coverage.png}
+\begin{figure}[t]
+% \centerline{
+% \begin{minipage}{1.2\textwidth}
+\centering
+\includegraphics[width=0.7\linewidth]{coverage.png}
 % \end{minipage}
 % \begin{minipage}{\linewidth}
-\includegraphics[width=0.5\linewidth]{distrib.png}
-\end{minipage}
-}
-\vspace{3ex}
-\caption{Results of our coverage testing and the distribution of test
-  outcomes. Our random search successfully finds witnesses for 76--82\% of
-  the programs in under one second, improving to 84--85\% in under
-  10 seconds. In both datasets we detect actual type errors at least 75\%
-  of the time, unbound variables or constructors 4--5\% of the time, and
-  diverging loops 3\% of the time. For the remaining 13--16\% of the
-  programs we are unable to provide any useful feedback.  }
+% \includegraphics[width=0.6\linewidth]{distrib.png}
+% \end{minipage}
+% }
+% \vspace{3ex}
+\caption{Results of our coverage testing. Our random search successfully
+  finds witnesses for 76--82\% of the programs in under one second,
+  improving to 84--85\% in under 10 seconds. }
 \label{fig:results-witness}
 \end{figure}
+\begin{figure}[t]
+\includegraphics[width=0.7\linewidth]{distrib.png}
+\caption{Distribution of test outcomes. In both datasets we detect
+  actual type errors at least 75\% of the time, unbound variables or
+  constructors 4--5\% of the time, and diverging loops 3\% of the
+  time. For the remaining 13--16\% of the programs we are unable to
+  provide any useful feedback. }
+\label{fig:results-distrib}
+\end{figure}
+
 
 \paragraph{Results}
 \label{sec:results-witness}
 The results of our experiments are summarized in
-Figure~\ref{fig:results-witness}.
+Figures~\ref{fig:results-witness}~and~\ref{fig:results-distrib}.
 %
 In both datasets our tool was able to find a witness for over 75\% of the
 programs in under one second, \ie\ fast enough to be integrated as a
@@ -182,13 +189,13 @@ trace using two metrics.
 % \item \ES{others?}
 %
 \begin{figure}[t]
-\centerline{
-\begin{minipage}{1.2\textwidth}
-\includegraphics[width=0.5\linewidth]{trace_size_step.png}
-\includegraphics[width=0.5\linewidth]{trace_size_jump.png}
-\end{minipage}
-}
-\vspace{3ex}
+% \centerline{
+% \begin{minipage}{1.2\textwidth}
+\includegraphics[width=0.7\linewidth]{trace_size_step.png}
+\includegraphics[width=0.7\linewidth]{trace_size_jump.png}
+% \end{minipage}
+% }
+% \vspace{3ex}
 \caption{Complexity of the generated traces. Over 80\% of the combined traces
   have a jump complexity of at most 10, with an average complexity of 7
   and a median of 5.}
@@ -207,7 +214,8 @@ The average number of single-step reductions per trace is 30 for the
 The average number of jumps per trace is 7 (\resp 10) with a
 maximium of 353 (\resp 221) and a median of 4 (\resp 4).
 %
-In both datasets 80\% or more traces have at most 10 jumps.
+In both datasets 60\% of traces have at most 5 jumps, and 80\% or more
+have at most 10 jumps.
 
 
 \subsection{Qualitative Evaluation of Witness Utility}\label{sec:advantage-traces}
@@ -263,7 +271,7 @@ of the result.
 \end{ecode}
 %
 Unfortunately the student has used the list-append
-operator |@| instead of \texttt{+} to compute the sum.
+operator |@| instead of \texttt{+}. % to compute the sum.
 %
 Both \ocaml\ and \sherrloc\ blame the \emph{wrong location},
 the recursive call @sqsum t@, with the message
@@ -275,12 +283,12 @@ the recursive call @sqsum t@, with the message
     'a list
 \end{verbatim}
 %
-\toolname\ produces a trace showing how the evaluation of
-@sqsum [1]@ gets stuck.
-%
 \begin{center}
   \includegraphics[height=125px]{sqsum.png}
 \end{center}
+%
+\toolname\ produces the above trace showing how the evaluation of
+@sqsum [1]@ gets stuck.
 %
 The trace highlights the entire stuck term
 (not just the recursive call), emphasizing
@@ -546,13 +554,13 @@ would require having students answer the same problem twice (once with
 \ocaml and once with \toolname).
 
 \begin{figure}[t]
-\centerline{
-\begin{minipage}{1.2\textwidth}
-\includegraphics[width=0.5\linewidth]{user-study-reason.png}
-\includegraphics[width=0.5\linewidth]{user-study-fix.png}
-\end{minipage}
-}
-\vspace{3ex}
+% \centerline{
+% \begin{minipage}{1.2\textwidth}
+\includegraphics[width=0.7\linewidth]{user-study-reason.png}
+\includegraphics[width=0.7\linewidth]{user-study-fix.png}
+% \end{minipage}
+% }
+% \vspace{3ex}
 \caption{A classification of students' explanations and fixes for type
   errors, given either \ocaml's error % message
   or \toolname's
@@ -592,7 +600,7 @@ to type errors:
 %
 (1) with high coverage in a timespan amenable to compile-time analysis;
 %
-(2) with traces that have a low average complexity of 7 jumps;
+(2) with traces that have a low median complexity of 5 jumps;
 %
 (3) that are more helpful to novice programmers than traditional type
 error messages; and
@@ -604,7 +612,7 @@ are:
 %
 (1) coverage limits due to random generation;
 %
-(2) dealing with an explosion in the size of generated traces;
+(2) dealing with explosions in the size of generated traces;
 %
 %(3) the inability to handle certain instances of infinite types; and
 (3) our use of a non-parametric function type; and
