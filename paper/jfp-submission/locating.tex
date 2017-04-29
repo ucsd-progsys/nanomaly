@@ -81,7 +81,50 @@ We discard all such programs in our evaluation to level the playing
 field, around 15\% for each tool, leaving us with a benchmark set of
 1,569 programs.
 
-\ES{TODO: threats to validity}
+\paragraph{Threats to Validity}
+Our benchmarks were drawn from students in an undergraduate course
+at \ucsdbench\ and may not be representative of other student bodies.
+%
+We mitigate this threat with a large empirical evaluation of 1,569
+programs, drawn from a cohort of 46 students.
+%
+A similar threat is that students are not industrial programmers, thus
+our results may not translate to large-scale software engineering.
+%
+In particular, \toolname's reliance on running the program suggests that
+scaling it to larger programs would be more difficult than static
+methods.
+%
+However, in our experience programmers are able to construct a mental
+model of type systems after sufficient exposure, at which point
+traditional error reports may suffice.
+%
+We are thus particularly interested in aiding novice programmers as
+they learn to work with the type system.
+
+Our definition of the next well-typed program as the intended ground
+truth answer is another threat to validity. Students might submit
+multiple well-typed ``rewrites'' between the initial ill-typed program
+and the final intended answer.
+%
+Our approach to discarding outliers is intended to mitigate this threat.
+%
+A similar threat is our removal of programs where any of the tools could
+not produce an answer.
+%
+It may be, for example, that \mycroft and \sherrloc are particularly
+effective on programs that do not admit dynamic witnesses.
+%
+Finally, our use of student fixes as oracles for the source of type
+errors assumes that students are able to correctly identify the source.
+%
+As the students are in the process of learning \ocaml and the type
+system, this assumption may be faulty, \emph{expert} users may disagree
+with the student fixes.
+%
+We believe, however, that it is reasonable to use student fixes as
+oracles, as the student is the best judge of what she \emph{intended} to
+do.
 
 \begin{figure}[t]
 \includegraphics[width=0.7\linewidth]{blame.png}

@@ -90,7 +90,8 @@ We recorded each interaction with the \ocaml\ top-level system over the
 course of the first three assignments (IRB
 % \# hidden for blind review),
 \#140608),
-from which we extracted \ucsdsize\ distinct, ill-typed \ocaml\ programs.
+from which we extracted \ucsdsize\ distinct, ill-typed \ocaml\ programs
+from a cohort of 46 students..
 %
 The second dataset --- widely used in the literature --- comes from a
 graduate-level course at the University of Washington~\cite{Lerner2006-pj},
@@ -330,12 +331,12 @@ the recursive call @sqsum t@, with the message
     'a list
 \end{verbatim}
 %
+\toolname\ produces a trace showing how the evaluation of
+@sqsum [1]@ gets stuck.
+%
 \begin{center}
   \includegraphics[height=125px]{sqsum.png}
 \end{center}
-%
-\toolname\ produces the above trace showing how the evaluation of
-@sqsum [1]@ gets stuck.
 %
 The trace highlights the entire stuck term
 (not just the recursive call), emphasizing
