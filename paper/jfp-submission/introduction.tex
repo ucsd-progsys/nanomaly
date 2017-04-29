@@ -174,6 +174,11 @@ vast majority of cases.
 Furthermore, we show that a simple interactive strategy yields
 compact counterexample traces with at most 5 steps for 60\%
 of the programs, and at most 10 steps for over 80\% of the programs.
+%
+We can even use witnesses to \emph{localize} type errors with a simple
+heuristic that treats the values in a ``stuck'' term as \emph{sources}
+of typing constraints and the term itself as a \emph{sink},
+achieving around 70\% accuracy in locating the source of the error.
 
 The ultimate purpose of an error report is to help the programmer
 \emph{comprehend} and \emph{fix} problematic code.

@@ -34,7 +34,7 @@ There are four questions we seek to answer with our evaluation:
 In the sequel we present our experimental methodology (\S~\ref{sec:methodology})
 and then answer the above questions.
 %
-However, for the impatient reader, we begin with a quick summary of our main results:
+However, for the impatient reader, we first summarize our main results:
 
 \paragraph{1. Most Type Errors Admit Witnesses}
 Our prime result is that the vast majority of static type errors, around
@@ -42,7 +42,7 @@ Our prime result is that the vast majority of static type errors, around
 %
 Further, \toolname efficiently synthesizes witnesses with its randomized search;
 it can synthesize a witness for over 75\% of programs in under one second, \ie
-fast enough to be integrated into the edit-compile-debug cycle.
+fast enough for interactive use. %to be integrated into the edit-compile-debug cycle.
 %
 
 \paragraph{2. Jump-Compressed Traces Are Small}
@@ -67,15 +67,15 @@ Furthermore, we find, in a study of undergraduate students, that
 errors than \ocaml's type error messages.
 
 \paragraph{4. Witnesses Assign Blame}
-Finally, we find that a simple heuristic allows us to use witnesses
+Finally, we present a simple heuristic that allows us to use witnesses
 to \emph{automatically} assign blame for type errors.
 %
 We treat the values inside the stuck term as \emph{sources} of typing
 constraints and the stuck term itself as a \emph{sink}, producing
-a small slice of the program that likely contains the error.
+a slice of the program that likely contains the error.
 %
 Using this heuristic, \toolname's witness are competitive with the
-state-of-the-art type error localization tools \mycroft and \sherrloc.
+state-of-the-art localization tools \mycroft and \sherrloc.
 
 \subsection{Methodology}
 \label{sec:methodology}
@@ -428,8 +428,7 @@ the digits of the input integer.
     if n <= 0 then
       []
     else
-      append ((*@\hlSherrloc{digitsOfInt (n / 10)}@*))
-             [(*@\hlOcaml{n mod 10}@*)]
+      append ((*@\hlSherrloc{digitsOfInt (n / 10)}@*)) [(*@\hlOcaml{n mod 10}@*)]
 \end{ecode}
 %
 %\pagebreak
