@@ -554,6 +554,20 @@ Fleiss' kappa is measured on a scale from $1$, indicating total
 agreement, to $-1$, indicating total disagreement, with $0$ indicating
 random agreement.
 
+Finally, we used a one-sided Mann-Whitney $U$ test~\cite{Mann1947-fd} to
+determine the significance of our results.
+%
+The null hypothesis was that the responses from students given
+\toolname's witnesses were drawn from the same distribution as those
+given \ocaml's errors, \ie \toolname had no effect.
+%
+Since we used a one-sided test, the alternative to the null hypothesis
+is that \toolname had a \emph{positive} effect on the responses.
+%
+We reject the null hypothesis in favor of the alternative if the test
+produces a significance level $p < 0.05$, a standard threshold for
+determining statistical significance.
+
 \paragraph{Threats to Validity}
 Measuring understanding is a difficult task; the following summarize
 the threats to the validity of our results.
@@ -566,11 +580,11 @@ that other metrics would produce different results.
 
 \subparagraph{Internal.}
 %
-We assigned students randomly to two groups. The first group was given
+We assigned students randomly to two groups. The first was given
 \ocaml's errors for @append@ and \hbox{@digitsOfInt@,} and \toolname's trace
-for @sumList@ and @wwhile@. The second group was given the opposite
-assignment of errors and traces. This assignment ensured that (1) each
-student was given \ocaml and \toolname problems, and (2) each student
+for @sumList@ and \hbox{@wwhile@;} the second was given the opposite
+assignment of errors and traces. This assignment ensured that: (1) each
+student was given \ocaml and \toolname problems; and (2) each student
 was given an ``easy'' and ``hard'' problem for both \ocaml and
 \toolname. Students without sufficient knowledge of \ocaml could affect
 the results, as could the time-constrained nature of an exam. For these
@@ -596,7 +610,8 @@ The number of complete submissions ranges from 13 (for the \toolname
 version of @wwhile@) to 28 (for the \ocaml version of @sumList@), out of
 a maximum of 30 per program-tool pair.
 %
-Collecting more responses per test pair was not possible, as it
+Our results are statistically significant in only 2 out of 8 tests; however,
+collecting more responses per test pair was not possible as it
 would require having students answer the same problem twice (once with
 \ocaml and once with \toolname).
 
@@ -609,15 +624,21 @@ would require having students answer the same problem twice (once with
 % }
 % \vspace{3ex}
 \caption{A classification of students' explanations and fixes for type
-  errors, given either \ocaml's error % message
-  or \toolname's
+  errors, given either \ocaml's error message or \toolname's
   jump-compressed trace. The students given \toolname's jump-compressed
-  trace consistently scored better ($\ge 10\%$) than those given \ocaml's type
-  error.}
+  trace consistently scored better ($\ge 10\%$) than those given
+  \ocaml's type error. We report the result of a one-sided Mann-Whitney
+  $U$ test for statistical significance in parentheses.}
 \label{fig:results-user-study}
 \end{figure}
 
 \paragraph{Results}
+%
+The measured kappa values were $\kappa = 0.72$ for the explanations and
+$\kappa = 0.83$ for the fixes; while there is no formal notion for what
+consititutes strong agreement~\cite{Krippendorff2012-wd}, kappa values
+above $0.60$ are often called ``substantial''
+agreement~\cite{Landis1977-ey}.
 %
 Figure~\ref{fig:results-user-study} summarizes a single annotator's
 results, which show that students given \toolname's jump-compressed
@@ -627,14 +648,10 @@ and fix the type error than those given \ocaml's error message.
 Across each problem the \toolname responses were marked correct
 $10-30\%$ more often than the \ocaml responses, which suggests that
 the students who had access to \toolname's traces had a better
-understanding of the type errors.
+understanding of the type errors;
 %
-The measured kappa values were $\kappa = 0.72$ for the explanations and
-$\kappa = 0.83$ for the fixes; while there is no formal notion for what
-consititutes strong agreement~\cite{Krippendorff2012-wd}, kappa values
-above $0.60$ are often called ``substantial''
-agreement~\cite{Landis1977-ey}.
-%
+however, only the @append@ tests were statistically significant at
+$p < 0.05$.
 %
 
 \input{locating}
