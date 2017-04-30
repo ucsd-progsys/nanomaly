@@ -84,12 +84,12 @@ Alternatively, we could \emph{speculatively} instantiate both |n| and
 |m| with some arbitrary type, and proceed with execution until we
 discover a type error.
 %
-This speculative instantiation is of course unsound; we would have to
+This speculative instantiation is, of course, unsound; we would have to
 take care to avoid reporting frivolous type errors that were caused by
 such instantiations.
 %
-We would need to track which holes were instantiated speculatively in
-order to distinguish type errors that would have happened regardless, as
+We would need to track which holes were instantiated speculatively 
+to distinguish type errors that would have happened regardless, as
 in @fac@, from type errors that were caused by our instantiation.
 
 Further, suppose that our speculative instantiation induces a frivolous
@@ -114,8 +114,9 @@ narrowed to @float@s.
 We must now backtrack and try a different instantiation, but we no
 longer need to choose one at random.
 %
-Since our instantiation was speculative, we can still view @x@ and @y@
-\emph{morally} as holes, and thus treat the @*.@ operator as a normal
+Since our instantiation was speculative, and @x@ and @y@
+% WRW thinks "morally" is too informal for this venue. 
+were \emph{originally} hole, we can treat the @*.@ operator as a normal
 narrowing point with two holes.
 %
 This tells us that the \emph{correct} instantiation was in fact @float@,
@@ -199,7 +200,7 @@ Rather, we would note which evaluation steps induced incompatible
 type refinements, and if a traditional witness cannot be found, we could
 then report a trace expanded to show precisely these steps.
 %
-This seems like a modest extension to our semantics, and would be
+This represents only a modest extension to our semantics, and would be
 interesting to explore further.
 
 \paragraph{Dead Code and ``Safe'' Function Calls *}

@@ -137,12 +137,12 @@ We introduce a notion of \emph{jump-compressed} traces to abstract away
 the irrelevant details of a computation.
 %
 A jump-compressed trace includes only function
-calls and returns, for example the trace in the bottom-left of
+calls and returns. For example, the trace in the bottom-left of
 Figure~\ref{fig:factorial} is jump-compressed.
 %
-Jump-compressed traces are similar to stack traces, both show a
-sequence of function calls that lead to a crash, but the jump-compressed
-trace also shows the return values of successful calls, which can be
+Jump-compressed traces are similar to stack traces in that both show a
+sequence of function calls that lead to a crash. However, jump-compressed
+traces also show the return values of successful calls, which can be
 useful in understanding why a particular path was taken.
 
 \paragraph{3. Evaluating Witnesses}
