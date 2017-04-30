@@ -18,6 +18,7 @@
 % \newcommand{\doi}[1]{doi:~\href{http://dx.doi.org/#1}{\Hurl{#1}}}   % print a hyperlinked DOI
 \usepackage{xspace}
 \usepackage{graphicx}
+\usepackage{pdfpages}
 %\usepackage{pdfpages}
 %\usepackage[doi]{natbib}
 
@@ -129,6 +130,22 @@ of this paper.
 \appendix
 \input{proofs}
 %\input{interactive}
+\section{User Study}
+\label{sec:user-study}
+% \includepdf[pages={-},pagecommand={},scale=0.65,frame,fitpaper]{user-study.pdf}
+\subsection{Version A}
+\fbox{\includegraphics[width=\linewidth,page=4]{user-study.pdf}}
+\newpage
+\fbox{\includegraphics[width=\linewidth,page=5]{user-study.pdf}}
+\newpage
+\fbox{\includegraphics[width=\linewidth,page=6]{user-study.pdf}}
+\newpage
+\subsection{Version B}
+\fbox{\includegraphics[width=\linewidth,page=1]{user-study.pdf}}
+\newpage
+\fbox{\includegraphics[width=\linewidth,page=2]{user-study.pdf}}
+\newpage
+\fbox{\includegraphics[width=\linewidth,page=3]{user-study.pdf}}
 }
 
 
