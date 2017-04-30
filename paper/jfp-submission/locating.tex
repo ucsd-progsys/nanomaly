@@ -13,12 +13,15 @@ localizations.
 As discussed in \S~\ref{sec:methodology}, we recorded
 each interaction of our students with the \ocaml top-level system.
 %
-In addition to collecting ill-typed programs, we collected
-subsequent, fixed versions of the programs.
+This means that, in addition to collecting ill-typed programs, we
+collected subsequent, fixed versions of the same programs.
 %
-For each ill-typed program in a student's interaction trace, we identify
-the student's fix by searching for the first type-correct program
-that follows it in the trace.
+% For each ill-typed program in a student's interaction trace, we identify
+% the student's fix by searching for the first type-correct program
+% that follows it in the trace.
+For each ill-typed program compiled by a student, we identify the student's
+\emph{fix} by searching for the first type-correct program that the student
+subsequently compiled.
 %
 We then use an expression-level \emph{diff}~\cite{Lempsink2009-xf} to
 determine which sub-expressions changed between the ill-typed program

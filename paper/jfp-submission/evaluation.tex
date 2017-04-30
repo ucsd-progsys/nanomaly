@@ -123,9 +123,12 @@ either \ocaml's error message or \toolname's jump-compressed trace.
 
 We answer the last question on a subset of the \ucsdbench dataset.
 %
-For each ill-typed program in a student's interaction trace, we identify
-the student's \emph{fix} by searching for the first type-correct program
-that follows it in the trace.
+% For each ill-typed program in a student's interaction trace, we identify
+% the student's \emph{fix} by searching for the first type-correct program
+% that follows it in the trace.
+For each ill-typed program compiled by a student, we identify the student's
+\emph{fix} by searching for the first type-correct program that the student
+subsequently compiled.
 %
 We then use an expression-level \emph{diff}~\cite{Lempsink2009-xf} to
 determine which sub-expressions changed between the ill-typed program
