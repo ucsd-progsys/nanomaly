@@ -42,24 +42,21 @@ program is wrong.
 \begin{minipage}{.49\linewidth}
 \centering
 \begin{ecode}
-let rec fac n =
-  if n <= 0 then
-    true
-  else
-    n * __fac (n-1)__
+  let rec fac n =
+    if n <= 0 then
+      true
+    else
+      n * (*@\hlOcaml{fac (n-1)}@*)
 \end{ecode}
-\vspace{3em}
-% \end{minipage}
-% % \hspace{0.3in}
-% \begin{minipage}{.39\linewidth}
-\centering
-  \includegraphics[height=1.5in]{fac-overview.png}
+\vspace{2em}
+\includegraphics[height=1.5in]{fac-overview.png}
 \end{minipage}
 \begin{minipage}{.49\linewidth}
 \centering
 \includegraphics[height=3in]{fac-long.png}
 \end{minipage}
-\caption{(top-left) An ill-typed \texttt{fac} function, the error location reported by \ocaml is underlined; (bottom-left) Dynamically witnessing the type error in \texttt{fac}, showing only function calls; (right) The same trace, fully expanded.}
+\vspace{1em}
+\caption{(top-left) An ill-typed \texttt{fac} function \hlOcaml{highlighting} the error location reported by \ocaml. (bottom-left) Dynamically witnessing the type error in \texttt{fac}, showing only function call-return pairs. (right) The same trace, fully expanded to show each small-step reduction in the computation.}
 \label{fig:factorial}
 \end{figure}
 
@@ -140,12 +137,12 @@ We introduce a notion of \emph{jump-compressed} traces to abstract away
 the irrelevant details of a computation.
 %
 A jump-compressed trace includes only function
-calls and returns, for example the trace in the bottom-left of
+calls and returns. For example, the trace in the bottom-left of
 Figure~\ref{fig:factorial} is jump-compressed.
 %
-Jump-compressed traces are similar to stack traces, both show a
-sequence of function calls that lead to a crash, but the jump-compressed
-trace also shows the return values of successful calls, which can be
+Jump-compressed traces are similar to stack traces in that both show a
+sequence of function calls that lead to a crash. However, jump-compressed
+traces also show the return values of successful calls, which can be
 useful in understanding why a particular path was taken.
 
 \paragraph{3. Evaluating Witnesses}
@@ -171,12 +168,17 @@ The second is a new \ucsdbench\ data set, comprising \ucsdsize\
 ill-typed programs.
 %
 We show that for both data sets, our technique is able to generate
-witnesses for nearly 90\% of the programs, in under a second in the
+witnesses for around 85\% of the programs, in under a second in the
 vast majority of cases.
 %
 Furthermore, we show that a simple interactive strategy yields
-compact counterexample traces with at most 5 steps for 57\%
-of the programs, and at most 10 steps for 81\% of the programs.
+compact counterexample traces with at most 5 steps for 60\%
+of the programs, and at most 10 steps for over 80\% of the programs.
+%
+We can even use witnesses to \emph{localize} type errors with a simple
+heuristic that treats the values in a ``stuck'' term as \emph{sources}
+of typing constraints and the term itself as a \emph{sink},
+achieving around 70\% accuracy in locating the source of the error.
 
 The ultimate purpose of an error report is to help the programmer
 \emph{comprehend} and \emph{fix} problematic code.

@@ -15,16 +15,19 @@
   found, then for all inhabited input types,
   there exist values that can make the function go wrong.
   %
-  Second, we show how to extend the above procedure to
+  Second, we show how to extend this procedure to
   produce a reduction graph that can be used to
   interactively visualize and debug witness executions.
   %
   Third, we evaluate the coverage of our approach
   on two data sets comprising over 4,500 ill-typed
   student programs.
+  %
   Our technique is able to generate witnesses for
-  88\% of the programs, and our reduction graph
-  yields small counterexamples for 81\% of the witnesses.
+  around 85\% of the programs, our reduction graph
+  yields small counterexamples for over 80\% of the witnesses,
+  and a simple heuristic allows us to use witnesses to
+  locate the source of type errors with around 70\% accuracy.
   %
   Finally, we evaluate whether our witnesses help
   students understand and fix type errors, and

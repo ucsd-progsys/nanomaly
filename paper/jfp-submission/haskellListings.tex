@@ -127,12 +127,11 @@
 
 \lstnewenvironment{ecode}
 {\lstset{language=HaskellUlisses
-				,numbers=left
-                                ,frame=leftline
-                                ,xleftmargin=7.5mm
-				,moredelim=[is][\textbf]{==}{==}
-				,moredelim=[is][\underbar]{__}{__}
-				}}
+        ,numbers=left
+        ,frame=leftline
+        ,xleftmargin=7.5mm
+        ,escapeinside={(*@}{@*)}
+}}
 {}
 
 \lstnewenvironment{mcode}

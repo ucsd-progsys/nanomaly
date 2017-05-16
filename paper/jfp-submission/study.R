@@ -97,108 +97,136 @@ print(table(fixes[,4]))
 print(kappam.fleiss(fixes,exact=TRUE,detail=TRUE))
 #print(kappam.fleiss(fixes[1:3],detail=TRUE))
 
-
 significance <- function(x,y) {
-  wilcox.test(x, y)
+  print(x)
+  print(y)
+  wilcox.test(x, y, alternative="g")
+  R1=sum(rank(c(x,y))[seq_along(x)])
+  m=length(x)
+  n=length(y)
+  A12 = (R1/m - (m+1)/2)/n
 }
 
 print("append reason")
-#print(table(a3$X1..append.reason))
-#print(table(b3$X5..append.reason))
-print(significance(a3$X1..append.reason[a3$X1..append.reason != -1],
-             b3$X5..append.reason[b3$X5..append.reason != -1]))
+print(significance(
+        b3$X5..append.reason[b3$X5..append.reason != -1],
+        a3$X1..append.reason[a3$X1..append.reason != -1]
+))
+
 print("digistofint reason")
-#print(table(a3$X3..digitsofint.reason))
-#print(table(b3$X7..digitsofint.reason))
-print(significance(a3$X3..digitsofint.reason[a3$X3..digitsofint.reason != -1],
-             b3$X7..digitsofint.reason[b3$X7..digitsofint.reason != -1]))
+print(significance(
+        b3$X7..digitsofint.reason[b3$X7..digitsofint.reason != -1],
+        a3$X3..digitsofint.reason[a3$X3..digitsofint.reason != -1]
+))
+
 print("sumlist reason")
-#print(table(b3$X1..sumlist.reason))
-#print(table(a3$X5..sumlist.reason))
-print(significance(b3$X1..sumlist.reason[b3$X1..sumlist.reason != -1],
-             a3$X5..sumlist.reason[a3$X5..sumlist.reason != -1]))
+print(significance(
+        a3$X5..sumlist.reason[a3$X5..sumlist.reason != -1],
+        b3$X1..sumlist.reason[b3$X1..sumlist.reason != -1]
+))
+
 print("wwhile reason")
-#print(table(b3$X3..wwhile.reason))
-#print(table(a3$X7..wwhile.reason))
-print(significance(b3$X3..wwhile.reason[b3$X3..wwhile.reason != -1],
-             a3$X7..wwhile.reason[a3$X7..wwhile.reason != -1]))
+print(significance(
+        a3$X7..wwhile.reason[a3$X7..wwhile.reason != -1],
+        b3$X3..wwhile.reason[b3$X3..wwhile.reason != -1]
+))
 
 print("append fix")
-#print(table(a3$X2..append.fix))
-#print(table(b3$X6..append.fix))
-print(significance(a3$X2..append.fix[a3$X2..append.fix != -1],
-             b3$X6..append.fix[b3$X6..append.fix != -1]))
+print(significance(
+        b3$X6..append.fix[b3$X6..append.fix != -1],
+        a3$X2..append.fix[a3$X2..append.fix != -1]
+))
+
 print("digistofint fix")
-#print(table(a3$X4..digitsofint.fix))
-#print(table(b3$X8..digitsofint.fix))
-print(significance(a3$X4..digitsofint.fix[a3$X4..digitsofint.fix != -1],
-             b3$X8..digitsofint.fix[b3$X8..digitsofint.fix != -1]))
+print(significance(
+        b3$X8..digitsofint.fix[b3$X8..digitsofint.fix != -1],
+        a3$X4..digitsofint.fix[a3$X4..digitsofint.fix != -1]
+))
+
 print("sumlist fix")
-#print(table(b3$X2..sumlist.fix))
-#print(table(a3$X6..sumlist.fix))
-print(significance(b3$X2..sumlist.fix[b3$X2..sumlist.fix != -1],
-             a3$X6..sumlist.fix[a3$X6..sumlist.fix != -1]))
+print(significance(
+        a3$X6..sumlist.fix[a3$X6..sumlist.fix != -1],
+        b3$X2..sumlist.fix[b3$X2..sumlist.fix != -1]
+))
+
 print("wwhile fix")
-#print(table(b3$X4..wwhile.fix))
-#print(table(a3$X8..wwhile.fix))
-print(significance(b3$X4..wwhile.fix[b3$X4..wwhile.fix != -1],
-             a3$X8..wwhile.fix[a3$X8..wwhile.fix != -1]))
+print(significance(
+        a3$X8..wwhile.fix[a3$X8..wwhile.fix != -1],
+        b3$X4..wwhile.fix[b3$X4..wwhile.fix != -1]
+))
 
-print("append")
-print(significance(c(a3$X1..append.reason[a3$X1..append.reason != -1],
-               a3$X2..append.fix[a3$X2..append.fix != -1]),
-             c(b3$X5..append.reason[b3$X5..append.reason != -1],
-               b3$X6..append.fix[b3$X6..append.fix != -1])))
-print("digistofint")
-print(significance(c(a3$X3..digitsofint.reason[a3$X3..digitsofint.reason != -1],
-               a3$X4..digitsofint.fix[a3$X4..digitsofint.fix != -1]),
-             c(b3$X7..digitsofint.reason[b3$X7..digitsofint.reason != -1],
-               b3$X8..digitsofint.fix[b3$X8..digitsofint.fix != -1])))
-print("sumlist")
-print(significance(c(b3$X1..sumlist.reason[b3$X1..sumlist.reason != -1],
-               b3$X2..sumlist.fix[b3$X2..sumlist.fix != -1]),
-             c(a3$X5..sumlist.reason[a3$X5..sumlist.reason != -1],
-               a3$X6..sumlist.fix[a3$X6..sumlist.fix != -1])))
-print("wwhile")
-print(significance(c(b3$X3..wwhile.reason[b3$X3..wwhile.reason != -1],
-               b3$X4..wwhile.fix[b3$X4..wwhile.fix != -1]),
-             c(a3$X7..wwhile.reason[a3$X7..wwhile.reason != -1],
-               a3$X8..wwhile.fix[a3$X8..wwhile.fix != -1])))
+# print("append")
+# print(significance(
+#         c(b3$X5..append.reason[b3$X5..append.reason != -1],
+#           b3$X6..append.fix[b3$X6..append.fix != -1]),
+#         c(a3$X1..append.reason[a3$X1..append.reason != -1],
+#           a3$X2..append.fix[a3$X2..append.fix != -1])
+# ))
 
-print("total reason")
-print(significance(c(a3$X1..append.reason[a3$X1..append.reason != -1],
-               a3$X3..digitsofint.reason[a3$X3..digitsofint.reason != -1],
-               b3$X1..sumlist.reason[b3$X1..sumlist.reason != -1],
-               b3$X3..wwhile.reason[b3$X3..wwhile.reason != -1]),
-             c(b3$X5..append.reason[b3$X5..append.reason != -1],
-               b3$X7..digitsofint.reason[b3$X7..digitsofint.reason != -1],
-               a3$X5..sumlist.reason[a3$X5..sumlist.reason != -1],
-               a3$X7..wwhile.reason[a3$X7..wwhile.reason != -1])))
+# print("digistofint")
+# print(significance(
+#         c(b3$X7..digitsofint.reason[b3$X7..digitsofint.reason != -1],
+#           b3$X8..digitsofint.fix[b3$X8..digitsofint.fix != -1]),
+#         c(a3$X3..digitsofint.reason[a3$X3..digitsofint.reason != -1],
+#           a3$X4..digitsofint.fix[a3$X4..digitsofint.fix != -1])
+# ))
 
-print("total fix")
-print(significance(c(a3$X2..append.fix[a3$X2..append.fix != -1],
-               a3$X4..digitsofint.fix[a3$X4..digitsofint.fix != -1],
-               b3$X2..sumlist.fix[b3$X2..sumlist.fix != -1],
-               b3$X4..wwhile.fix[b3$X4..wwhile.fix != -1]),
-             c(b3$X6..append.fix[b3$X6..append.fix != -1],
-               b3$X8..digitsofint.fix[b3$X8..digitsofint.fix != -1],
-               a3$X6..sumlist.fix[a3$X6..sumlist.fix != -1],
-               a3$X8..wwhile.fix[a3$X8..wwhile.fix != -1])))
+# print("sumlist")
+# print(significance(
+#         c(a3$X5..sumlist.reason[a3$X5..sumlist.reason != -1],
+#           a3$X6..sumlist.fix[a3$X6..sumlist.fix != -1]),
+#         c(b3$X1..sumlist.reason[b3$X1..sumlist.reason != -1],
+#           b3$X2..sumlist.fix[b3$X2..sumlist.fix != -1])
+# ))
 
-print("total")
-print(significance(c(a3$X1..append.reason[a3$X1..append.reason != -1],
-               a3$X3..digitsofint.reason[a3$X3..digitsofint.reason != -1],
-               b3$X1..sumlist.reason[b3$X1..sumlist.reason != -1],
-               b3$X3..wwhile.reason[b3$X3..wwhile.reason != -1],
-               a3$X2..append.fix[a3$X2..append.fix != -1],
-               a3$X4..digitsofint.fix[a3$X4..digitsofint.fix != -1],
-               b3$X2..sumlist.fix[b3$X2..sumlist.fix != -1],
-               b3$X4..wwhile.fix[b3$X4..wwhile.fix != -1]),
-             c(b3$X5..append.reason[b3$X5..append.reason != -1],
-               b3$X7..digitsofint.reason[b3$X7..digitsofint.reason != -1],
-               a3$X5..sumlist.reason[a3$X5..sumlist.reason != -1],
-               a3$X7..wwhile.reason[a3$X7..wwhile.reason != -1],
-               b3$X6..append.fix[b3$X6..append.fix != -1],
-               b3$X8..digitsofint.fix[b3$X8..digitsofint.fix != -1],
-               a3$X6..sumlist.fix[a3$X6..sumlist.fix != -1],
-               a3$X8..wwhile.fix[a3$X8..wwhile.fix != -1])))
+# print("wwhile")
+# print(significance(
+#         c(a3$X7..wwhile.reason[a3$X7..wwhile.reason != -1],
+#           a3$X8..wwhile.fix[a3$X8..wwhile.fix != -1]),
+#         c(b3$X3..wwhile.reason[b3$X3..wwhile.reason != -1],
+#           b3$X4..wwhile.fix[b3$X4..wwhile.fix != -1])
+# ))
+
+# print("total reason")
+# print(significance(
+#         c(b3$X5..append.reason[b3$X5..append.reason != -1],
+#           b3$X7..digitsofint.reason[b3$X7..digitsofint.reason != -1],
+#           a3$X5..sumlist.reason[a3$X5..sumlist.reason != -1],
+#           a3$X7..wwhile.reason[a3$X7..wwhile.reason != -1]),
+#         c(a3$X1..append.reason[a3$X1..append.reason != -1],
+#           a3$X3..digitsofint.reason[a3$X3..digitsofint.reason != -1],
+#           b3$X1..sumlist.reason[b3$X1..sumlist.reason != -1],
+#           b3$X3..wwhile.reason[b3$X3..wwhile.reason != -1])
+# ))
+
+# print("total fix")
+# print(significance(
+#         c(b3$X6..append.fix[b3$X6..append.fix != -1],
+#           b3$X8..digitsofint.fix[b3$X8..digitsofint.fix != -1],
+#           a3$X6..sumlist.fix[a3$X6..sumlist.fix != -1],
+#           a3$X8..wwhile.fix[a3$X8..wwhile.fix != -1]),
+#         c(a3$X2..append.fix[a3$X2..append.fix != -1],
+#           a3$X4..digitsofint.fix[a3$X4..digitsofint.fix != -1],
+#           b3$X2..sumlist.fix[b3$X2..sumlist.fix != -1],
+#           b3$X4..wwhile.fix[b3$X4..wwhile.fix != -1])
+# ))
+
+# print("total")
+# print(significance(
+#         c(b3$X5..append.reason[b3$X5..append.reason != -1],
+#           b3$X7..digitsofint.reason[b3$X7..digitsofint.reason != -1],
+#           a3$X5..sumlist.reason[a3$X5..sumlist.reason != -1],
+#           a3$X7..wwhile.reason[a3$X7..wwhile.reason != -1],
+#           b3$X6..append.fix[b3$X6..append.fix != -1],
+#           b3$X8..digitsofint.fix[b3$X8..digitsofint.fix != -1],
+#           a3$X6..sumlist.fix[a3$X6..sumlist.fix != -1],
+#           a3$X8..wwhile.fix[a3$X8..wwhile.fix != -1]),
+#         c(a3$X1..append.reason[a3$X1..append.reason != -1],
+#           a3$X3..digitsofint.reason[a3$X3..digitsofint.reason != -1],
+#           b3$X1..sumlist.reason[b3$X1..sumlist.reason != -1],
+#           b3$X3..wwhile.reason[b3$X3..wwhile.reason != -1],
+#           a3$X2..append.fix[a3$X2..append.fix != -1],
+#           a3$X4..digitsofint.fix[a3$X4..digitsofint.fix != -1],
+#           b3$X2..sumlist.fix[b3$X2..sumlist.fix != -1],
+#           b3$X4..wwhile.fix[b3$X4..wwhile.fix != -1])
+# ))

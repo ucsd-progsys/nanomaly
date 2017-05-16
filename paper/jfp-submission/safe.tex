@@ -1,4 +1,4 @@
-\subsubsection{How Safe are the ``Safe'' Programs?}
+\subsection{How safe are the ``safe'' programs?}
 \label{sec:how-safe}
 
 An immediate question arises regarding the 13--16\% of programs for
@@ -6,7 +6,7 @@ which we could not synthesize a witness:
 %
 are they \emph{actually} safe (\ie is the type system being too conservative),
 %
-or did \toolname simply fail to find the witness?
+or did \toolname simply fail to find a witness?
 %
 % \ES{Need better organization for the groupings of programs, maybe a pie chart to guide us?}
 
@@ -19,17 +19,17 @@ programs into four classes.
 The first class is easily detected by \toolname itself, and thus admits
 a precise count.
 %
-This left us with 473 programs requiring manual coding; we selected
+This left us with 473 programs that required manual coding; we selected
 a random sample of 50 programs to investigate, and will report results
 based on that sample.
 %
-Figure~\ref{fig:no-witness} summarizes the results of our investigation,
-we note the classes that were based on a random sample with a ``*''.
+Figure~\ref{fig:no-witness} summarizes the results of our investigation ---
+we note the classes that were based on the random sample with a ``*''.
 
 
 \begin{figure}[t]
 %\centering
-\includegraphics[width=0.8\linewidth]{distrib_ext.png}
+\includegraphics[width=0.7\linewidth]{distrib_ext.png}
 \vspace{-0.75cm}
 \caption{Results of our investigation into programs where \toolname
   did not produce a witness. A ``*'' denotes that the percentage is an
@@ -37,7 +37,7 @@ we note the classes that were based on a random sample with a ``*''.
 \label{fig:no-witness}
 \end{figure}
 
-\paragraph{Overloaded Functions.}
+\paragraph{Ad-Hoc Polymorphism}
 %
 We found that for 5\% programs \toolname got stuck when it tried to
 compare two holes.
@@ -45,22 +45,27 @@ compare two holes.
 \ocaml provides polymorphic equality and comparison operators,
 overloading them for each type.
 %
-While extremely convenient to use, they pose a challenge for \toolname's
+While convenient to use, they pose a challenge for \toolname's
 combination of execution and inference.
 %
-Consider, for example
+For example, consider the \hbox{@n <= 0@} test in our @fac@ example.
+%
+The @<=@ operator is polymorphic, but in this case we can make progress because
+the literal @0@ is not.
+%
+Suppose, however, we parameterized @fac@ by a lower bound, \eg
 %
 \begin{code}
-  let bad x y =
-    if x < y then
-      1 + true
+  let rec fac n m =
+    if n <= m then
+      true
     else
-      0
+      n * fac (n - 1) m
 \end{code}
 %
-When given @bad@ as input, \toolname will generate two fresh holes
+When given @fac@, \toolname will generate two fresh holes
 $\nu_1[\alpha_1]$ and $\nu_2[\alpha_2]$ and proceed directly into the
-@x < y@ comparison.
+@n < m@ comparison.
 %
 We cannot (yet) instantiate either hole because we have no constraints
 on the $\alpha$s (we know they must be equal, but nothing else), and
@@ -68,25 +73,24 @@ furthermore we do not know what constraints we may encounter later on in
 the program.
 %
 Thus, we cannot perform the comparison and proceed, and must give up our
-search for a witness, even though one obviously exists, any pair of |x|
-and |y| such that |x < y| is true.
+search for a witness, even though one obviously exists, any pair of |n|
+and |m| such that |n <= m| is false.
 
 Extending \toolname with support for symbolic execution would alleviate
 this issue, as we could then begin symbolically executing the program
-until we learn how to instantiate |x| and |y|.
+until we learn how to instantiate |n| and |m|.
 %
-Alternatively, we could \emph{speculatively} instantiate both |x| and
-|y| with some arbitrary type, and proceed with execution until we
+Alternatively, we could \emph{speculatively} instantiate both |n| and
+|m| with some arbitrary type, and proceed with execution until we
 discover a type error.
 %
-This speculative instantiation is of course unsound, we would have to
+This speculative instantiation is, of course, unsound; we would have to
 take care to avoid reporting frivolous type errors that were caused by
 such instantiations.
 %
-We would need to track which holes were instantiated speculatively in
-order to distinguish type errors that would have happened regardless, as
-in the above @bad@ function, from type errors that were the fault of our
-instantiation.
+We would need to track which holes were instantiated speculatively 
+to distinguish type errors that would have happened regardless, as
+in @fac@, from type errors that were caused by our instantiation.
 
 Further, suppose that our speculative instantiation induces a frivolous
 type error.
@@ -110,8 +114,9 @@ narrowed to @float@s.
 We must now backtrack and try a different instantiation, but we no
 longer need to choose one at random.
 %
-Since our instantiation was speculative, we can still view @x@ and @y@
-\emph{morally} as holes, and thus treat the @*.@ operator as a normal
+Since our instantiation was speculative, and @x@ and @y@
+% WRW thinks "morally" is too informal for this venue. 
+were \emph{originally} holes, we can treat the @*.@ operator as a normal
 narrowing point with two holes.
 %
 This tells us that the \emph{correct} instantiation was in fact @float@,
@@ -129,7 +134,7 @@ useful, lightweight alternative to symbolic execution for our purposes.
 % We categorized the programs into three groups.
 
 
-\paragraph{Non-Parametric Function Type *.}
+\paragraph{Non-Parametric Function Type *}
 %
 5\% of programs lack a witness in our semantics due to our
 non-parametric $\tfun$ type for functions.
@@ -195,10 +200,10 @@ Rather, we would note which evaluation steps induced incompatible
 type refinements, and if a traditional witness cannot be found, we could
 then report a trace expanded to show precisely these steps.
 %
-This seems like a modest extension to our semantics, and would be
+This represents only a modest extension to our semantics, and would be
 interesting to explore further.
 
-\paragraph{Dead Code and ``Safe'' Function Calls *.}
+\paragraph{Dead Code and ``Safe'' Function Calls *}
 %
 4\% of programs contained type errors that were unreachable, either
 because they were dead code, or because the student called the function
@@ -216,17 +221,17 @@ While technically safe, dead code is generally considered a maintenance
 risk, as the programmer may not realize that it is dead~\cite{Wheeler2014-fg}
 or may accidentally bring it back to life~\cite{Seven2014-gf}.
 %
-Thus, a warning like that provided by \ocaml's pattern-exhaustiveness
+Thus, a warning like that provided by \ocaml's pattern exhaustiveness
 checker would be helpful.
 
 %\paragraph{Bad Function Calls}
 A further 3\% included a function call where the
-student had supplied ill-typed inputs, yet the path induced
-by the call contained no errors.
+student supplied ill-typed inputs, but the path induced
+by the call did not contain an error.
 %
-Consider, for example the following |assoc| function, which
-looks up a key in an \emph{association list} and returns a default if
-the key cannot be found.
+Consider the following |assoc| function, which
+looks up a key in an \emph{association list}, returning a default if
+it cannot be found.
 %
 \begin{code}
   let rec assoc (d, k, l) = match l with
@@ -244,15 +249,15 @@ The student's definition of |assoc| is correct, but \ocaml rejects their
 subsequent call because the default value |[]| is incompatible with the
 |string| values in the list.
 %
-In this particular call, the key |123| is in the list, so the default
-will not be used (and even if it were, no error would be triggered) and
+In this particular call the key |123| is in the list, so the default
+will not be used (even if it were, there would not be an error) and
 \ocaml's complaint is moot.
-
+%
 Of course, \ocaml cannot be expected to know that this particular call
 is safe, its type system is not sophisticated enough to express the
 necessary conditions.
 %
-\ES{TODO: add some comment about using dependent types, though this particular example would be quite bizarre to encode in DT..}
+% \ES{TODO: add some comment about using dependent types, though this particular example would be quite bizarre to encode in DT..}
 
 % We note that many of the programs in this category appear to come from
 % interactions with the \ocaml top-level, \ie the student defined a
@@ -264,7 +269,7 @@ necessary conditions.
 % incompatible.
 % \ES{Wes doesn't like this, sounds like punting on the issue}
 
-\paragraph{Witness Exists *.}
+\paragraph{Witness Exists *}
 %
 We found that only 2\% of programs admit a witness that \toolname
 was unable to discover.
@@ -277,23 +282,22 @@ The rest required synthesizing an input that would trigger a
 particular path through the program, and would likely have been caught
 by symbolic execution.
 
-\paragraph{Summary.}
+\paragraph{Summary}
 %
-Our investigation suggests that the majority of programs
-(84\%) for which we fail to find a witness do not, in fact, admit a
+Our investigation suggests that the vast majority of programs
+for which we fail to find a witness do not, in fact, admit a
 witness.
 %
-Overall, it appears that our random instantiation of holes is well-suited
-to finding type errors in student programs.
-%
-The remaining programs were all cases where \ocaml's type system was
+% Overall, it appears that our random instantiation of holes is well-suited
+% to finding type errors in student programs.
+These programs were generally cases where \ocaml's type system was
 overly conservative.
 %
 Of course, the conservatism is somewhat justified as each case pointed
 to code that would be difficult to use or maintain;
 %
-it would be interesting to investigate how demonstrate these issues in a
-similar manner.
+it would be interesting to investigate how demonstrate these issues in an
+intuitive manner.
 
 % \begin{enumerate}
 % \item 7 infinite type. program doesn't go wrong, but could search for

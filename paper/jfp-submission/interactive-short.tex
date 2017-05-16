@@ -28,7 +28,7 @@ each reduction step in a \emph{trace}, producing a \emph{reduction
 Then we describe a set of common \emph{interactive debugging} steps that
 can be expressed as simple traversals over the reduction graph
 (\S~\ref{sec:traversing-graph}), yielding an interactive debugger that
-allows the user to effectively visualize \emph{how} the program goes
+allows the user to visualize \emph{how} the program goes
 (wrong).
 
 \subsection{Tracing Semantics}
@@ -74,7 +74,7 @@ allows the user to effectively visualize \emph{how} the program goes
 \paragraph{Reduction Graphs}
 %
 A \emph{steps-to} edge is a pair of expressions \singlestep{e_1}{e_2}, which
-intuitively indicates that $e_1$ reduces, in a single step, to $e_2$.
+indicates that $e_1$ reduces, in a single step, to $e_2$.
 %
 %A \emph{sub-term} edge is a pair of expressions \subterm{e_1}{e_2}, which
 %intuitively indicates that $e_1$ contains $e_2$ as a sub-expression.
@@ -89,7 +89,7 @@ collect the set of edges corresponding to the reduction graph.
 %
 Concretely, we extend the operational semantics to
 a relation of the form $\stepg{e}{\vsu}{\tsu}{\tr}{e'}{\vsu'}{\tsu'}{\tr'}$
-where $\tr'$ collects the edges of the transition.
+where $\tr'$ collects the transitions.
 
 \paragraph{Collecting Edges}
 %
@@ -176,16 +176,16 @@ is parameterized by a single expression (vertex) selected from the
 \begin{itemize}
 %
 \item \stepforwardsym, \stepbackwardsym:
-      show the result of a single step forward or backward respectively,
+      show the result of a single step forward or backward;
 %
 \item \jumpforwardsym, \jumpbackwardsym:
       show the result of taking multiple steps (a \emph{``big''} step)
       up to the first function call, or return, forward or backward
-      respectively,
+      respectively;
 %
 \item \stepintosym:
       show the result of stepping into a function call in a sub-term,
-      isolating it in a new thread, and
+      isolating it in a new reduction thread; and
 %
 \item \stepoversym:
       show the result of skipping over a function call in a sub-term.
@@ -226,7 +226,7 @@ step into those calls and proceed with more fine-grained steps.
 % proceed with more fine-grained steps.
 %
 Note that jump compressed traces are not quite the same as
-stack-traces as they show \emph{all} function calls, including
+stack traces as they show \emph{all} function calls, including
 those that returned successfully.
 %
 % For example, the display on the bottom-left in Figure~\ref{fig:factorial} shows

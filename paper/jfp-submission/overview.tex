@@ -200,9 +200,8 @@ graph in Figure~\ref{fig:simple-reduction-hi}.
 \begin{figure}[t]
   \centering
   \includegraphics[height=2in]{simple.png}
-  \caption{The reduction graph for \texttt{1+2+3}. The two edges
-    produced by the transition from \texttt{1+2+3} to \hbox{\texttt{3+3}}
-    are highlighted.}
+  \caption{The reduction graph for \texttt{1+2+3}, highlighting the edges
+    produced by reducing \texttt{1+2+3} to \hbox{\texttt{3+3}}.}
 \label{fig:simple-reduction-hi}
 \end{figure}
 %
@@ -211,8 +210,8 @@ both that edge \emph{and} an edge from the sub-term @1+2@ to @3@.
 %
 These additional edges allow us to implement two common debugging
 operations \emph{post-hoc}: ``step into'' to zoom in on a specific
-function call, and ``step over'' to skip over an uninteresting
-sub-computation.
+function call, and ``step over'' to skip over uninteresting
+computations.
 
 \paragraph{Interacting with the graph}
 The reduction graph is useful for formulating and executing traversals,

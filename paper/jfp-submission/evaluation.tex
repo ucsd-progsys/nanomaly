@@ -16,19 +16,69 @@ type errors.
 
 \paragraph{Evaluation Goals}
 %
-There are three questions we seek to answer with our evaluation:
+There are four questions we seek to answer with our evaluation:
 %
 \begin{enumerate}
-\item \emphbf{Witness Coverage}
-      How many ill-typed programs can we find witnesses for?
-\item \emphbf{Witness Complexity}
+\item \emphbf{Witness Coverage} (\S~\ref{sec:eval:witness-coverage},~\ref{sec:how-safe})
+      How many ill-typed programs \emph{admit} witnesses?
+\item \emphbf{Witness Complexity} (\S~\ref{sec:trace-complexity})
       How \emph{complex} are the traces produced by the witnesses?
-\item \emphbf{Witness Utility}
-      How \emph{helpful} (qualitatively and quantitatively)
-      are the witnesses and traces in debugging type errors?
+\item \emphbf{Witness Utility} (\S~\ref{sec:advantage-traces},~\ref{sec:user-study})
+      How \emph{helpful} %(qualitatively and quantitatively)
+      are the witnesses in debugging type errors?
+\item \emphbf{Witness-based Blame} (\S~\ref{sec:locating})
+      Can witnesses be used to \emph{locate} the source
+      of an error?
 \end{enumerate}
 
-\paragraph{Benchmarks}
+In the sequel we present our experimental methodology (\S~\ref{sec:methodology})
+and then answer the above questions.
+%
+However, for the impatient reader, we first summarize our main results:
+
+\paragraph{1. Most Type Errors Admit Witnesses}
+Our prime result is that the vast majority of static type errors, around
+85\%, do in fact admit a dynamic witness.
+%
+Further, \toolname efficiently synthesizes witnesses with its randomized search;
+it can synthesize a witness for over 75\% of programs in under one second, \ie
+fast enough for interactive use. %to be integrated into the edit-compile-debug cycle.
+%
+
+\paragraph{2. Jump-Compressed Traces Are Small}
+We find that our jump-compression heuristic effectively abstracts the
+pedestrian details of computation, compressing the median trace with
+14--15 single-step reductions to only 4 jumps.
+%
+Over 80\% of programs have a jump-compressed trace with at most 10
+jumps, providing a bird's-eye view from which we can launch a more
+in-depth investigation.
+
+\paragraph{3. Witnesses Help Novices}
+A witness should also help programmers \emph{understand} and
+\emph{fix} type errors.
+%
+We use a set of ill-typed student programs to show that \toolname's
+witnesses effectively demonstrate the runtime error that the type
+system prevented.
+%
+Furthermore, we find, in a study of undergraduate students, that
+\toolname's witnesses lead to more accurate diagnoses and fixes of type
+errors than \ocaml's type error messages.
+
+\paragraph{4. Witnesses Assign Blame}
+Finally, we present a simple heuristic that allows us to use witnesses
+to \emph{automatically} assign blame for type errors.
+%
+We treat the values inside the stuck term as \emph{sources} of typing
+constraints and the stuck term itself as a \emph{sink}, producing
+a slice of the program that likely contains the error.
+%
+Using this heuristic, \toolname's witnesses are competitive with the
+state-of-the-art localization tools \mycroft and \sherrloc.
+
+\subsection{Methodology}
+\label{sec:methodology}
 We answer the first two questions on two sets of ill-typed programs,
 \ie\ programs that were rejected by the \ocaml\ compiler because of a
 type error.
@@ -40,7 +90,8 @@ We recorded each interaction with the \ocaml\ top-level system over the
 course of the first three assignments (IRB
 % \# hidden for blind review),
 \#140608),
-from which we extracted \ucsdsize\ distinct, ill-typed \ocaml\ programs.
+from which we extracted \ucsdsize\ distinct, ill-typed \ocaml\ programs
+from a cohort of 46 students..
 %
 The second dataset --- widely used in the literature --- comes from a
 graduate-level course at the University of Washington~\cite{Lerner2006-pj},
@@ -49,7 +100,7 @@ from which we extracted 284 ill-typed programs.
 Both datasets contain relatively small programs, the largest being 348
 SLoC; however, they demonstrate a variety of functional programming
 idioms including (tail) recursive functions, higher-order functions,
-polymorphic and algebraic data types. % and expression evaluators.
+and polymorphic and algebraic data types. % and expression evaluators.
 
 We answer the third question in two steps.
 %
@@ -70,6 +121,19 @@ programs and asked them to
 For each problem the students were given the ill-typed program and
 either \ocaml's error message or \toolname's jump-compressed trace.
 
+We answer the last question on a subset of the \ucsdbench dataset.
+%
+% For each ill-typed program in a student's interaction trace, we identify
+% the student's \emph{fix} by searching for the first type-correct program
+% that follows it in the trace.
+For each ill-typed program compiled by a student, we identify the student's
+\emph{fix} by searching for the first type-correct program that the student
+subsequently compiled.
+%
+We then use an expression-level \emph{diff}~\cite{Lempsink2009-xf} to
+determine which sub-expressions changed between the ill-typed program
+and the student's fix, and treat those expressions as the source of the
+type error.
 
 \subsection{Witness Coverage}
 \label{sec:eval:witness-coverage}
@@ -94,42 +158,50 @@ If so, the function cannot possibly terminate and we report an error.
 While not a \emph{type error}, infinite recursion is still a clear bug
 in the program, and thus valuable feedback for the user.
 
-\begin{figure}[htp]
-\centerline{
-\begin{minipage}{1.2\textwidth}
-\includegraphics[width=0.5\linewidth]{coverage.png}
+\begin{figure}[t]
+% \centerline{
+% \begin{minipage}{1.2\textwidth}
+\centering
+\includegraphics[width=0.7\linewidth]{coverage.png}
 % \end{minipage}
 % \begin{minipage}{\linewidth}
-\includegraphics[width=0.5\linewidth]{distrib.png}
-\end{minipage}
-}
-\vspace{3ex}
-\caption{Results of our coverage testing and the distribution of test
-  outcomes. Our random search successfully finds witnesses for 79--85\% of
-  the programs in under one second, improving to 87\% in under
-  10 seconds. In both datasets we detect actual type errors about 82\%
-  of the time, unbound variables or constructors 3--4\% of the time, and
-  diverging loops 2--3\% of the time. For the remaining 11--12\% of the
-  programs we are unable to provide any useful feedback.  }
+% \includegraphics[width=0.6\linewidth]{distrib.png}
+% \end{minipage}
+% }
+% \vspace{3ex}
+\caption{Results of our coverage testing. Our random search successfully
+  finds witnesses for 76--82\% of the programs in under one second,
+  improving to 84--85\% in under 10 seconds. }
 \label{fig:results-witness}
 \end{figure}
+\begin{figure}[t]
+\includegraphics[width=0.7\linewidth]{distrib.png}
+\caption{Distribution of test outcomes. In both datasets we detect
+  actual type errors at least 75\% of the time, unbound variables or
+  constructors 4--5\% of the time, and diverging loops 3\% of the
+  time. For the remaining 13--16\% of the programs we are unable to
+  provide any useful feedback. }
+\label{fig:results-distrib}
+\end{figure}
+
 
 \paragraph{Results}
 \label{sec:results-witness}
 The results of our experiments are summarized in
-Figure~\ref{fig:results-witness}.
+Figures~\ref{fig:results-witness}~and~\ref{fig:results-distrib}.
 %
-In both datasets our tool was able to find a witness for 83\% of the
+In both datasets our tool was able to find a witness for over 75\% of the
 programs in under one second, \ie\ fast enough to be integrated as a
 compile-time check. If we extend our tolerance to a 10 second timeout,
-we hit a maximum of 87\% coverage.
+we reach 84--85\% coverage, and if we allow a 60 second search,
+we hit a maximum of 84--87\% coverage.
 %
 Interestingly, while the vast majority of witnesses corresponded to a
-type-error, as expected, 3--4\% triggered an unbound variable error (even
-though \ocaml\ reported a type error) and 2--3\% triggered an infinite
+type-error, as expected, 4--5\% triggered an unbound variable error (even
+though \ocaml\ reported a type error) and 3\% triggered an infinite
 recursion error.
 %
-For the remaining 12\% of programs we were unable to provide any useful
+For the remaining 13--16\% of programs we were unable to provide any useful
 feedback as they either completed 1,000 tests successfully, or timed out
 after one minute.
 %
@@ -137,7 +209,7 @@ after one minute.
 % we could not provide any useful feedback for XX\% of the total programs.
 %
 While a more advanced search procedure, \eg\ dynamic-symbolic execution,
-could likely trigger more of the type errors, our experiments suggest that
+could likely uncover more errors, our experiments suggest that
 type errors are coarse enough (or that novice programs are \emph{simple}
 enough) that these techniques are not necessary.
 
@@ -167,51 +239,34 @@ trace using two metrics.
 
 % \item \ES{others?}
 %
-\begin{figure}[htp]
-\centerline{
-\begin{minipage}{1.2\textwidth}
-\includegraphics[width=0.5\linewidth]{trace_size_step.png}
-\includegraphics[width=0.5\linewidth]{trace_size_jump.png}
-\end{minipage}
-}
-\vspace{3ex}
-\caption{Complexity of the generated traces. 81\% of the combined traces
+\begin{figure}[t]
+% \centerline{
+% \begin{minipage}{1.2\textwidth}
+\includegraphics[width=0.7\linewidth]{trace_size_step.png}
+\includegraphics[width=0.7\linewidth]{trace_size_jump.png}
+% \end{minipage}
+% }
+% \vspace{3ex}
+\caption{Complexity of the generated traces. Over 80\% of the combined traces
   have a jump complexity of at most 10, with an average complexity of 7
   and a median of 5.}
 \label{fig:results-complexity}
 \end{figure}
 %
-\begin{figure}[htp]
-\centerline{
-\begin{minipage}{1.2\textwidth}
-\includegraphics[width=0.5\linewidth]{user-study-reason.png}
-\includegraphics[width=0.5\linewidth]{user-study-fix.png}
-\end{minipage}
-}
-\vspace{3ex}
-\caption{A classification of students' explanations and fixes for type
-  errors, given either \ocaml's error % message
-  or \toolname's
-  jump-compressed trace. The students given \toolname's jump-compressed
-  trace consistently scored better ($\ge 10\%$) than those given \ocaml's type
-  error.}
-\label{fig:results-user-study}
-\end{figure}
-
 \paragraph{Results}
 \label{sec:results-complexity}
 The results of the experiment are summarized in
 Figure~\ref{fig:results-complexity}.
 %
-The average number of single-step reductions per trace is 31 for the
-\ucsdbench\ dataset (35 for the \uwbench\ dataset) with a maximum of
-2,745 (986 for \uwbench) and a median of 17 (also 17 for \uwbench).
+The average number of single-step reductions per trace is 30 for the
+\ucsdbench\ dataset (45 for the \uwbench\ dataset) with a maximum of
+2,745 (\resp 982) and a median of 14.5 (\resp 14.5).
 %
-The average number of jumps per trace is 7 (also 7 for \uwbench) with a
-maximium of 353 (185 for \uwbench) and a median of 4 (also 4 for
-\uwbench).
+The average number of jumps per trace is 7 (\resp 10) with a
+maximium of 353 (\resp 221) and a median of 4 (\resp 4).
 %
-In both datasets 80\% or more traces have at most 10 jumps.
+In both datasets 60\% of traces have at most 5 jumps, and 80\% or more
+have at most 10 jumps.
 
 
 \subsection{Qualitative Evaluation of Witness Utility}\label{sec:advantage-traces}
@@ -232,12 +287,11 @@ shows the steps necessary to reach the stuck state, and
 %
 does not assume that a function is correct just because it type-checks.
 %
-For each example we will present
-(1)~the code,
-(2)~the error message returned \ocaml,
-(3)~the error locations returned by \ocaml\ (underlined) and \sherrloc\ (in bold),\footnote{When the locations from \ocaml\ and \sherrloc\ overlap,
-we just underline the relevant code.}
-and (4)~the jump-compressed trace produced by \toolname.
+For each example we will present:
+(1)~the code;
+(2)~the error message returned \ocaml;
+(3)~the error locations returned by \hlOcaml{\ocaml} and \hlSherrloc{\sherrloc};
+and (4)~\toolname's jump-compressed trace.
 
 % \begin{figure*}[ht]
 % \centering
@@ -264,11 +318,11 @@ of the result.
 \begin{ecode}
   let rec sqsum xs = match xs with
     | [] -> 0
-    | h::t -> __(sqsum t)__ @ (h * h)
+    | h::t -> (*@\hlOcaml{\hlSherrloc{sqsum t}}@*) @ (h * h)
 \end{ecode}
 %
 Unfortunately the student has used the list-append
-operator |@| instead of \texttt{+} to compute the sum.
+operator |@| instead of \texttt{+}. % to compute the sum.
 %
 Both \ocaml\ and \sherrloc\ blame the \emph{wrong location},
 the recursive call @sqsum t@, with the message
@@ -299,8 +353,8 @@ the elements of its input list.
 %
 \begin{ecode}
   let rec sumList xs = match xs with
-    | []    -> ==[]==
-    | y::ys -> y + __sumList ys__
+    | []    -> (*@\hlSherrloc{[]}@*)
+    | y::ys -> y + (*@\hlOcaml{sumList ys}@*)
 \end{ecode}
 %
 Unfortunately, in the base case, it returns @[]@
@@ -326,8 +380,8 @@ how @sumList [1; 2]@ gets stuck at @2 + []@.
 \end{center}
 %
 The trace clarifies (via the third step)
-that the @[]@ is the result of the recursive call
-@sumList []@, and shows how it is incompatible with
+that the @[]@ results from the recursive call
+\hbox{@sumList []@,} and shows how it is incompatible with
 the subsequent \texttt{+} operation.
 
 %% ES: append is actually a bit problematic as we don't find the nice
@@ -377,8 +431,7 @@ the digits of the input integer.
     if n <= 0 then
       []
     else
-      append (==digitsOfInt (n / 10)==)
-             [__n mod 10__]
+      append ((*@\hlSherrloc{digitsOfInt (n / 10)}@*)) [(*@\hlOcaml{n mod 10}@*)]
 \end{ecode}
 %
 %\pagebreak
@@ -395,8 +448,8 @@ Though incorrect, @append@ still type-checks and thus \ocaml and
     'a list
 \end{verbatim}
 %
-In contrast, \toolname makes no assumptions about @append@
-yielding a trace that illustrates the true error on line 4, by
+In contrast, \toolname makes no assumptions about @append@,
+yielding a trace that illustrates the error on line 4, by
 highlighting the conflict in consing a list onto a list of integers.
 %
 \begin{center}
@@ -422,7 +475,7 @@ the initial @b@, till the second element is @false@.
     let xx = x * x in
     (xx, (xx < 100))
 
-  let _ = wwhile (__f__, 2)
+  let _ = wwhile ((*@\hlOcaml{\hlSherrloc{f}}@*), 2)
 \end{ecode}
 %
 The student has forgotten to \emph{apply} @f@ at all on line 2,
@@ -469,8 +522,8 @@ actually relevant to the error.
 % For each problem the student was given the ill-typed program and
 % either \ocaml's error message or \toolname's jump-compressed trace.
 %
-We assigned four problems to the ($n=60$) students in the course: the
-@sumList@, @digitsOfInt@, and @wwhile@ programs from
+We assigned four problems to the 60 students in the course: the
+@sumList@, \hbox{@digitsOfInt@,} and @wwhile@ programs from
 \S~\ref{sec:advantage-traces}, as well as the following @append@ program
 %
 \begin{ecode}
@@ -483,7 +536,8 @@ We assigned four problems to the ($n=60$) students in the course: the
 which triggers an occurs-check error on line 4.
 %
 For each problem the students were given the ill-typed program and
-either \ocaml's error message or \toolname's jump-compressed trace.
+either \ocaml's error or \toolname's jump-compressed trace;
+the full user study is available in \S~\ref{sec:user-study}.
 %
 Due to the nature of an in-class exam, not every student answered every
 question; we received between 13 and 28 (out of a possible 30) responses
@@ -504,40 +558,54 @@ Fleiss' kappa is measured on a scale from $1$, indicating total
 agreement, to $-1$, indicating total disagreement, with $0$ indicating
 random agreement.
 
+Finally, we used a one-sided Mann-Whitney $U$ test~\cite{Mann1947-fd} to
+determine the significance of our results.
+%
+The null hypothesis was that the responses from students given
+\toolname's witnesses were drawn from the same distribution as those
+given \ocaml's errors, \ie \toolname had no effect.
+%
+Since we used a one-sided test, the alternative to the null hypothesis
+is that \toolname had a \emph{positive} effect on the responses.
+%
+We reject the null hypothesis in favor of the alternative if the test
+produces a significance level $p < 0.05$, a standard threshold for
+determining statistical significance.
+
 \paragraph{Threats to Validity}
 Measuring understanding is a difficult task; the following summarize
 the threats to the validity of our results.
 
-\subparagraph{Construct}
+\subparagraph{Construct.}
 %
 We used the correctness of the student's explanation of, and fix for,
 the type error as a proxy for her understanding, but it is possible
 that other metrics would produce different results.
 
-\subparagraph{Internal}
+\subparagraph{Internal.}
 %
-We assigned students randomly to two groups. The first group was given
+We assigned students randomly to two groups. The first was given
 \ocaml's errors for @append@ and \hbox{@digitsOfInt@,} and \toolname's trace
-for @sumList@ and @wwhile@. The second group was given the opposite
-assignment of errors and traces. This assignment ensured that (1) each
-student was given \ocaml and \toolname problems, and (2) each student
+for @sumList@ and \hbox{@wwhile@;} the second was given the opposite
+assignment of errors and traces. This assignment ensured that: (1) each
+student was given \ocaml and \toolname problems; and (2) each student
 was given an ``easy'' and ``hard'' problem for both \ocaml and
 \toolname. Students without sufficient knowledge of \ocaml could affect
 the results, as could the time-constrained nature of an exam. For these
 reasons we excluded any answers left blank from our analysis.
 
-\subparagraph{External}
+\subparagraph{External.}
 %
-Our experiment is based on students in the process of learning \ocaml,
+Our experiment used students in the process of learning \ocaml,
 and thus may not generalize to all developers. The four
-programs we used were chosen manually, via a random selection and
+programs were chosen manually, via a random selection and
 filtering of the programs in the \ucsdbench dataset. In some cases we made
 minor simplifying edits (\eg alpha-renaming, dead-code removal) to the
 programs to make them more understandable in the short timeframe of an
 exam; however, we never altered the resulting type-error. A different
 selection of programs may lead to different results.
 
-\subparagraph{Conclusion}
+\subparagraph{Conclusion.}
 %
 We collected exams from 60 students, though due to the nature of the
 study not every student completed every problem.
@@ -546,12 +614,35 @@ The number of complete submissions ranges from 13 (for the \toolname
 version of @wwhile@) to 28 (for the \ocaml version of @sumList@), out of
 a maximum of 30 per program-tool pair.
 %
-Collecting more responses per test pair was not possible, as it
+Our results are statistically significant in only 2 out of 8 tests; however,
+collecting more responses per test pair was not possible as it
 would require having students answer the same problem twice (once with
 \ocaml and once with \toolname).
 
+\begin{figure}[t]
+% \centerline{
+% \begin{minipage}{1.2\textwidth}
+\includegraphics[width=0.7\linewidth]{user-study-reason.png}
+\includegraphics[width=0.7\linewidth]{user-study-fix.png}
+% \end{minipage}
+% }
+% \vspace{3ex}
+\caption{A classification of students' explanations and fixes for type
+  errors, given either \ocaml's error message or \toolname's
+  jump-compressed trace. The students given \toolname's jump-compressed
+  trace consistently scored better ($\ge 10\%$) than those given
+  \ocaml's type error. We report the result of a one-sided Mann-Whitney
+  $U$ test for statistical significance in parentheses.}
+\label{fig:results-user-study}
+\end{figure}
 
 \paragraph{Results}
+%
+The measured kappa values were $\kappa = 0.72$ for the explanations and
+$\kappa = 0.83$ for the fixes; while there is no formal notion for what
+consititutes strong agreement~\cite{Krippendorff2012-wd}, kappa values
+above $0.60$ are often called ``substantial''
+agreement~\cite{Landis1977-ey}.
 %
 Figure~\ref{fig:results-user-study} summarizes a single annotator's
 results, which show that students given \toolname's jump-compressed
@@ -561,30 +652,40 @@ and fix the type error than those given \ocaml's error message.
 Across each problem the \toolname responses were marked correct
 $10-30\%$ more often than the \ocaml responses, which suggests that
 the students who had access to \toolname's traces had a better
-understanding of the type errors.
+understanding of the type errors;
 %
-The measured kappa values were $\kappa = 0.72$ for the explanations and
-$\kappa = 0.83$ for the fixes; while there is no formal notion for what
-consititutes strong agreement~\cite{Krippendorff2012-wd}, kappa values
-above $0.60$ are often called ``substantial''
-agreement~\cite{Landis1977-ey}.
+however, only the @append@ tests were statistically significant at
+$p < 0.05$.
 %
-%
+
+\input{locating}
 
 \subsection{Discussion}
 \label{sec:discussion}
 
 To summarize, our experiments demonstrate that \nanomaly finds witnesses
-to type errors: (1) with high coverage in a timespan amenable to
-compile-time analysis, (2) with traces that have a low average
-complexity of 7 jumps, and (3) that are more helpful to novice
-programmers than traditional type error messages.
+to type errors:
+%
+(1) with high coverage in a timespan amenable to compile-time analysis;
+%
+(2) with traces that have a low median complexity of 5 jumps;
+%
+(3) that are more helpful to novice programmers than traditional type
+error messages; and
+%
+(4) that can be used to automatically locate the source of a type error.
 
 There are, of course, drawbacks to our approach. Four that stand out
-are: (1) coverage limits due to random generation, (2) the inability to
-handle certain instances of infinite types, (3) dealing with an
-explosion in the size of generated traces, and (4) handling ad-hoc
-polymorphism.
+are:
+%
+(1) coverage limits due to random generation;
+%
+(2) dealing with explosions in the size of generated traces;
+%
+%(3) the inability to handle certain instances of infinite types; and
+(3) our use of a non-parametric function type; and
+%
+(4) handling ad-hoc polymorphism.
 
 \paragraph{Random Generation}
 Random test generation has difficulty generating highly constrained
@@ -594,32 +695,32 @@ able to trigger it. Exhaustive testing and dynamic-symbolic execution
 can address this short-coming by performing an exhaustive search for
 inputs (\emph{resp}.\ paths through the program). As our experiments
 show, however, novice programs do not appear to require more advanced
-search techniques, likely because the novice programs tend to be simple.
+search techniques, likely because they tend to be simple.
 
-\paragraph{Infinite Types}
-Our implementation does check for infinite types inside \forcesym, but
-there are some degenerate cases where it is unable to detect
-them. Consider, the following buggy @replicate@
-%
-\begin{code}
-  let rec replicate n x =
-    if n <= 0 then
-      []
-    else
-      replicate (n-1) [x]
-\end{code}
-%
-This code produces a nested list (with @n@ levels of nesting) containing
-a single copy of @x@, instead of a list with @n@ copies of @x@. \ocaml\
-detects a cyclic \hbox{@'a = 'a list@} constraint in the recursive call
-and throws a type error, whereas \nanomaly\ happily % recurses @n@ times to
-produces the nested list.  Strictly speaking, this function itself cannot
-``go wrong'', the program would not get stuck until a \emph{client}
-attempted to use the result expecting a flat list. But this is not very
-satisfying as @replicate@ is clearly to blame. Furthermore, in our
-experience, infinite-type errors are often difficult to %some of the more difficult ones to
-debug (and to explain to novices), so better support for this scenario
-would be useful.
+% \paragraph{Infinite Types}
+% Our implementation does check for infinite types inside \forcesym, but
+% there are some degenerate cases where it is unable to detect
+% them. Consider the following buggy @replicate@.
+% %
+% \begin{code}
+%   let rec replicate n x =
+%     if n <= 0 then
+%       []
+%     else
+%       replicate (n-1) [x]
+% \end{code}
+% %
+% This code produces a nested list (with @n@ levels of nesting) containing
+% a single copy of @x@, instead of a list with @n@ copies of @x@. \ocaml\
+% detects a cyclic \hbox{@'a = 'a list@} constraint in the recursive call
+% and throws a type error, whereas \nanomaly\ happily recurses @n@ times to
+% produces the nested list.  Strictly speaking, this function itself cannot
+% ``go wrong'', the program would not get stuck until a \emph{client}
+% attempted to use the result expecting a flat list. But this is not very
+% satisfying as @replicate@ is clearly to blame. Furthermore, in our
+% experience, infinite-type errors are often difficult to %some of the more difficult ones to
+% debug (and to explain to novices), so better support for this scenario
+% would be useful.
 
 \paragraph{Trace Explosion}
 Though the average complexity of our generated traces is low in terms of
@@ -634,33 +735,57 @@ specific values~\cite{Perera2012-dy}, would likely help alleviate this
 issue, allowing users to highlight a confusing value and ask: ``Where
 did this come from?''
 
-\paragraph{Ad-hoc Polymorphism}
-Our approach can only support ad-hoc polymorphism (\eg\ type-classes in
-\haskell\ or polymorphic comparison functions in \ocaml) in limited cases
-where we have enough typing information at the call-site to resolve the
-overloading. For example, consider the @n <= 0@ test in our @fac@ example.
-@<=@ is polymorphic in \ocaml, but in this case we can make progress because
-the literal @0@ is not. If we parameterized @fac@ by a lower bound, \eg
+\paragraph{Non-Parametric Function Type}
+As we discussed in \S~\ref{sec:how-safe} some ill-typed programs
+lack a witness in our semantics due to our use of a non-parametric
+type $\tfun$ for functions.
 %
-\begin{code}
-  let rec fac n m =
-    if n <= m then
-      1
-    else
-      n * fac (n - 1) m
-\end{code}
+These programs cannot ``go wrong'', strictly speaking, but would be very
+difficult to \emph{use} in practice.
 %
-and called @fac@ with two holes, we would get stuck at the @n <= m@
-test; not because of a type error, but because all we know about
-@n@ and @m@ at that point is that they must have the same (unknown)
-type.
+We also note that many of these programs induce cyclic typing constraints,
+causing infinite-type errors, which in our experience can be particularly
+difficult to debug (and to explain to novices).
+%
+Better support for these programs would be welcome.
+%
+For example, we might track how the types of inputs change between
+recursive calls.
+%
+If we cannot find a traditional witness, we could then produce a trace
+expanded to show these particular steps.
 
-This issue is uncommon in \ocaml\
-(we detected it in around 5\% of our benchmarks),
-but it would surely be exacerbated
-by a language like \haskell, which makes heavy use of overloading. We
-suspect that dynamic-symbolic execution would allow us to handle ad-hoc
-polymorphism, but defer a proper treatment to future work.
+\paragraph{Ad-Hoc Polymorphism}
+% Our approach can only support ad-hoc polymorphism (\eg\ type-classes in
+% \haskell\ or polymorphic comparison functions in \ocaml) in limited cases
+% where we have enough typing information at the call-site to resolve the
+% overloading. For example, consider the @n <= 0@ test in our @fac@ example.
+% @<=@ is polymorphic in \ocaml, but in this case we can make progress because
+% the literal @0@ is not. If we parameterized @fac@ by a lower bound, \eg
+% %
+% \begin{code}
+%   let rec fac n m =
+%     if n <= m then
+%       1
+%     else
+%       n * fac (n - 1) m
+% \end{code}
+% %
+% and called @fac@ with two holes, we would get stuck at the @n <= m@
+% test; not because of a type error, but because all we know about
+% @n@ and @m@ at that point is that they must have the same (unknown)
+% type.
+
+Also discussed in \S~\ref{sec:how-safe}, our approach can only support
+ad-hoc polymorphism (\eg\ type-classes in \haskell\ or polymorphic
+comparison functions in \ocaml) in limited cases where we have enough
+typing information at the call-site to resolve the overloading. This
+issue is uncommon in \ocaml\ (we detected it in around 5\% of our
+benchmarks), but it would surely be exacerbated by a language like
+\haskell, which makes heavy use of overloading. We suspect that either
+dynamic-symbolic execution or speculative instantiation of holes would
+allow us to handle ad-hoc polymorphism, but defer a proper treatment to
+future work.
 
 % \begin{itemize}
 % \item benchmarks: our data + seminal data

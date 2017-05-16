@@ -190,15 +190,16 @@ an if-expression tells us the condition must be a boolean.
 When a hole appears in such a context, we know what type it must have
 in order to make progress and can fill it in with a concrete value.
 
-The evaluation relation is parameterized by a pair of functions:
-called \emph{narrow} (\forcesym) and \emph{generate} (\gensym),
+The evaluation relation is parameterized by a pair of functions,
+\emph{narrow} (\forcesym) and \emph{generate} (\gensym),
 that ``dynamically'' perform type-checking and hole-filling
 respectively.
 
-\paragraph{Narrowing Types} The procedure % $\force{v}{t}{\vsu}{\tsu}$,
+\paragraph{Narrowing Types}
+The procedure % $\force{v}{t}{\vsu}{\tsu}$,
 \[
 \forcesym : v \times t \times \vsu \times \tsu \rightarrow \triple{v \cup \stuck}{\vsu}{\tsu}
-\]
+\]%
 defined in Figure~\ref{fig:narrow}, takes as input a value $v$, a type
 $t$, and the current value and type substitutions, and refines $v$ to
 have type $t$ by yielding a triple of either the same value and
@@ -393,7 +394,7 @@ if we have $\steps{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\
 then \emph{for every} concrete type $t$, we can find a value
 $v$ of type $t$ such that $\eapp{f}{v}$ goes wrong.
 
-\begin{thm}{\textbf{[Witness Generality]}}
+\begin{thm}[Witness Generality]
 \label{thm:soundness}
   For any lambda-term $f$, if
   \hbox{$\steptr{\trace}{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}{\stuck}{\vsu}{\tsu}$,}
@@ -603,7 +604,7 @@ then $\tsu' = \tsu[\thole_1 \mapsto t_1] \ldots [\thole_n \mapsto t_n]$.
   $\thole$ does not change, so if the partial input types differ then
   $\tsu \neq \tsu'$.
   %
-  Note that only \forcesym\ can change \tsu,
+  Only \forcesym\ can change \tsu,
   %, and it can only do so via \unifysym
   via \unifysym, which can only extend \tsu.
   % and only the first case,
@@ -626,7 +627,7 @@ $\vsub{\ptype{\trace}{f}}{\resolve{\vhole{\thole}}{\vsu}}$.
   By induction on $\trace$.
   %
   In the base case $\trace = \triple{\eapp{f}{\vhole{\thole}}}{\emptysu}{\emptysu}$
-  and $\thole$ is trivially a refinement of $\vhole{\thole}$.
+  and $\thole$ trivially refines $\vhole{\thole}$.
   %
   In the inductive case, consider the single-step extension of $\trace$,
   $\trace' = \trace,\triple{e'}{\vsu'}{\tsu'}$.
@@ -839,8 +840,9 @@ wrong for at least one input of every type).
 In particular, we have shown how to non-deterministically find a witnesses
 for a function of a \emph{single} argument.
 
-In order to convert the semantics into a \emph{procedure} for finding
-witnesses, we must address two challenges.
+We must address two challenges
+to convert the semantics into a \emph{procedure} for finding
+witnesses.
 %
 First, we must resolve the non-determinism introduced by \gensym.
 %
@@ -869,7 +871,7 @@ traces are finite.} and
 (2) the target expression $e$ that contains the type error
 (which may be a curried function of multiple arguments).
 %
-The witness generation procedure returns as output a list of (general)
+The witness generation procedure returns a list of (general)
 witness expressions, each of which is of the form $e\ v_1 \ldots v_n$.
 %
 The \emph{empty} list is returned when no witness can be found after
@@ -957,15 +959,15 @@ The search proceeds as follows.
 %
 We obtain the following corollary of Theorem~\ref{thm:soundness}:
 
-\begin{cor}{\textbf{[Witness Generation]}}
+\begin{cor}[Witness Generation]
 \label{thm:generation}
   If $\genWitness{k}{e} = \triple{\eapp{e}{v_1 \ldots v_n}}{\vsu}{\tsu},\ldots$
   then for all types $t_1 \ldots t_n$ there exist values $w_1 \ldots w_n$ such that
   $\steps{\eapp{e}{w_1 \ldots w_n}}{\emptysu}{\emptysu}{\stuck}{\vsu'}{\tsu'}$.
 \end{cor}
 \begin{proof}
-  For any function $f$ of multiple arguments, we can define $f'$ to be
-  the uncurried version of $f$ that takes all of its arguments as a single
+  For any function $f$ of multiple arguments, we can define $f'$ as the
+  uncurried version of $f$ that takes all of its arguments as a single
   nested pair, and then apply Theorem~\ref{thm:soundness} to $f'$.
 \end{proof}
 
