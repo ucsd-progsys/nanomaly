@@ -82,10 +82,10 @@ fixes = data.frame(fixes0, fixes1, fixes2, fixes3)
 fixes = fixes[fixes$fixes0 != -1 & fixes$fixes1 != -1 & fixes$fixes2 != -1 & fixes$fixes3 != -1,]
 
 print("REASONS")
-print(table(reasons[,1]))
-print(table(reasons[,2]))
-print(table(reasons[,3]))
-print(table(reasons[,4]))
+print(reasons[,1])
+print(reasons[,2])
+print(reasons[,3])
+print(reasons[,4])
 print(kappam.fleiss(reasons,exact=TRUE,detail=TRUE))
 #print(kappam.fleiss(reasons[1:3],detail=TRUE))
 
@@ -99,7 +99,9 @@ print(kappam.fleiss(fixes,exact=TRUE,detail=TRUE))
 
 significance <- function(x,y) {
   print(x)
+  print(mean(x))
   print(y)
+  print(mean(y))
   wilcox.test(x, y, alternative="g")
 }
 

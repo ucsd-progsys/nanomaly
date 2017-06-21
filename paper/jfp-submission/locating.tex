@@ -34,10 +34,10 @@ at some point a ``fix'' becomes a ``rewrite''.
 We do not wish to consider the ``rewrites'', so we discard outliers
 where the fraction of expressions that have changed is more than one
 standard deviation above the mean, establishing a diff threshold of
-45\%.
+40\%.
 %
 This accounts for roughly 14\% of programs pairs we discovered, leaving
-us with 2,425 program pairs.
+us with 2,710 program pairs.
 
 For each pair of an ill-typed program and its fix, we run \toolname and
 collect two sets of source locations:
@@ -82,13 +82,13 @@ minute, or where \toolname failed to produce a witness.
 %
 We discard all such programs in our evaluation to level the playing
 field, around 15\% for each tool, leaving us with a benchmark set of
-1,569 programs.
+1,759 programs.
 
 \paragraph{Threats to Validity}
 Our benchmarks were drawn from students in an undergraduate course
 at \ucsdbench\ and may not be representative of other student bodies.
 %
-We mitigate this threat with a large empirical evaluation of 1,569
+We mitigate this threat with a large empirical evaluation of 1,759
 programs, drawn from a cohort of 46 students.
 %
 A similar threat is that students are not industrial programmers, thus
@@ -132,7 +132,7 @@ do.
 \begin{figure}[t]
 \includegraphics[width=0.7\linewidth]{blame.png}
 \caption{Accuracy of type error localization. \toolname's witness-based
-  predictions outperform \ocaml by 22 points, and are competitive
+  predictions outperform \ocaml by 21 points, and are competitive
   with the state-of-the-art tools \mycroft and \sherrloc.}
 \label{fig:results-blame}
 \end{figure}
@@ -149,7 +149,7 @@ error location.
 %
 Interestingly, while all tools have a median of 2 predicted error
 locations per program, \mycroft and \sherrloc have a long tail with a
-maximum of 22 (\resp 12) locations, while \toolname's maximum is 5
+maximum of 22 (\resp 11) locations, while \toolname's maximum is 5
 locations.
 %
 We also note that while \mycroft and \sherrloc were designed

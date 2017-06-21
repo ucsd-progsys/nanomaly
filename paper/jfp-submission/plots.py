@@ -404,7 +404,7 @@ def plot_blame():
 
     # FIXME: load these numbers from csv...
     tools = ['OCaml', 'NanoMaLy', 'Mycroft', 'SHErrLoc']
-    accs  = [49.0,    70.7,       71.0,      78.9      ]
+    accs  = [47.4,    68.3,       73.2,      75.8      ]
 
     N = len(tools)
     ind = np.arange(N)    # the x locations for the groups
@@ -430,7 +430,7 @@ def plot_blame():
 
 if __name__ == '__main__':
     seminal = read_csv('../../seminal.csv')
-    ucsd = read_csv('../../ucsd.csv')
+    ucsd = read_csv('../../ucsd-sp14.csv')
 
     plot_distrib(seminal, ucsd)
     plot_distrib_extended(ucsd)

@@ -91,7 +91,7 @@ course of the first three assignments (IRB
 % \# hidden for blind review),
 \#140608),
 from which we extracted \ucsdsize\ distinct, ill-typed \ocaml\ programs
-from a cohort of 46 students..
+from a cohort of 46 students.
 %
 The second dataset --- widely used in the literature --- comes from a
 graduate-level course at the University of Washington~\cite{Lerner2006-pj},
@@ -170,16 +170,16 @@ in the program, and thus valuable feedback for the user.
 % }
 % \vspace{3ex}
 \caption{Results of our coverage testing. Our random search successfully
-  finds witnesses for 76--82\% of the programs in under one second,
+  finds witnesses for 76--83\% of the programs in under one second,
   improving to 84--85\% in under 10 seconds. }
 \label{fig:results-witness}
 \end{figure}
 \begin{figure}[t]
 \includegraphics[width=0.7\linewidth]{distrib.png}
 \caption{Distribution of test outcomes. In both datasets we detect
-  actual type errors at least 75\% of the time, unbound variables or
-  constructors 4--5\% of the time, and diverging loops 3\% of the
-  time. For the remaining 13--16\% of the programs we are unable to
+  actual type errors at least 77\% of the time, unbound variables or
+  constructors 4\% of the time, and diverging loops 2--3\% of the
+  time. For the remaining 15--16\% of the programs we are unable to
   provide any useful feedback. }
 \label{fig:results-distrib}
 \end{figure}
@@ -193,15 +193,15 @@ Figures~\ref{fig:results-witness}~and~\ref{fig:results-distrib}.
 In both datasets our tool was able to find a witness for over 75\% of the
 programs in under one second, \ie\ fast enough to be integrated as a
 compile-time check. If we extend our tolerance to a 10 second timeout,
-we reach 84--85\% coverage, and if we allow a 60 second search,
-we hit a maximum of 84--87\% coverage.
+we reach 84\% coverage, and if we allow a 60 second search,
+we hit a maximum of 84--85\% coverage.
 %
 Interestingly, while the vast majority of witnesses corresponded to a
-type-error, as expected, 4--5\% triggered an unbound variable error (even
+type-error, as expected, 4\% triggered an unbound variable error (even
 though \ocaml\ reported a type error) and 3\% triggered an infinite
 recursion error.
 %
-For the remaining 13--16\% of programs we were unable to provide any useful
+For the remaining 15--16\% of programs we were unable to provide any useful
 feedback as they either completed 1,000 tests successfully, or timed out
 after one minute.
 %
@@ -258,14 +258,14 @@ trace using two metrics.
 The results of the experiment are summarized in
 Figure~\ref{fig:results-complexity}.
 %
-The average number of single-step reductions per trace is 30 for the
-\ucsdbench\ dataset (45 for the \uwbench\ dataset) with a maximum of
-2,745 (\resp 982) and a median of 14.5 (\resp 14.5).
+The average number of single-step reductions per trace is 17 for the
+\ucsdbench\ dataset (42 for the \uwbench\ dataset) with a maximum of
+2,745 (\resp 982) and a median of 15 (\resp 15).
 %
-The average number of jumps per trace is 7 (\resp 10) with a
+The average number of jumps per trace is 7 (\resp 9) with a
 maximium of 353 (\resp 221) and a median of 4 (\resp 4).
 %
-In both datasets 60\% of traces have at most 5 jumps, and 80\% or more
+In both datasets about 60\% of traces have at most 5 jumps, and 80\% or more
 have at most 10 jumps.
 
 
