@@ -217,6 +217,30 @@ helpful in understanding the source of the error. This, in turn, opens the
 door to a novel dynamic way to explain, understand, and appreciate the
 benefits of static typing.
 
+\paragraph{New Material}
+This paper is an extension of our ICFP '16 paper of the same
+name~\cite{Seidel2016-ul}.
+%
+In this extension we have focused on expanding our experimental evaluation.
+%
+First, in \S~\ref{sec:how-safe} we investigate the student programs for
+which we were unable to synthesize a witness. We group the failures into
+five categories, give representative examples, and suggest ways to
+improve our feedback in these cases. Interestingly, we find that in the
+majority of these failed cases, the programs do not actually admit a
+witness in our semantics.
+%
+Second, in \S~\ref{sec:locating} we attempt to use our witnesses to
+localize type errors with a simple heuristic. We treat the stuck term as
+a sink for typing constraints, and the values it contains as sources of
+constraints. We can then predict that either the stuck term or one of
+the terms that \emph{produced} a value it contains is likely at fault
+for the error. We compare our localizations to \ocaml and two
+state-of-the-art type error localization tools, and find that we are
+competitive with the state of the art.
+%
+Finally, we have also extended \S~\ref{sec:user-study} with an analysis
+of the statistical significance of our user study results.
 
 %%% Local Variables:
 %%% mode: latex

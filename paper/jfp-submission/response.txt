@@ -1,7 +1,8 @@
 We thank the reviewers for their detailed comments and suggestions.
 
+# Questions about the Evaluation
 
-## Questions about the user study
+## User Study
 
 Reviewer 1
 > I was not completely convinced by the metrics used for the statistical
@@ -68,6 +69,37 @@ really meant to be a preliminary "sanity-check", but would be happy to
 if the reviewers feel it would be helpful.)
 
 
+## Investigating the "safe" programs
+
+Reviewer 1
+> page 23, regarding section "witness exists", I got puzzled. The study
+> there is on 50 programs. It was found that 2% of the programs admit a
+> witness. I deduce this must correspond to one single program. But
+> then, the next sentence tells that "slightly over half of these
+> programs involved had some particular property, while the rest had
+> some other property."  There semms to be some inconcistency there.
+
+Indeed, the wording here was confusing. The percentages in this section
+are presented as a fraction of *all* programs, not just the random
+sample of failing programs. We have updated the text at the start of 5.3
+to explain this.
+
+
+# Questions about limitations
+
+## Traversal Bias
+
+Reviewer 2
+> 1. you do not address the issue of bias, the fact that locations
+> towards the end of the program are more likely to be crashed at. This
+> is similar to the left-to-right-bias of algorithm W, although in your
+> case the left-to-rightness is in the trace, not the syntax tree (as
+> addressed for that case in work by Hage and Heeren (VODCA 2008) and
+> the work of Erwig and Chen).  Does your implementation allow general
+> datatypes so that I can have case with many arms?
+
+TODO
+
 
 ## Reviewer 1
 
@@ -91,30 +123,6 @@ TODO
 
 TODO
 
-> page 23, regarding section "witness exists", I got puzzled. The study
-> there is on 50 programs. It was found that 2% of the programs admit a
-> witness. I deduce this must correspond to one single program. But
-> then, the next sentence tells that "slightly over half of these
-> programs involved had some particular property, while the rest had
-> some other property."  There semms to be some inconcistency there.
-
-Indeed, the wording here was confusing. The percentages in this section
-are presented as a fraction of *all* programs, not just the random
-sample of failing programs. We have updated the text at the start of 5.3
-to explain this.
-
-
-## Reviewer 2
-
-> 1. you do not address the issue of bias, the fact that locations
-> towards the end of the program are more likely to be crashed at. This
-> is similar to the left-to-right-bias of algorithm W, although in your
-> case the left-to-rightness is in the trace, not the syntax tree (as
-> addressed for that case in work by Hage and Heeren (VODCA 2008) and
-> the work of Erwig and Chen).  Does your implementation allow general
-> datatypes so that I can have case with many arms?
-
-TODO
 
 > 5. your approximation of functions to fun is rather strong, and it is
 > unclear to me how well that works. I guess since all executions start
