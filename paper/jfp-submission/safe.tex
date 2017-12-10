@@ -41,7 +41,7 @@ witness.
 \label{fig:no-witness}
 \end{figure}
 
-\paragraph{Ad-Hoc Polymorphism}
+\paragraph{Ad-hoc Polymorphism}
 %
 We found that for 5\% of all programs \toolname got stuck when it tried to
 compare two holes.
@@ -207,6 +207,40 @@ then report a trace expanded to show precisely these steps.
 This represents only a modest extension to our semantics, and would be
 interesting to explore further.
 
+The $\tfun$ abstraction is also problematic when we have to generate new
+functions. Consider the following @pipe@ function that composes a list
+of functions.
+%
+\begin{code}
+  let pipe fs =
+    let f a x = a x in
+    let base a = a in
+    List.fold_left f base fs
+\end{code}
+%
+In the folding function @f@, the student has applied the accumulator @a@
+to the new function @x@, rather than composing the two.
+%
+The \ocaml compiler again detects a cyclic typing constraint and rejects
+the program, but \toolname is unable to produce a witness.
+%
+In this case the issue lies in the fact that the safety of a call to
+@pipe@ is determined by its arguments: the call @pipe [(fun x -> 1)]@ is
+safe, but the call @pipe [(fun x -> 1); (fun x -> 2); (fun x -> 3)]@
+will get stuck when we try to reduce @1 (fun x -> 3)@.
+%
+Unfortunately, \toolname is unable to synthesize such a witness because
+of the abstraction to $\tfun$.
+%
+Specifically, this abstraction forces our hand inside $\gensym$; we do
+not know the what the input and output types of the function should be,
+so the only safe thing to do is to generate a function that accepts any
+input and returns a value of a yet-to-be-determined type.
+%
+Thus, \toolname's lenient instantiation of holes prevents it from
+discovering a witness for @pipe@.
+
+
 \paragraph{Dead Code and ``Safe'' Function Calls *}
 %
 4\% of all programs contained type errors that were unreachable, either
@@ -288,9 +322,9 @@ by symbolic execution.
 
 \paragraph{Summary}
 %
-Our investigation suggests that the vast majority of programs
+Our investigation suggests that the majority of programs
 for which we fail to find a witness do not, in fact, admit a
-witness.
+witness under \toolname's semantics.
 %
 % Overall, it appears that our random instantiation of holes is well-suited
 % to finding type errors in student programs.
