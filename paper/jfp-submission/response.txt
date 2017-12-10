@@ -190,6 +190,6 @@ We discuss the approximation of functions to `fun` in the
 "Non-Parametric Function Type" subsection of 5.3, it is the other major
 limitation of our work (the first being overloading). We do in fact have
 to invent functions sometimes (the definition of `gen` says that these
-must be constant functions), and this interacts very poorly with
-higher-order functions like `foldr`. We have added another example to
-the discussion in 5.3 that illustrates the issue.
+must be constant functions), and this interacts poorly with higher-order
+functions like `foldr`. We have added another example to the discussion
+in 5.3 that illustrates the issue.
