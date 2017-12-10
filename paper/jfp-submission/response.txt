@@ -1,5 +1,12 @@
 We thank the reviewers for their detailed comments and suggestions.
 
+As requested, we have added a paragraph at the end of the Introduction
+that describes the major changes from the ICFP paper.
+
+In the rest of this document, we will respond to the larger comments and
+concerns of the reviewers, and describe the changes we have made to
+address them.
+
 # Questions about the Evaluation
 
 ## User Study
@@ -98,11 +105,13 @@ Reviewer 2
 > the work of Erwig and Chen).  Does your implementation allow general
 > datatypes so that I can have case with many arms?
 
-TODO
+Indeed, this was an oversight on our part. We have added a new paragraph
+to section 5.8 to discuss our bias.
 
 
-## Reviewer 1
+## Other language features
 
+Reviewer 1
 > The tool is restricted to a small subset of OCaml, in particular it does
 > not support side-effects. While many FP courses begin by focusing on
 > pure programs only, there are some intringuing type errors that students
@@ -111,9 +120,36 @@ TODO
 > easy to generalize the present work to deal with side effects, because
 > of the need to maintain the state and report it to the user.
 
-TODO
+While side effects would certainly make the visualization more complex,
+we don't believe they present a fundamental limitation to our approach.
+Your example of the student forgetting to supply the unit argument is
+actually quite similar to the problem posed by curried functions. Either
+the function will be consumed where it's return value was expected,
+which would produce an error similar to our `wwhile` example, our it
+will be discarded entirely as the call was intended solely for its side
+effect. In the latter case, we could simply add a restriction that any
+such discarded values must be unit (it is commonly considered a best
+practice to explicitly discard the results of functions called just for
+their side effects with a `void` function).
 
 
+Reviewer 2
+> 1. explain how things would be if applied to other functional
+> languages, in particular Haskell. What about laziness? What about
+> overloaded numerals?  It seems to me that these are quite
+> problematic. For example, the 0 in your fac program will be Num a =>
+> a.
+
+Overloading is indeed problematic for us. We discuss this in the new
+section 5.3 (under the heading "Ad-Hoc Polymorphsim"), both describing
+the issue and presenting a possible solution. We return to the issue in
+section 5.8 and mention how a language like Haskell with pervasive
+overloading would exacerbate the problem.
+
+
+## Scalability
+
+Reviewer 1
 > Random-test generation would likely fail to produce counter-examples
 > on slightly more complex programs such as red-black trees; for such
 > programs, more advanced techniques such as constraint-based test
@@ -121,9 +157,12 @@ TODO
 > whether the approach presented in the paper could be extended to
 > accomodate constraint-based test generation.
 
-TODO
+Indeed, we discuss the limitations of random generation in section
+5.8. We have added a sentence there describing how we could replace
+random generation with constraint-based generation.
 
 
+Reviewer 2
 > 5. your approximation of functions to fun is rather strong, and it is
 > unclear to me how well that works. I guess since all executions start
 > from the beginning of the programs keeps everything rather concrete,
@@ -138,19 +177,6 @@ TODO
 > dynamic level this may not be the case for you. But do say and explain
 > so.
 
-TODO
-
-
-
-
-> 1. explain how things would be if applied to other functional
-> languages, in particular Haskell. What about laziness? What about
-> overloaded numerals?  It seems to me that these are quite
-> problematic. For example, the 0 in your fac program will be Num a =>
-> a.
-
-TODO
-
 > 2. what is the limit to the size of programs you can reasonably
 > handle?  What if we have a large program, is it possible to have a
 > different starting point? So does a trace have to start at the start
@@ -160,6 +186,4 @@ TODO
 > something I am really curious about.  Now you have 5% Non-parametric
 > function types. Does that change in this situation?
 
-TOOD
-
-
+TODO

@@ -696,7 +696,7 @@ error messages; and
 %
 (4) that can be used to automatically locate the source of a type error.
 
-There are, of course, drawbacks to our approach. Four that stand out
+There are, of course, drawbacks to our approach. Five that stand out
 are:
 %
 (1) coverage limits due to random generation;
@@ -704,9 +704,11 @@ are:
 (2) dealing with explosions in the size of generated traces;
 %
 %(3) the inability to handle certain instances of infinite types; and
-(3) our use of a non-parametric function type; and
+(3) our use of a non-parametric function type;
 %
-(4) handling ad-hoc polymorphism.
+(4) handling ad-hoc polymorphism; and
+%
+(5) traversal bias.
 
 \paragraph{Random Generation}
 Random test generation has difficulty generating highly constrained
@@ -714,9 +716,15 @@ values, \eg\ red-black trees or a pair of equal integers. If the type
 error is hidden behind a complex branch condition \nanomaly\ may not be
 able to trigger it. Exhaustive testing and dynamic-symbolic execution
 can address this short-coming by performing an exhaustive search for
-inputs (\emph{resp}.\ paths through the program). As our experiments
-show, however, novice programs do not appear to require more advanced
-search techniques, likely because they tend to be simple.
+inputs (\emph{resp}.\ paths through the program). Our approach does not
+rely on random generation, we could easily substitute it for
+dynamic-symbolic execution by extending the evaluation relation to
+maintain a path condition and replacing the \gensym function with a call
+to the constraint solver.
+%
+As our experiments show, however, novice programs do not appear to
+require more advanced search techniques, likely because they tend to be
+simple.
 
 % \paragraph{Infinite Types}
 % Our implementation does check for infinite types inside \forcesym, but
@@ -807,6 +815,27 @@ benchmarks), but it would surely be exacerbated by a language like
 dynamic-symbolic execution or speculative instantiation of holes would
 allow us to handle ad-hoc polymorphism, but defer a proper treatment to
 future work.
+
+\paragraph{Traversal Bias}
+
+A common problem with typecheckers is that the order in which the
+typechecker traverses the abstract syntax tree \emph{biases} it in favor
+of blaming expressions that are seen later~\cite{McAdam1998-ub}. This
+usually takes the form of a left-to-right bias with respect to the
+source code (terms that appear later \emph{textually} are more likely to
+be blamed), but in our case the bias is with respect to the execution
+trace. Incorporating our notion of type sources from
+\S~\ref{sec:locating} into the visualization, \eg by including those
+reductions in the initial visualization, may help alleviate our bias.
+% in a similar manner to the proposals of McAdam~\shortcite{McAdam1998-ub},
+
+
+% Several solutions to the bias problem have been proposed.
+% %
+% Hage and Heeren~\shortcite{Hage2009-em} describe a system that allows
+% the compiler author to selectively control the bias and thus produce
+% better errors, while McAdam~\shortcite{McAdam1998-ub},
+
 
 % \begin{itemize}
 % \item benchmarks: our data + seminal data
