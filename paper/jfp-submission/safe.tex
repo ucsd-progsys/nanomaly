@@ -25,7 +25,11 @@ based on that sample.
 %
 Figure~\ref{fig:no-witness} summarizes the results of our investigation ---
 we note the classes that were based on the random sample with a ``*''.
-
+%
+Note that the percentages referenced in Figure~\ref{fig:no-witness} (and
+in the sequel) are with respect to the total number of programs in the
+\ucsdbench dataset, not only those were \toolname failed to find a
+witness.
 
 \begin{figure}[t]
 %\centering
@@ -39,7 +43,7 @@ we note the classes that were based on the random sample with a ``*''.
 
 \paragraph{Ad-Hoc Polymorphism}
 %
-We found that for 5\% programs \toolname got stuck when it tried to
+We found that for 5\% of all programs \toolname got stuck when it tried to
 compare two holes.
 %
 \ocaml provides polymorphic equality and comparison operators,
@@ -136,7 +140,7 @@ useful, lightweight alternative to symbolic execution for our purposes.
 
 \paragraph{Non-Parametric Function Type *}
 %
-5\% of programs lack a witness in our semantics due to our
+5\% of all programs lack a witness in our semantics due to our
 non-parametric $\tfun$ type for functions.
 %
 Recall that our goal is to expose the runtime errors that would have
@@ -205,7 +209,7 @@ interesting to explore further.
 
 \paragraph{Dead Code and ``Safe'' Function Calls *}
 %
-4\% of programs contained type errors that were unreachable, either
+4\% of all programs contained type errors that were unreachable, either
 because they were dead code, or because the student called the function
 with inputs that could not trigger the error.
 
@@ -271,7 +275,7 @@ necessary conditions.
 
 \paragraph{Witness Exists *}
 %
-We found that only 2\% of programs admit a witness that \toolname
+We found that only 2\% of all programs admit a witness that \toolname
 was unable to discover.
 %
 Slightly over half involved synthesizing a \emph{pair} of

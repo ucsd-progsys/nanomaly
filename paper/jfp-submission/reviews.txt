@@ -1,0 +1,358 @@
+Referees' Comments to Author:
+Referee: 1
+
+Comments to the Author
+
+
+This paper is an extended version of an ICFP'16 paper. It describes
+a tool to help beginners in OCaml (or other ML languages) to debug
+ill-typed programs. The idea is to provided, whenever possible, as
+counter-example a piece of execution that triggers an obviously incorrect
+subexpression. As this paper demonstrates, for small programs, typically
+written by beginners in a first functional programming courses, finding
+such counter-examples is feasible in a majority of situations. Moreover,
+the counter-example may be presented is a compact, readable manner. It thus
+provide a small-enough amount of material to read, making the feedback
+effectively useful for the students. Sometimes, the tool does not manage
+to give feedback for all input ill-typed programs, either because the program
+is ill-typed but nevertheless correct, or because the random generation failed
+to reach a counterexample before the timeout. Yet, in practice the tool does
+quite often find a counterexample, and this feedback appears to be generally
+quite useful for students to understand the bug.
+
+Strengths of the paper:
+- The paper is well written, and very clear all along.
+- It comes with a working implementation.
+- It builds upon solid theory, and includes theorems and proofs.
+- The output of the tool has been put to practice with students.
+
+Weaknesses:
+- The tool is restricted to a small subset of OCaml, in particular it does
+  not support side-effects. While many FP courses begin by focusing on
+  pure programs only, there are some intringuing type errors that students
+  face only when working with effectful programs, e.g. forgetting to apply
+  a function to the unit argument. I speculate that it would be /not/ so
+  easy to generalize the present work to deal with side effects, because
+  of the need to maintain the state and report it to the user.
+- Random-test generation would likely fail to produce counter-examples
+  on slightly more complex programs such as red-black trees; for such programs,
+  more advanced techniques such as constraint-based test generation are
+  probably required. I was not able to quite understand whether the approach
+  presented in the paper could be extended to accomodate constraint-based
+  test generation.
+- I was not completely convinced by the metrics used for the statistical
+  analysis; I would have found it more convincing to measure the speed
+  at which an incorrect program may be fixed by a student sitting in front
+  of a machine. That said, some statistical analysis is better than none,
+  and I am greatful that the authors attempted some evaluation.
+
+
+In spite of the limitations described above, I believe that this is a great
+paper that deserves to appear in JFP. The authors will find below a number
+of suggestions.
+
+
+*) Journal papers often include a short paragraph explaining the delta with
+respect to the conference version. I believe one such paragraph would be useful.
+
+*) It is common practice for papers describing to tool to include a
+long-lasting url from where to download the tool and be able to test it.
+I would have really liked to test the tool on particular input programs.
+
+*) Page 3: it would be worth explaining precisely what is the difference
+between a jump-compressed trace and a big-step derivation with one hole
+(the hole corresponding to the subtree for which there is no derivation).
+
+*) Figure 7: dynamic type of a value: for leaves and node, there is a type
+annotation [t], but where does it come from, since the source code does not
+mention this type? The text says "from the label on their values", but
+I wasn't quite able to follow. In particular, a leaf has no argument,
+so I believe all you can say is that it has type "Tree \alpha", for some
+\alpha.
+
+*) Page 16: when discussing jump compression, you say that it abstracts
+many details of the computation that are "often" uninteresting. Thus, I guess
+that there are cases where the jump compression hides interesting details.
+Can you provide an example of one such case? How often
+
+*) page 18: the first occurence of Mycroft and Sherrloc should come with
+proper citations.
+
+*) page 18: "from which we extracted 284 ill-typed programs";
+how were they selected? did they all fit the sublanguage supported by your tool?
+
+*) page 23, regarding section "witness exists", I got puzzled. The study
+there is on 50 programs. It was found that 2% of the programs admit a
+witness. I deduce this must correspond to one single program. But then,
+the next sentence tells that "slightly over half of these programs involved
+had some particular property, while the rest had some other property."
+There semms to be some inconcistency there.
+
+*) page 23 gives very detailed statistics on the size of the single-step
+reductions. However, the paper gives much less details on the statistics
+(mean, median, variance) of the input programs. Without sufficient
+information on the size of the input programs, it is quite hard to
+draw conclusions about the distribution of the size of the reduction traces.
+
+*) page 27: I see that when a value is a first-class function, the definition
+of the function gets inlined in the trace presented to the user. This means
+that if the user calls a higher-order function providing it with a function
+whose definition is more than one line long, then the output will be certainly
+unreadable. I suggest that, whenever a function is not anonymous (i.e. it was
+bound by a let), the trace should stick to using this name, possibly annotating
+the name with a line number in case of possible ambiguity.
+
+*) Related work section begins with a sentence "many groups have explored
+techniques to pinpoint the true source of errors reported by static type
+checkers". I dislike this formulation because, even though it might not
+be the author's intention, the sentence could suggest that there necessarily
+exists a "true" location in any ill-typed program. But sometimes, there is no
+possible way for the type-checker to know what is the true location of the
+error. Consider for example:
+
+   let rec f a n =
+      if n = 0 then 0 else a +. f (n-1)
+
+Should it be "0." instead of "0" or should it be "+" instead of "+."?
+Only the programmer can tell.
+
+Although I like this example because it highlights that sometimes it is
+not possible to blame one particular location, note that I also don't
+believe in the practical usability of tools that report several locations,
+as it overwhelms the user with too much information, and overall does not
+help the user fix the problem any faster.
+
+*) One typechecker that provides a helpful error message for the above
+example, as well as for several examples cited in the present paper, is
+a piece of work that is missing from the related work section:
+
+   Improving Type Error Messages in OCaml
+   Arthur Charguéraud
+   ETPCS: Post-proceedings of the ML/OCaml 2014 workshops
+   https://arxiv.org/abs/1512.01897  (2015)
+
+This was advertised by its author on the OCaml mailing list last January:
+https://sympa.inria.fr/sympa/arc/caml-list/2017-01/msg00049.html
+Using the opam switch, it was easy to test some of your example programs:
+
+-------------------------------------------------------------
+
+   let rec fac n m =
+     if n <= m
+       then true
+       else n * fac (n-1) m
+
+
+   File "test.ml", line 2, characters 2-52:
+   Error: The then-branch has type
+      bool
+   but the else-branch has type
+      int.
+
+-------------------------------------------------------------
+
+   let rec sumList xs = match xs with
+     | [] -> []
+     | y::ys -> y + sumList ys
+
+
+   File "test.ml", line 3, characters 13-27:
+   Error: The previous branch has type
+      'a list
+   but this branch has type
+      int.
+
+-------------------------------------------------------------
+
+   let rec sqsum xs = match xs with
+     | [] -> 0
+     | h::t -> sqsum t @ (h * h)
+
+
+   File "test.ml", line 3, characters 20-21:
+   Error: The function `@' cannot be applied to the arguments provided.
+
+      | Types of the expected arguments:    | Types of the provided arguments:
+   ---|-------------------------------------|------------------------------------
+    1 | 'b list                             | 'a list
+    2 | 'b list                             | int
+
+
+-------------------------------------------------------------
+
+In the examples above, the location reported is the desired one, I believe.
+On some other examples from your paper that I have tried, the output of
+Chargueraud's patch to the typechecker was not as convincing, admittedly.
+
+In any case, I understand that the present paper is aiming at a very different
+approach than that of improving type-error messages. I am mentioning the above
+work because it shows that type-checkers are not necessarily doomed to frequently
+reporting incorrect locations, or to verbosely report multiple locations.
+
+
+
+Referee: 2
+
+Comments to the Author
+
+This is a journal version of an ICFP conference paper. The authors do not
+mention this at all in the paper, and there is no citation of that paper.
+The authors state in the cover letter that the new additions to the paper
+are Sec. 5.3 and 5.7 (and indeed they are), and a few details have been
+added like statistical significance. Also, the exam questions given to students
+are in an appendix. Ignoring the latter, there are 5 pages of new work.
+
+The authors describe a system NANOMALY developed for ML that instead
+of type error messages generates a test that when run will crash
+due to a type conflict. The nice aspect of this work is that novice
+programmers who might make any number of mistakes involving types when they
+start programming, in this case, ML, may not be in a position yet to understand
+the type error messages the ML compiler provides. The assumption is that
+giving a failing test run is a much more concrete way of delivering this
+information. The paper does some formalization, proves that when ,
+provides a semantics for running type incorrect programs, and most interestingly
+does quite some experimental validation: they consider how accurate they locate
+the error (compared to OCaml, Mycroft and Sherrloc), consider how well their
+output can be used (compared to OCAML's error, not Sherrloc or Mycroft), consider how complex the generated traces are, and finally make a study of
+how often witnesses can be generated, and if not, why that might be the case.
+There is an on-line tool, but a strong lack of documentation. For example,
+I have no idea whether only the syntax of the paper is supported or more.
+
+As before, I am entirely sympathetic to this line of work. However, it seems
+to me that this paper does not add very much to the conference paper,
+while there is plenty of ground uncovered (including some I mentioned in my
+ICFP review).
+
+1. you do not address the issue of bias, the fact that locations towards
+   the end of the program are more likely to be crashed at. This is similar
+   to the left-to-right-bias of algorithm W, although in your case the
+   left-to-rightness is in the trace, not the syntax tree (as addressed for that
+   case in work by Hage and Heeren (VODCA 2008) and the work of Erwig and Chen).
+   Does your implementation allow general datatypes so that I can have case
+   with many arms?
+2. you compare only to OCAML in your student user study, which seems to be to
+   be an easy target. Why not Sherrloc or Mycroft which at least get the location right more often? If OCAML much more often gives the wrong location,
+   the message is not likely to be helpful. Indeed, I would expect you to only
+   compare the systems for those cases that both NANOMALY and OCAML blame
+   the same location.
+3. does your tool help students to learn about the type system, or is it simply
+   a better crutch to help them along. Did you investigate this at all?
+4. you seem to often give non-standard names: types are `compatibles', instead
+   of saying that they unify, idempotence on p.8 is circumscribed, type
+   refinement can also be called matching (admittedly, that terminology is not
+   so standard).
+5. your approximation of functions to fun is rather strong, and it is unclear
+   to me how well that works. I guess since all executions start from the
+   beginning of the programs keeps everything rather concrete, so that you
+   do not need to invent functions. But I am not sure, and I would like to see
+   a thorough discussion. I am fine with novice programs being short and simple
+   since that is quite likely to be the case when they resort to Nanomaly,
+   but when you do that, it should be clear that you do.
+   What may be related to this is the idea to deal with Currying. What about
+   functions like foldr of which the result is a type variable? I know that
+   some static work on error diagnosis sometimes runs into a problem of some
+   sort and since you work at the dynamic level this may not be the case for
+   you. But do say and explain so.
+6. why do you introduce graphs if all you have a list of lists?
+7. why did you do a user study as part of an exam, and not as an independent
+   study? I don't think this is a good idea.
+
+I would also like to see a discussion of the following:
+1. explain how things would be if applied to other functional languages, in
+   particular Haskell. What about laziness? What about overloaded numerals?
+   It seems to me that these are quite problematic. For example, the 0 in your
+   fac program will be Num a => a.
+2. what is the limit to the size of programs you can reasonably handle?
+   What if we have a large program, is it possible to have a different starting
+   point? So does a trace have to start at the start of the program? I guess
+   this is important since if you start with a higher order function then
+   you need to dynamically invent a function, and then your approximation might
+   well be in the way. This is something I am really curious about.
+   Now you have 5% Non-parametric function types. Does that change in this situation?
+
+Moreover
+1. p.9, use more space in Fig. 4 to make sure I know what belongs to what,
+        particularly for narrowing v[alpha].
+2. Could you look at Haskell's Imprecise Exceptions Semantics? Your evaluation
+   relation looks quite similar (but that might be me).
+3. example programs for your results on p.19 would be nice.
+4. in sec. 5.3 first list the classes before you talk of "the first class"
+5. p.27 -> assumptionS about functions correctness
+6. To me it is more natural to be reading first about the empirical results and
+   then the threats.
+7  p.34 about the its behavior
+
+
+
+
+
+
+Referee: 3
+
+Comments to the Author
+# Summary
+
+This paper presents a technique for automatically generating dynamic
+counterexamples for programs with type errors, focusing on student
+programs in OCaml, as well as a tool built using the technique. The
+primary idea is to symbolically execute programs to generate inputs
+that cause the programs to "go wrong". This of course fails to
+generate counterexamples in areas where the type system is
+(necessarily) conservative. Given the counterexample, the tool then
+provides a reduction sequence (in the sense of small-step operational
+semantics) which students can use to hopefully debug the problem that
+led to the original type error.
+
+The work is evaluated in several ways, again focused on student
+learners of OCaml:
+
+* How often are counterexamples found, for type-incorrect programs?
+  This is quite high, suggesting that the tool is almost always
+  useful.
+
+* Does the method provide a better error location than existing type
+  error message generation tools? This is often the case, given a
+  heuristic for going from a counterexample to a type error location.
+
+* Do students benefit from the tool? Here the authors executed studies
+  with students and found some benefit for both success in debugging
+  and type error understanding.
+
+# Evaluation
+
+This paper presents an interesting idea, well-executed, and with
+evidence of success in the real world that is not usually available
+for new tools. I recommend publication.
+
+In some ways, few of the individual components of the system are
+novel. Finding counterexamples via symbolic execution and random input
+generation is a form of concolic execution, which is well-studied,
+although the particular combination here is new. (The authors might be
+interested in [Nguyen & Van Horn, PLDI 2015] on the topic of
+counterexample generation.) Visualizing program execution as a
+reduction graph is also not new, as described in [Clements, Flatt,
+Felleisen, ESOP 2001] (which should be cited here). And studying
+improved error messages has a long history, discussed in the paper.
+
+However, the combination of these approaches, as well as the
+particular details of the author's tool, has not been previously
+attempted and demonstrates significant promise in the user studies.
+
+### Smaller issues
+
+* Corollary 1 quantifies over types t1 ... tn, but does not mention
+  them in the theorem statement.
+
+* The discussion of inter-rater reliability is strange. Why do we need
+  to know if the exams are graded similarly, except to check that UCSD
+  students are fairly graded? Also, why is IRR so low, given that
+  these are questions with a correct answer? Given that there are only
+  60 exams in question, having a single evaluator with a clear rubric
+  would eliminate both this potential source of inconsistency as well
+  as the need to discuss IRR at all.
+
+* Since NanoMaly only ever produces 5 locations, what would the
+  results in Figure 17 look like if Mycroft and Sherrloc were limited
+  to the top 5 locations as well? A CDF visualization, showing
+  accuracy plotted against the number of locations allowed, would be
+  nice to show this.

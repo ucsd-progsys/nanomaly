@@ -1,0 +1,157 @@
+We thank the reviewers for their detailed comments and suggestions.
+
+
+## Questions about the user study
+
+Reviewer 1
+> I was not completely convinced by the metrics used for the statistical
+> analysis; I would have found it more convincing to measure the speed
+> at which an incorrect program may be fixed by a student sitting in front
+> of a machine. That said, some statistical analysis is better than none,
+> and I am greatful that the authors attempted some evaluation.
+
+Reviewer 2
+> 7. why did you do a user study as part of an exam, and not as an
+> independent study? I don't think this is a good idea.
+
+We agree that it would be preferable to have timing data in addition to
+correctness data. We did attempt a study that would have collected
+timing data, but unfortunately were not able to recruit enough
+participants to draw any conclusions. We have updated the text in the
+"Constuct" subsection of the "Threats to Validity" to mention lack of
+timing data as a threat.
+
+
+Reviewer 2
+> 2. you compare only to OCAML in your student user study, which seems
+> to be to be an easy target. Why not Sherrloc or Mycroft which at least
+> get the location right more often? If OCAML much more often gives the
+> wrong location, the message is not likely to be helpful. Indeed, I
+> would expect you to only compare the systems for those cases that both
+> NANOMALY and OCAML blame the same location.
+
+Reviewer 2
+> 3. does your tool help students to learn about the type system, or is
+> it simply a better crutch to help them along. Did you investigate this
+> at all?
+
+These are valid concerns, we have updated the "Threats to Validity" to
+mention them.
+
+
+Reviewer 3
+> The discussion of inter-rater reliability is strange. Why do we need
+> to know if the exams are graded similarly, except to check that UCSD
+> students are fairly graded? Also, why is IRR so low, given that
+> these are questions with a correct answer? Given that there are only
+> 60 exams in question, having a single evaluator with a clear rubric
+> would eliminate both this potential source of inconsistency as well
+> as the need to discuss IRR at all.
+
+Our use of IRR is intended to account for potential bias in the
+raters. One such form of bias (conscious or not) could be bias in favor
+of NanoMaLy since it is new and interesting, and the raters (even if
+they are not directly connected to the project) may want to see it
+succeed. Due to the graphical nature of NanoMaLy's traces it is not easy
+to hide whether a given answer was assisted by OCaml or NanoMaLy from
+the raters. A further form of potential bias is inconsistency in
+evaluating the student answers, which were long-form, English
+explanations of the error/fix. There is a surprising amount of
+subjectivity involved in judging, based on a couple sentences, whether
+the student truly understood the error.
+
+For these reasons we feel that our use of IRR is justified to lend
+credibility to the results.
+
+(We have not added this discussion to the paper as the IRR test is
+really meant to be a preliminary "sanity-check", but would be happy to
+if the reviewers feel it would be helpful.)
+
+
+
+## Reviewer 1
+
+> The tool is restricted to a small subset of OCaml, in particular it does
+> not support side-effects. While many FP courses begin by focusing on
+> pure programs only, there are some intringuing type errors that students
+> face only when working with effectful programs, e.g. forgetting to apply
+> a function to the unit argument. I speculate that it would be /not/ so
+> easy to generalize the present work to deal with side effects, because
+> of the need to maintain the state and report it to the user.
+
+TODO
+
+
+> Random-test generation would likely fail to produce counter-examples
+> on slightly more complex programs such as red-black trees; for such
+> programs, more advanced techniques such as constraint-based test
+> generation are probably required. I was not able to quite understand
+> whether the approach presented in the paper could be extended to
+> accomodate constraint-based test generation.
+
+TODO
+
+> page 23, regarding section "witness exists", I got puzzled. The study
+> there is on 50 programs. It was found that 2% of the programs admit a
+> witness. I deduce this must correspond to one single program. But
+> then, the next sentence tells that "slightly over half of these
+> programs involved had some particular property, while the rest had
+> some other property."  There semms to be some inconcistency there.
+
+Indeed, the wording here was confusing. The percentages in this section
+are presented as a fraction of *all* programs, not just the random
+sample of failing programs. We have updated the text at the start of 5.3
+to explain this.
+
+
+## Reviewer 2
+
+> 1. you do not address the issue of bias, the fact that locations
+> towards the end of the program are more likely to be crashed at. This
+> is similar to the left-to-right-bias of algorithm W, although in your
+> case the left-to-rightness is in the trace, not the syntax tree (as
+> addressed for that case in work by Hage and Heeren (VODCA 2008) and
+> the work of Erwig and Chen).  Does your implementation allow general
+> datatypes so that I can have case with many arms?
+
+TODO
+
+> 5. your approximation of functions to fun is rather strong, and it is
+> unclear to me how well that works. I guess since all executions start
+> from the beginning of the programs keeps everything rather concrete,
+> so that you do not need to invent functions. But I am not sure, and I
+> would like to see a thorough discussion. I am fine with novice
+> programs being short and simple since that is quite likely to be the
+> case when they resort to Nanomaly, but when you do that, it should be
+> clear that you do.  What may be related to this is the idea to deal
+> with Currying. What about functions like foldr of which the result is
+> a type variable? I know that some static work on error diagnosis
+> sometimes runs into a problem of some sort and since you work at the
+> dynamic level this may not be the case for you. But do say and explain
+> so.
+
+TODO
+
+
+
+
+> 1. explain how things would be if applied to other functional
+> languages, in particular Haskell. What about laziness? What about
+> overloaded numerals?  It seems to me that these are quite
+> problematic. For example, the 0 in your fac program will be Num a =>
+> a.
+
+TODO
+
+> 2. what is the limit to the size of programs you can reasonably
+> handle?  What if we have a large program, is it possible to have a
+> different starting point? So does a trace have to start at the start
+> of the program? I guess this is important since if you start with a
+> higher order function then you need to dynamically invent a function,
+> and then your approximation might well be in the way. This is
+> something I am really curious about.  Now you have 5% Non-parametric
+> function types. Does that change in this situation?
+
+TOOD
+
+
