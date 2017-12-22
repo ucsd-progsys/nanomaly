@@ -184,7 +184,8 @@ domain of novice programs.
 A function's type is a theorem about its behavior.
 Thus, \toolname's witnesses can be viewed as \emph{counter-examples},
 thereby connecting it to work on using test cases to find
-counter-examples prior to starting a proof~\cite{ACL2Testing, Seidel15}.
+counter-examples prior to starting a proof~\cite{ACL2Testing, Nguyen2015-oo, Seidel15}.
+
 
 % \begin{itemize}
 % \item \cite{Claessen2000-lj}
@@ -202,7 +203,14 @@ corresponding to soft-typing errors. The debugger allows the user to explore
 an abstract reduction graph computed from a static value set analysis of
 the program. In contrast, \toolname generates witnesses and allows the user
 to explore the resulting dynamic execution.
-%
+
+Clements~\etal~\shortcite{Clements2001-qj} present a reduction-based
+visualization of program execution similar to \toolname's, though their
+interaction model is closer to that of a traditional step-debugger,
+limited to taking single step forwards or backwards. In contrast,
+\toolname first presents an overview of the whole computation, and then
+allows the user to focus in on the interesting reductions.
+
 Perera~\etal~\shortcite{Perera2012-dy} present a tracing semantics
 for functional programs that tags values with their provenance, enabling
 a form of backwards program slicing from a final value to the sequence
