@@ -26,7 +26,7 @@ We agree that it would be preferable to have timing data in addition to
 correctness data. We did attempt a study that would have collected
 timing data, but unfortunately were not able to recruit enough
 participants to draw any conclusions. We have updated the text in the
-"Constuct" subsection of the "Threats to Validity" to mention lack of
+"Constuct" subsection of the "Threats to Validity" to discuss the lack of
 timing data as a threat.
 
 
@@ -44,7 +44,7 @@ Reviewer 2
 > at all?
 
 These are valid concerns, we have updated the "Threats to Validity" to
-mention them.
+discuss them.
 
 
 Reviewer 3
@@ -71,10 +71,8 @@ the student truly understood the error.
 For these reasons we feel that our use of IRR is justified to lend
 credibility to the results.
 
-(We have not added this discussion to the paper as the IRR test is
-really meant to be a preliminary "sanity-check", but would be happy to
-if the reviewers feel it would be helpful.)
-
+We have added a footnote to the discussion of IRR explaining our
+justification.
 
 ## Investigating the "safe" programs
 
@@ -89,7 +87,7 @@ Reviewer 1
 Indeed, the wording here was confusing. The percentages in this section
 are presented as a fraction of *all* programs, not just the random
 sample of failing programs. We have updated the text at the start of 5.3
-to explain this.
+to clarify this.
 
 
 # Questions about limitations
@@ -132,6 +130,8 @@ such discarded values must be unit (it is commonly considered a best
 practice to explicitly discard the results of functions called just for
 their side effects with a `void` function).
 
+We have added a discussion of imperative features to section 6.
+
 
 Reviewer 2
 > 1. explain how things would be if applied to other functional
@@ -146,6 +146,7 @@ the issue and presenting a possible solution. We return to the issue in
 section 5.8 and mention how a language like Haskell with pervasive
 overloading would exacerbate the problem.
 
+We have clarified the relevant text in the paper.
 
 ## Scalability
 

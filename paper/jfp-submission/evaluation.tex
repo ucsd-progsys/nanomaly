@@ -6,6 +6,7 @@ We have implemented a prototype of our search procedure and trace
 visualization for a purely functional subset of \ocaml\ --- with
 polymorphic types and records, but no modules, objects, or polymorphic
 variants --- in a tool called \nanomaly.
+\footnote{\url{https://github.com/ucsd-progsys/nanomaly}}
 %
 We treat explicit type signatures, \eg @(x : int)@, as
 primitive operations that narrow the type of the wrapped value.
@@ -550,6 +551,11 @@ correct or incorrect.
 %
 We performed an inter-rater reliability (IRR) analysis to determine the
 degree to which the annotators consistently graded the exams.
+\footnote{Measuring IRR is an established practice to account for
+  potential bias among raters. The students were asked to explain the
+  errors in English; judging whether they truly understood the errors
+  invovled a surprising amount of subjectivity, and is thus subject to
+  rater bias.}
 %
 As we had more than two annotators assigning nominal (``correct'' or
 ``incorrect'') ratings we used Fleiss' kappa~\cite{Fleiss1971-du} to
@@ -696,19 +702,23 @@ error messages; and
 %
 (4) that can be used to automatically locate the source of a type error.
 
-There are, of course, drawbacks to our approach. Five that stand out
-are:
+There are, of course, drawbacks to our approach.
+% %
+% Five that stand out are:
+% %
+% (1) coverage limits due to random generation;
+% %
+% (2) dealing with explosions in the size of generated traces;
+% %
+% %(3) the inability to handle certain instances of infinite types; and
+% (3) our use of a non-parametric function type;
+% %
+% (4) handling ad-hoc polymorphism; and
+% %
+% (5) traversal bias.
 %
-(1) coverage limits due to random generation;
-%
-(2) dealing with explosions in the size of generated traces;
-%
-%(3) the inability to handle certain instances of infinite types; and
-(3) our use of a non-parametric function type;
-%
-(4) handling ad-hoc polymorphism; and
-%
-(5) traversal bias.
+In the sequel we discuss a selection of drawbacks, and how we might
+address them in future work.
 
 \paragraph{Random Generation}
 Random test generation has difficulty generating highly constrained
@@ -811,10 +821,13 @@ comparison functions in \ocaml) in limited cases where we have enough
 typing information at the call-site to resolve the overloading. This
 issue is uncommon in \ocaml\ (we detected it in around 5\% of our
 benchmarks), but it would surely be exacerbated by a language like
-\haskell, which makes heavy use of overloading. We suspect that either
-dynamic-symbolic execution or speculative instantiation of holes would
-allow us to handle ad-hoc polymorphism, but defer a proper treatment to
-future work.
+\haskell, which overloads not only functions but also numeric literals,
+as well as strings and lists if one enables the respective language
+extensions.
+%
+We suspect that either dynamic-symbolic execution or speculative
+instantiation of holes would allow us to handle ad-hoc polymorphism, but
+defer a proper treatment to future work.
 
 \paragraph{Traversal Bias}
 
@@ -835,6 +848,29 @@ reductions in the initial visualization, may help alleviate our bias.
 % Hage and Heeren~\shortcite{Hage2009-em} describe a system that allows
 % the compiler author to selectively control the bias and thus produce
 % better errors, while McAdam~\shortcite{McAdam1998-ub},
+
+\paragraph{Side Effects}
+
+While our implementation does not currently support side effects, it
+would not be difficult to add support.
+%
+The search procedure is easily extended to support mutation by
+maintaining a store in the evaluation relation, the main complexity
+would be in extending the trace visualization to demonstrate mutation.
+%
+Incorporating mutation directly into our reduction-based visualization
+would be difficult, as mutation would have non-local effects on the
+expressions and may be difficult for students to follow.
+%
+Instead, we could follow the example of
+%
+\textsc{Python Tutor}~\cite{GuoSIGCSE2013}
+%
+and provide a separate visualization of the mutable store, with references
+visualized as constant pointers to changing objects.
+
+
+
 
 
 % \begin{itemize}
