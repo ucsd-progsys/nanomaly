@@ -84,6 +84,35 @@ We discard all such programs in our evaluation to level the playing
 field, around 15\% for each tool, leaving us with a benchmark set of
 1,759 programs.
 
+
+\begin{figure}[t]
+\includegraphics[width=0.7\linewidth]{blame.png}
+\caption{Accuracy of type error localization. \toolname's witness-based
+  predictions outperform \ocaml by 21 points, and are competitive
+  with the state-of-the-art tools \mycroft and \sherrloc.}
+\label{fig:results-blame}
+\end{figure}
+
+\paragraph{Results}
+Figure~\ref{fig:results-blame} summarizes our results, which show that
+\toolname's witnesses are competitive with \mycroft and \sherrloc in
+automatically locating the source of a type error.
+%
+\toolname, \mycroft, and \sherrloc all outperform the \ocaml compiler,
+which is not surprising given that they can produce multiple possible
+error locations, while the \ocaml compiler is limited to one predicted
+error location.
+%
+Interestingly, while all tools have a median of 2 predicted error
+locations per program, \mycroft and \sherrloc have a long tail with a
+maximum of 22 (\resp 11) locations, while \toolname's maximum is 5
+locations.
+%
+We also note that while \mycroft and \sherrloc were designed
+specifically to \emph{localize} type errors, \toolname's foremost
+purpose is to \emph{explain} them, we consider its ability to localize
+type errors an added benefit.
+
 \paragraph{Threats to Validity}
 Our benchmarks were drawn from students in an undergraduate course
 at \ucsdbench\ and may not be representative of other student bodies.
@@ -128,34 +157,6 @@ with the student fixes.
 We believe, however, that it is reasonable to use student fixes as
 oracles, as the student is the best judge of what she \emph{intended} to
 do.
-
-\begin{figure}[t]
-\includegraphics[width=0.7\linewidth]{blame.png}
-\caption{Accuracy of type error localization. \toolname's witness-based
-  predictions outperform \ocaml by 21 points, and are competitive
-  with the state-of-the-art tools \mycroft and \sherrloc.}
-\label{fig:results-blame}
-\end{figure}
-
-\paragraph{Results}
-Figure~\ref{fig:results-blame} summarizes our results, which show that
-\toolname's witnesses are competitive with \mycroft and \sherrloc in
-automatically locating the source of a type error.
-%
-\toolname, \mycroft, and \sherrloc all outperform the \ocaml compiler,
-which is not surprising given that they can produce multiple possible
-error locations, while the \ocaml compiler is limited to one predicted
-error location.
-%
-Interestingly, while all tools have a median of 2 predicted error
-locations per program, \mycroft and \sherrloc have a long tail with a
-maximum of 22 (\resp 11) locations, while \toolname's maximum is 5
-locations.
-%
-We also note that while \mycroft and \sherrloc were designed
-specifically to \emph{localize} type errors, \toolname's foremost
-purpose is to \emph{explain} them, we consider its ability to localize
-type errors an added benefit.
 
 %%% Local Variables:
 %%% mode: latex
