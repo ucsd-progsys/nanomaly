@@ -13,8 +13,8 @@
 % produce poor error messages, and in particular, can misidentify the
 % \emph{source} of the type error.
 %
-Many groups have explored techniques to pinpoint the true source
-of errors reported by static type checkers.
+Many groups have explored techniques to improve the error locations
+reported by static type checkers.
 % unification-based type inference procedures.
 %
 % \subparagraph{Localization}
@@ -93,12 +93,16 @@ evolution.
 The content and quality of the error messages themselves has also been
 studied extensively.
 %
-Marceau~\etal~\shortcite{Marceau2011-ok,Marceau2011-cy} study the effectiveness of error
-messages in novice environments and present suggestions for improving
-their quality and consistency.
+Marceau~\etal~\shortcite{Marceau2011-ok,Marceau2011-cy} study the
+effectiveness of error messages in novice environments and present
+suggestions for improving their quality and consistency.
 %
-Hage~\&~Heeren~\shortcite{Hage2006-hc} identify a variety of general heuristics to improve
-the quality of type error messages, based on their teaching experience.
+Hage~\&~Heeren~\shortcite{Hage2006-hc} identify a variety of general
+heuristics to improve the quality of type error messages, based on their
+teaching experience.
+%
+Chargu{\'e}raud~\shortcite{Chargueraud2015-dc} presents a tabular format
+for type errors that can provide multiple explanations in a compact form.
 %
 Heeren~\etal~\shortcite{Heeren2003-db},
 Christiansen~\shortcite{Christiansen2014-qc}, and
@@ -177,7 +181,7 @@ random generation instead because it is efficient, does not incur
 the overhead of an external solver, and produces high coverage for our
 domain of novice programs.
 
-A function's type is a theorem about the its behavior.
+A function's type is a theorem about its behavior.
 Thus, \toolname's witnesses can be viewed as \emph{counter-examples},
 thereby connecting it to work on using test cases to find
 counter-examples prior to starting a proof~\cite{ACL2Testing, Seidel15}.

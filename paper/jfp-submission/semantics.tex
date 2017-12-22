@@ -209,7 +209,7 @@ $\vsu$ to see if the hole has already been instantiated and, if so,
 returns the existing instantiation.
 %
 \begin{figure}[t]
-\[
+\[\def\arraystretch{1.5}
 \begin{array}{lll}
 %% \multicolumn{3}{l}{\forcesym \ :: \  (e, t) \rightarrow \pair{e}{\vsu}} \\
 \forcesym                  & : v \times t \times \vsu \times \tsu \rightarrow \triple{v \cup \stuck}{\vsu}{\tsu} \\
@@ -224,10 +224,10 @@ returns the existing instantiation.
 \force{\vhole{\thole}}{t}{\vsu}{\tsu} & \defeq % \hspace{-1ex}
 \begin{cases}
   \triple{v}{\vsu}{\tsu'}    &\ \textbf{if} \begin{array}{l} v = \lookupsu{\vsu}{\vhole{\thole}}, \\
-                                         \tsu' = \unify{\{\thole, t, \typeof{v}\}}{\tsu}\end{array} \\
-  \triple{\stuck}{\vsu}{\tsu} &\ \textbf{if} \begin{array}{l} v = \lookupsu{\vsu}{\vhole{\thole}}\end{array} \\
+                                         \tsu' = \unify{\{\thole, t, \typeof{v}\}}{\tsu}\end{array} \\[0.16in]
+  \triple{\stuck}{\vsu}{\tsu} &\ \textbf{if} \begin{array}{l} v = \lookupsu{\vsu}{\vhole{\thole}}\end{array} \\[0.08in]
   \triple{v}{\extendsu{\vsu}{\vhole{\thole}}{v}}{\tsu'} &\ \textbf{if} \begin{array}{l} \tsu' = \unify{\{\thole, t\}}{\tsu}, \\ v = \gen{t}{\tsu'} \end{array}\\
-\end{cases}  \\
+\end{cases}  \\ %[0.2in]
 % \begin{cases}
 %   \triple{\lookupsu{\vsu}{\ehole}}{\vsu}{\tsu} & \mbox{if}\ \ehole \in dom(\vsu), \hastype{\lookupsu{\vsu}{\ehole}}{t} \\
 %   \triple{\stuck}{\vsu}{\tsu}                  & \mbox{if}\ \ehole \in dom(\vsu) \\
@@ -424,8 +424,15 @@ For example,
 $$\typeof{\efun{x}{\eplus{x}{1}}} = \tfun$$
 instead of $\tint \rightarrow \tint$.
 %
-The types of (polymorphic) trees are obtained from the labels on their
-values, and the types of tuples directly from their values.
+The types of tuples are obtained directly from their values, and the
+types of (polymorphic) trees from their labels.
+%
+Note that the evaluation relation in Figure~\ref{fig:operational}
+guarantees that tree \emph{values} will be annotated with their type.
+%
+For nodes the type can be taken from the type of its value $v_1$, but
+for leaves the evaluation relation creates a new type hole $\thole$
+(this corresponds to polymorphic instantiation in a typechecker).
 
 \begin{figure}[t]
 \[ \begin{array}{lcll}
@@ -962,7 +969,7 @@ We obtain the following corollary of Theorem~\ref{thm:soundness}:
 \begin{cor}[Witness Generation]
 \label{thm:generation}
   If $\genWitness{k}{e} = \triple{\eapp{e}{v_1 \ldots v_n}}{\vsu}{\tsu},\ldots$
-  then for all types $t_1 \ldots t_n$ there exist values $w_1 \ldots w_n$ such that
+  then for all types $t_1 \ldots t_n$ there exist values $w_1:t_1\ \ldots\ w_n:t_n$ such that
   $\steps{\eapp{e}{w_1 \ldots w_n}}{\emptysu}{\emptysu}{\stuck}{\vsu'}{\tsu'}$.
 \end{cor}
 \begin{proof}
