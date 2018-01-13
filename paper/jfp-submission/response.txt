@@ -74,6 +74,7 @@ credibility to the results.
 We have added a footnote to the discussion of IRR explaining our
 justification.
 
+
 ## Investigating the "safe" programs
 
 Reviewer 1
@@ -147,6 +148,7 @@ section 5.8 and mention how a language like Haskell with pervasive
 overloading would exacerbate the problem.
 
 We have clarified the relevant text in the paper.
+
 
 ## Scalability
 
