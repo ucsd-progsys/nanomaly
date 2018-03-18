@@ -555,7 +555,7 @@ degree to which the annotators consistently graded the exams.
 \footnote{Measuring IRR is an established practice to account for
   potential bias among raters. The students were asked to explain the
   errors in English; judging whether they truly understood the errors
-  invovled a surprising amount of subjectivity, and is thus subject to
+  involved a surprising amount of subjectivity, and is thus subject to
   rater bias.}
 %
 As we had more than two annotators assigning nominal (``correct'' or
@@ -838,11 +838,18 @@ of blaming expressions that are seen later~\cite{McAdam1998-ub}. This
 usually takes the form of a left-to-right bias with respect to the
 source code (terms that appear later \emph{textually} are more likely to
 be blamed), but in our case the bias is with respect to the execution
-trace. Incorporating our notion of type sources from
-\S~\ref{sec:locating} into the visualization, \eg by including those
-reductions in the initial visualization, may help alleviate our bias.
-% in a similar manner to the proposals of McAdam~\shortcite{McAdam1998-ub},
+trace.
 
+Incorporating our notion of type sources from \S~\ref{sec:locating} into
+the visualization, \eg by including those reductions in the initial
+visualization, may help alleviate our bias in a similar manner to
+McAdam's proposal. Hage and Heeren~\shortcite{Hage2009-em} offer another
+solution that allows the compiler author to selectively control the
+bias, and thus produce better errors, by prioritizing typing
+constraints. Unfortunately, due to \toolname's dynamic nature, providing
+this sort of control would likely require selectively changing the order
+of evalution; while sound for the pure subset of \ocaml that we address,
+this could nonetheless confuse newcomers to the language even more.
 
 % Several solutions to the bias problem have been proposed.
 % %
@@ -852,8 +859,8 @@ reductions in the initial visualization, may help alleviate our bias.
 
 \paragraph{Side Effects}
 
-While our implementation does not currently support side effects, it
-would not be difficult to add support.
+While our implementation does not currently support side effects, we
+suspect it would not be difficult to add support.
 %
 The search procedure is easily extended to support mutation by
 maintaining a store in the evaluation relation, the main complexity
